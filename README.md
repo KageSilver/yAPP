@@ -14,7 +14,7 @@ Nothing to see here... YET.
 - Here is the [Project Proposal](./Sprint%200/Project%20Proposal.md) for Iteration 0.
 
 
-## Iteration Milestones
+## Milestones
 Nothing to see here... YET.
 
 
