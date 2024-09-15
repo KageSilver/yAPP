@@ -10,15 +10,6 @@ Nothing to see here... YET.
 Nothing to see here... YET.
 
 
-## Iteration Documents
-Here are the different iterations with their respective descriptions for this project. It is imperative that you view these for important implementation details and quirks.
-
-- [Iteration 0](./Sprint%200/Iteration%201.md) 
-- Iteration 1
-- Iteration 2
-- Iteration 3
-
-
 ## Proposal
 - Here is the [Project Proposal](./Sprint%200/Project%20Proposal.md) for Iteration 0.
 
