@@ -1,0 +1,9 @@
+{
+  "editorconfig": true,
+  "singleAttributePerLine": true,
+  "vueIndentScriptAndStyle": true,
+  "useTabs": true,
+  "arrowParens": "avoid",
+  "trailingComma": "all",
+  "plugins": ["prettier-plugin-tailwindcss"]
+}

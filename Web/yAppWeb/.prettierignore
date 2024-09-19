@@ -1,0 +1,4 @@
+node_modules/**
+amplify/**
+venv/**
+build-tools/**
