@@ -12,7 +12,7 @@ Nothing to see here... YET.
 
 
 ## Proposal
-- Here is the [Project Proposal](./Sprint%200/Project%20Proposal.md) for Iteration 0.
+- Here is the [Project Proposal](./Documentation/Sprint%200/Project%20Proposal.md) for Iteration 0.
 
 
 ## Milestones
@@ -28,7 +28,7 @@ Nothing to see here... YET.
 
 
 ## Architecture
-- What the planned [High Level Architecture Diagram](./Sprint%200/yAPP%20HLA.png) is for the project.
+- What the planned [High Level Architecture Diagram](./Documentation/Sprint%200/yAPP%20HLA.png) is for the project.
 
 
 ## Standards and Other Guides
