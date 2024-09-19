@@ -27,51 +27,84 @@ In addition to making anonymous question posts, Yappers can also pose questions 
 
 We will make our application available for multiple platforms, including a website, desktop app, and IOS and Android app. By providing support for these various platforms, we allow more people to join our community of Yappers. This will also allow Yappers to access their account from various devices to stay engaged with their friends and our community of Yappers.
 
-## Core Features and User Stories
+## Core Features, User Stories, and Acceptance Criteria
 
 #### Posting
 
 - As a Yapper, I want to anonymously ask questions to the general public so I can get multiple opinions.
 
+    - Given that I am a registered Yapper, when I open the “make a post” page, then the system should show me an editor to create a post. When I am done writing my post and clicking the “make post” button, then the system should reassure me I made the post, and then show me where my post lies in the feed.
+
 - As a Yapper, I want to publish one friends-only post per day to update/ask my friends indirectly. Each post can either be anonymous or tied to my account based on my preference.
 
-- As a Yapper, I want to be able to see all the anonymous posts I’ve made to the Yapper community
+    - Given that I am a registered Yapper, when I open the “make a post” page, then the system should show me an editor to create a post. I want to make this post only for my friends, and when I click on the toggle button to make it only for my friends, then the system should change the colour of the editor to tell me it’s a friends-only post. When I finish editing the post and click on the “post to friends” button, then the system should reassure me that the post was created successfully, and then show me my diary page where this post should be.
+
+- As a Yapper, I want to be able to see all the anonymous posts I’ve made to the Yapper community.
+
+    - Given that I am a registered Yapper, when I open the “my posts” page, then the system should bring me to a timeline/list where it will show all of the posts that I’ve made in the past.
 
 #### Interactions 
 
 - As a Yapper, I want to be able to view other public posts. 
 
+    - Given that I am a registered Yapper, when I open the app, then the system should show me a timeline/list where it will show the most recently-created posts.
+
 - As a Yapper, I want to be able to upvote posts.
+
+    - Given that I am a registered Yapper, when I click on a post, then the system should show me all of the comments listed beneath it. I want to positively rate this post/comment, and when I click on the “upvote” button, then the system should fill in the button to show that I have successfully rated the post.
 
 - As a Yapper, I want to be able to downvote posts.
 
+    - Given that I am a registered Yapper, when I click on a post, then the system should show me all of the comments listed beneath it. I want to negatively rate this post/comment, and when I click on the “downvote” button, then the system should fill in the button to show that I have successfully rated the post.
+
 - As a Yapper, I want to be able to reply to other public posts.
+
+    - Given that I am a registered Yapper, when I click on a post, then the system should show me all of the comments listed beneath it. I want to add my own comment to the post, and when I click on the “comment” button, then the system should bring up the comment editor. When I fill out my comment and click submit, then the system should show that I have successfully commented and show me where my comment lies in the thread.
 
 #### Personal Calendar
 
 - As a Yapper, I want to be able to view my diary entries through a personal calendar for easier access and tracking.
 
+    - Given that I am a registered Yapper, when I click on my calendar, then the system should show me all of my diary entries that I’ve made for a given time period that I can change.
+
 - As a Yapper, I want to be able to see my friends’ diary entries anonymously through the calendar view (i.e., the original poster won’t know who has seen their upload). 
+
+    - Given that I am a registered Yapper, when I click on my calendar, then the system should show me all of my diary entries that I’ve made for a given time period that I can change. When I click on the “friend view” toggle, then the system should show all of the diary entries that my friends have made, and when they made them.
 
 #### Hidden Achievement System
 
 - As a Yapper, I want to be rewarded with an achievement if my post is highly upvoted.
 
+    - Given that I am a registered Yapper, when one of my posts passes a certain upvote threshold, then the system should show me that my post did well by giving me an achievement. Given that I want to find that achievement, when I click on my “achievements” page, then the system should show me a list of the achievements that I have made and which posts helped me achieve them.
+
 - As a Yapper, I want to be rewarded with an achievement if my post is highly downvoted.
+
+    - Given that I am a registered Yapper, when one of my posts passes a certain downvote threshold, then the system should show me that my post did poorly by giving me an achievement. Given that I want to find that achievement, when I click on my “achievements” page, then the system should show me a list of the achievements that I have made and which posts helped me achieve them.
 
 - As a Yapper, I want to be rewarded with an achievement if my post garners a lot of traffic.
 
+    - Given that I am a registered Yapper, when one of my posts passes a certain number of views, then the system should show me that my post gained a lot of attention by giving me an achievement. Given that I want to find that achievement, when I click on my “achievements” page, then the system should show me a list of the achievements that I have made and which posts helped me achieve them.
+
 - As a Yapper, I want to be rewarded with an achievement if I'm a frequent poster.
+
+    - Given that I am a registered Yapper, when I make a lot of concurrent posts, then the system should show me that I’ve been posting a lot by giving me an achievement. Given that I want to find that achievement, when I click on my “achievements” page, then the system should show me a list of the achievements that I have made and how I achieved them.
 
 #### Profile Management
 
 - As a new user, I want to create a Yapp account. 
 
+    - Given that I am not a registered Yapper, when I first open yAPP, then the system should show me a login page with a sign-up option. When I click on the sign-up option, then the system should bring me to a page where I can create an account. When I finish creating the account, the system should then notify me that I successfully created the account and send me back to the login page.
+
 - As a Yapper, I want to log in to my account.
+
+    - Given that I am a registered Yapper, when I open yAPP, then the system should show me a login page. When I enter my username and password, then the system should bring me to my home page.
 
 - As a Yapper, I want my activity to be private and visible only to me, to prevent being identified by others. 
 
+    - Given that I am a registered Yapper, when I use yAPP and interact with posts, then the system should hide my username from the post for people other than me.
+
 - As a Yapper, I want to be able to make friends with other fellow Yappers through an identifier.
+    - Given that me and my friend are registered Yappers, when I click on the “Add friend” button, then the system should bring me to a new page where I can enter my friend’s username, then the system should show me an option to add them. When I click on the “add” button, then the system should show me that I successfully sent a request to my friend. When my friend checks their friend invitations, then they should be able to see my invitation waiting for them.
 
 #### Yapping Capacity
 
@@ -80,6 +113,40 @@ We will make our application available for multiple platforms, including a websi
 - As a new Yapper, I should be able to create a public post within 5 minutes.
 
 - As a new Yapper, I should be able to create a diary entry within 5 minutes.
+
+## Trimmable Features, User Stories, and Acceptance Criteria
+
+#### Notifications
+
+- As a Yapper, I want to receive notifications when one of my friends makes a diary entry.
+
+    - Given that I am a registered Yapper, when one of my friends makes a diary entry, then the system should send me a notification of a new diary entry waiting to be read.
+
+- As a Yapper, I want to receive notifications when I get a new achievement.
+
+    - Given that I am a registered Yapper, when I reach an achievement, then the system should send me a notification of my accomplishment.
+
+- As a Yapper, I want to receive a notification when I get a new friend request.
+
+    - Given that I am a registered Yapper, when someone sends me a friend request, then the system should send me a notification that I have a new friend request waiting for me.
+
+- As a Yapper, I want to receive daily notifications reminding me about yAPP.
+
+    - Given that I am a registered Yapper, when I haven’t opened the app in over a day, then the system should send me a notification reminding me to check my feed.
+
+#### Post Tags
+
+- As a Yapper, I want to add relevant tags to posts I make to the general Yapper community.
+
+    - Given that I am a registered Yapper, when I create a post, then the system should show me an option where I can add specific tags to my post. When the post is published, then I should be able to see my post with the associated tag I put on it.
+
+- As a Yapper, I want to be able to search for posts with specific tags.
+
+    - Given that I am a registered Yapper, when I open the search menu, then the system should allow me to select a custom tag by typing it in. When I finish adding what tags to filter by, then I should be able to see all of the posts that match my criteria.
+
+- As a Yapper, I would like to filter out posts with specific tags.
+
+    - Given that I am a registered Yapper, when I am looking at my feed, then the system should allow me to filter out posts with certain tags so that I don’t need to see them.
 
 ## Tools and Technology
 
@@ -104,3 +171,7 @@ This proposed architecture would work for our use case because it allows for us 
 ## Project Proposal Presentation
 
 The final version of our project proposal can be found [here](./Comp%204350%20Finalized%20Proposal%20Presentation.pdf)!
+
+## Work Division
+
+We’re planning on dividing work for this project by feature. Two people will work on each feature as we aim to complete two features per sprint for the first two sprints. From there, work will be divided through time estimates, aiming to have the time estimates for all the work evenly distributed between all group members. The work on a single feature will be divided in a way that allows each person working on that feature to work on all the layers and tiers of the project to maximize learning for each of us. The initial planning for distributing the work will be done in a shared spreadsheet to allow all of us to work on the rough draft together and make quick changes where needed. Once the work has been distributed, we will use Issues in GitHub attached to our project repository to keep track of what work is completed and in progress. 
