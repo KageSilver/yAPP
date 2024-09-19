@@ -28,3 +28,4 @@ web/*.local
 *.sw?
 .idea/*
 .idea/
+.idea.Lambdas/
