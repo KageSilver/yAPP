@@ -1,5 +1,5 @@
 # yAPP
-*A place to yap your heart out.*
+A place to yap your heart out.
 
 ## Dev Team (*"The Searching Sisters"*)
 
@@ -103,4 +103,4 @@ This proposed architecture would work for our use case because it allows for us 
 
 ## Project Proposal Presentation
 
-The final version of our project proposal can be found [here](./Comp%204350%20Finalized%20Proposal%20Presentation.pdf).
+The final version of our project proposal can be found [here](./Comp%204350%20Finalized%20Proposal%20Presentation.pdf)!

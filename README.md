@@ -32,7 +32,8 @@ Nothing to see here... YET.
 
 
 ## Standards and Other Guides
-Nothing to see here... YET.
+- Here are the [coding conventions](./Documentation/Standards/Coding%20Conventions.md) used for the project.
+- Here is our [repository protocol](./Documentation/Standards/Repository%20Protocol.md).
 
 
 ## Retrospective
