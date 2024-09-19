@@ -26,3 +26,4 @@ web/*.local
 *.njsproj
 *.sln
 *.sw?
+.idea/*
