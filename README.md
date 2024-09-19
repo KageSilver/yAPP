@@ -16,15 +16,15 @@ Nothing to see here... YET.
 
 
 ## Milestones
-Nothing to see here... YET.
+- Click [here](https://github.com/KageSilver/yAPP/milestones) to see the milestones we have set up for our project!
 
 
 ## Features
-Nothing to see here... YET.
+- Click [here](https://github.com/KageSilver/yAPP/labels/feature) to see the open features for our project!
 
 
 ## User Stories
-Nothing to see here... YET.
+- Click [here](https://github.com/KageSilver/yAPP/labels/user%20story) to see the open User Stories for our project!
 
 
 ## Architecture
