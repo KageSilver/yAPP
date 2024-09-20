@@ -99,9 +99,9 @@ We will make our application available for multiple platforms, including a websi
 
     - Given that I am a registered Yapper, when I open yAPP, then the system should show me a login page. When I enter my username and password, then the system should bring me to my home page.
 
-- As a Yapper, I want my activity to be private and visible only to me, to prevent being identified by others. 
+- As a Yapper, I want to change my account details (e.g., username, birthday, email, etc.) to my liking. 
 
-    - Given that I am a registered Yapper, when I use yAPP and interact with posts, then the system should hide my username from the post for people other than me.
+    - Given that I am a registered Yapper, when I click on the profile management tab,  the system should bring me to a page where I can view the details I have set up and allow me to modify them.
 
 - As a Yapper, I want to be able to make friends with other fellow Yappers through an identifier.
     - Given that me and my friend are registered Yappers, when I click on the “Add friend” button, then the system should bring me to a new page where I can enter my friend’s username, then the system should show me an option to add them. When I click on the “add” button, then the system should show me that I successfully sent a request to my friend. When my friend checks their friend invitations, then they should be able to see my invitation waiting for them.
