@@ -1,6 +1,7 @@
 # Repository Protocol
 
 ## CI/CD Flow
+![svg](./workflow.drawio.svg)
 
 - Branches
 	- The `main` branch contains the stable, release-ready product. The application on this branch should always be functional.
