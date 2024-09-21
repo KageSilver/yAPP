@@ -1,7 +1,5 @@
 # Repository Protocol
 
-===============
-
 ## CI/CD Flow
 
 - Branches
