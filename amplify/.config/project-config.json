@@ -1,0 +1,17 @@
+{
+  "projectName": "yApp",
+  "version": "3.1",
+  "frontend": "javascript",
+  "javascript": {
+    "framework": "vue",
+    "config": {
+      "SourceDir": "yAppWeb/src",
+      "DistributionDir": "yAppWeb/dist",
+      "BuildCommand": "npm run-script build",
+      "StartCommand": "npm run-script serve"
+    }
+  },
+  "providers": [
+    "awscloudformation"
+  ]
+}
