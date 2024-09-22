@@ -9,7 +9,22 @@
       "UnauthRoleName": "amplify-yapp-main-a1f30-unauthRole",
       "StackName": "amplify-yapp-main-a1f30",
       "StackId": "arn:aws:cloudformation:us-east-2:746669205882:stack/amplify-yapp-main-a1f30/64b89b10-77c4-11ef-9dfc-0a3db7ac2389",
-      "AmplifyAppId": "d34oy4u1icq89e"
+      "AmplifyAppId": "d34oy4u1icq89e",
+      "APIGatewayAuthURL": "https://s3.amazonaws.com/amplify-yapp-main-a1f30-deployment/amplify-cfn-templates/api/APIGatewayAuthStack.json"
+    },
+    "categories": {
+      "function": {
+        "yAppLambda": {
+          "deploymentBucketName": "amplify-yapp-main-a1f30-deployment",
+          "s3Key": "amplify-builds/yAppLambda-2f584a7541455842355a-build.zip"
+        }
+      },
+      "auth": {
+        "yapp": {}
+      },
+      "api": {
+        "yapp": {}
+      }
     }
   }
 }
