@@ -1,8 +1,8 @@
 {
   "version": 1,
   "paths": {
-    "/": {
-      "name": "/",
+    "/api": {
+      "name": "/api",
       "lambdaFunction": "yAppLambda",
       "permissions": {
         "setting": "private",
