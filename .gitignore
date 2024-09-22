@@ -53,3 +53,4 @@ amplifytools.xcconfig
 #amplify-do-not-edit-end
 
 amplify/backend/function/Lambdas.sln.DotSettings.user
+amplify/backend/function/.vscode
