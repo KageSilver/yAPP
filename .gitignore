@@ -51,3 +51,5 @@ amplifytools.xcconfig
 .secret-*
 **.sample
 #amplify-do-not-edit-end
+
+amplify/backend/function/Lambdas.sln.DotSettings.user
