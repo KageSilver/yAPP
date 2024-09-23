@@ -1,0 +1,24 @@
+version: 1
+backend:
+  phases:
+    preBuild:
+      commands:    
+    build:
+      commands:
+        - amplify push --yes 
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - cd yAppWeb
+        - pnpm install
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: yAppWeb/dist
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - yAppWeb/node_modules/**/*
