@@ -24,6 +24,9 @@
       },
       "api": {
         "yapp": {}
+      },
+      "hosting": {
+        "S3AndCloudFront": {}
       }
     }
   },
