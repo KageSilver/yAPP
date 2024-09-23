@@ -10,10 +10,10 @@ frontend:
     preBuild:
       commands:
         - cd yAppWeb
-        - pnpm install
+        - npx pnpm install
     build:
       commands:
-        - npm run build
+        - npx pnpm run build
   artifacts:
     baseDirectory: yAppWeb/dist
     files:
