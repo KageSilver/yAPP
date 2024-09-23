@@ -5,7 +5,6 @@ backend:
       commands:    
     build:
       commands:
-        - amplify push --yes 
 frontend:
   phases:
     preBuild:
