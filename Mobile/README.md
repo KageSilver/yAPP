@@ -1,1 +1,0 @@
-# .NET MAUI Mobile Application
