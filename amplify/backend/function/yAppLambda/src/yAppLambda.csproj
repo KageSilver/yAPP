@@ -17,4 +17,10 @@
     <PackageReference Include="Unchase.SwashBuckle.AspNetCore.Extensions" Version="2.7.1"/>
     <PackageReference Include="Microsoft.OpenApi" Version="1.2.3"/>
   </ItemGroup>
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
+
