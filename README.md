@@ -31,7 +31,7 @@ Nothing to see here... YET.
 - What the planned [High Level Architecture Diagram](./Documentation/Sprint%200/yAPP%20HLA.png) is for the project.
 
 ## Meeting Minutes
-- Here are our [minutes](.Documentation/Meeting%20Minutes) from our meetings.
+- Here are our [minutes](./Documentation/Meeting%20Minutes) from our meetings.
 
 ## Standards and Other Guides
 - Here are the [coding conventions](./Documentation/Standards/Coding%20Conventions.md) used for the project.
