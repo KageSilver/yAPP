@@ -51,7 +51,7 @@ public class Startup
             }
 
             // convert the settings to the class object
-            _appSettings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(@"appsettings.json"), new JsonSerializerOptions { ReadCommentHandling = JsonCommentHandling.Skip });
+            _appSettings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(@"appSettings.json"), new JsonSerializerOptions { ReadCommentHandling = JsonCommentHandling.Skip });
             Console.WriteLine($"Environment: {_appSettings.Environment}" );
             Console.WriteLine($"Cognito: {_appSettings.Cognito}");
             Console.WriteLine($"Region: {_appSettings.AwsRegion}");

@@ -18,7 +18,7 @@
     <PackageReference Include="Microsoft.OpenApi" Version="1.2.3"/>
   </ItemGroup>
   <ItemGroup>
-    <None Update="appsettings.json">
+    <None Update="appSettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
