@@ -160,6 +160,22 @@
                   }
                 ]
               }
+            },  {
+              "Effect": "Allow",
+              "Action": [
+                "dynamodb:CreateTable",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:ListTables",
+                "dynamodb:Scan",
+                "dynamodb:Query",
+                "dynamodb:DeleteTable",
+                "dynamodb:DeleteItem",
+                "dynamodb:GetItem",
+                "dynamodb:DescribeTable",
+                "dynamodb:PartiQLUpdate"
+              ],
+              "Resource":"*"
             }
           ]
         }
