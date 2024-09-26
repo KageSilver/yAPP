@@ -35,19 +35,15 @@ We will make our application available for multiple platforms, including a websi
 
     - Given that I am a registered Yapper, when I open the “make a post” page, then the system should show me an editor to create a post. When I am done writing my post and clicking the “make post” button, then the system should reassure me I made the post, and then show me where my post lies in the feed.
 
-- As a Yapper, I want to publish one friends-only post per day to update/ask my friends indirectly. Each post can either be anonymous or tied to my account based on my preference.
-
-    - Given that I am a registered Yapper, when I open the “make a post” page, then the system should show me an editor to create a post. I want to make this post only for my friends, and when I click on the toggle button to make it only for my friends, then the system should change the colour of the editor to tell me it’s a friends-only post. When I finish editing the post and click on the “post to friends” button, then the system should reassure me that the post was created successfully, and then show me my diary page where this post should be.
-
 - As a Yapper, I want to be able to see all the anonymous posts I’ve made to the Yapper community.
 
     - Given that I am a registered Yapper, when I open the “my posts” page, then the system should bring me to a timeline/list where it will show all of the posts that I’ve made in the past.
 
-#### Interactions 
-
 - As a Yapper, I want to be able to view other public posts. 
 
     - Given that I am a registered Yapper, when I open the app, then the system should show me a timeline/list where it will show the most recently-created posts.
+
+#### Interactions 
 
 - As a Yapper, I want to be able to upvote posts.
 
@@ -62,6 +58,10 @@ We will make our application available for multiple platforms, including a websi
     - Given that I am a registered Yapper, when I click on a post, then the system should show me all of the comments listed beneath it. I want to add my own comment to the post, and when I click on the “comment” button, then the system should bring up the comment editor. When I fill out my comment and click submit, then the system should show that I have successfully commented and show me where my comment lies in the thread.
 
 #### Personal Calendar
+
+- As a Yapper, I want to publish one friends-only post per day to update/ask my friends indirectly. Each post can either be anonymous or tied to my account based on my preference.
+
+    - Given that I am a registered Yapper, when I open the “make a post” page, then the system should show me an editor to create a post. I want to make this post only for my friends, and when I click on the toggle button to make it only for my friends, then the system should change the colour of the editor to tell me it’s a friends-only post. When I finish editing the post and click on the “post to friends” button, then the system should reassure me that the post was created successfully, and then show me my diary page where this post should be.
 
 - As a Yapper, I want to be able to view my diary entries through a personal calendar for easier access and tracking.
 
