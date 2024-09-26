@@ -4,9 +4,6 @@ def minor = 0
 def revision = 0
 
 def appversion = "$major.$minor.$revision"
-def buildName = "$Software $env.BRANCH_NAME"
-
-def publishedApps = "yAppWeb/dist/**"
 
 def amplify_env = ""
 def cognito_pool = ""
@@ -33,7 +30,6 @@ def TEST_ENV = "test"
 def AMPLIFY_APP_ID = "d34oy4u1icq89e"
 def MAIN_CLOUDFRONT_ID = "E1J2AXX98R4GJP" 
 def DEV_CLOUDFRONT_ID = "E31QWRSIU8H00V"
-def TEST_CLOUDFRONT_ID = "" 
 
 //file path we need to update
 def VERSION_FILE_PATH = "yAppWeb/src/version.json"
@@ -45,10 +41,8 @@ def TEST_POOL = "us-east-2_DpPbDoSUa"
 def DEV_POOL = "us-east-2_AoahD29kD"
 def MAIN_POOL = "us-east-2_itXR8ULJ4"
 
-
-//dotnet tests
-//path
-def solution = "amplify/backend/function/Lambdas.sln"
+//dotnet tests path
+def SOLUTION = "amplify/backend/function/Lambdas.sln"
 
 pipeline {
     environment {
@@ -141,7 +135,7 @@ pipeline {
             steps {
                 script {
                     echo 'Running tests'
-                    def testStatus = sh(script: "dotnet test ${solution}", returnStatus: true)
+                    def testStatus = sh(script: "dotnet test ${SOLUTION}", returnStatus: true)
                     if (testStatus != 0) {
                         error("Tests failed. Exiting...")
                     }
