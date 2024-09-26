@@ -50,11 +50,14 @@
       "function": {
         "yAppLambda": {
           "deploymentBucketName": "amplify-yapp-dev-94d82-deployment",
-          "s3Key": "amplify-builds/yAppLambda-6849462b4757534c4a6d-build.zip"
+          "s3Key": "amplify-builds/yAppLambda-393230482b637a626c56-build.zip"
         }
       },
       "api": {
         "yapp": {}
+      },
+      "hosting": {
+        "S3AndCloudFront": {}
       }
     }
   },
