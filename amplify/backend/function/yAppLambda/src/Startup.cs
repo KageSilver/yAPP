@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
+using Amazon.Extensions.NETCore.Setup;
 using Unchase.Swashbuckle.AspNetCore.Extensions.Extensions;
 using yAppLambda.Models;
 
@@ -39,7 +40,6 @@ public class Startup
         
         try
         {
-
             services.AddEndpointsApiExplorer();
             services.AddHttpLogging(_ => { });
             if (IsLocal)
@@ -54,8 +54,15 @@ public class Startup
             _appSettings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(@"appSettings.json"), new JsonSerializerOptions { ReadCommentHandling = JsonCommentHandling.Skip });
             Console.WriteLine($"Environment: {_appSettings.Environment}" );
             Console.WriteLine($"Cognito: {_appSettings.UserPoolId}");
-            Console.WriteLine($"Region: {_appSettings.AwsRegion}");
+            Console.WriteLine($"Region: {_appSettings.AwsRegionEndpoint}");
             
+            // Manually configure AWS options
+            var awsOptions = new AWSOptions
+            {
+                Region = _appSettings.AwsRegionEndpoint
+            };
+            
+            services.AddDefaultAWSOptions(awsOptions);
             services.AddCognitoIdentity();
             //TODO: Add authentication & authorization service with cognito
 
