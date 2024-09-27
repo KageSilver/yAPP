@@ -90,6 +90,57 @@ public static class CognitoActions
         }
     }
 
+    /// <summary>
+    /// Retrieves a user from the Cognito user pool by their unique identifier.
+    /// </summary>
+    /// <param name="userId">The unique identifier of the user.</param>
+    /// <param name="appSettings">The application settings containing configuration values.</param>
+    /// <returns>A `User` object representing the user details, or `null` if the user is not found.</returns>
+    public static async Task<User> GetUserById(string userId, IAppSettings appSettings)
+    {
+        var request = new ListUsersRequest
+        {
+            UserPoolId = appSettings.UserPoolId,
+            Filter = $"sub = \"{userId}\""
+        };
+
+        var awsCognitoIdentityProviderConfig = new AmazonCognitoIdentityProviderConfig
+        {
+            RegionEndpoint = appSettings.AwsRegionEndpoint
+        };
+
+        var cognitoIdentityProvider = new AmazonCognitoIdentityProviderClient(awsCognitoIdentityProviderConfig);
+        
+        var response = await cognitoIdentityProvider.ListUsersAsync(request);
+
+        // Get the first (and likely only) user returned by the filter
+        // If the user is found, return the user details
+        var cognitoUser = response.Users.FirstOrDefault();
+
+        if (cognitoUser != null)
+        {
+            var user = new User
+            {
+                UserName = cognitoUser.Username,
+                Email = cognitoUser.Attributes.FirstOrDefault(attr => attr.Name == "email")?.Value,
+                Name = cognitoUser.Attributes.FirstOrDefault(attr => attr.Name == "name")?.Value,
+                Id = cognitoUser.Attributes.FirstOrDefault(attr => attr.Name == "sub")?.Value,
+                Attributes = cognitoUser.Attributes.ToDictionary(attr => attr.Name, attr => attr.Value),
+                NickName = cognitoUser.Attributes.FirstOrDefault(attr => attr.Name == "nickname")?.Value
+            };
+            return user;
+        }
+
+        Console.WriteLine("User not found");
+        return null;
+    }
+
+    /// <summary>
+    /// Retrieves detailed information about a user from the Cognito user pool.
+    /// </summary>
+    /// <param name="userName">The username of the user to retrieve.</param>
+    /// <param name="appSettings">The application settings containing configuration values.</param>
+    /// <returns>An `AdminGetUserResponse` object containing the user details.</returns>
     private static async Task<AdminGetUserResponse> GetUserDetails(string userName, IAppSettings appSettings)
     {
         //Get User Params
