@@ -35,8 +35,8 @@ public class UserController:ControllerBase
         return await CognitoActions.UpdateUser(request, _appSettings);
     }
 
-    // GET: api/cognito/getUser?username={username}
-    [HttpGet("getUser")]
+    // GET: api/cognito/getUserByName?username={username}
+    [HttpGet("getUserByName")]
     [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<User>> GetUser(string username)
@@ -46,5 +46,18 @@ public class UserController:ControllerBase
             return BadRequest("username is required");
         }
         return await CognitoActions.GetUser(username, _appSettings);
+    }
+    
+    // GET: api/cognito/getUserById?id={id}
+    [HttpGet("getUserById")]
+    [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<User>> GetUserById(string id)
+    {
+        if (id== null)
+        {
+            return BadRequest("id is required");
+        }
+        return await CognitoActions.GetUserById(id, _appSettings);
     }
 }
