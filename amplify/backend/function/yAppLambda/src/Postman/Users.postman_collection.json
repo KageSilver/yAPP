@@ -41,7 +41,7 @@
       "response": []
     },
     {
-      "name": "Post data",
+      "name": "UpdateUser",
       "event": [
         {
           "listen": "test",
@@ -61,7 +61,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n\t\"userName\": \"Add your user name in the body\",\n\t\"name\": \"Add your name in the body\"\n}",
+          "raw": "{\n\t\"userName\": \"Add your user name in the body\",\n\t\"nickName\": \"Add your user name in the body\",\n\t\"name\": \"Add your name in the body\"\n}",
           "options": {
             "raw": {
               "language": "json"
