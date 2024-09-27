@@ -85,7 +85,7 @@ public class UserController : ControllerBase
     {
         if (id == null)
         {
-            return BadRequest("id is required");
+            return BadRequest("Id is required");
         }
 
         var user = await CognitoActions.GetUserById(id, _appSettings);
