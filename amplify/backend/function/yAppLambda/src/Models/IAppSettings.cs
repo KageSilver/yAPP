@@ -1,3 +1,5 @@
+using Amazon;
+
 namespace yAppLambda.Models;
 
 public interface IAppSettings
@@ -16,4 +18,9 @@ public interface IAppSettings
     /// Cognito user pool id
     /// </summary>
     string UserPoolId { get; set; }
+    
+    /// <summary>
+    /// Convert the region to the endpoint
+    /// </summary>
+    RegionEndpoint AwsRegionEndpoint { get; }
 }
