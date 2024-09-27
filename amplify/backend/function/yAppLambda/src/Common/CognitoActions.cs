@@ -45,11 +45,20 @@ public static class CognitoActions
 
         var cognitoIdentityProvider = new AmazonCognitoIdentityProviderClient(awsCognitoIdentityProviderConfig);
 
-        var response = await cognitoIdentityProvider.AdminUpdateUserAttributesAsync(updateUserAttributesRequest);
-        if (response.HttpStatusCode == (HttpStatusCode)StatusCodes.Status200OK)
+        try
         {
-            return await GetUser(updateUser.UserName, appSettings);
+            var response = await cognitoIdentityProvider.AdminUpdateUserAttributesAsync(updateUserAttributesRequest);
+            if (response.HttpStatusCode == (HttpStatusCode)StatusCodes.Status200OK)
+            {
+                return await GetUser(updateUser.UserName, appSettings);
+            }
         }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Failed: {e.Message}");
+            return null;
+        }
+       
         
         return null;
     }
