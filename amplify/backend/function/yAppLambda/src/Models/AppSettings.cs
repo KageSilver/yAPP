@@ -13,7 +13,7 @@ public class AppSettings: IAppSettings
     public string AwsRegion { get; set; }
 
     /// <summary>
-    /// Cognito user pool url 
+    /// Cognito user pool id
     /// </summary>
-    public string Cognito { get; set; }
+    public string UserPoolId { get; set; }
 }

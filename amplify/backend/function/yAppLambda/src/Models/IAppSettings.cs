@@ -13,7 +13,7 @@ public interface IAppSettings
     string AwsRegion { get; set; }
 
     /// <summary>
-    /// Cognito user pool url 
+    /// Cognito user pool id
     /// </summary>
-    string Cognito { get; set; }
+    string UserPoolId { get; set; }
 }
