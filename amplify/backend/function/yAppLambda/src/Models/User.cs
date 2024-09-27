@@ -7,6 +7,12 @@ public class User
     [JsonPropertyName("userName")]
     public string UserName { get; set; }
     
+    [JsonPropertyName("nickName")]
+    public string NickName { get; set; }
+    
+    [JsonPropertyName("id")]
+    public string Id { get; set; }
+    
     [JsonPropertyName("name")]
     public string Name { get; set; }
     

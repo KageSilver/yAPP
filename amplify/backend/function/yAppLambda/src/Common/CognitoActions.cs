@@ -29,10 +29,14 @@ public static class CognitoActions
                 {
                     Name = "name",
                     Value = updateUser.Name
-                }
+                },
+                new AttributeType
+                {
+                    Name = "nickname",
+                    Value = updateUser.NickName
+                },
             }
         };
-
 
         var awsCognitoIdentityProviderConfig = new AmazonCognitoIdentityProviderConfig
         {
@@ -68,6 +72,8 @@ public static class CognitoActions
                 UserName = result.Username,
                 Email = result.UserAttributes.FirstOrDefault(attr => attr.Name == "email")?.Value,
                 Name = result.UserAttributes.FirstOrDefault(attr => attr.Name == "name")?.Value,
+                NickName = result.UserAttributes.FirstOrDefault(attr => attr.Name == "nickname")?.Value,
+                Id = result.UserAttributes.FirstOrDefault(attr => attr.Name == "sub")?.Value,
                 Attributes = result.UserAttributes.ToDictionary(attr => attr.Name, attr => attr.Value)
             };
             return user;
