@@ -50,8 +50,7 @@ public static class CognitoActions
         {
             return await GetUser(updateUser.UserName, appSettings);
         }
-
-
+        
         return null;
     }
 
