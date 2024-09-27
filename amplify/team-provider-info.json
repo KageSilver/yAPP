@@ -81,11 +81,14 @@
       "function": {
         "yAppLambda": {
           "deploymentBucketName": "amplify-yapp-test-d66f4-deployment",
-          "s3Key": "amplify-builds/yAppLambda-6849462b4757534c4a6d-build.zip"
+          "s3Key": "amplify-builds/yAppLambda-726d6f627463486f4744-build.zip"
         }
       },
       "api": {
         "yapp": {}
+      },
+      "hosting": {
+        "S3AndCloudFront": {}
       }
     }
   }
