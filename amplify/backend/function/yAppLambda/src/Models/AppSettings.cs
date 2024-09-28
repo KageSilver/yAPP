@@ -23,4 +23,9 @@ public class AppSettings: IAppSettings
     /// Convert the region to the endpoint
     /// </summary>
     public RegionEndpoint AwsRegionEndpoint => RegionEndpoint.GetBySystemName(AwsRegion);
+
+    /// <summary>
+    /// friendship table name
+    /// </summary>
+    public string FriendshipTableName { get; set; }
 }
