@@ -2,6 +2,9 @@ using yAppLambda.Enum;
 
 namespace yAppLambda.Models;
 
+/// <summary>
+/// Represents a friendship between two users.
+/// </summary>
 public class Friendship
 {
     public string FromUserName { get; set; } // Partition Key
