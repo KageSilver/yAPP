@@ -38,7 +38,7 @@ public class FriendController : ControllerBase
     {
         ActionResult<Friendship> result;
 
-        if (request == null || request.FromUserName == null || request.ToUserId == null)
+        if (request == null || string.IsNullOrEmpty(request.FromUserName) || string.IsNullOrEmpty(request.ToUserId))
         {
             result = BadRequest("request body is required and must contain username and friend's id");
         }
@@ -62,7 +62,7 @@ public class FriendController : ControllerBase
                 var existingFriendship = await FriendshipActions.GetFriendship(request.FromUserName, friend.UserName,
                     _dbContext, _appSettings);
 
-                if (existingFriendship == null)
+                if (existingFriendship.Value == null)
                 {
                     var createResult = await FriendshipActions.CreateFriendship(friendship, _dbContext, _appSettings);
                     result = createResult.Result is OkObjectResult
@@ -92,18 +92,18 @@ public class FriendController : ControllerBase
         return result;
     }
 
-    // POST: api/friends/updateFriendRequest with body { "fromUserName": "username", "toUserName": "username", "status": 1 }
+    // PUT: api/friends/updateFriendRequest with body { "fromUserName": "username", "toUserName": "username", "status": 1 }
     /// <summary>
     /// Updates the status of an existing friend request.
     /// </summary>
     /// <param name="request">The friend request object containing the details of the request.</param>
     /// <returns>An ActionResult containing the updated Friendship object if the update is successful, or an error message if it fails.</returns>
-    [HttpPost("updateFriendRequest")]
+    [HttpPut("updateFriendRequest")]
     [ProducesResponseType(typeof(Friendship), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Friendship>> UpdateFriendRequest([FromBody] FriendRequest request)
     {
-        if (request == null || request.FromUserName == null || request.FromUserName == null)
+        if (request == null || string.IsNullOrEmpty(request.FromUserName) || string.IsNullOrEmpty(request.FromUserName))
 
         {
             return BadRequest("request body is required and must contain username and friend's username");
@@ -156,10 +156,11 @@ public class FriendController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<List<Friendship>>> GetFriends(string userName, int status = -1)
     {
-        if (userName == null)
+        if (string.IsNullOrEmpty(userName))
         {
             return BadRequest("username is required");
         }
+        
 
         // get the friendship status
         var friendshipStatus = GetFriendshipStatus(status);
