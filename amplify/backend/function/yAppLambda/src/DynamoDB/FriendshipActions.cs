@@ -65,7 +65,20 @@ public static class FriendshipActions
             {
                 OverrideTableName = friendshipTable
             };
-            friendship.UpdatedAt = DateTime.Now;
+            
+            // if the friendship is accepted or declined, we need to update the updated time
+            if (friendship.Status == FriendshipStatus.Accepted || friendship.Status == FriendshipStatus.Declined)
+            {
+                friendship.UpdatedAt = DateTime.Now;
+                
+            }else if (friendship.Status == FriendshipStatus.Pending)
+            {
+                // if the friendship is pending,
+                // we need to update the created time since the request user would send a new request
+                friendship.CreatedAt = DateTime.Now;
+            }
+          
+            // update the friendship status
             await dynamoDbContext.SaveAsync(friendship, config);
             return new OkObjectResult(friendship);
         }
