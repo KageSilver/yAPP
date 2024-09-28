@@ -204,9 +204,9 @@
         "type": "text/javascript",
         "exec": [
           "//Set API URL based ",
-          "var isRunningLocal = postman.getEnvironmentVariable(\"isRunningLocal\");",
-          "console.log(\"isRunningLocal=\"+ isRunningLocal);",
-          "var url = /^true$/i.test(isRunningLocal) ? postman.getEnvironmentVariable(\"local_url\") : postman.getEnvironmentVariable(\"base_url\") + \"/\" + postman.getEnvironmentVariable(\"branch\");",
+          "var isLocal = postman.getEnvironmentVariable(\"isLocal\");",
+          "console.log(\"isLocal=\"+ isLocal);",
+          "var url = /^true$/i.test(isLocal) ? postman.getEnvironmentVariable(\"local_url\") : postman.getEnvironmentVariable(\"base_url\") + \"/\" + postman.getEnvironmentVariable(\"env\");",
           "console.log(\"URL=\"+ url);",
           "pm.environment.set(\"url\", url);",
           "",
