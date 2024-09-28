@@ -1,3 +1,5 @@
+using yAppLambda.Enum;
+
 namespace yAppLambda.Models;
 
 public class Friendship
@@ -6,7 +8,7 @@ public class Friendship
 
     public string ToUserName { get; set; } // Sort Key
     
-    public Friendship Status { get; set; } // e.g. "Pending", "Accepted", "Declined"
+    public FriendshipStatus Status { get; set; } // e.g. "Pending", "Accepted", "Declined"
     
     public DateTime CreatedAt { get; set; }
 }
