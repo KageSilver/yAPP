@@ -12,4 +12,10 @@ public class FriendRequest
     
     [JsonPropertyName("toUserId")]
     public string ToUserId { get; set; } 
+    
+    [JsonPropertyName("toUserName")]
+    public string ToUserName { get; set; }
+    
+    [JsonPropertyName("status")]
+    public int Status { get; set; }
 }
