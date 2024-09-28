@@ -13,5 +13,7 @@ public class Friendship
     
     public FriendshipStatus Status { get; set; } // e.g. "Pending", "Accepted", "Declined"
     
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } // The time when the friendship was created
+    
+    public DateTime UpdatedAt { get; set; } // The time when the friendship status was updated
 }
