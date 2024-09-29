@@ -142,8 +142,8 @@ public class FriendshipActionTests
     public async Task GetAllFriends_ShouldReturnFriendships_WhenStatusIsAccepted()
     {
         // Arrange
-        string userName = "user1@example.com";
-        var friendshipStatus = FriendshipStatus.Accepted;
+        const string userName = "user1@example.com";
+        const FriendshipStatus friendshipStatus = FriendshipStatus.Accepted;
 
         var friendshipsFrom = new List<Friendship>
         {
@@ -187,7 +187,7 @@ public class FriendshipActionTests
     public async Task GetAllFriends_ShouldReturnEmptyList_WhenExceptionIsThrown()
     {
         // Arrange
-        var userName = "user1@example.com";
+        const string userName = "user1@example.com";
         const FriendshipStatus friendshipStatus = FriendshipStatus.Accepted;
 
         _appSettingsMock.Setup(a => a.FriendshipTableName).Returns(FriendshipTableName);
@@ -198,6 +198,8 @@ public class FriendshipActionTests
             .ThrowsAsync(new Exception("Error querying friendships"));
 
         // Setup QueryAsync to return the mocked AsyncSearch<Friendship>
+        _dynamoDbContextMock.Setup(d => d.QueryAsync<Friendship>(userName, It.IsAny<DynamoDBOperationConfig>()))
+            .Returns(queryFromSearchMock.Object);
         
         var result = await FriendshipActions.GetAllFriends(userName, friendshipStatus, _dynamoDbContextMock.Object, _appSettingsMock.Object);
 
@@ -209,8 +211,8 @@ public class FriendshipActionTests
     public async Task GetFriendship_ShouldReturnFriendship_WhenExists()
     {
         // Arrange
-        string fromUserName = "user1@example.com";
-        string toUserName = "user2@example.com";
+        const string fromUserName = "user1@example.com";
+        const string toUserName = "user2@example.com";
         var friendship = new Friendship
         {
             FromUserName = fromUserName,
@@ -239,8 +241,8 @@ public class FriendshipActionTests
     public async Task GetFriendship_ShouldReturnNull_WhenExceptionIsThrown()
     {
         // Arrange
-        string fromUserName = "user1@example.com";
-        string toUserName = "user2@example.com";
+        const string fromUserName = "user1@example.com";
+        const string toUserName = "user2@example.com";
 
         _appSettingsMock.Setup(a => a.FriendshipTableName).Returns(string.Empty);
         _dynamoDbContextMock.Setup(d => d.LoadAsync<Friendship>(fromUserName, toUserName, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
