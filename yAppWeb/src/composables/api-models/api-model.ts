@@ -9,6 +9,54 @@
  * ---------------------------------------------------------------
  */
 
+export interface FriendRequest {
+  fromUserName?: string | null;
+  toUserId?: string | null;
+  toUserName?: string | null;
+  /** @format int32 */
+  status?: number;
+}
+
+export interface Friendship {
+  FromUserName?: string | null;
+  ToUserName?: string | null;
+  /**
+   *
+   *
+   * 0 = Pending
+   *
+   * 1 = Accepted
+   *
+   * 2 = Declined
+   *
+   * -1 = All
+   */
+  Status?: FriendshipStatus;
+  /** @format date-time */
+  CreatedAt?: string;
+  /** @format date-time */
+  UpdatedAt?: string;
+}
+
+/**
+ *
+ *
+ * 0 = Pending
+ *
+ * 1 = Accepted
+ *
+ * 2 = Declined
+ *
+ * -1 = All
+ * @format int32
+ */
+export enum FriendshipStatus {
+  Pending = 0,
+  Accepted = 1,
+  Declined = 2,
+  All = -1,
+}
+
 export interface ProblemDetails {
   type?: string | null;
   title?: string | null;
@@ -244,6 +292,66 @@ export class HttpClient<SecurityDataType = unknown> {
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
   api = {
+    /**
+     * No description
+     *
+     * @tags Friend
+     * @name FriendsFriendRequestCreate
+     * @request POST:/api/friends/friendRequest
+     */
+    friendsFriendRequestCreate: (data: FriendRequest, params: RequestParams = {}) =>
+      this.request<Friendship, ProblemDetails>({
+        path: `/api/friends/friendRequest`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Friend
+     * @name FriendsUpdateFriendRequestUpdate
+     * @request PUT:/api/friends/updateFriendRequest
+     */
+    friendsUpdateFriendRequestUpdate: (data: FriendRequest, params: RequestParams = {}) =>
+      this.request<Friendship, ProblemDetails>({
+        path: `/api/friends/updateFriendRequest`,
+        method: "PUT",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Friend
+     * @name FriendsGetFriendsByStatusList
+     * @request GET:/api/friends/getFriendsByStatus
+     */
+    friendsGetFriendsByStatusList: (
+      query?: {
+        userName?: string;
+        /**
+         * @format int32
+         * @default -1
+         */
+        status?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<Friendship[], ProblemDetails>({
+        path: `/api/friends/getFriendsByStatus`,
+        method: "GET",
+        query: query,
+        format: "json",
+        ...params,
+      }),
+
     /**
      * No description
      *

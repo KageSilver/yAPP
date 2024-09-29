@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
+using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
 using Amazon.Extensions.NETCore.Setup;
 using Unchase.Swashbuckle.AspNetCore.Extensions.Extensions;
 using yAppLambda.Models;
@@ -62,7 +64,7 @@ public class Startup
                 Region = _appSettings.AwsRegionEndpoint
             };
             
-            services.AddDefaultAWSOptions(awsOptions);
+            services.AddDefaultAWSOptions(awsOptions);// Register AmazonDynamoDBClient as a singleton
             services.AddCognitoIdentity();
             //TODO: Add authentication & authorization service with cognito
 
@@ -89,6 +91,19 @@ public class Startup
             
             //Inject shared connection wrappers if they don't exist
             services.AddSingleton<IAppSettings>(_appSettings);
+            // Register AmazonDynamoDBClient as a singleton with the specified region
+            services.AddSingleton<IAmazonDynamoDB>(sp =>
+            {
+                var config = new AmazonDynamoDBConfig
+                {
+                    RegionEndpoint = _appSettings.AwsRegionEndpoint
+                };
+                return new AmazonDynamoDBClient(config);
+            });
+
+            // Register DynamoDBContext as a scoped service
+            services.AddScoped<IDynamoDBContext, DynamoDBContext>();
+
         }
         catch (Exception e)
         {
