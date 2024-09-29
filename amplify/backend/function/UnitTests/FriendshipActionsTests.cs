@@ -13,7 +13,7 @@ using yAppLambda.Enum;
 
 namespace UnitTests;
 
-public class FriendshipActionTests
+public class FriendshipActionsTests
 {
     private readonly Mock<IAppSettings> _appSettingsMock = new();
     private readonly Mock<IDynamoDBContext> _dynamoDbContextMock = new();
