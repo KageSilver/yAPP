@@ -9,5 +9,53 @@ namespace yAppLambda.Controllers;
 [Route("api/posts")]
 public class PostController : ControllerBase 
 {
+    private readonly IAppSettings _appSettings;
+    private readonly IDynamoDBContext _dbContext;
+    private readonly ICognitoActions _cognitoActions;
 
+    public PostController(IAppSettings appSettings,ICognitoActions cognitoActions, IDynamoDBContext dbContext)
+    {
+        _appSettings = appSettings;
+        _cognitoActions = cognitoActions;
+        _dbContext = dbContext;
+    }
+
+    // POST: api/posts/createPost with body {}
+    /// <summary>
+    /// Creates a new post
+    /// </summary>
+    /// <param name="post">The post object containing the details of the post</param>
+    /// <returns>An ActionResult containing the Post object if the request is successful, or an error message if it fails</returns>
+    [HttpPost("createPost")]
+    [ProducesResponseType(typeof(Post), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<Post>> CreatePost([FromBody] Post request)
+    {
+        ActionResult<Post> result;
+
+        if(request == null || string.IsNullOrEmpty(request.PID) || string.IsNullOrEmpty(request.UserName))
+        {
+            result = BadRequest("request body is required and must contain post id and poster's username");
+        }
+        else
+        {
+            Console.WriteLine("Post request from: " + request.UserName + " with post id: " + request.PID + " and title: " + request.PostTitle);
+
+            var poster = await _cognitoActions.getUserByName(request.UserName);
+
+            if(poster == null)
+            {
+                request = NotFound("Post creator not found");
+            }
+            else
+            {
+                var createResult = await PostActions.CreatePost(post, _dbContext, _appSettings);
+                result = createResult.Result is OkObjectResult
+                    ? (ActionResult<Post>)post
+                    : BadRequest("Failed to create post");
+            }
+        }
+
+        return result;
+    }
 }
