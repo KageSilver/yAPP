@@ -19,7 +19,7 @@ public class CognitoActionsTests
     private readonly Mock<IAmazonCognitoIdentityProvider> _cognitoClientMock;
     private readonly Mock<IAppSettings> _appSettingsMock;
     private readonly CognitoActions _cognitoActions;
-    
+
     public CognitoActionsTests()
     {
         _cognitoClientMock = new Mock<IAmazonCognitoIdentityProvider>();
@@ -29,7 +29,7 @@ public class CognitoActionsTests
 
         _cognitoActions = new CognitoActions(_cognitoClientMock.Object, _appSettingsMock.Object);
     }
-    
+
     [Fact]
     public async Task UpdateUser_ShouldReturnUpdatedUser_WhenUpdateIsSuccessful()
     {
@@ -53,10 +53,13 @@ public class CognitoActionsTests
             }
         };
 
-        _cognitoClientMock.Setup(c => c.AdminUpdateUserAttributesAsync(It.IsAny<AdminUpdateUserAttributesRequest>(), It.IsAny<CancellationToken>()))
+        _cognitoClientMock.Setup(c =>
+                c.AdminUpdateUserAttributesAsync(It.IsAny<AdminUpdateUserAttributesRequest>(),
+                    It.IsAny<CancellationToken>()))
             .ReturnsAsync(updateResponse);
 
-        _cognitoClientMock.Setup(c => c.AdminGetUserAsync(It.IsAny<AdminGetUserRequest>(), It.IsAny<CancellationToken>()))
+        _cognitoClientMock.Setup(c =>
+                c.AdminGetUserAsync(It.IsAny<AdminGetUserRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(getUserResponse);
 
         // Act
@@ -69,7 +72,9 @@ public class CognitoActionsTests
         Assert.Equal("user1", returnedUser.UserName);
         Assert.Equal("User One", returnedUser.Name);
         Assert.Equal("User1Nick", returnedUser.NickName);
-        _cognitoClientMock.Verify(c => c.AdminUpdateUserAttributesAsync(It.IsAny<AdminUpdateUserAttributesRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+        _cognitoClientMock.Verify(
+            c => c.AdminUpdateUserAttributesAsync(It.IsAny<AdminUpdateUserAttributesRequest>(),
+                It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -78,7 +83,9 @@ public class CognitoActionsTests
         // Arrange
         var user = new User { UserName = "user1", Name = "User One", NickName = "User1Nick" };
 
-        _cognitoClientMock.Setup(c => c.AdminUpdateUserAttributesAsync(It.IsAny<AdminUpdateUserAttributesRequest>(), It.IsAny<CancellationToken>()))
+        _cognitoClientMock.Setup(c =>
+                c.AdminUpdateUserAttributesAsync(It.IsAny<AdminUpdateUserAttributesRequest>(),
+                    It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("Update failed"));
 
         // Act
@@ -86,7 +93,9 @@ public class CognitoActionsTests
 
         // Assert
         Assert.Null(result);
-        _cognitoClientMock.Verify(c => c.AdminUpdateUserAttributesAsync(It.IsAny<AdminUpdateUserAttributesRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+        _cognitoClientMock.Verify(
+            c => c.AdminUpdateUserAttributesAsync(It.IsAny<AdminUpdateUserAttributesRequest>(),
+                It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -107,7 +116,8 @@ public class CognitoActionsTests
             }
         };
 
-        _cognitoClientMock.Setup(c => c.AdminGetUserAsync(It.IsAny<AdminGetUserRequest>(), It.IsAny<CancellationToken>()))
+        _cognitoClientMock.Setup(c =>
+                c.AdminGetUserAsync(It.IsAny<AdminGetUserRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(getUserResponse);
 
         // Act
@@ -120,14 +130,15 @@ public class CognitoActionsTests
         Assert.Equal("user1@example.com", result.Email);
         Assert.Equal("12345", result.Id);
     }
-    
+
     [Fact]
     public async Task GetUser_ShouldReturnNull_WhenAmazonServiceExceptionIsThrown()
     {
         // Arrange
         const string userName = "user1";
 
-        _cognitoClientMock.Setup(c => c.AdminGetUserAsync(It.IsAny<AdminGetUserRequest>(), It.IsAny<CancellationToken>()))
+        _cognitoClientMock.Setup(c =>
+                c.AdminGetUserAsync(It.IsAny<AdminGetUserRequest>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new AmazonServiceException("Service error"));
 
         // Act
@@ -136,7 +147,7 @@ public class CognitoActionsTests
         // Assert
         Assert.Null(result);
     }
-    
+
     [Fact]
     public async Task GetUserById_ShouldReturnUser_WhenUserExists()
     {
@@ -174,7 +185,7 @@ public class CognitoActionsTests
         Assert.Equal("user1@example.com", result.Email);
         Assert.Equal("12345", result.Id);
     }
-    
+
     [Fact]
     public async Task GetUserById_ShouldReturnNull_WhenUserNotFound()
     {
