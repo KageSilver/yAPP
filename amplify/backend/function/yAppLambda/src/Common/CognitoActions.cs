@@ -118,8 +118,7 @@ public class CognitoActions : ICognitoActions
 
         return null;
     }
-
-    // This method is private in your class, so you'd mock it in your tests
+    
     private async Task<AdminGetUserResponse> GetUserDetails(string userName)
     {
         var adminGetUserRequest = new AdminGetUserRequest
