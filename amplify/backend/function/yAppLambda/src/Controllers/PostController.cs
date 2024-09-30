@@ -1,4 +1,9 @@
-
+using Amazon.DynamoDBv2.DataModel;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using yAppLambda.Common;
+using yAppLambda.DynamoDB;
+using yAppLambda.Models;
 
 namespace yAppLambda.Controllers;
 
@@ -13,7 +18,7 @@ public class PostController : ControllerBase
     private readonly IDynamoDBContext _dbContext;
     private readonly ICognitoActions _cognitoActions;
 
-    public PostController(IAppSettings appSettings,ICognitoActions cognitoActions, IDynamoDBContext dbContext)
+    public PostController(IAppSettings appSettings, ICognitoActions cognitoActions, IDynamoDBContext dbContext)
     {
         _appSettings = appSettings;
         _cognitoActions = cognitoActions;
@@ -41,17 +46,17 @@ public class PostController : ControllerBase
         {
             Console.WriteLine("Post request from: " + request.UserName + " with post id: " + request.PID + " and title: " + request.PostTitle);
 
-            var poster = await _cognitoActions.getUserByName(request.UserName);
+            var poster = await _cognitoActions.GetUser(request.UserName);
 
             if(poster == null)
             {
-                request = NotFound("Post creator not found");
+                result = NotFound("Post creator not found");
             }
             else
             {
-                var createResult = await PostActions.CreatePost(post, _dbContext, _appSettings);
+                var createResult = await PostActions.CreatePost(request, _dbContext, _appSettings);
                 result = createResult.Result is OkObjectResult
-                    ? (ActionResult<Post>)post
+                    ? (ActionResult<Post>)request
                     : BadRequest("Failed to create post");
             }
         }
