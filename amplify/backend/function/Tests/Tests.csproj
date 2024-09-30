@@ -28,9 +28,4 @@
             <HintPath>System</HintPath>
         </Reference>
     </ItemGroup>
-    <ItemGroup>
-<!--        <None Update="TestCognitoSettings.json">-->
-<!--            <CopyToOutputDirectory>Always</CopyToOutputDirectory>-->
-<!--        </None>-->
-    </ItemGroup>
 </Project>
