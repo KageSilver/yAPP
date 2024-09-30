@@ -7,5 +7,6 @@
 * devTaskIssue#41-FeatureIssue#5-Create an endpoint to send a friend request
 * devTaskIssue#42-FeatureIssue#5-Create an endpoint to accept/decline a friend request
 * devTaskIssue#43-FeatureIssue#5-Create an endpoint to list all friend requests
+* devTaskIssue#45-FeatureIssue#1-Setup a post table schema using C#
 * devTaskIssue#70-FeatureIssue#5-Add unit tests for all friendship actions
 * devTaskIssue#73-FeatureIssue#5-Add unit tests for all cognito actions
