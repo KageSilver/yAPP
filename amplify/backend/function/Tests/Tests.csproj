@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
+        <RootNamespace>UnitTests</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Amazon.Lambda.Core" Version="2.2.0" />
@@ -22,11 +23,6 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\yAppLambda\src\yAppLambda.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-        <Reference Include="testhost">
-            <HintPath>$(NuGetPackageRoot)/microsoft.testplatform.testhost/16.9.4/lib/netcoreapp2.1/testhost.dll</HintPath>
-        </Reference>
     </ItemGroup>
     <ItemGroup>
         <Reference Include="System">
