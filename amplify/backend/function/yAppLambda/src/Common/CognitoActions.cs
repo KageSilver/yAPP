@@ -118,7 +118,12 @@ public class CognitoActions : ICognitoActions
 
         return null;
     }
-    
+
+    /// <summary>
+    /// Retrieves the user details from the Cognito user pool by username.
+    /// </summary>
+    /// <param name="userName">The username of the user to retrieve.</param>
+    /// <returns>A Task containing the AdminGetUserResponse object with user details.</returns>
     private async Task<AdminGetUserResponse> GetUserDetails(string userName)
     {
         var adminGetUserRequest = new AdminGetUserRequest
