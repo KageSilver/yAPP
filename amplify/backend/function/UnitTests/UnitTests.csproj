@@ -14,6 +14,7 @@
         <PackageReference Include="Moq" Version="4.13.1" />
         <PackageReference Include="xunit" Version="2.4.1" />
         <PackageReference Include="Xunit.Extensions.Ordering" Version="1.4.5" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.16" />
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
@@ -23,13 +24,18 @@
         <ProjectReference Include="..\yAppLambda\src\yAppLambda.csproj" />
     </ItemGroup>
     <ItemGroup>
+        <Reference Include="testhost">
+            <HintPath>$(NuGetPackageRoot)/microsoft.testplatform.testhost/16.9.4/lib/netcoreapp2.1/testhost.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
         <Reference Include="System">
             <HintPath>System</HintPath>
         </Reference>
     </ItemGroup>
     <ItemGroup>
-<!--        <None Update="TestCognitoSettings.json">-->
-<!--            <CopyToOutputDirectory>Always</CopyToOutputDirectory>-->
-<!--        </None>-->
+        <None Update="..\yAppLambda\src\appSettings.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 </Project>
