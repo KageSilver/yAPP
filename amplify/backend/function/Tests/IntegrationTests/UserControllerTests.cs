@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -25,6 +26,7 @@ public class UserControllerIntegrationTests
 
     //we must use simulator email to test the user without using email quota
     private const string TestUserEmail = "bounce@simulator.amazonses.com";
+    private static string TestUserId = ""; // this will be updated from a test and use for another test
 
     public UserControllerIntegrationTests()
     {
@@ -61,9 +63,30 @@ public class UserControllerIntegrationTests
     {
         var response = await _client.GetAsync($"/api/users/getUserByName?username={TestUserEmail}");
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        //update id 
+        var user = await response.Content.ReadFromJsonAsync<User>();
+        Assert.NotNull(user);
+        TestUserId = user.Id;
+        Assert.NotEmpty(TestUserId);
     }
 
     [Fact, Order(2)]
+    public async Task GetUserById_ShouldReturnNotFound_WhenUserDoesNotExist()
+    {
+        var response = await _client.GetAsync("/api/users/getUserById?id=nonexistentUser");
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact, Order(2)]
+    public async Task GetUserById_ShouldReturnFound_WhenUserExist()
+    {
+        Assert.NotEmpty(TestUserId);
+        var response = await _client.GetAsync($"/api/users/getUserById?id={TestUserId}");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+    
+
+    [Fact, Order(3)]
     public async Task UpdateUser_ShouldReturnBadRequest_WhenRequestIsNull()
     {
         // Arrange
@@ -78,7 +101,7 @@ public class UserControllerIntegrationTests
     }
 
 
-    [Fact, Order(2)]
+    [Fact, Order(3)]
     public async Task UpdateUser_ShouldReturnBadRequest_WhenUserNameIsNull()
     {
         var user = new User { UserName = null, Name = "", NickName = "" };
@@ -87,7 +110,7 @@ public class UserControllerIntegrationTests
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
-    [Fact, Order(2)]
+    [Fact, Order(3)]
     public async Task UpdateUser_ShouldReturnNotFound_WhenUserDoesNotExist()
     {
         var user = new User { UserName = "nonexistentUser", Name = "Test User", NickName = "TestNick" };
@@ -96,7 +119,8 @@ public class UserControllerIntegrationTests
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
-    [Fact, Order(2)]
+
+    [Fact, Order(3)]
     public async Task UpdateUser_ShouldReturnOk_WhenUserExist()
     {
         var user = new User { UserName = TestUserEmail, Name = "Test User", NickName = "TestNick" };
