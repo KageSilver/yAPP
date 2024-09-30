@@ -206,4 +206,78 @@ public class CognitoActionsTests
         // Assert
         Assert.Null(result);
     }
+    
+    #region CreateUser Tests
+
+    [Fact]
+    public async Task CreateUser_ShouldCallAdminCreateUserAsync()
+    {
+        // Arrange
+        const string email = "bounce@simulator.amazonses.com";
+        _cognitoClientMock.Setup(m => m.AdminCreateUserAsync(It.IsAny<AdminCreateUserRequest>(), default))
+                          .ReturnsAsync(new AdminCreateUserResponse());
+
+        // Act
+        await _cognitoActions.CreateUser(email);
+
+        // Assert
+        _cognitoClientMock.Verify(m => m.AdminCreateUserAsync(It.Is<AdminCreateUserRequest>(r => 
+            r.Username == email &&
+            r.UserAttributes.Exists(attr => attr.Name == "email" && attr.Value == email) &&
+            r.UserAttributes.Exists(attr => attr.Name == "email_verified" && attr.Value == "true")),
+            default), Times.Once);
+    }
+
+    [Fact]
+    public async Task CreateUser_ShouldHandleException_WhenAdminCreateUserFails()
+    {
+        // Arrange
+        const string email = "test@example.com";
+        _cognitoClientMock.Setup(m => m.AdminCreateUserAsync(It.IsAny<AdminCreateUserRequest>(), default))
+                          .ThrowsAsync(new Exception("Cognito error"));
+
+        // Act
+        var exception = await Record.ExceptionAsync(() => _cognitoActions.CreateUser(email));
+
+        // Assert
+        Assert.Null(exception); 
+        _cognitoClientMock.Verify(m => m.AdminCreateUserAsync(It.IsAny<AdminCreateUserRequest>(), default), Times.Once);
+    }
+
+    #endregion
+
+    #region DeleteUser Tests
+
+    [Fact]
+    public async Task DeleteUser_ShouldCallAdminDeleteUserAsync()
+    {
+        // Arrange
+        const string username = "testuser";
+        _cognitoClientMock.Setup(m => m.AdminDeleteUserAsync(It.IsAny<AdminDeleteUserRequest>(), default))
+                          .ReturnsAsync(new AdminDeleteUserResponse());
+
+        // Act
+        await _cognitoActions.DeleteUser(username);
+
+        // Assert
+        _cognitoClientMock.Verify(m => m.AdminDeleteUserAsync(It.Is<AdminDeleteUserRequest>(r => r.Username == username), default), Times.Once);
+    }
+
+    [Fact]
+    public async Task DeleteUser_ShouldHandleException_WhenAdminDeleteUserFails()
+    {
+        // Arrange
+        const string username = "testuser";
+        _cognitoClientMock.Setup(m => m.AdminDeleteUserAsync(It.IsAny<AdminDeleteUserRequest>(), default))
+                          .ThrowsAsync(new Exception("Cognito error"));
+
+        // Act
+        var exception = await Record.ExceptionAsync(() => _cognitoActions.DeleteUser(username));
+
+        // Assert
+        Assert.Null(exception); 
+        _cognitoClientMock.Verify(m => m.AdminDeleteUserAsync(It.IsAny<AdminDeleteUserRequest>(), default), Times.Once);
+    }
+
+    #endregion
 }
