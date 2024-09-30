@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace yAppLambda.Models;
 
 /// <summary>
@@ -12,7 +14,7 @@ public class NewPost
     public string PostTitle { get; set; }
 
     [JsonPropertyName("postBody")]
-    public string postBody { get; set; }
+    public string PostBody { get; set; }
 
     [JsonPropertyName("diaryEntry")]
     public bool DiaryEntry { get; set; }
