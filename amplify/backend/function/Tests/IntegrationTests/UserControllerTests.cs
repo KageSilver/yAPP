@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -8,15 +6,16 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Amazon.CognitoIdentityProvider;
-using Amazon.CognitoIdentityProvider.Model;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Xunit;
 using Xunit.Extensions.Ordering;
 using yAppLambda;
+using yAppLambda.Common;
 using yAppLambda.Models;
 
 namespace Tests.IntegrationTests;
+
 
 public class UserControllerIntegrationTests
 {
@@ -28,8 +27,9 @@ public class UserControllerIntegrationTests
 
     //we must use simulator email to test the user without using email quota
     private const string TestUserEmail = "bounce@simulator.amazonses.com";
-    private static string TestUserId = ""; // this will be updated from a test and use for another test
+    private static string _testUserId = ""; // this will be updated from a test and use for another test
 
+    private  ICognitoActions _cognitoActions;
     public UserControllerIntegrationTests()
     {
         var webHostBuilder = new WebHostBuilder()
@@ -41,16 +41,12 @@ public class UserControllerIntegrationTests
 
         _appSettings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(@"appSettings.json"),
             new JsonSerializerOptions { ReadCommentHandling = JsonCommentHandling.Skip });
-
-        var awsCognitoIdentityProviderConfig = new AmazonCognitoIdentityProviderConfig
-        {
-            RegionEndpoint = _appSettings.AwsRegionEndpoint
-        };
-
-        _cognitoIdentityProvider = new AmazonCognitoIdentityProviderClient(awsCognitoIdentityProviderConfig);
+        
+        IAmazonCognitoIdentityProvider cognitoClient = new AmazonCognitoIdentityProviderClient(_appSettings.AwsRegionEndpoint);
+        _cognitoActions = new CognitoActions(cognitoClient, _appSettings);
 
         // setup the user for testing
-        CreateUserAsync(TestUserEmail).Wait();
+        _cognitoActions.CreateUser(TestUserEmail).Wait();
     }
 
     [Fact, Order(1)]
@@ -65,11 +61,7 @@ public class UserControllerIntegrationTests
     {
         var response = await _client.GetAsync($"/api/users/getUserByName?username={TestUserEmail}");
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        //update id 
-        var user = await response.Content.ReadFromJsonAsync<User>();
-        Assert.NotNull(user);
-        TestUserId = user.Id;
-        Assert.NotEmpty(TestUserId);
+       
     }
 
     [Fact, Order(2)]
@@ -82,9 +74,16 @@ public class UserControllerIntegrationTests
     [Fact, Order(2)]
     public async Task GetUserById_ShouldReturnFound_WhenUserExist()
     {
-        Assert.NotEmpty(TestUserId);
-        var response = await _client.GetAsync($"/api/users/getUserById?id={TestUserId}");
+        //update id 
+        var response = await _client.GetAsync($"/api/users/getUserByName?username={TestUserEmail}");
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var user = await response.Content.ReadFromJsonAsync<User>();
+        Assert.NotNull(user);
+        _testUserId = user.Id;
+        Assert.NotEmpty(_testUserId);
+        
+        var response2 = await _client.GetAsync($"/api/users/getUserById?id={_testUserId}");
+        Assert.Equal(HttpStatusCode.OK, response2.StatusCode);
     }
     
 
@@ -130,71 +129,12 @@ public class UserControllerIntegrationTests
             new StringContent(JsonSerializer.Serialize(user), Encoding.UTF8, "application/json"));
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         //delete the user after the test
-        DeleteUserAsync(TestUserEmail).Wait();
+        _cognitoActions.DeleteUser(TestUserEmail).Wait();
         //verify the user is deleted
         var response2 = await _client.GetAsync($"/api/users/getUserByName?username={TestUserEmail}");
         Assert.Equal(HttpStatusCode.NotFound, response2.StatusCode);
     }
 
 
-    /// <summary>
-    /// Creates a new user in the Cognito user pool with the specified email.
-    /// Purpose to create a user for testing
-    /// </summary>
-    /// <param name="email">The email address of the user to create.</param>
-    private async Task CreateUserAsync(string email)
-    {
-        var request = new AdminCreateUserRequest
-        {
-            UserPoolId = _appSettings.UserPoolId,
-            Username = email,
-            UserAttributes = new List<AttributeType>
-            {
-                new AttributeType
-                {
-                    Name = "email",
-                    Value = email
-                },
-                new AttributeType
-                {
-                    Name = "email_verified",
-                    Value = "true"
-                }
-            },
-            TemporaryPassword = "TemporaryPassword123!",
-            MessageAction = "SUPPRESS" // To suppress sending a welcome email
-        };
-
-        try
-        {
-            var response = await _cognitoIdentityProvider.AdminCreateUserAsync(request);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine($"Error creating user: {e.Message}");
-        }
-    }
-
-    /// <summary>
-    /// Deletes a user from the Cognito user pool with the specified username.
-    /// </summary>
-    /// <param name="username">The username of the user to delete.</param>
-    private async Task DeleteUserAsync(string username)
-    {
-        var request = new AdminDeleteUserRequest
-        {
-            UserPoolId = _appSettings.UserPoolId,
-            Username = username
-        };
-
-        try
-        {
-            await _cognitoIdentityProvider.AdminDeleteUserAsync(request);
-            Console.WriteLine($"User {username} deleted successfully.");
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine($"Error deleting user: {e.Message}");
-        }
-    }
+  
 }
