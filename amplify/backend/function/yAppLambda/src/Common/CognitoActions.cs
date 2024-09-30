@@ -7,7 +7,7 @@ using yAppLambda.Models;
 
 namespace yAppLambda.Common;
 
-public class CognitoActions:ICognitoActions
+public class CognitoActions : ICognitoActions
 {
     private readonly IAmazonCognitoIdentityProvider _cognitoClient;
     private readonly IAppSettings _appSettings;
@@ -18,6 +18,11 @@ public class CognitoActions:ICognitoActions
         _appSettings = appSettings;
     }
 
+    /// <summary>
+    /// Updates the user attributes in the Cognito user pool and retrieves the updated user details.
+    /// </summary>
+    /// <param name="updateUser">The user object containing updated attributes.</param>
+    /// <returns>An ActionResult containing the updated User object or null if the update fails.</returns>
     public async Task<ActionResult<User>> UpdateUser(User updateUser)
     {
         var updateUserAttributesRequest = new AdminUpdateUserAttributesRequest
@@ -48,6 +53,11 @@ public class CognitoActions:ICognitoActions
         return null;
     }
 
+    /// <summary>
+    /// Retrieves the user details from the Cognito user pool by username.
+    /// </summary>
+    /// <param name="userName">The username of the user to retrieve.</param>
+    /// <returns>A Task containing the User object or null if the user is not found or an error occurs.</returns>
     public async Task<User> GetUser(string userName)
     {
         try
@@ -76,6 +86,11 @@ public class CognitoActions:ICognitoActions
         }
     }
 
+    /// <summary>
+    /// Retrieves the user details from the Cognito user pool by user ID.
+    /// </summary>
+    /// <param name="userId">The ID of the user to retrieve.</param>
+    /// <returns>A Task containing the User object or null if the user is not found or an error occurs.</returns>
     public async Task<User> GetUserById(string userId)
     {
         var request = new ListUsersRequest
