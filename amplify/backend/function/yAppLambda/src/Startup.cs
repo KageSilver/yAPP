@@ -11,6 +11,7 @@ using Amazon.DynamoDBv2.DataModel;
 using Amazon.Extensions.NETCore.Setup;
 using Unchase.Swashbuckle.AspNetCore.Extensions.Extensions;
 using yAppLambda.Common;
+using yAppLambda.DynamoDB;
 using yAppLambda.Models;
 
 namespace yAppLambda;
@@ -21,7 +22,6 @@ public class Startup
     private bool IsLocal { get; set; }
 
     private IAppSettings _appSettings; // the settings file for current lambda
-    private ICognitoActions _cognitoActions;
 
     /// <summary>
     /// Startup constructor
@@ -94,6 +94,7 @@ public class Startup
             //Inject shared connection wrappers if they don't exist
             services.AddSingleton<IAppSettings>(_appSettings);
             services.AddSingleton<ICognitoActions,CognitoActions>();
+            services.AddSingleton<IFriendshipActions, FriendshipActions>();
             // Register AmazonDynamoDBClient as a singleton with the specified region
             services.AddSingleton<IAmazonDynamoDB>(sp =>
             {
