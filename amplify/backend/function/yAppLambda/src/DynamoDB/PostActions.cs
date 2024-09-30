@@ -33,6 +33,9 @@ public static class PostActions
 
             // update the current time
             post.CreatedAt = DateTime.Now;
+            // gets a unique ID for the post
+            post.PID = Guid.NewGuid().ToString();
+
             await dynamoDbContext.SaveAsync(post, config);
 
             return new OkObjectResult(post);
