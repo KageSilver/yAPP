@@ -1,4 +1,3 @@
-using Amazon.CognitoIdentityProvider;
 using Microsoft.AspNetCore.Mvc;
 using yAppLambda.Models;
 
@@ -30,4 +29,20 @@ public interface ICognitoActions
     /// <param name="sub">The ID of the user to retrieve.</param>
     /// <returns>A Task containing the User object or null if the user is not found or an error occurs.</returns>
     Task<User> GetUserById(string sub);
+
+
+    /// <summary>
+    /// Creates a new user in the Cognito user pool with the specified email.
+    /// </summary>
+    /// <param name="email">The email address of the user to create.</param>
+    /// <returns>A Task representing the asynchronous operation.</returns>
+    Task CreateUser(string email);
+
+
+    /// <summary>
+    /// Deletes a user from the Cognito user pool by username.
+    /// </summary>
+    /// <param name="userName">The username of the user to delete.</param>
+    /// <returns>A Task representing the asynchronous operation.</returns>
+    Task DeleteUser(string userName);
 }

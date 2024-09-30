@@ -1,3 +1,5 @@
+namespace Tests.UnitTests.Actions;
+
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -10,8 +12,6 @@ using Amazon.DynamoDBv2.DataModel;
 using yAppLambda.Models;
 using yAppLambda.DynamoDB;
 using yAppLambda.Enum;
-
-namespace UnitTests;
 
 public class FriendshipActionsTests
 {
