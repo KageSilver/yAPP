@@ -1,3 +1,8 @@
+using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.DocumentModel;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using yAppLambda.Models;
 
 namespace yAppLambda.DynamoDB;
 
