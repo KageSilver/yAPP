@@ -1,3 +1,5 @@
+namespace Tests.UnitTests.Actions;
+
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -11,8 +13,6 @@ using Moq;
 using Xunit;
 using yAppLambda.Common;
 using yAppLambda.Models;
-
-namespace Tests.UnitTests;
 
 public class CognitoActionsTests
 {
