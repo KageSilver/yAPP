@@ -20,7 +20,7 @@ public class PostController : ControllerBase
         _dbContext = dbContext;
     }
 
-    // POST: api/posts/createPost with body {}
+    // POST: api/posts/createPost with body { "PID": "postID", "UserName": "username", "PostTitle": "title", "PostBody": "body", "Upvotes": 0, "Downvotes": 0, "DiaryEntry": false, "Anonymous": false }
     /// <summary>
     /// Creates a new post
     /// </summary>
