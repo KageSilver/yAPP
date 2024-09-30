@@ -14,10 +14,12 @@ namespace yAppLambda.Controllers;
 public class UserController : ControllerBase
 {
     private readonly IAppSettings _appSettings;
+    private readonly ICognitoActions _cognitoActions;
 
-    public UserController(IAppSettings appSettings)
+    public UserController(IAppSettings appSettings, ICognitoActions cognitoActions)
     {
         _appSettings = appSettings;
+        _cognitoActions = cognitoActions;
     }
 
     /// POST: api/users/updateUser 
@@ -36,7 +38,7 @@ public class UserController : ControllerBase
             return BadRequest("request body is required and must contain username and name");
         }
 
-        var user = await CognitoActions.UpdateUser(request, _appSettings);
+        var user = await _cognitoActions.UpdateUser(request);
 
         if (user == null)
         {
@@ -62,7 +64,7 @@ public class UserController : ControllerBase
             return BadRequest("username is required");
         }
 
-        var user = await CognitoActions.GetUser(username, _appSettings);
+        var user = await _cognitoActions.GetUser(username);
 
         if (user == null)
         {
@@ -88,7 +90,7 @@ public class UserController : ControllerBase
             return BadRequest("Id is required");
         }
 
-        var user = await CognitoActions.GetUserById(id, _appSettings);
+        var user = await _cognitoActions.GetUserById(id);
 
         if (user == null)
         {
