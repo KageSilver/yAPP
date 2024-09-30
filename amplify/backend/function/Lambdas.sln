@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "yAppLambda", "yAppLambda\src\yAppLambda.csproj", "{10FA90E7-826A-44DB-B81B-03A26B634320}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{7B1DEEBF-F771-4B76-A858-491E63B5B117}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{7B1DEEBF-F771-4B76-A858-491E63B5B117}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

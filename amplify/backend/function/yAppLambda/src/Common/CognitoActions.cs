@@ -2,55 +2,46 @@ using System.Net;
 using Amazon.CognitoIdentityProvider;
 using Amazon.CognitoIdentityProvider.Model;
 using Amazon.Runtime;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using yAppLambda.Models;
 
 namespace yAppLambda.Common;
 
-public static class CognitoActions
+public class CognitoActions : ICognitoActions
 {
+    private readonly IAmazonCognitoIdentityProvider _cognitoClient;
+    private readonly IAppSettings _appSettings;
+
+    public CognitoActions(IAmazonCognitoIdentityProvider cognitoClient, IAppSettings appSettings)
+    {
+        _cognitoClient = cognitoClient;
+        _appSettings = appSettings;
+    }
+
     /// <summary>
-    /// Updates the user attributes in the Cognito user pool.
+    /// Updates the user attributes in the Cognito user pool and retrieves the updated user details.
     /// </summary>
     /// <param name="updateUser">The user object containing updated attributes.</param>
-    /// <param name="appSettings">The application settings containing configuration values.</param>
-    /// <returns>An APIGatewayProxyResponse indicating the result of the update operation.</returns>
-    public static async Task<ActionResult<User>> UpdateUser(User updateUser, IAppSettings appSettings)
-
+    /// <returns>An ActionResult containing the updated User object or null if the update fails.</returns>
+    public async Task<ActionResult<User>> UpdateUser(User updateUser)
     {
         var updateUserAttributesRequest = new AdminUpdateUserAttributesRequest
         {
-            UserPoolId = appSettings.UserPoolId,
+            UserPoolId = _appSettings.UserPoolId,
             Username = updateUser.UserName,
             UserAttributes = new List<AttributeType>
             {
-                new AttributeType
-                {
-                    Name = "name",
-                    Value = updateUser.Name
-                },
-                new AttributeType
-                {
-                    Name = "nickname",
-                    Value = updateUser.NickName
-                },
+                new AttributeType { Name = "name", Value = updateUser.Name },
+                new AttributeType { Name = "nickname", Value = updateUser.NickName }
             }
         };
 
-        var awsCognitoIdentityProviderConfig = new AmazonCognitoIdentityProviderConfig
-        {
-            RegionEndpoint = appSettings.AwsRegionEndpoint
-        };
-
-        var cognitoIdentityProvider = new AmazonCognitoIdentityProviderClient(awsCognitoIdentityProviderConfig);
-
         try
         {
-            var response = await cognitoIdentityProvider.AdminUpdateUserAttributesAsync(updateUserAttributesRequest);
-            if (response.HttpStatusCode == (HttpStatusCode)StatusCodes.Status200OK)
+            var response = await _cognitoClient.AdminUpdateUserAttributesAsync(updateUserAttributesRequest);
+            if (response.HttpStatusCode == HttpStatusCode.OK)
             {
-                return await GetUser(updateUser.UserName, appSettings);
+                return await GetUser(updateUser.UserName);
             }
         }
         catch (Exception e)
@@ -58,24 +49,21 @@ public static class CognitoActions
             Console.WriteLine($"Failed: {e.Message}");
             return null;
         }
-       
-        
+
         return null;
     }
 
     /// <summary>
-    /// Get users from the user pool  
+    /// Retrieves the user details from the Cognito user pool by username.
     /// </summary>
-    /// <param name="userName"></param>
-    /// <param name="appSettings"></param>
-    /// <returns>APIGatewayProxyResponse</returns>
-    public static async Task<User> GetUser(string userName, IAppSettings appSettings)
+    /// <param name="userName">The username of the user to retrieve.</param>
+    /// <returns>A Task containing the User object or null if the user is not found or an error occurs.</returns>
+    public async Task<User> GetUser(string userName)
     {
-        Console.WriteLine("GetUser Started");
         try
         {
-            var result = await GetUserDetails(userName, appSettings);
-            var user = new User()
+            var result = await GetUserDetails(userName);
+            var user = new User
             {
                 UserName = result.Username,
                 Email = result.UserAttributes.FirstOrDefault(attr => attr.Name == "email")?.Value,
@@ -99,32 +87,21 @@ public static class CognitoActions
     }
 
     /// <summary>
-    /// Retrieves a user from the Cognito user pool by their unique identifier.
+    /// Retrieves the user details from the Cognito user pool by user ID.
     /// </summary>
-    /// <param name="userId">The unique identifier of the user.</param>
-    /// <param name="appSettings">The application settings containing configuration values.</param>
-    /// <returns>A `User` object representing the user details, or `null` if the user is not found.</returns>
-    public static async Task<User> GetUserById(string userId, IAppSettings appSettings)
+    /// <param name="userId">The ID of the user to retrieve.</param>
+    /// <returns>A Task containing the User object or null if the user is not found or an error occurs.</returns>
+    public async Task<User> GetUserById(string userId)
     {
         var request = new ListUsersRequest
         {
-            UserPoolId = appSettings.UserPoolId,
+            UserPoolId = _appSettings.UserPoolId,
             Filter = $"sub = \"{userId}\""
         };
 
-        var awsCognitoIdentityProviderConfig = new AmazonCognitoIdentityProviderConfig
-        {
-            RegionEndpoint = appSettings.AwsRegionEndpoint
-        };
+        var response = await _cognitoClient.ListUsersAsync(request);
 
-        var cognitoIdentityProvider = new AmazonCognitoIdentityProviderClient(awsCognitoIdentityProviderConfig);
-        
-        var response = await cognitoIdentityProvider.ListUsersAsync(request);
-
-        // Get the first (and likely only) user returned by the filter
-        // If the user is found, return the user details
         var cognitoUser = response.Users.FirstOrDefault();
-
         if (cognitoUser != null)
         {
             var user = new User
@@ -139,49 +116,24 @@ public static class CognitoActions
             return user;
         }
 
-        Console.WriteLine("User not found");
         return null;
     }
 
     /// <summary>
-    /// Retrieves detailed information about a user from the Cognito user pool.
+    /// Retrieves the user details from the Cognito user pool by username.
     /// </summary>
     /// <param name="userName">The username of the user to retrieve.</param>
-    /// <param name="appSettings">The application settings containing configuration values.</param>
-    /// <returns>An `AdminGetUserResponse` object containing the user details.</returns>
-    private static async Task<AdminGetUserResponse> GetUserDetails(string userName, IAppSettings appSettings)
+    /// <returns>A Task containing the AdminGetUserResponse object with user details.</returns>
+    private async Task<AdminGetUserResponse> GetUserDetails(string userName)
     {
-        //Get User Params
-        var adminGetUserRequest = new AdminGetUserRequest()
+        var adminGetUserRequest = new AdminGetUserRequest
         {
             Username = userName,
-            UserPoolId = appSettings.UserPoolId
+            UserPoolId = _appSettings.UserPoolId
         };
 
-        var adminListGroupsForUserRequest = new AdminListGroupsForUserRequest()
-        {
-            Username = userName,
-            UserPoolId = appSettings.UserPoolId
-        };
+        var adminGetUserResponse = await _cognitoClient.AdminGetUserAsync(adminGetUserRequest);
 
-        Console.WriteLine($"Attempting to Get User: {userName}  with those params: {adminGetUserRequest}");
-        var awsCognitoIdentityProviderConfig = new AmazonCognitoIdentityProviderConfig
-        {
-            RegionEndpoint = appSettings.AwsRegionEndpoint
-        };
-
-        var cognitoIdentityProvider = new AmazonCognitoIdentityProviderClient(awsCognitoIdentityProviderConfig);
-
-        var adminGetUserResponse = await cognitoIdentityProvider.AdminGetUserAsync(adminGetUserRequest);
-        var result = new AdminGetUserResponse()
-        {
-            Username = adminGetUserResponse.Username,
-            UserStatus = adminGetUserResponse.UserStatus,
-            Enabled = adminGetUserResponse.Enabled,
-            UserAttributes = adminGetUserResponse.UserAttributes,
-        };
-
-        Console.WriteLine($"Get user successfully");
-        return result;
+        return adminGetUserResponse;
     }
 }

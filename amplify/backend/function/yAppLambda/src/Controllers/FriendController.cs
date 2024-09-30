@@ -18,10 +18,12 @@ public class FriendController : ControllerBase
 {
     private readonly IAppSettings _appSettings;
     private readonly IDynamoDBContext _dbContext;
+    private readonly ICognitoActions _cognitoActions;
 
-    public FriendController(IAppSettings appSettings, IDynamoDBContext dbContext)
+    public FriendController(IAppSettings appSettings,ICognitoActions cognitoActions, IDynamoDBContext dbContext)
     {
         _appSettings = appSettings;
+        _cognitoActions = cognitoActions;
         _dbContext = dbContext;
     }
     
@@ -45,7 +47,8 @@ public class FriendController : ControllerBase
         else
         {
             Console.WriteLine("Friend request from: " + request.FromUserName + " to: " + request.ToUserId);
-            var friend = await CognitoActions.GetUserById(request.ToUserId, _appSettings);
+            
+            var friend = await _cognitoActions.GetUserById(request.ToUserId);
             if (friend == null)
             {
                 result = NotFound("Friend not found");

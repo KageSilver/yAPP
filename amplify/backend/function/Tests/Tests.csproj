@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
+        <RootNamespace>UnitTests</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Amazon.Lambda.Core" Version="2.2.0" />
@@ -26,10 +27,5 @@
         <Reference Include="System">
             <HintPath>System</HintPath>
         </Reference>
-    </ItemGroup>
-    <ItemGroup>
-<!--        <None Update="TestCognitoSettings.json">-->
-<!--            <CopyToOutputDirectory>Always</CopyToOutputDirectory>-->
-<!--        </None>-->
     </ItemGroup>
 </Project>
