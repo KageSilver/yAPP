@@ -19,7 +19,7 @@ public class Post
 
     public int Downvotes { get; set; } // The number of downvotes the post has
 
-    public boolean DiaryEntry { get; set; } // Is the post a diary entry
+    public bool DiaryEntry { get; set; } // Is the post a diary entry
 
-    public boolean Anonymous { get; set; } // If the post is a diary entry, is it posted anonymously
+    public bool Anonymous { get; set; } // If the post is a diary entry, is it posted anonymously
 }
