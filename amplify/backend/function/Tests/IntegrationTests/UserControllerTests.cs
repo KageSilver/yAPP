@@ -9,12 +9,14 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Amazon.CognitoIdentityProvider;
 using Amazon.CognitoIdentityProvider.Model;
-using Xunit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
+using Xunit;
 using Xunit.Extensions.Ordering;
 using yAppLambda;
 using yAppLambda.Models;
+
+namespace Tests.IntegrationTests;
 
 public class UserControllerIntegrationTests
 {

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
-        <RootNamespace>UnitTests</RootNamespace>
+        <RootNamespace>Tests</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Amazon.Lambda.Core" Version="2.2.0" />
@@ -33,5 +33,6 @@
         <None Update="..\yAppLambda\src\appSettings.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Remove="Tests.csproj.DotSettings" />
     </ItemGroup>
 </Project>

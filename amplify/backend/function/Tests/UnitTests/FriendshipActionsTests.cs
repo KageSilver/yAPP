@@ -11,7 +11,7 @@ using yAppLambda.Models;
 using yAppLambda.DynamoDB;
 using yAppLambda.Enum;
 
-namespace UnitTests;
+namespace Tests.UnitTests;
 
 public class FriendshipActionsTests
 {

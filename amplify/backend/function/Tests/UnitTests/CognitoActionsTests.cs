@@ -12,7 +12,7 @@ using Xunit;
 using yAppLambda.Common;
 using yAppLambda.Models;
 
-namespace UnitTests;
+namespace Tests.UnitTests;
 
 public class CognitoActionsTests
 {
