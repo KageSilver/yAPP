@@ -34,17 +34,17 @@ public class PostController : ControllerBase
     [HttpPost("createPost")]
     [ProducesResponseType(typeof(Post), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Post>> CreatePost([FromBody] Post request)
+    public async Task<ActionResult<Post>> CreatePost([FromBody] NewPost request)
     {
         ActionResult<Post> result;
 
-        if(request == null || string.IsNullOrEmpty(request.PID) || string.IsNullOrEmpty(request.UserName))
+        if(request == null || string.IsNullOrEmpty(request.UserName))
         {
-            result = BadRequest("request body is required and must contain post id and poster's username");
+            result = BadRequest("request body is required and must contain poster's username");
         }
         else
         {
-            Console.WriteLine("Post request from: " + request.UserName + " with post id: " + request.PID + " and title: " + request.PostTitle);
+            Console.WriteLine("Post request from: " + request.UserName + " and title: " + request.PostTitle);
 
             var poster = await _cognitoActions.GetUser(request.UserName);
 
@@ -54,9 +54,20 @@ public class PostController : ControllerBase
             }
             else
             {
-                var createResult = await PostActions.CreatePost(request, _dbContext, _appSettings);
+                var post = new Post
+                {
+                    UserName = request.UserName,
+                    PostTitle = request.PostTitle,
+                    PostBody = request.PostBody,
+                    DiaryEntry = request.DiaryEntry,
+                    Anonymous = request.Anonymous,
+                    Upvotes = 0,
+                    Downvotes = 0
+                };
+
+                var createResult = await PostActions.CreatePost(post, _dbContext, _appSettings);
                 result = createResult.Result is OkObjectResult
-                    ? (ActionResult<Post>)request
+                    ? (ActionResult<Post>)post
                     : BadRequest("Failed to create post");
             }
         }
