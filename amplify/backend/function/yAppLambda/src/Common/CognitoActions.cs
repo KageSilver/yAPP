@@ -136,4 +136,65 @@ public class CognitoActions : ICognitoActions
 
         return adminGetUserResponse;
     }
+    
+    /// <summary>
+    /// Creates a new user in the Cognito user pool with the specified email.
+    /// Purpose to create a user for testing
+    /// </summary>
+    /// <param name="email">The email address of the user to create.</param>
+    public async Task CreateUser(string email)
+    {
+        var request = new AdminCreateUserRequest
+        {
+            UserPoolId = _appSettings.UserPoolId,
+            Username = email,
+            UserAttributes = new List<AttributeType>
+            {
+                new AttributeType
+                {
+                    Name = "email",
+                    Value = email
+                },
+                new AttributeType
+                {
+                    Name = "email_verified",
+                    Value = "true"
+                }
+            },
+            TemporaryPassword = "TemporaryPassword123!",
+            MessageAction = "SUPPRESS" // To suppress sending a welcome email
+        };
+
+        try
+        {
+            var response = await _cognitoClient.AdminCreateUserAsync(request);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error creating user: {e.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Deletes a user from the Cognito user pool with the specified username.
+    /// </summary>
+    /// <param name="username">The username of the user to delete.</param>
+    public async Task DeleteUser(string username)
+    {
+        var request = new AdminDeleteUserRequest
+        {
+            UserPoolId = _appSettings.UserPoolId,
+            Username = username
+        };
+
+        try
+        {
+            await _cognitoClient.AdminDeleteUserAsync(request);
+            Console.WriteLine($"User {username} deleted successfully.");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error deleting user: {e.Message}");
+        }
+    }
 }
