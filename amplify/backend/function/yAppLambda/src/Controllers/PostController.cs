@@ -41,9 +41,9 @@ public class PostController : ControllerBase
     {
         ActionResult<Post> result;
 
-        if(request == null || string.IsNullOrEmpty(request.UserName))
+        if(request == null || string.IsNullOrEmpty(request.PostBody) || string.IsNullOrEmpty(request.PostTitle) || string.IsNullOrEmpty(request.UserName))
         {
-            result = BadRequest("request body is required and must contain poster's username");
+            result = BadRequest("request body is required and must contain poster's username, post title and post body");
         }
         else
         {
