@@ -82,14 +82,14 @@ public class PostController : ControllerBase
     /// <summary>
     /// Retrieves a post by a unique identifier
     /// </summary>
-    /// <param name="id">The unique identifier for a post.</param>
+    /// <param name="pid">The unique identifier for a post.</param>
     /// <returns>An ActionResult containing the Post object if found, or a NotFound result otherwise</returns>
     [HttpGet("getPostById")]
     [ProducesResponseType(typeof(Post), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Post>> GetPostById(string pid)
     {
-        if(id == null)
+        if(pid == null)
         {
             return BadRequest("Post ID is required");
         }
