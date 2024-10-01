@@ -8,7 +8,8 @@ using yAppLambda.Models;
 namespace yAppLambda.Controllers;
 
 /// <summary>
-/// 
+/// The 'PostController" class is an API controller in the 'yAppLamba project. 
+/// It is responsible for handling HTTP requests related to post operations.
 /// </summary>
 [ApiController]
 [Route("api/posts")]
@@ -17,12 +18,14 @@ public class PostController : ControllerBase
     private readonly IAppSettings _appSettings;
     private readonly IDynamoDBContext _dbContext;
     private readonly ICognitoActions _cognitoActions;
+    private readonly IPostActions _postActions;
 
-    public PostController(IAppSettings appSettings, ICognitoActions cognitoActions, IDynamoDBContext dbContext)
+    public PostController(IAppSettings appSettings, ICognitoActions cognitoActions, IDynamoDBContext dbContext, IPostActions postActions)
     {
         _appSettings = appSettings;
         _cognitoActions = cognitoActions;
         _dbContext = dbContext;
+        _postActions = postActions;
     }
 
     // POST: api/posts/createPost with body { "PID": "postID", "UserName": "username", "PostTitle": "title", "PostBody": "body", "Upvotes": 0, "Downvotes": 0, "DiaryEntry": false, "Anonymous": false }
@@ -65,7 +68,7 @@ public class PostController : ControllerBase
                     Downvotes = 0
                 };
 
-                var createResult = await PostActions.CreatePost(post, _dbContext, _appSettings);
+                var createResult = await _postActions.CreatePost(post);
                 result = createResult.Result is OkObjectResult
                     ? (ActionResult<Post>)post
                     : BadRequest("Failed to create post");
