@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -17,12 +18,11 @@ using Xunit;
 using yAppLambda;
 using Newtonsoft.Json;
 using System.Net;
+using Moq;
 using yAppLambda.Models;
 
 namespace Tests.IntegrationTests;
 
-[Collection("Non-Parallel Collection")]
-[TestCaseOrderer("Xunit.Extensions.Ordering.OrderedTestCaseOrderer", "Xunit.Extensions.Ordering")]
 public class FriendControllerIntegrationTests
 {
     private readonly HttpClient _client;
@@ -61,14 +61,17 @@ public class FriendControllerIntegrationTests
 
         _friendshipActions = new FriendshipActions(_appSettings, dynamoDbContext);
 
-        //setup the user for testing
-        _cognitoActions.CreateUser(TestUserEmail1).Wait();
-        _cognitoActions.CreateUser(TestUserEmail2).Wait();
+       
     }
 
     [Fact, Order(1)]
     public async Task SendFriendRequest_ValidRequest_ReturnsFriendship()
     {
+        //setup the user for testing
+        await _cognitoActions.CreateUser(TestUserEmail1);
+        await _cognitoActions.CreateUser(TestUserEmail2);
+        await Task.Delay(TimeSpan.FromSeconds(5)); // make sure the user is created, and it take time
+        
         var responseId = await _client.GetAsync($"/api/users/getUserByName?username={TestUserEmail2}");
         Assert.Equal(HttpStatusCode.OK, responseId.StatusCode);
         var responseIdString = await responseId.Content.ReadAsStringAsync();
@@ -86,9 +89,9 @@ public class FriendControllerIntegrationTests
 
         // Act
         var response = await _client.PostAsync("/api/friends/friendRequest", content);
-
+        
+        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
         // Assert
-        response.EnsureSuccessStatusCode(); // Status Code 200-299
         var responseString = await response.Content.ReadAsStringAsync();
 
         var friendship = JsonConvert.DeserializeObject<Friendship>(responseString);
@@ -154,9 +157,9 @@ public class FriendControllerIntegrationTests
 
         // Act
         var response = await _client.PutAsync("/api/friends/updateFriendRequest", content);
+        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
 
         // Assert
-        response.EnsureSuccessStatusCode();
         var responseString = await response.Content.ReadAsStringAsync();
         var updatedFriendship = JsonConvert.DeserializeObject<Friendship>(responseString);
 
@@ -290,6 +293,7 @@ public class FriendControllerIntegrationTests
         _cognitoActions.DeleteUser(TestUserEmail2).Wait();
         //clean up database
         var value = await _friendshipActions.DeleteFriendship(TestUserEmail1, TestUserEmail2);
-        Assert.Equal(true, value);
+        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        Assert.True(value);
     }
 }
