@@ -89,7 +89,7 @@ public class PostController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Post>> GetPostById(string pid)
     {
-        if(pid == null)
+        if(string.IsNullOrEmpty(pid))
         {
             return BadRequest("Post ID is required");
         }
@@ -102,5 +102,26 @@ public class PostController : ControllerBase
         }
 
         return post;
+    }
+
+    // GET: api/posts/getPostsByUser?userName={userName}
+    /// <summary>
+    /// Retrieves all public posts from a user
+    /// </summary>
+    /// <param name="userName">The username used to find all posts created by a user.</param>
+    /// <returns>A list of public posts created by a user.</returns>
+    [HttpGet("getPostsByUser")]
+    [ProducesResponseType(typeof(List<Post>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<List<Post>>> GetPostsByUser(string userName)
+    {
+        if(string.IsNullOrEmpty(userName))
+        {
+            return BadRequest("username is required");
+        }
+
+        var posts = await _postActions.GetPostsByUser(userName);
+
+        return posts;
     }
 }
