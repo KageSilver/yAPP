@@ -43,6 +43,39 @@
           "description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
         },
         "response": []
+      },
+      {
+        "name": "GetPostById",
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test(\"Status code is 200\", function () {",
+                "    pm.response.to.have.status(200);",
+                "});"
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ],
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{base_url}}/api/posts/getPostById?pid=${pid}",
+            "host": ["{{base_url}}"],
+            "path": ["api", "posts", "getPostById"],
+            "query": [
+              {
+                "key": "pid",
+                "value": ""
+              }
+            ]
+          },
+          "description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+        },
+        "response": []
       }
     ],
     "event": [
