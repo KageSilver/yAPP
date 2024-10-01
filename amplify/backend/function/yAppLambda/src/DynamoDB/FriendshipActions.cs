@@ -152,4 +152,30 @@ public class FriendshipActions: IFriendshipActions
             return null;
         }
     }
+    
+    /// <summary>
+    /// Deletes a friendship between two users.
+    /// </summary>
+    /// <param name="fromUserName">The username of the user who sent the friend request.</param>
+    /// <param name="toUserName">The username of the user who received the friend request.</param>
+    /// <returns>A boolean indicating whether the deletion was successful.</returns>
+    public async Task<bool> DeleteFriendship(string fromUserName, string toUserName)
+    {
+        try
+        {
+            // Load the friendship record to check if it exists
+            var friendship = GetFriendship(fromUserName, toUserName).Result.Value;
+
+            // Delete the friendship record
+            await _dynamoDbContext.DeleteAsync(friendship, _config);
+        
+            return true; 
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to delete friendship: " + e.Message);
+            return false;
+        }
+    }
+
 }
