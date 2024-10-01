@@ -64,7 +64,7 @@ public class PostActions : IPostActions
     {
         try
         {
-            var post = await _dynamoDbContext.LoadAsync<Post>(pid);
+            var post = await _dynamoDbContext.LoadAsync<Post>(pid, _config);
             return post;
         }
         catch (Exception e)
