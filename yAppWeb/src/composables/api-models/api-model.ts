@@ -57,6 +57,29 @@ export enum FriendshipStatus {
   All = -1,
 }
 
+export interface NewPost {
+  userName?: string | null;
+  postTitle?: string | null;
+  postBody?: string | null;
+  diaryEntry?: boolean;
+  anonymous?: boolean;
+}
+
+export interface Post {
+  PID?: string | null;
+  /** @format date-time */
+  CreatedAt?: string;
+  UserName?: string | null;
+  PostTitle?: string | null;
+  PostBody?: string | null;
+  /** @format int32 */
+  Upvotes?: number;
+  /** @format int32 */
+  Downvotes?: number;
+  DiaryEntry?: boolean;
+  Anonymous?: boolean;
+}
+
 export interface ProblemDetails {
   type?: string | null;
   title?: string | null;
@@ -348,6 +371,23 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/api/friends/getFriendsByStatus`,
         method: "GET",
         query: query,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Post
+     * @name PostsCreatePostCreate
+     * @request POST:/api/posts/createPost
+     */
+    postsCreatePostCreate: (data: NewPost, params: RequestParams = {}) =>
+      this.request<Post, ProblemDetails>({
+        path: `/api/posts/createPost`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
         format: "json",
         ...params,
       }),

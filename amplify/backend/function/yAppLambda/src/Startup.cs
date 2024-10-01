@@ -110,6 +110,7 @@ public class Startup
             // Register DynamoDBContext as a scoped service
             services.AddScoped<IDynamoDBContext, DynamoDBContext>();
             services.AddScoped<IFriendshipActions, FriendshipActions>();
+            services.AddScoped<IPostActions, PostActions>();
 
         }
         catch (Exception e)

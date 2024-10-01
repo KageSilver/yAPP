@@ -29,4 +29,9 @@ public interface IAppSettings
     /// Friendship table name
     /// </summary>
     string FriendshipTableName { get; set; }
+
+    /// <summary>
+    /// Post table name
+    /// </summary>
+    string PostTableName { get; set; }
 }

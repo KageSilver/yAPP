@@ -28,4 +28,9 @@ public class AppSettings: IAppSettings
     /// friendship table name
     /// </summary>
     public string FriendshipTableName { get; set; }
+
+    /// <summary>
+    /// post table name
+    /// </summary>
+    public string PostTableName { get; set; }
 }
