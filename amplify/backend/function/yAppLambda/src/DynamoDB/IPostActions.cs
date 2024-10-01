@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using yAppLambda.Models;
 
+namespace yAppLambda.DynamoDB;
+
 public interface IPostActions
 {
     /// <summary>
