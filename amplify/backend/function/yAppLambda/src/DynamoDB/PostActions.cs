@@ -15,7 +15,7 @@ public class PostActions : IPostActions
     private readonly string _postTable;
     private readonly DynamoDBOperationConfig _config;
 
-    public PostActions(IAppSettings appSettings,IDynamoDBContext dynamoDbContext)
+    public PostActions(IAppSettings appSettings, IDynamoDBContext dynamoDbContext)
     {
         _appSettings = appSettings;
         _dynamoDbContext = dynamoDbContext;
@@ -34,7 +34,7 @@ public class PostActions : IPostActions
     /// </summary>
     /// <param name="post">The post object that contains information on the post.</param>
     /// <returns>An ActionResult containing the created Post object or an error status.</returns>
-   public async Task<ActionResult<Post>> CreatePost(Post post)
+    public async Task<ActionResult<Post>> CreatePost(Post post)
     {
         try
         {
