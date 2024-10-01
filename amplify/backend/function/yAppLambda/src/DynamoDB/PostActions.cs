@@ -34,8 +34,7 @@ public class PostActions : IPostActions
     /// </summary>
     /// <param name="post">The post object that contains information on the post.</param>
     /// <returns>An ActionResult containing the created Post object or an error status.</returns>
-   public async Task<ActionResult<Post>> CreatePost(Post post,
-        IDynamoDBContext dynamoDbContext, IAppSettings appSettings)
+   public async Task<ActionResult<Post>> CreatePost(Post post)
     {
         try
         {
