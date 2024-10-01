@@ -11,3 +11,4 @@
 * devTaskIssue#70-FeatureIssue#5-Add unit tests for all friendship actions
 * devTaskIssue#73-FeatureIssue#5-Add unit tests for all cognito actions
 * devTaskIssue#74-FeatureIssue#5-Add integration tests for all cognito actions
+* devTaskIssue#71-FeatureIssue#5-Add integration tests for friends actions
