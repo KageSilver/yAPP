@@ -15,10 +15,25 @@ using yAppLambda.Enum;
 
 public class FriendshipActionsTests
 {
-    private readonly Mock<IAppSettings> _appSettingsMock = new();
-    private readonly Mock<IDynamoDBContext> _dynamoDbContextMock = new();
+    private readonly Mock<IAppSettings> _appSettingsMock;
+    private readonly Mock<IDynamoDBContext> _dynamoDbContextMock;
+    private readonly IFriendshipActions _friendshipActionsMock;
     private const string FriendshipTableName = "Friendship-test";
-    
+
+    public FriendshipActionsTests()
+    {
+        _appSettingsMock = new Mock<IAppSettings>();
+        _appSettingsMock.Setup(a => a.UserPoolId).Returns("test_pool_id");
+        _appSettingsMock.Setup(a => a.AwsRegionEndpoint).Returns(Amazon.RegionEndpoint.USEast2);
+        _appSettingsMock.Setup(a => a.FriendshipTableName).Returns(FriendshipTableName);
+        
+        // Initialize the dynamoDbContextMock
+        _dynamoDbContextMock = new Mock<IDynamoDBContext>();
+        
+        // Initialize the FriendshipActions with the mocks
+        _friendshipActionsMock = new FriendshipActions(_appSettingsMock.Object, _dynamoDbContextMock.Object);
+    }
+
 
     [Fact]
     public async Task CreateFriendship_ShouldReturnOk_WhenFriendshipIsCreatedSuccessfully()
@@ -30,15 +45,15 @@ public class FriendshipActionsTests
             ToUserName = "user2@example.com",
             Status = 0
         };
-        
+    
         _appSettingsMock.Setup(a => a.FriendshipTableName).Returns(FriendshipTableName);
 
-        var dynamoDbContext = new Mock<IDynamoDBContext>();
-        dynamoDbContext.Setup(d => d.SaveAsync(friendship, It.IsAny<DynamoDBOperationConfig>(), CancellationToken.None))
+        // Setup SaveAsync to succeed
+        _dynamoDbContextMock.Setup(d => d.SaveAsync(It.IsAny<Friendship>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         // Act
-        var result = await FriendshipActions.CreateFriendship(friendship, dynamoDbContext.Object, _appSettingsMock.Object);
+        var result = await _friendshipActionsMock.CreateFriendship(friendship);
 
         // Assert
         var actionResult = Assert.IsType<ActionResult<Friendship>>(result);
@@ -48,10 +63,10 @@ public class FriendshipActionsTests
         Assert.Equal(friendship.FromUserName, returnedFriendship.FromUserName);
         Assert.Equal(friendship.ToUserName, returnedFriendship.ToUserName);
 
-        dynamoDbContext.Verify(
-            d => d.SaveAsync(friendship, It.IsAny<DynamoDBOperationConfig>(), CancellationToken.None), Times.Once);
+        // Verify that SaveAsync was called once with the correct parameters
+        _dynamoDbContextMock.Verify(
+            d => d.SaveAsync(It.IsAny<Friendship>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Once);
     }
-
 
     [Fact]
     public async Task CreateFriendship_ShouldReturnStatus500_WhenExceptionIsThrown()
@@ -66,12 +81,12 @@ public class FriendshipActionsTests
         
         _appSettingsMock.Setup(a => a.FriendshipTableName).Returns(FriendshipTableName);
 
-        var dynamoDbContext = new Mock<IDynamoDBContext>();
-        dynamoDbContext.Setup(d => d.SaveAsync(friendship, It.IsAny<DynamoDBOperationConfig>(), CancellationToken.None))
+        // Setup SaveAsync to throw an exception
+        _dynamoDbContextMock.Setup(d => d.SaveAsync(It.IsAny<Friendship>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("Error saving to DynamoDB"));
 
         // Act
-        var result = await FriendshipActions.CreateFriendship(friendship, dynamoDbContext.Object, _appSettingsMock.Object);
+        var result = await _friendshipActionsMock.CreateFriendship(friendship);
 
         // Assert
         var actionResult =
@@ -98,7 +113,7 @@ public class FriendshipActionsTests
             .Returns(Task.CompletedTask);
 
         // Act
-        var result = await FriendshipActions.UpdateFriendshipStatus(friendship, _dynamoDbContextMock.Object, _appSettingsMock.Object);
+        var result = await _friendshipActionsMock.UpdateFriendshipStatus(friendship);
 
         // Assert
         var actionResult = Assert.IsType<ActionResult<Friendship>>(result);
@@ -129,7 +144,7 @@ public class FriendshipActionsTests
             .ThrowsAsync(new Exception("Error updating friendship in DynamoDB"));
 
         // Act
-        var result = await FriendshipActions.UpdateFriendshipStatus(friendship, _dynamoDbContextMock.Object, _appSettingsMock.Object);
+        var result = await _friendshipActionsMock.UpdateFriendshipStatus(friendship);
 
         // Assert
         var actionResult = Assert.IsType<ActionResult<Friendship>>(result);
@@ -157,22 +172,25 @@ public class FriendshipActionsTests
 
         _appSettingsMock.Setup(a => a.FriendshipTableName).Returns(string.Empty);
         
+        // Mock the AsyncSearch<Friendship> returned by QueryAsync
         var queryFromSearchMock = new Mock<AsyncSearch<Friendship>>();
         queryFromSearchMock.Setup(q => q.GetRemainingAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(friendshipsFrom);
 
+        // Mock the AsyncSearch<Friendship> returned by ScanAsync
         var scanToSearchMock = new Mock<AsyncSearch<Friendship>>();
         scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(friendshipsTo);
 
+        // Setup the IDynamoDBContext mock to return the mocked AsyncSearch objects
         _dynamoDbContextMock.Setup(d => d.QueryAsync<Friendship>(userName, It.IsAny<DynamoDBOperationConfig>()))
             .Returns(queryFromSearchMock.Object);
 
         _dynamoDbContextMock.Setup(d => d.ScanAsync<Friendship>(It.IsAny<List<ScanCondition>>(), It.IsAny<DynamoDBOperationConfig>()))
             .Returns(scanToSearchMock.Object);
-
+        
         // Act
-        var result = await FriendshipActions.GetAllFriends(userName, friendshipStatus, _dynamoDbContextMock.Object, _appSettingsMock.Object);
+        var result = await _friendshipActionsMock.GetAllFriends(userName, friendshipStatus);
 
         // Assert
         Assert.Equal(2, result.Count); // One from `FromUserName` and one from `ToUserName`
@@ -196,12 +214,8 @@ public class FriendshipActionsTests
         var queryFromSearchMock = new Mock<AsyncSearch<Friendship>>();
         queryFromSearchMock.Setup(q => q.GetRemainingAsync(It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("Error querying friendships"));
-
-        // Setup QueryAsync to return the mocked AsyncSearch<Friendship>
-        _dynamoDbContextMock.Setup(d => d.QueryAsync<Friendship>(userName, It.IsAny<DynamoDBOperationConfig>()))
-            .Returns(queryFromSearchMock.Object);
         
-        var result = await FriendshipActions.GetAllFriends(userName, friendshipStatus, _dynamoDbContextMock.Object, _appSettingsMock.Object);
+        var result = await _friendshipActionsMock.GetAllFriends(userName, friendshipStatus);
 
         // Assert
         Assert.Empty(result); // Should return an empty list on exception
@@ -225,7 +239,7 @@ public class FriendshipActionsTests
             .ReturnsAsync(friendship);
 
         // Act
-        var result = await FriendshipActions.GetFriendship(fromUserName, toUserName, _dynamoDbContextMock.Object, _appSettingsMock.Object);
+        var result = await _friendshipActionsMock.GetFriendship(fromUserName, toUserName);
 
         // Assert
         var actionResult = Assert.IsType<ActionResult<Friendship>>(result);
@@ -249,7 +263,7 @@ public class FriendshipActionsTests
             .ThrowsAsync(new Exception("Error loading friendship from DynamoDB"));
 
         // Act
-        var result = await FriendshipActions.GetFriendship(fromUserName, toUserName, _dynamoDbContextMock.Object, _appSettingsMock.Object);
+        var result = await _friendshipActionsMock.GetFriendship(fromUserName, toUserName);
 
         // Assert
         Assert.Null(result);

@@ -19,12 +19,16 @@ public class FriendController : ControllerBase
     private readonly IAppSettings _appSettings;
     private readonly IDynamoDBContext _dbContext;
     private readonly ICognitoActions _cognitoActions;
+    private readonly IFriendshipActions _friendshipActions;
+    private readonly IFriendshipStatusActions _friendshipStatusActions;
 
-    public FriendController(IAppSettings appSettings,ICognitoActions cognitoActions, IDynamoDBContext dbContext)
+    public FriendController(IAppSettings appSettings,ICognitoActions cognitoActions, IDynamoDBContext dbContext, IFriendshipActions friendshipActions, IFriendshipStatusActions friendshipStatusActions)
     {
         _appSettings = appSettings;
         _cognitoActions = cognitoActions;
         _dbContext = dbContext;
+        _friendshipActions = friendshipActions;
+        _friendshipStatusActions = friendshipStatusActions;
     }
     
     // POST: api/friends/friendRequest with body { "fromUserName": "username", "toUserId": "id" }
@@ -62,32 +66,26 @@ public class FriendController : ControllerBase
                     Status = FriendshipStatus.Pending
                 };
 
-                var existingFriendship = await FriendshipActions.GetFriendship(request.FromUserName, friend.UserName,
-                    _dbContext, _appSettings);
+                var existingFriendship = await _friendshipActions.GetFriendship(request.FromUserName, friend.UserName);
 
-                if (existingFriendship.Value == null)
+                // if the friendship does not exist, create a new one
+                if (existingFriendship == null || existingFriendship.Value == null)
                 {
-                    var createResult = await FriendshipActions.CreateFriendship(friendship, _dbContext, _appSettings);
+                    var createResult = await _friendshipActions.CreateFriendship(friendship);
                     result = createResult.Result is OkObjectResult
                         ? (ActionResult<Friendship>)friendship
                         : BadRequest("Failed to create friendship");
                 }
                 else
                 {
-                    if (existingFriendship.Value == null)
-                    {
-                        result = BadRequest("Failed to create friendship");
-                    }
-                    else
-                    {
-                        existingFriendship.Value.Status = FriendshipStatus.Pending;
-                        var updateResult =
-                            await FriendshipActions.UpdateFriendshipStatus(existingFriendship.Value, _dbContext,
-                                _appSettings);
-                        result = updateResult.Result is OkObjectResult
-                            ? (ActionResult<Friendship>)existingFriendship.Value
-                            : BadRequest("Failed to create friendship");
-                    }
+               
+                    existingFriendship.Value.Status = FriendshipStatus.Pending;
+                    var updateResult =
+                        await _friendshipActions.UpdateFriendshipStatus(existingFriendship.Value);
+                    result = updateResult.Result is OkObjectResult
+                        ? (ActionResult<Friendship>)existingFriendship.Value
+                        : BadRequest("Failed to create friendship");
+                    
                 }
             }
         }
@@ -114,11 +112,10 @@ public class FriendController : ControllerBase
 
         ActionResult<Friendship> result = null;
         // get the status
-        var status = GetFriendshipStatus(request.Status);
+        var status = _friendshipStatusActions.GetFriendshipStatus(request.Status);
 
         // to retrieve the friendship object
-        var friendship = await FriendshipActions.GetFriendship(request.FromUserName, request.ToUserName, _dbContext,
-            _appSettings);
+        var friendship = await _friendshipActions.GetFriendship(request.FromUserName, request.ToUserName);
 
         if (friendship != null)
         {
@@ -126,9 +123,9 @@ public class FriendController : ControllerBase
             if (friendship.Value != null && status != FriendshipStatus.All)
             {
                 // update the status of the friendship
-                friendship.Value.Status = GetFriendshipStatus(request.Status);
+                friendship.Value.Status = _friendshipStatusActions.GetFriendshipStatus(request.Status);
                 var updateResult =
-                    await FriendshipActions.UpdateFriendshipStatus(friendship.Value, _dbContext, _appSettings);
+                    await _friendshipActions.UpdateFriendshipStatus(friendship.Value);
                 result = updateResult.Result is OkObjectResult
                     ? (ActionResult<Friendship>)friendship.Value
                     : BadRequest("Failed to update friendship status");
@@ -163,30 +160,15 @@ public class FriendController : ControllerBase
         {
             return BadRequest("username is required");
         }
-        
 
         // get the friendship status
-        var friendshipStatus = GetFriendshipStatus(status);
+        var friendshipStatus = _friendshipStatusActions.GetFriendshipStatus(status);
 
-        var friendships = await FriendshipActions.GetAllFriends(userName, friendshipStatus, _dbContext, _appSettings);
+        var friendships = await _friendshipActions.GetAllFriends(userName, friendshipStatus);
 
         return friendships;
     }
-
-    /// <summary>
-    /// Converts an integer status code to the corresponding FriendshipStatus enum value.
-    /// </summary>
-    /// <param name="status">The integer status code (0: Pending, 1: Accepted, 2: Declined).</param>
-    /// <returns>The corresponding FriendshipStatus enum value.</returns>
-    private static FriendshipStatus GetFriendshipStatus(int status)
-    {
-        var friendshipStatus = status switch
-        {
-            0 => FriendshipStatus.Pending,
-            1 => FriendshipStatus.Accepted,
-            2 => FriendshipStatus.Declined,
-            _ => FriendshipStatus.All
-        };
-        return friendshipStatus;
-    }
+    
+    
+    
 }
