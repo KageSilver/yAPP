@@ -28,7 +28,7 @@ public class PostController : ControllerBase
         _postActions = postActions;
     }
 
-    // POST: api/posts/createPost with body { "UserName": "username", "PostTitle": "title", "PostBody": "body", "Upvotes": 0, "Downvotes": 0, "DiaryEntry": false, "Anonymous": false }
+    // POST: api/posts/createPost with body { "userName": "username", "postTitle": "title", "postBody": "body", "diaryEntry": false, "anonymous": false }
     /// <summary>
     /// Creates a new post
     /// </summary>
