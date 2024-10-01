@@ -54,4 +54,23 @@ public class PostActions : IPostActions
             return new StatusCodeResult(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
+
+    /// <summary>
+    /// Gets a post by the post ID
+    /// </summary>
+    /// <param name="pid">The id to find a post.</param>
+    /// <returns>An ActionResult containing the Post object if found, or a NotFound result otherwise.</returns>
+    public async Task<ActionResult<Post>> GetPostById(string pid)
+    {
+        try
+        {
+            var post = await _dynamoDbContext.LoadAsync<Post>(pid);
+            return post;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to get post: " + e.Message);
+            return null;
+        }
+    }
 }
