@@ -28,7 +28,7 @@ public class PostController : ControllerBase
         _postActions = postActions;
     }
 
-    // POST: api/posts/createPost with body { "PID": "postID", "UserName": "username", "PostTitle": "title", "PostBody": "body", "Upvotes": 0, "Downvotes": 0, "DiaryEntry": false, "Anonymous": false }
+    // POST: api/posts/createPost with body { "UserName": "username", "PostTitle": "title", "PostBody": "body", "Upvotes": 0, "Downvotes": 0, "DiaryEntry": false, "Anonymous": false }
     /// <summary>
     /// Creates a new post
     /// </summary>
@@ -76,5 +76,31 @@ public class PostController : ControllerBase
         }
 
         return result;
+    }
+
+    // GET: api/posts/getPostById?pid={pid}
+    /// <summary>
+    /// Retrieves a post by a unique identifier
+    /// </summary>
+    /// <param name="id">The unique identifier for a post.</param>
+    /// <returns>An ActionResult containing the Post object if found, or a NotFound result otherwise</returns>
+    [HttpGet("getPostById")]
+    [ProducesResponseType(typeof(Post), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<Post>> GetPostById(string pid)
+    {
+        if(id == null)
+        {
+            return BadRequest("Post ID is required");
+        }
+
+        var post = await _postActions.GetPostById(pid);
+
+        if(post == null)
+        {
+            return NotFound("Post does not exist");
+        }
+
+        return post;
     }
 }
