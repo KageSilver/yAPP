@@ -23,6 +23,7 @@ public interface IPostActions
     /// Gets all public posts from a user
     /// </summary>
     /// <param name="userName">The username used to find all posts created by a user.</param>
-    /// <returns>A list of public posts created by a user.</returns>
-    Task<List<Post>> GetPostsByUser(string userName);
+    /// <param name="diaryEntry">If the query is for public posts or diary entries.</param>
+    /// <returns>A list of posts created by a user, either public posts or diary entries.</returns>
+    Task<List<Post>> GetPostsByUser(string userName, bool diaryEntry);
 }
