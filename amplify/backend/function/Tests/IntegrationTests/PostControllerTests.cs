@@ -59,7 +59,7 @@ public class PostControllerIntegrationTests
         _postActions = new PostActions(_appSettings, dynamoDbContext);
     }
 
-    [Fact, Order(1)]
+    [Fact]
     public async Task CreatePost_ValidRequest_ReturnsPost()
     {
         //setup the user for testing
@@ -101,7 +101,7 @@ public class PostControllerIntegrationTests
         Assert.Equal(newPost.Anonymous, post.Anonymous);
     }
 
-    [Fact, Order(2)]
+    [Fact]
     public async Task CreatePost_PosterNotFound_ReturnsNotFound()
     {
         // Arrange
@@ -124,7 +124,7 @@ public class PostControllerIntegrationTests
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 
-    [Fact, Order(3)]
+    [Fact]
     public async Task CreatePost_InvalidRequest_ReturnsBadRequest()
     {
         // Arrange
