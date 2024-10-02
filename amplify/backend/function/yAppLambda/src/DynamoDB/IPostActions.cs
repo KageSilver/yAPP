@@ -25,4 +25,11 @@ public interface IPostActions
     /// <param name="userName">The username used to find all posts created by a user.</param>
     /// <returns>A list of public posts created by a user.</returns>
     Task<List<Post>> GetPostsByUser(string userName);
+    
+    /// <summary>
+    /// Deletes a post from the database by a post id
+    /// </summary>
+    /// <param name="pid">The id of the post to be deleted.</param>
+    /// <returns>A boolean indicating whether the deletion was successful.</returns>
+    Task<bool> DeletePost(string pid);
 }
