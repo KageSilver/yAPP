@@ -4,6 +4,7 @@
 * devTaskIssue#46-FeatureIssue#1-Create an endpoint to create a post
 * devTaskIssue#48-FeatureIssue#1-Create post object
 * devTaskIssue#45-FeatureIssue#1-Setup a post table schema using C#
+* devTaskIssue#49-FeatureIssue#1-Issue #7 unit tests
 * devTaskIssue#38-FeatureIssue#5-Create an endpoint to allow user to update their information
 * devTaskIssue#39-FeatureIssue#5-Create an endpoint to get all friends
 * devTaskIssue#40-FeatureIssue#5-Setup a friend table schema using c# #40
