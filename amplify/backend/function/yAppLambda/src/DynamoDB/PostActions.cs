@@ -121,6 +121,7 @@ public class PostActions : IPostActions
         catch (Exception e)
         {
             Console.WriteLine("Failed to delete post: " + e.Message);
+            return false;
         }
     }
 }

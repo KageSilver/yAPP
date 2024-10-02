@@ -99,6 +99,10 @@ public class PostControllerIntegrationTests
         Assert.Equal(newPost.PostBody, post.PostBody);
         Assert.Equal(newPost.DiaryEntry, post.DiaryEntry);
         Assert.Equal(newPost.Anonymous, post.Anonymous);
+
+        // Clean up
+        await _cognitoActions.DeleteUser(TestUserEmail);
+        await _postActions.DeletePost(post.PID);
     }
 
     [Fact]
