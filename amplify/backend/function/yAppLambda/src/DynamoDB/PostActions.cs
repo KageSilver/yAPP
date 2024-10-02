@@ -78,18 +78,19 @@ public class PostActions : IPostActions
     /// Gets all public posts from a user
     /// </summary>
     /// <param name="userName">The username used to find all posts created by a user.</param>
-    /// <returns>A list of public posts created by a user.</returns>
-    public async Task<List<Post>> GetPostsByUser(string userName)
+    /// <param name="diaryEntry">If the query is for public posts or diary entries.</param>
+    /// <returns>A list of posts created by a user, either public posts or diary entries.</returns>
+    public async Task<List<Post>> GetPostsByUser(string userName, bool diaryEntry)
     {
         try
         {
             List<ScanCondition> scanConditions = new List<ScanCondition>
             {
                 new ScanCondition("UserName", ScanOperator.Equal, userName),
-                new ScanCondition("DiaryEntry", ScanOperator.Equal, false)
+                new ScanCondition("DiaryEntry", ScanOperator.Equal, diaryEntry)
             };
 
-            // query posts where the poster's username is 'userName' and 'diaryEntry' is false
+            // query posts where the poster's username is 'userName' and 'diaryEntry' is equal to the input
             var posts = await _dynamoDbContext.ScanAsync<Post>(scanConditions, _config).GetRemainingAsync();
 
             return posts;

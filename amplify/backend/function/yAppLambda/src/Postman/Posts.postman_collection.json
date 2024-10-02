@@ -96,12 +96,16 @@
           "method": "GET",
           "header": [],
           "url": {
-            "raw": "{{base_url}}/api/posts/getPostsByUser?userName=${userName}",
+            "raw": "{{base_url}}/api/posts/getPostsByUser?userName=${userName}&diaryEntry=${diaryEntry}",
             "host": ["{{base_url}}"],
             "path": ["api", "posts", "getPostsByUser"],
             "query": [
               {
                 "key": "userName",
+                "value": ""
+              },
+              {
+                "key": "diaryEntry",
                 "value": ""
               }
             ]
