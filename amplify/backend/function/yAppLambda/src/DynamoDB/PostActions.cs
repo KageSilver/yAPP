@@ -54,4 +54,50 @@ public class PostActions : IPostActions
             return new StatusCodeResult(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
+
+    /// <summary>
+    /// Gets a post by the post ID
+    /// </summary>
+    /// <param name="pid">The id to find a post.</param>
+    /// <returns>An ActionResult containing the Post object if found, or a NotFound result otherwise.</returns>
+    public async Task<ActionResult<Post>> GetPostById(string pid)
+    {
+        try
+        {
+            var post = await _dynamoDbContext.LoadAsync<Post>(pid, _config);
+            return post;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to get post: " + e.Message);
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Gets all public posts from a user
+    /// </summary>
+    /// <param name="userName">The username used to find all posts created by a user.</param>
+    /// <returns>A list of public posts created by a user.</returns>
+    public async Task<List<Post>> GetPostsByUser(string userName)
+    {
+        try
+        {
+            List<ScanCondition> scanConditions = new List<ScanCondition>
+            {
+                new ScanCondition("UserName", ScanOperator.Equal, userName),
+                new ScanCondition("DiaryEntry", ScanOperator.Equal, false)
+            };
+
+            // query posts where the poster's username is 'userName' and 'diaryEntry' is false
+            var posts = await _dynamoDbContext.ScanAsync<Post>(scanConditions, _config).GetRemainingAsync();
+
+            return posts;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to get posts: " + e.Message);
+            return new List<Post>();
+        }
+    }
 }

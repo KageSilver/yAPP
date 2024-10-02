@@ -28,7 +28,7 @@ public class PostController : ControllerBase
         _postActions = postActions;
     }
 
-    // POST: api/posts/createPost with body { "PID": "postID", "UserName": "username", "PostTitle": "title", "PostBody": "body", "Upvotes": 0, "Downvotes": 0, "DiaryEntry": false, "Anonymous": false }
+    // POST: api/posts/createPost with body { "userName": "username", "postTitle": "title", "postBody": "body", "diaryEntry": false, "anonymous": false }
     /// <summary>
     /// Creates a new post
     /// </summary>
@@ -76,5 +76,52 @@ public class PostController : ControllerBase
         }
 
         return result;
+    }
+
+    // GET: api/posts/getPostById?pid={pid}
+    /// <summary>
+    /// Retrieves a post by a unique identifier
+    /// </summary>
+    /// <param name="pid">The unique identifier for a post.</param>
+    /// <returns>An ActionResult containing the Post object if found, or a NotFound result otherwise</returns>
+    [HttpGet("getPostById")]
+    [ProducesResponseType(typeof(Post), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<Post>> GetPostById(string pid)
+    {
+        if(string.IsNullOrEmpty(pid))
+        {
+            return BadRequest("Post ID is required");
+        }
+
+        var post = await _postActions.GetPostById(pid);
+
+        if(post == null)
+        {
+            return NotFound("Post does not exist");
+        }
+
+        return post;
+    }
+
+    // GET: api/posts/getPostsByUser?userName={userName}
+    /// <summary>
+    /// Retrieves all public posts from a user
+    /// </summary>
+    /// <param name="userName">The username used to find all posts created by a user.</param>
+    /// <returns>A list of public posts created by a user.</returns>
+    [HttpGet("getPostsByUser")]
+    [ProducesResponseType(typeof(List<Post>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<List<Post>>> GetPostsByUser(string userName)
+    {
+        if(string.IsNullOrEmpty(userName))
+        {
+            return BadRequest("username is required");
+        }
+
+        var posts = await _postActions.GetPostsByUser(userName);
+
+        return posts;
     }
 }
