@@ -1,5 +1,6 @@
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
+using Amazon.DynamoDBv2.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using yAppLambda.Models;
@@ -98,6 +99,78 @@ public class PostActions : IPostActions
         catch (Exception e)
         {
             Console.WriteLine("Failed to get posts: " + e.Message);
+            return new List<Post>();
+        }
+    }
+    
+    /// <summary>
+    /// Deletes a post from the database by a post id
+    /// </summary>
+    /// <param name="pid">The id of the post to be deleted.</param>
+    /// <returns>A boolean indicating whether the deletion was successful.</returns>
+    public async Task<bool> DeletePost(string pid)
+    {
+        try
+        {
+            // Load the post record to check if it exists
+            var post = GetPostById(pid).Result.Value;
+
+            // Delete the post from the database
+            await _dynamoDbContext.DeleteAsync(post, _config);
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to delete post: " + e.Message);
+            return false;
+        }
+    }
+    
+    /// <summary>
+    /// Gets all recent posts
+    /// </summary>
+    /// <param name="since">Returns posts made after this time.</param>
+    /// <param name="maxResults">The maximum number of results to retrieve.</param>
+    /// <returns>A list of recent posts.</returns>
+    public async Task<List<Post>> GetRecentPosts(DateTime since, int maxResults)
+    {
+        try
+        {
+            var expressionAttributeValues = new Dictionary<string, DynamoDBEntry>();
+            expressionAttributeValues.Add(":diaryEntry", false);
+            expressionAttributeValues.Add(":since", since.ToString());
+            
+            var query = new QueryOperationConfig()
+            {
+                IndexName = "CreatedAtIndex",
+                KeyExpression = new Expression
+                {
+                    ExpressionStatement = "DiaryEntry = :diaryEntry AND CreatedAt > :since",
+                    ExpressionAttributeValues = expressionAttributeValues
+                },
+                Limit = maxResults,
+                AttributesToGet = new List<string>
+                {
+                    "PID"
+                },
+                Select = SelectValues.SpecificAttributes
+            };
+
+            var result = await _dynamoDbContext.FromQueryAsync<Post>(query, _config).GetNextSetAsync();
+            
+            var posts = new List<Post>();
+            
+            foreach(Post post in result)
+            {
+                posts.Add(GetPostById(post.PID).Result.Value);
+            }
+
+            return posts;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to get recent posts: " + e.Message);
             return new List<Post>();
         }
     }
