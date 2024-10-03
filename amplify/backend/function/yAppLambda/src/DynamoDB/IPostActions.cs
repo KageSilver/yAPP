@@ -26,4 +26,11 @@ public interface IPostActions
     /// <param name="diaryEntry">If the query is for public posts or diary entries.</param>
     /// <returns>A list of posts created by a user, either public posts or diary entries.</returns>
     Task<List<Post>> GetPostsByUser(string userName, bool diaryEntry);
+    
+    /// <summary>
+    /// Deletes a post from the database by a post id
+    /// </summary>
+    /// <param name="pid">The id of the post to be deleted.</param>
+    /// <returns>A boolean indicating whether the deletion was successful.</returns>
+    Task<bool> DeletePost(string pid);
 }

@@ -101,4 +101,28 @@ public class PostActions : IPostActions
             return new List<Post>();
         }
     }
+    
+    /// <summary>
+    /// Deletes a post from the database by a post id
+    /// </summary>
+    /// <param name="pid">The id of the post to be deleted.</param>
+    /// <returns>A boolean indicating whether the deletion was successful.</returns>
+    public async Task<bool> DeletePost(string pid)
+    {
+        try
+        {
+            // Load the post record to check if it exists
+            var post = GetPostById(pid).Result.Value;
+
+            // Delete the post from the database
+            await _dynamoDbContext.DeleteAsync(post, _config);
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to delete post: " + e.Message);
+            return false;
+        }
+    }
 }
