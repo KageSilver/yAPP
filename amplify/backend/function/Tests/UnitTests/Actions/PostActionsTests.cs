@@ -109,4 +109,97 @@ public class PostActionsTests
         var statusCodeResult = Assert.IsType<StatusCodeResult>(actionResult.Result);
         Assert.Equal(StatusCodes.Status500InternalServerError, statusCodeResult.StatusCode);
     }
+
+    [Fact]
+    public async Task DeletePost_ShouldCallDeleteAsync()
+    {
+        // Arrange
+        var request = new Post
+        {
+            PID = "11111",
+            CreatedAt = DateTime.Now,
+            UserName = "username",
+            PostTitle = "title",
+            PostBody = "body",
+            Upvotes = 0,
+            Downvotes = 0,
+            DiaryEntry = false,
+            Anonymous = true
+        };
+
+        // Sets up LoadAsync to return the request post (for in GetPostById)
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Post>(request.PID, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(request);
+
+        // Sets up DeleteAsync to succeed            
+        _dynamoDbContextMock.Setup(d => d.DeleteAsync(It.IsAny<Post>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()));
+
+        // Act
+        await _postActionsMock.DeletePost(request.PID);
+
+        // Assert
+        _dynamoDbContextMock.Verify(d => d.DeleteAsync(request, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()));
+    }
+
+    [Fact]
+    public async Task DeletePost_ShouldHandleException_WhenPostDoesNotExist()
+    {
+        // Arrange
+        var request = new Post
+        {
+            PID = "11111",
+            CreatedAt = DateTime.Now,
+            UserName = "username",
+            PostTitle = "title",
+            PostBody = "body",
+            Upvotes = 0,
+            Downvotes = 0,
+            DiaryEntry = false,
+            Anonymous = true
+        };
+
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Post>(request.PID, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new Exception("Post does not exist"));
+
+        // Act
+        var exception = await Record.ExceptionAsync(() => _postActionsMock.DeletePost(request.PID));
+
+        // Assert
+        Assert.Null(exception);
+        _dynamoDbContextMock.Verify(d => d.LoadAsync<Post>(request.PID, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    
+    [Fact]
+    public async Task DeletePost_ShouldHandleException_WhenDeletePostFails()
+    {
+        // Arrange
+        var request = new Post
+        {
+            PID = "11111",
+            CreatedAt = DateTime.Now,
+            UserName = "username",
+            PostTitle = "title",
+            PostBody = "body",
+            Upvotes = 0,
+            Downvotes = 0,
+            DiaryEntry = false,
+            Anonymous = true
+        };
+
+        // Sets up LoadAsync to return the request post (for in GetPostById)
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Post>(request.PID, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(request);
+
+        // Sets up DeleteAsync to throw an exception           
+        _dynamoDbContextMock.Setup(d => d.DeleteAsync(It.IsAny<Post>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new Exception("Could not delete post"));
+
+        // Act
+        var result = await _postActionsMock.DeletePost(request.PID);
+
+        // Assert
+        Assert.False(result);
+        _dynamoDbContextMock.Verify(d => d.DeleteAsync(request, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
 }
