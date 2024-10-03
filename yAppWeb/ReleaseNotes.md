@@ -7,6 +7,7 @@
 * devTaskIssue#45-FeatureIssue#1-Setup a post table schema using C#
 * devTaskIssue#49-FeatureIssue#1-Issue #7 unit tests
 * devTaskIssue#50-FeatureIssue#1-Issue #7 integration tests
+* devTaskIssue#53-FeatureIssue#1-Create an endpoint to get public posts
 * devTaskIssue#63-FeatureIssue#1-Create an endpoint to get all public question posts a user has made
 
 * devTaskIssue#38-FeatureIssue#5-Create an endpoint to allow user to update their information
