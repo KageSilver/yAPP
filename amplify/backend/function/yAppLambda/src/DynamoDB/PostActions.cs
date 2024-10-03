@@ -154,7 +154,8 @@ public class PostActions : IPostActions
                 {
                     "PID"
                 },
-                Select = SelectValues.SpecificAttributes
+                Select = SelectValues.SpecificAttributes,
+                BackwardSearch = true
             };
 
             var result = await _dynamoDbContext.FromQueryAsync<Post>(query, _config).GetNextSetAsync();
