@@ -164,7 +164,9 @@ public class PostActions : IPostActions
             
             foreach(Post post in result)
             {
-                posts.Add(GetPostById(post.PID).Result.Value);
+                var thisPost = GetPostById(post.PID).Result.Value;
+                thisPost.UserName = "Anonymous";
+                posts.Add(thisPost);
             }
 
             return posts;
