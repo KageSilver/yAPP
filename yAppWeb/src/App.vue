@@ -1,17 +1,36 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+  import { ref } from 'vue';
+
+  // State to track whether the menu is open or closed
+  const isOpen = ref(false);
+
+  // Function to toggle the menu visibility
+  function toggleMenu() {
+    isOpen.value = !isOpen.value;
+  }
+  function closeMenu() {
+    isOpen.value = false;
+  }
 </script>
 
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <nav class="navbar">
+    <div class="hamburger" @click="toggleMenu">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </div>
+    
+    <ul v-if="isOpen" class="menu">
+      <li @click="toggleMenu"><router-link to="/">Home</router-link></li>
+      <li @click="toggleMenu"><router-link to="/Diary">Diary</router-link></li>
+      <li @click="toggleMenu"><router-link to="/Profile">Profile</router-link></li>
+      <!-- Add more menu items as needed -->
+    </ul>
+  </nav>
+  <div id="App" @click="closeMenu">
+    <router-view></router-view>
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
 <style scoped>
@@ -26,5 +45,58 @@ import HelloWorld from './components/HelloWorld.vue'
 }
 .logo.vue:hover {
   filter: drop-shadow(0 0 2em #42b883aa);
+}
+
+.navbar {
+  position: relative;
+  width: 100%;
+  background-color: #25364b;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.hamburger {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 20px;
+}
+
+.bar {
+  height: 4px;
+  width: 100%;
+  background-color: white;
+  margin: 3px 0;
+  transition: 0.4s;
+}
+
+.menu {
+  position: absolute;
+  top: auto;
+  left: 0;
+  background-color: #25364b;
+  padding: 10px;
+  width: 200px;
+  border-radius: 5px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu li {
+  margin-bottom: 10px;
+}
+
+.menu li a {
+  color: white;
+  text-decoration: none;
+}
+
+.menu li a:hover {
+  color: #ccc;
 }
 </style>
