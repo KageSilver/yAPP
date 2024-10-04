@@ -271,24 +271,7 @@ public class PostActionsTests
     public async Task GetRecentPosts_ShouldReturnEmptyList_WhenExceptionIsThrown()
     {
         // Arrange
-        var post = new Post
-        {
-            PID = "1",
-            CreatedAt = DateTime.Now,
-            UserName = "username",
-            PostTitle = "title",
-            PostBody = "body",
-            Upvotes = 0,
-            Downvotes = 0,
-            DiaryEntry = false,
-            Anonymous = true
-        };
-
-        // Sets up LoadAsync to return the request post (for in GetPostById)
-        _dynamoDbContextMock.Setup(d => d.LoadAsync<Post>(post.PID, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(post);
-
-        // Sets up FromQueryAsync to succeed
+        // Sets up FromQueryAsync to fail
         _dynamoDbContextMock.Setup(d => d.FromQueryAsync<Post>(It.IsAny<QueryOperationConfig>(), It.IsAny<DynamoDBOperationConfig>()))
             .Throws(new Exception("Could not load post"));
             
