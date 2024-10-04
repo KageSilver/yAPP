@@ -284,8 +284,6 @@ public class PostActionsTests
             Anonymous = true
         };
 
-        var response = new Post { PID = "1" };
-
         // Sets up LoadAsync to return the request post (for in GetPostById)
         _dynamoDbContextMock.Setup(d => d.LoadAsync<Post>(post.PID, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(post);
