@@ -153,7 +153,7 @@ public class PostController : ControllerBase
     /// </summary>
     /// <param name="request">The new version of the post after editing.</param>
     /// <returns>An ActionResult containing the edited Post object if successful, or an error message if it fails.</returns>
-    [HttpDelete("updatePost")]
+    [HttpPut("updatePost")]
     [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Post>> UpdatePost([FromBody] Post request)
