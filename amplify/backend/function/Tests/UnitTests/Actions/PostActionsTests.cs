@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace Tests.UnitTests.Actions;
 
 using System;
@@ -128,7 +130,7 @@ public class PostActionsTests
         };
 
         // Sets up LoadAsync to return the request post (for in GetPostById)
-        _dynamoDbContextMock.Setup(d => d.LoadAsync<Post>(request.PID, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Post>(It.IsAny<string>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(request);
 
         // Sets up DeleteAsync to succeed            
@@ -138,7 +140,7 @@ public class PostActionsTests
         await _postActionsMock.DeletePost(request.PID);
 
         // Assert
-        _dynamoDbContextMock.Verify(d => d.DeleteAsync(request, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()));
+        _dynamoDbContextMock.Verify(d => d.DeleteAsync(It.IsAny<Post>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()));
     }
 
     [Fact]
@@ -188,7 +190,7 @@ public class PostActionsTests
         };
 
         // Sets up LoadAsync to return the request post (for in GetPostById)
-        _dynamoDbContextMock.Setup(d => d.LoadAsync<Post>(request.PID, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Post>(It.IsAny<string>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(request);
 
         // Sets up DeleteAsync to throw an exception           
@@ -200,6 +202,127 @@ public class PostActionsTests
 
         // Assert
         Assert.False(result);
-        _dynamoDbContextMock.Verify(d => d.DeleteAsync(request, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Once);
+        _dynamoDbContextMock.Verify(d => d.DeleteAsync(It.IsAny<Post>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    #region GetPostById Tests
+
+    [Fact]
+    public async Task GetPostById_ShouldReturnPost_WhenSuccessful()
+    {
+        // Arrange
+        var request = new Post
+        {
+            PID = "11111",
+            CreatedAt = DateTime.Now,
+            UserName = "username",
+            PostTitle = "title",
+            PostBody = "body",
+            Upvotes = 0,
+            Downvotes = 0,
+            DiaryEntry = false,
+            Anonymous = true
+        };
+
+        // Sets up LoadAsync to return the request post
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Post>(It.IsAny<string>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(request);
+
+        // Act
+        var result = await _postActionsMock.GetPostById(request.PID);
+
+        // Assert
+        var returnedPost = Assert.IsType<Post>(result);
+        Assert.Equal(request.PID, returnedPost.PID);
+        Assert.Equal(request.CreatedAt, returnedPost.CreatedAt);
+        Assert.Equal(request.UserName, returnedPost.UserName);
+        Assert.Equal(request.PostTitle, returnedPost.PostTitle);
+        Assert.Equal(request.PostBody, returnedPost.PostBody);
+        Assert.Equal(request.Upvotes, returnedPost.Upvotes);
+        Assert.Equal(request.Downvotes, returnedPost.Downvotes);
+        Assert.Equal(request.DiaryEntry, returnedPost.DiaryEntry);
+        Assert.Equal(request.Anonymous, returnedPost.Anonymous);
+        _dynamoDbContextMock.Verify(d => d.LoadAsync<Post>(It.IsAny<string>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetPostById_ShouldReturnNull_WhenExceptionIsThrown()
+    {
+        // Arrange
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Post>(It.IsAny<string>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new Exception("Error loading post"));
+            
+        // Act
+        var result = await _postActionsMock.GetPostById("111");
+        
+        // Assert
+        Assert.Null(result);
+        _dynamoDbContextMock.Verify(d => d.LoadAsync<Post>(It.IsAny<string>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    #endregion
+
+    #region GetPostsByUser Tests
+    
+    [Fact]
+    public async Task GetPostsByUser_ShouldReturnPosts_WhenSuccessful()
+    {
+        // Arrange
+        var post = new Post
+        {
+            PID = "1",
+            UserName = "username",
+            CreatedAt = DateTime.Now,
+            PostTitle = "title",
+            PostBody = "body",
+            Upvotes = 0,
+            Downvotes = 0,
+            DiaryEntry = false,
+            Anonymous = true
+        };
+
+        var list = new List<Post>();
+        list.Add(post);
+
+        // Mock the AsyncSearch<Post> returned by ScanAsync
+        var scanToSearchMock = new Mock<AsyncSearch<Post>>();
+        scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(list);
+            
+        _dynamoDbContextMock.Setup(d => d.ScanAsync<Post>(It.IsAny<List<ScanCondition>>(), It.IsAny<DynamoDBOperationConfig>()))
+            .Returns(scanToSearchMock.Object);
+
+        // Act
+        var result = await _postActionsMock.GetPostsByUser(post.UserName, false);
+
+        // Assert
+        Assert.Equal(1, result.Count);
+        Assert.Equal(post.PID, result.First().PID);
+        Assert.Equal(post.CreatedAt, result.First().CreatedAt);
+        Assert.Equal(post.UserName, result.First().UserName);
+        Assert.Equal(post.PostTitle, result.First().PostTitle);
+        Assert.Equal(post.PostBody, result.First().PostBody);
+        Assert.Equal(post.Upvotes, result.First().Upvotes);
+        Assert.Equal(post.Downvotes, result.First().Downvotes);
+        Assert.Equal(post.DiaryEntry, result.First().DiaryEntry);
+        Assert.Equal(post.Anonymous, result.First().Anonymous);
+        _dynamoDbContextMock.Verify(d => d.ScanAsync<Post>(It.IsAny<List<ScanCondition>>(), It.IsAny<DynamoDBOperationConfig>()), Times.Once);
+    }
+    
+    [Fact]
+    public async Task GetPostsByUser_ShouldReturnEmptyList_WhenExceptionIsThrown()
+    {
+        // Arrange
+        var scanToSearchMock = new Mock<AsyncSearch<Post>>();
+        scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new Exception("error querying posts"));
+
+        // Act
+        var result = await _postActionsMock.GetPostsByUser("username", false);
+
+        // Assert
+        Assert.Empty(result);
+    }
+    
+    #endregion
 }
