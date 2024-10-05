@@ -2,7 +2,7 @@
   import { ref } from 'vue';
 
   // State to track whether the menu is open or closed
-  const isOpen = ref(false);
+  var isOpen = ref(false);
 
   // Function to toggle the menu visibility
   function toggleMenu() {
@@ -22,7 +22,8 @@
     </div>
     
     <ul v-if="isOpen" class="menu">
-      <li @click="toggleMenu"><router-link to="/">Home</router-link></li>
+      <li @click="toggleMenu"><router-link to="/">Public Posts</router-link></li>
+      <li @click="toggleMenu"><router-link to="/">Your Posts</router-link></li>
       <li @click="toggleMenu"><router-link to="/Diary">Diary</router-link></li>
       <li @click="toggleMenu"><router-link to="/Profile">Profile</router-link></li>
       <!-- Add more menu items as needed -->
