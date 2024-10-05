@@ -125,6 +125,28 @@ public class PostController : ControllerBase
 
         return posts;
     }
+
+    // GET: api/posts/getRecentPosts?since={since}&maxResults={maxResults}
+    /// <summary>
+    /// Gets all recent posts
+    /// </summary>
+    /// <param name="since">Returns posts made after this time.</param>
+    /// <param name="maxResults">The maximum number of results to retrieve.</param>
+    /// <returns>A list of recent posts.</returns>
+    [HttpGet("getRecentPosts")]
+    [ProducesResponseType(typeof(List<Post>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<List<Post>>> GetRecentPosts(DateTime since, int maxResults)
+    {
+        if(maxResults < 0 || !DateTime.TryParse(since.ToString(), out since))
+        {
+            return BadRequest("requires valid max result number and valid time");
+        }
+
+        var posts = await _postActions.GetRecentPosts(since, maxResults);
+
+        return posts;
+    }
     
     // DELETE: api/posts/deletePost?pid={pid}
     /// <summary>

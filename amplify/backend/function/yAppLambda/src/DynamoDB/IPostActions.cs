@@ -40,4 +40,12 @@ public interface IPostActions
     /// <param name="updatedPost">The new version of the post after editing.</param>
     /// <returns>An ActionResult containing the edited Post object if successful, or an error message if it fails.</returns>
     Task<ActionResult<Post>> UpdatePost(Post updatedPost);
+
+    /// <summary>
+    /// Gets all recent posts
+    /// </summary>
+    /// <param name="since">Returns posts made after this time.</param>
+    /// <param name="maxResults">The maximum number of results to retrieve.</param>
+    /// <returns>A list of recent posts.</returns>
+    Task<List<Post>> GetRecentPosts(DateTime since, int maxResults);
 }

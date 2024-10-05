@@ -184,6 +184,43 @@
           "description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
         },
         "response": []
+      },
+      {
+        "name": "GetRecentPosts",
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test(\"Status code is 200\", function () {",
+                "    pm.response.to.have.status(200);",
+                "});"
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ],
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{base_url}}/api/posts/getRecentPosts?since=${since}&maxResults=${maxResults}",
+            "host": ["{{base_url}}"],
+            "path": ["api", "posts", "getRecentPosts"],
+            "query": [
+              {
+                "key": "since",
+                "value": ""
+              },
+              {
+                "key": "maxResults",
+                "value": ""
+              }
+            ]
+          },
+          "description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on.\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+        },
+        "response": []
       }
     ],
     "event": [
