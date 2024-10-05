@@ -218,13 +218,71 @@ public class PostActionsTests
     [Fact]
     public async Task UpdatePost_ShouldReturnOk_WhenPostIsUpdatedSuccessfully()
     {
+        // Arrange
+        var request = new Post
+        {
+            PID = "1",
+            CreatedAt = DateTime.Now,
+            UserName = "username",
+            PostTitle = "title",
+            PostBody = "body",
+            Upvotes = 0,
+            Downvotes = 0,
+            DiaryEntry = false,
+            Anonymous = true
+        };
 
+        _dynamoDbContextMock.Setup(d => d.SaveAsync(request, It.IsAny<DynamoDBOperationConfig>(), CancellationToken.None))
+            .Returns(Task.CompletedTask);
+
+        // Act
+        var result = await _postActionsMock.UpdatePost(request);
+
+        // Assert
+        var actionResult = Assert.IsType<ActionResult<Post>>(result);
+        var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
+        var returnedPost = Assert.IsType<Post>(okResult.Value);
+
+        Assert.Equal(request.PID, returnedPost.PID);
+        Assert.Equal(request.UserName, returnedPost.UserName);
+        Assert.Equal(request.PostTitle, returnedPost.PostTitle);
+        Assert.Equal(request.PostBody, returnedPost.PostBody);
+        Assert.Equal(request.Upvotes, returnedPost.Upvotes);
+        Assert.Equal(request.Downvotes, returnedPost.Downvotes);
+        Assert.Equal(request.DiaryEntry, returnedPost.DiaryEntry);
+        Assert.Equal(request.Anonymous, returnedPost.Anonymous);
+
+        _dynamoDbContextMock.Verify(d => d.SaveAsync(request, It.IsAny<DynamoDBOperationConfig>(), CancellationToken.None), Times.Once);
     }
 
     [Fact]
     public async Task UpdatePost_ShouldReturnStatus500_WhenExceptionIsThrown()
     {
+        // Arrange
+        var request = new Post
+        {
+            PID = "1",
+            CreatedAt = DateTime.Now,
+            UserName = "username",
+            PostTitle = "title",
+            PostBody = "body",
+            Upvotes = 0,
+            Downvotes = 0,
+            DiaryEntry = false,
+            Anonymous = true
+        };
 
+        _dynamoDbContextMock.Setup(d => d.SaveAsync(request, It.IsAny<DynamoDBOperationConfig>(), CancellationToken.None))
+            .ThrowsAsync(new Exception("Error updatiing post in database"));
+
+        // Act
+        var result = await _postActionsMock.UpdatePost(request);
+        
+        // Assert
+        var actionResult = Assert.IsType<ActionResult<Post>>(result);
+        var statusCodeResult = Assert.IsType<StatusCodeResult>(actionResult.Result);
+
+        Assert.Equal(StatusCodes.Status500InternalServerError, statusCodeResult.StatusCode);
     }
 
     #endregion
