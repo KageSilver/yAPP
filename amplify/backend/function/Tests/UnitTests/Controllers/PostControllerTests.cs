@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Tests.UnitTests.Controllers;
 
 using Xunit;
@@ -95,4 +99,123 @@ public class PostControllerTests
         Assert.Equal(post.DiaryEntry, returnedPost.DiaryEntry);
         Assert.Equal(post.Anonymous, returnedPost.Anonymous);
     }
+
+    #region GetPostById Tests
+
+    [Fact]
+    public async Task GetPostById_ShouldReturnPost_WhenSuccessful()
+    {
+        // Arrange
+        var post = new Post
+        {
+            PID = "1",
+            UserName = "username",
+            CreatedAt = DateTime.Now,
+            PostTitle = "title",
+            PostBody = "body",
+            Upvotes = 0,
+            Downvotes = 0,
+            DiaryEntry = false,
+            Anonymous = true
+        };
+
+        _mockPostActions.Setup(p => p.GetPostById(It.IsAny<string>())).ReturnsAsync(post);
+
+        // Act
+        var result = await _postController.GetPostById(post.PID);
+
+        // Assert
+        var returnedPost = Assert.IsType<Post>(result.Value);
+        Assert.Equal(post.PID, returnedPost.PID);
+        Assert.Equal(post.CreatedAt, returnedPost.CreatedAt);
+        Assert.Equal(post.UserName, returnedPost.UserName);
+        Assert.Equal(post.PostTitle, returnedPost.PostTitle);
+        Assert.Equal(post.PostBody, returnedPost.PostBody);
+        Assert.Equal(post.Upvotes, returnedPost.Upvotes);
+        Assert.Equal(post.Downvotes, returnedPost.Downvotes);
+        Assert.Equal(post.DiaryEntry, returnedPost.DiaryEntry);
+        Assert.Equal(post.Anonymous, returnedPost.Anonymous);
+    }
+
+    [Fact]
+    public async Task GetPostById_ShouldReturnNotFound_WhenPostNotFound()
+    {
+        // Arrange
+        _mockPostActions.Setup(p => p.GetPostById(It.IsAny<string>())).ReturnsAsync((Post)null);
+
+        // Act
+        var result = await _postController.GetPostById("1");
+        
+        // Assert
+        var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
+        Assert.Equal("Post does not exist", notFoundResult.Value);
+    }
+
+    [Fact]
+    public async Task GetPostById_ShouldReturnBadRequest_WithInvalidPostId()
+    {
+        // Act
+        var result = await _postController.GetPostById(null);
+
+        // Assert
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+        Assert.Equal("Post ID is required", badRequestResult.Value);
+    }
+
+    #endregion
+
+    #region GetPostsByUser Tests
+
+    [Fact]
+    public async Task GetPostsByUser_ShouldReturnPosts_WhenSuccessful()
+    {
+        // Arrange
+        var post = new Post
+        {
+            PID = "1",
+            UserName = "username",
+            CreatedAt = DateTime.Now,
+            PostTitle = "title",
+            PostBody = "body",
+            Upvotes = 0,
+            Downvotes = 0,
+            DiaryEntry = false,
+            Anonymous = true
+        };
+
+        var list = new List<Post>();
+        list.Add(post);
+
+        _mockPostActions.Setup(p => p.GetPostsByUser(It.IsAny<string>(), It.IsAny<bool>())).ReturnsAsync(list);
+
+        // Act
+        var result = await _postController.GetPostsByUser(post.UserName, false);
+
+        // Assert
+        var returnedList = Assert.IsType<List<Post>>(result.Value);
+        Assert.Equal(1, returnedList.Count);
+        Assert.Equal(post.PID, returnedList.First().PID);
+        Assert.Equal(post.CreatedAt, returnedList.First().CreatedAt);
+        Assert.Equal(post.UserName, returnedList.First().UserName);
+        Assert.Equal(post.PostTitle, returnedList.First().PostTitle);
+        Assert.Equal(post.PostBody, returnedList.First().PostBody);
+        Assert.Equal(post.Upvotes, returnedList.First().Upvotes);
+        Assert.Equal(post.Downvotes, returnedList.First().Downvotes);
+        Assert.Equal(post.DiaryEntry, returnedList.First().DiaryEntry);
+        Assert.Equal(post.Anonymous, returnedList.First().Anonymous);
+
+    }
+
+    [Fact]
+    public async Task GetPostsByUser_ShouldReturnBadRequest_WithInvalidUsername()
+    {
+        // Act
+        var result = await _postController.GetPostsByUser(null, false);
+
+        // Assert
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+        Assert.Equal("username is required", badRequestResult.Value);
+    }
+
+    #endregion
 }
