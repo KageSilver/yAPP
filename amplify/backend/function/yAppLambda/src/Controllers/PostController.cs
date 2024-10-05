@@ -147,6 +147,7 @@ public class PostController : ControllerBase
         return deleted;
     }
 
+    // PUT: api/posts/updatePost with body { "pid": "pid", "createdAt": "createdAt", "userName": "username", "postTitle": "title", "postBody": "body", "upvotes": "upvotes", "downvotes": "downvotes", "diaryEntry": false, "anonymous": false }
     /// <summary>
     /// Edits an already existing post
     /// </summary>
