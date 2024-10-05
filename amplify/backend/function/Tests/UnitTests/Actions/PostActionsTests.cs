@@ -114,6 +114,10 @@ public class PostActionsTests
         Assert.Equal(StatusCodes.Status500InternalServerError, statusCodeResult.StatusCode);
     }
 
+    #endregion
+
+    #region DeletePost Tests
+
     [Fact]
     public async Task DeletePost_ShouldCallDeleteAsync()
     {
@@ -144,10 +148,6 @@ public class PostActionsTests
         // Assert
         _dynamoDbContextMock.Verify(d => d.DeleteAsync(request, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()));
     }
-
-    #endregion
-
-    #region DeletePost Tests
 
     [Fact]
     public async Task DeletePost_ShouldHandleException_WhenPostDoesNotExist()
