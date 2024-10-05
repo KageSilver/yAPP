@@ -151,6 +151,71 @@ public class PostControllerIntegrationTests
         // Assert
         Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
     }
+
+    
+    [Fact]
+    public async Task GetRecentPosts_ShouldReturnPosts_WhenRequestIsSuccessful()
+    {
+        //setup the user for testing
+        await _cognitoActions.CreateUser(TestUserEmail);
+        await Task.Delay(TimeSpan.FromSeconds(5)); // make sure the user is created
+
+        var responseId = await _client.GetAsync($"/api/users/getUserByName?username={TestUserEmail}");
+        Assert.Equal(HttpStatusCode.OK, responseId.StatusCode);
+        var responseIdString = await responseId.Content.ReadAsStringAsync();
+        var user = JsonConvert.DeserializeObject<User>(responseIdString);
+
+        // Arrange
+        var newPost = new NewPost
+        {
+            UserName = TestUserEmail,
+            PostTitle = "title",
+            PostBody = "body",
+            DiaryEntry = false,
+            Anonymous = true
+        };
+        
+        var content = new StringContent(JsonConvert.SerializeObject(newPost), System.Text.Encoding.UTF8,
+            "application/json");
+
+        // Create a new post for testing
+        var response1 = await _client.PostAsync("/api/posts/createPost", content);
+        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+
+        var responseString = await response1.Content.ReadAsStringAsync();
+        var responsePost = JsonConvert.DeserializeObject<Post>(responseString);
+        
+        var list = new List<Post>();
+        list.Add(responsePost);
+
+        // Act
+        var response2 = await _client.GetAsync($"/api/posts/getRecentPosts?since={DateTime.Now}&maxResults={1}");
+
+        var responseString2 = response2.Content.ReadAsStringAsync().Result;
+        var responseList = JsonConvert.DeserializeObject<List<Post>>(responseString2);
+
+        // Assert
+        Assert.Equal(1, responseList.Count);
+        Assert.Equal("Anonymous", responseList.First().UserName);
+        Assert.Equal(newPost.PostTitle, responseList.First().PostTitle);
+        Assert.Equal(newPost.PostBody, responseList.First().PostBody);
+        Assert.Equal(newPost.DiaryEntry, responseList.First().DiaryEntry);
+        Assert.Equal(newPost.Anonymous, responseList.First().Anonymous);
+
+        // Clean up
+        await _cognitoActions.DeleteUser(TestUserEmail);
+        await _postActions.DeletePost(responsePost.PID);
+    }
+    
+    [Fact]
+    public async Task GetRecentPosts_ShouldReturnBadRequest_WithInvalidRequest()
+    {
+        // Act
+        var response = await _client.GetAsync($"/api/posts/getRecentPosts?since={DateTime.Now}&maxResults={-1}");
+
+        // Assert
+        Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+    }
     
     #region GetPostById Tests
     
