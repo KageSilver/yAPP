@@ -187,11 +187,6 @@ public class PostController : ControllerBase
 
         var post = await _postActions.UpdatePost(request);
 
-        if(post == null)
-        {
-            return NotFound("Post not found");
-        }
-
         return post;
     }
 }

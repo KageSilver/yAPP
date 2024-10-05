@@ -111,25 +111,39 @@ public class PostControllerTests
     [Fact]
     public async Task DeletePost_ShouldReturnTrue_WhenPostIsDeletedSuccessfully()
     {
+        // Arrange
+        _mockPostActions.Setup(p => p.DeletePost(It.IsAny<string>())).ReturnsAsync(true);
 
+        // Act
+        var response = await _postController.DeletePost("1");
+
+        // Assert
+        Assert.True(response.Value);
     }
 
     [Fact]
     public async Task DeletePost_ShouldReturnBadRequest_WhenPostIdIsNull()
     {
+        // Act
+        var result = await _postController.DeletePost(null);
 
+        // Assert
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+        Assert.Equal("Post id is required",
+            badRequestResult.Value);
     }
     
     [Fact]
     public async Task DeletePost_ShouldReturnFalse_WhenDeleteFails()
     {
+        // Arrange
+        _mockPostActions.Setup(p => p.DeletePost(It.IsAny<string>())).ReturnsAsync(false);
 
-    }
-
-    [Fact]
-    public async Task DeletePost_ShouldReturnNotFound_WhenPostIsNotFound()
-    {
-
+        // Act
+        var response = await _postController.DeletePost("1");
+        
+        // Assert
+        Assert.False(response.Value);
     }
 
     #endregion
@@ -139,43 +153,129 @@ public class PostControllerTests
     [Fact]
     public async Task UpdatePost_ShouldReturnOk_WhenPostIsUpdatedSuccessfully()
     {
+        // Arrange
+        var request = new Post
+        {
+            PID = "1",
+            CreatedAt = DateTime.Now,
+            UserName = "username",
+            PostTitle = "title",
+            PostBody = "body",
+            Upvotes = 0,
+            Downvotes = 0,
+            DiaryEntry = false,
+            Anonymous = true
+        };
 
+        _mockPostActions.Setup(p => p.UpdatePost(It.IsAny<Post>())).ReturnsAsync(new OkObjectResult(request));
+
+        // Act
+        var response = await _postController.UpdatePost(request);
+
+        // Assert
+        var actionResult = Assert.IsType<ActionResult<Post>>(response);
+        var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
+        var returnedPost = Assert.IsType<Post>(okResult.Value);
+
+        Assert.Equal(request.PID, returnedPost.PID);
+        Assert.Equal(request.UserName, returnedPost.UserName);
+        Assert.Equal(request.PostTitle, returnedPost.PostTitle);
+        Assert.Equal(request.PostBody, returnedPost.PostBody);
+        Assert.Equal(request.Upvotes, returnedPost.Upvotes);
+        Assert.Equal(request.Downvotes, returnedPost.Downvotes);
+        Assert.Equal(request.DiaryEntry, returnedPost.DiaryEntry);
+        Assert.Equal(request.Anonymous, returnedPost.Anonymous);
     }
 
     [Fact]
     public async Task UpdatePost_ShouldReturnBadRequest_WhenRequestIsNull()
     {
+        // Act
+        var response = await _postController.UpdatePost(null);
 
+        // Assert
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(response.Result);
+        Assert.Equal("request body is required and must contain username, post title, post body",
+            badRequestResult.Value);
     }
     
     [Fact]
     public async Task UpdatePost_ShouldReturnBadRequest_WhenUsernameIsMissing()
     {
+        // Arrange
+        var request = new Post
+        {
+            PID = "1",
+            CreatedAt = DateTime.Now,
+            UserName = "",
+            PostTitle = "title",
+            PostBody = "body",
+            Upvotes = 0,
+            Downvotes = 0,
+            DiaryEntry = false,
+            Anonymous = true
+        };
+
+        // Act
+        var response = await _postController.UpdatePost(request);
+
+        // Assert
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(response.Result);
+        Assert.Equal("request body is required and must contain username, post title, post body",
+            badRequestResult.Value);
 
     }
     
     [Fact]
     public async Task UpdatePost_ShouldReturnBadRequest_WhenPostBodyIsMissing()
     {
+        // Arrange
+        var request = new Post
+        {
+            PID = "1",
+            CreatedAt = DateTime.Now,
+            UserName = "username",
+            PostTitle = "title",
+            PostBody = "",
+            Upvotes = 0,
+            Downvotes = 0,
+            DiaryEntry = false,
+            Anonymous = true
+        };
 
+        // Act
+        var response = await _postController.UpdatePost(request);
+
+        // Assert
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(response.Result);
+        Assert.Equal("request body is required and must contain username, post title, post body",
+            badRequestResult.Value);
     }
-    
+
     [Fact]
     public async Task UpdatePost_ShouldReturnBadRequest_WhenPostTitleIsMissing()
     {
+        // Arrange
+        var request = new Post
+        {
+            PID = "1",
+            CreatedAt = DateTime.Now,
+            UserName = "username",
+            PostTitle = "",
+            PostBody = "body",
+            Upvotes = 0,
+            Downvotes = 0,
+            DiaryEntry = false,
+            Anonymous = true
+        };
 
-    }
-    
-    [Fact]
-    public async Task UpdatePost_ShouldReturnBadRequest_WhenUpdateFails()
-    {
+        // Act
+        var response = await _postController.UpdatePost(request);
 
-    }
-
-    [Fact]
-    public async Task UpdatePost_ShouldReturnNotFound_WhenPostIsNotFound()
-    {
-
+        // Assert
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(response.Result);
+        Assert.Equal("request body is required and must contain username, post title, post body",
+            badRequestResult.Value);
     }
 
     #endregion
