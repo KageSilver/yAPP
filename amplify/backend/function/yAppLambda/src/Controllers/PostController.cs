@@ -125,4 +125,50 @@ public class PostController : ControllerBase
 
         return posts;
     }
+    
+    // DELETE: api/posts/deletePost?pid={pid}
+    /// <summary>
+    /// Deletes a post from the database by a post id
+    /// </summary>
+    /// <param name="pid">The id of the post to be deleted.</param>
+    /// <returns>A boolean indicating whether the deletion was successful.</returns>
+    [HttpDelete("deletePost")]
+    [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<bool>> DeletePost(string pid)
+    {
+        if(string.IsNullOrEmpty(pid))
+        {
+            return BadRequest("Post id is required");
+        }
+
+        var deleted = await _postActions.DeletePost(pid);
+
+        return deleted;
+    }
+
+    /// <summary>
+    /// Edits an already existing post
+    /// </summary>
+    /// <param name="request">The new version of the post after editing.</param>
+    /// <returns>An ActionResult containing the edited Post object if successful, or an error message if it fails.</returns>
+    [HttpDelete("updatePost")]
+    [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<Post>> UpdatePost([FromBody] Post request)
+    {
+        if(request == null || string.IsNullOrEmpty(request.UserName) || string.IsNullOrEmpty(request.PostBody) || string.IsNullOrEmpty(request.PostTitle))
+        {
+            return BadRequest("request body is required and must contain username, post title, post body")
+        }
+
+        var post = await _postController.UpdatePost(request);
+
+        if(post == null)
+        {
+            return NotFound("Post not found");
+        }
+
+        return post;
+    }
 }
