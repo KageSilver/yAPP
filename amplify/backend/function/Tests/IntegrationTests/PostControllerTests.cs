@@ -216,4 +216,152 @@ public class PostControllerIntegrationTests
         // Assert
         Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
     }
+
+    #region DeletePost Tests
+    
+    [Fact]
+    public async Task DeletePost_ShouldReturnTrue_WhenPostIsDeletedSuccessfully()
+    {
+        //setup the user for testing
+        await _cognitoActions.CreateUser(TestUserEmail);
+        await Task.Delay(TimeSpan.FromSeconds(5)); // make sure the user is created
+
+        var responseId = await _client.GetAsync($"/api/users/getUserByName?username={TestUserEmail}");
+        Assert.Equal(HttpStatusCode.OK, responseId.StatusCode);
+        var responseIdString = await responseId.Content.ReadAsStringAsync();
+        var user = JsonConvert.DeserializeObject<User>(responseIdString);
+
+        // Arrange
+        var newPost = new NewPost
+        {
+            UserName = TestUserEmail,
+            PostTitle = "title",
+            PostBody = "body",
+            DiaryEntry = false,
+            Anonymous = true
+        };
+        
+        var content = new StringContent(JsonConvert.SerializeObject(newPost), System.Text.Encoding.UTF8,
+            "application/json");
+
+        // Create a new post for testing
+        var response1 = await _client.PostAsync("/api/posts/createPost", content);
+        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+
+        var responseString = await response1.Content.ReadAsStringAsync();
+        var responsePost = JsonConvert.DeserializeObject<Post>(responseString);
+
+        // Act
+        var response2 = await _client.DeleteAsync($"/api/posts/deletePost?pid={responsePost.PID}");
+        var responseString2 = response2.Content.ReadAsStringAsync().Result;
+        var result = JsonConvert.DeserializeObject<bool>(responseString2);
+
+        // Assert
+        Assert.True(result);
+
+        // Clean up
+        await _cognitoActions.DeleteUser(TestUserEmail);
+    }
+    
+    [Fact]
+    public async Task DeletePost_ShouldReturnBadRequest_WhenPostIdIsNull()
+    {
+        // Act
+        var response = await _client.DeleteAsync($"/api/posts/deletePost?pid={null}");
+
+        // Assert
+        Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+    }
+    
+    [Fact]
+    public async Task DeletePost_ShouldReturnFalse_WhenDeleteFails()
+    {
+        // Act
+        var response2 = await _client.DeleteAsync($"/api/posts/deletePost?pid={"1"}");
+        var responseString2 = response2.Content.ReadAsStringAsync().Result;
+        var result = JsonConvert.DeserializeObject<bool>(responseString2);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    #endregion
+
+    #region UpdatePost Tests
+
+    
+    [Fact]
+    public async Task UpdatePost_ShouldReturnOk_WhenPostIsUpdatedSuccessfully()
+    {
+        //setup the user for testing
+        await _cognitoActions.CreateUser(TestUserEmail);
+        await Task.Delay(TimeSpan.FromSeconds(5)); // make sure the user is created
+
+        var responseId = await _client.GetAsync($"/api/users/getUserByName?username={TestUserEmail}");
+        Assert.Equal(HttpStatusCode.OK, responseId.StatusCode);
+        var responseIdString = await responseId.Content.ReadAsStringAsync();
+        var user = JsonConvert.DeserializeObject<User>(responseIdString);
+
+        // Arrange
+        var newPost = new NewPost
+        {
+            UserName = TestUserEmail,
+            PostTitle = "title",
+            PostBody = "body",
+            DiaryEntry = false,
+            Anonymous = true
+        };
+        
+        var content = new StringContent(JsonConvert.SerializeObject(newPost), System.Text.Encoding.UTF8,
+            "application/json");
+
+        // Create a new post for testing
+        var response1 = await _client.PostAsync("/api/posts/createPost", content);
+        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+
+        var responseString = await response1.Content.ReadAsStringAsync();
+        var responsePost = JsonConvert.DeserializeObject<Post>(responseString);
+        
+        // make updates to the post
+        responsePost.PostTitle = "edited post";
+        responsePost.PostBody = "this post has been edited";
+        var content2 = new StringContent(JsonConvert.SerializeObject(responsePost), System.Text.Encoding.UTF8,
+            "application/json");
+
+        // Act
+        var response2 = await _client.PutAsync($"/api/posts/updatePost", content2);
+        var responseString2 = response2.Content.ReadAsStringAsync().Result;
+        var updatedPost = JsonConvert.DeserializeObject<Post>(responseString2);
+
+        // Assert
+        Assert.NotNull(updatedPost);
+        Assert.Equal(responsePost.PID, updatedPost.PID);
+        Assert.Equal(responsePost.UserName, updatedPost.UserName);
+        Assert.Equal(responsePost.PostTitle, updatedPost.PostTitle);
+        Assert.Equal(responsePost.PostBody, updatedPost.PostBody);
+        Assert.Equal(responsePost.Upvotes, updatedPost.Upvotes);
+        Assert.Equal(responsePost.Downvotes, updatedPost.Downvotes);
+        Assert.Equal(responsePost.DiaryEntry, updatedPost.DiaryEntry);
+        Assert.Equal(responsePost.Anonymous, updatedPost.Anonymous);
+
+        // Clean up
+        await _cognitoActions.DeleteUser(TestUserEmail);
+        await _postActions.DeletePost(responsePost.PID);
+    }
+    
+    [Fact]
+    public async Task UpdatePost_ShouldReturnBadRequest_WhenRequestIsNull()
+    {
+        // Arrange
+        var content = new StringContent(JsonConvert.SerializeObject(null), System.Text.Encoding.UTF8,
+            "application/json");
+        
+        // Act
+        var response = await _client.PutAsync($"/api/posts/updatePost", content);
+
+        // Assert
+        Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    #endregion
 }
