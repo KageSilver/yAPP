@@ -202,4 +202,20 @@ public class PostActionsTests
         Assert.False(result);
         _dynamoDbContextMock.Verify(d => d.DeleteAsync(request, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    #region UpdatePost Tests
+
+    [Fact]
+    public async Task UpdatePost_ShouldReturnOk_WhenPostIsUpdatedSuccessfully()
+    {
+
+    }
+
+    [Fact]
+    public async Task UpdatePost_ShouldReturnStatus500_WhenExceptionIsThrown()
+    {
+
+    }
+
+    #endregion
 }

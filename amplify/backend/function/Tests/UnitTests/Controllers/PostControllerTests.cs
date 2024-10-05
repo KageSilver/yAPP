@@ -95,4 +95,78 @@ public class PostControllerTests
         Assert.Equal(post.DiaryEntry, returnedPost.DiaryEntry);
         Assert.Equal(post.Anonymous, returnedPost.Anonymous);
     }
+
+    #region DeletePost Tests
+
+    [Fact]
+    public async Task DeletePost_ShouldReturnTrue_WhenPostIsDeletedSuccessfully()
+    {
+
+    }
+
+    [Fact]
+    public async Task DeletePost_ShouldReturnBadRequest_WhenPostIdIsNull()
+    {
+
+    }
+    
+    [Fact]
+    public async Task DeletePost_ShouldReturnFalse_WhenDeleteFails()
+    {
+
+    }
+
+    [Fact]
+    public async Task DeletePost_ShouldReturnNotFound_WhenPostIsNotFound()
+    {
+
+    }
+
+    #endregion
+
+    #region UpdatePost Tests
+
+    [Fact]
+    public async Task UpdatePost_ShouldReturnOk_WhenPostIsUpdatedSuccessfully()
+    {
+
+    }
+
+    [Fact]
+    public async Task UpdatePost_ShouldReturnBadRequest_WhenRequestIsNull()
+    {
+
+    }
+    
+    [Fact]
+    public async Task UpdatePost_ShouldReturnBadRequest_WhenUsernameIsMissing()
+    {
+
+    }
+    
+    [Fact]
+    public async Task UpdatePost_ShouldReturnBadRequest_WhenPostBodyIsMissing()
+    {
+
+    }
+    
+    [Fact]
+    public async Task UpdatePost_ShouldReturnBadRequest_WhenPostTitleIsMissing()
+    {
+
+    }
+    
+    [Fact]
+    public async Task UpdatePost_ShouldReturnBadRequest_WhenUpdateFails()
+    {
+
+    }
+
+    [Fact]
+    public async Task UpdatePost_ShouldReturnNotFound_WhenPostIsNotFound()
+    {
+
+    }
+
+    #endregion
 }
