@@ -160,10 +160,10 @@ public class PostController : ControllerBase
     {
         if(request == null || string.IsNullOrEmpty(request.UserName) || string.IsNullOrEmpty(request.PostBody) || string.IsNullOrEmpty(request.PostTitle))
         {
-            return BadRequest("request body is required and must contain username, post title, post body")
+            return BadRequest("request body is required and must contain username, post title, post body");
         }
 
-        var post = await _postController.UpdatePost(request);
+        var post = await _postActions.UpdatePost(request);
 
         if(post == null)
         {
