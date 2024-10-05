@@ -17,7 +17,7 @@ public interface IPostActions
     /// </summary>
     /// <param name="pid">The id to find a post.</param>
     /// <returns>An ActionResult containing the Post object if found, or a NotFound result otherwise.</returns>
-    Task<ActionResult<Post>> GetPostById(string pid);
+    Task<Post> GetPostById(string pid);
 
     /// <summary>
     /// Gets all public posts from a user
