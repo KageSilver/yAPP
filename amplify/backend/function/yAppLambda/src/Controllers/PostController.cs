@@ -104,7 +104,7 @@ public class PostController : ControllerBase
         return post;
     }
 
-    // GET: api/posts/getPostsByUser?userName={userName}
+    // GET: api/posts/getPostsByUser?userName={userName}&diaryEntry={diaryEntry}
     /// <summary>
     /// Retrieves all public posts from a user
     /// </summary>
