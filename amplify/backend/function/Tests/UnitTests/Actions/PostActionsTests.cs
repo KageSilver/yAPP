@@ -215,7 +215,7 @@ public class PostActionsTests
         {
             PID = "11111",
             CreatedAt = DateTime.Now,
-            UserName = "username",
+            UserName = "Anonymous",
             PostTitle = "title",
             PostBody = "body",
             Upvotes = 0,
@@ -235,7 +235,7 @@ public class PostActionsTests
         var returnedPost = Assert.IsType<Post>(result);
         Assert.Equal(request.PID, returnedPost.PID);
         Assert.Equal(request.CreatedAt, returnedPost.CreatedAt);
-        Assert.Equal(request.UserName, returnedPost.UserName);
+        Assert.Equal("Anonymous", returnedPost.UserName);
         Assert.Equal(request.PostTitle, returnedPost.PostTitle);
         Assert.Equal(request.PostBody, returnedPost.PostBody);
         Assert.Equal(request.Upvotes, returnedPost.Upvotes);

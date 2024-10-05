@@ -65,6 +65,12 @@ public class PostActions : IPostActions
         try
         {
             var post = await _dynamoDbContext.LoadAsync<Post>(pid, _config);
+
+            if(post.Anonymous)
+            {
+                post.UserName = "Anonymous";
+            }
+            
             return post;
         }
         catch (Exception e)
