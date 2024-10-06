@@ -364,4 +364,148 @@ public class PostControllerIntegrationTests
     }
 
     #endregion
+    
+    #region GetPostById Tests
+    
+    [Fact]
+    public async Task GetPostById_ShouldReturnPost_WhenSuccessful()
+    {
+        //setup the user for testing
+        await _cognitoActions.CreateUser(TestUserEmail);
+        await Task.Delay(TimeSpan.FromSeconds(5)); // make sure the user is created
+
+        var responseId = await _client.GetAsync($"/api/users/getUserByName?username={TestUserEmail}");
+        Assert.Equal(HttpStatusCode.OK, responseId.StatusCode);
+        var responseIdString = await responseId.Content.ReadAsStringAsync();
+        var user = JsonConvert.DeserializeObject<User>(responseIdString);
+
+        // Arrange
+        var request = new NewPost
+        {
+            UserName = TestUserEmail,
+            PostTitle = "title",
+            PostBody = "body",
+            DiaryEntry = false,
+            Anonymous = true
+        };
+        
+        var content = new StringContent(JsonConvert.SerializeObject(request), System.Text.Encoding.UTF8,
+            "application/json");
+
+        // Creates a new post to query
+        var response1 = await _client.PostAsync("/api/posts/createPost", content);
+        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        var responseString1 = await response1.Content.ReadAsStringAsync();
+        var newPost = JsonConvert.DeserializeObject<Post>(responseString1);
+
+        // Act
+        var response2 = await _client.GetAsync($"/api/posts/getPostById?pid={newPost.PID}");
+        var responseString2 = await response2.Content.ReadAsStringAsync();
+        var post = JsonConvert.DeserializeObject<Post>(responseString2);
+
+        // Assert
+        Assert.NotNull(post);
+        Assert.Equal(newPost.PID, post.PID);
+        Assert.Equal("Anonymous", post.UserName);
+        Assert.Equal(newPost.PostTitle, post.PostTitle);
+        Assert.Equal(newPost.PostBody, post.PostBody);
+        Assert.Equal(newPost.Upvotes, post.Upvotes);
+        Assert.Equal(newPost.Downvotes, post.Downvotes);
+        Assert.Equal(newPost.DiaryEntry, post.DiaryEntry);
+        Assert.Equal(newPost.Anonymous, post.Anonymous);
+
+        // Clean up
+        await _cognitoActions.DeleteUser(TestUserEmail);
+        await _postActions.DeletePost(post.PID);
+        
+    }
+
+    [Fact]
+    public async Task GetPostById_ShouldReturnNotFound_WhenPostNotFound()
+    {
+        // Act
+        var pid = "1";
+        var response = await _client.GetAsync($"/api/posts/getPostById?pid={pid}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetPostById_ShouldReturnBadRequest_WithInvalidPostId()
+    {
+        // Act
+        var response = await _client.GetAsync($"/api/posts/getPostById?pid={null}");
+        
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+    
+    #endregion
+
+    #region GetPostsByUser Tests
+
+    [Fact]
+    public async Task GetPostsByUser_ShouldReturnPosts_WhenSuccessful()
+    {
+        //setup the user for testing
+        await _cognitoActions.CreateUser(TestUserEmail);
+        await Task.Delay(TimeSpan.FromSeconds(5)); // make sure the user is created
+
+        var responseId = await _client.GetAsync($"/api/users/getUserByName?username={TestUserEmail}");
+        Assert.Equal(HttpStatusCode.OK, responseId.StatusCode);
+        var responseIdString = await responseId.Content.ReadAsStringAsync();
+        var user = JsonConvert.DeserializeObject<User>(responseIdString);
+
+        // Arrange
+        var request = new NewPost
+        {
+            UserName = TestUserEmail,
+            PostTitle = "title",
+            PostBody = "body",
+            DiaryEntry = false,
+            Anonymous = true
+        };
+        
+        var content = new StringContent(JsonConvert.SerializeObject(request), System.Text.Encoding.UTF8,
+            "application/json");
+
+        // Creates a new post to query
+        var response1 = await _client.PostAsync("/api/posts/createPost", content);
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
+        var responseString1 = await response1.Content.ReadAsStringAsync();
+        var newPost = JsonConvert.DeserializeObject<Post>(responseString1);
+
+        // Act
+        var response2 = await _client.GetAsync($"/api/posts/getPostsByUser?userName={TestUserEmail}&diaryEntry={false}");
+        var responseString2 = await response2.Content.ReadAsStringAsync();
+        var postList = JsonConvert.DeserializeObject<List<Post>>(responseString2);
+
+        // Assert
+        Assert.Equal(1, postList.Count);
+        Assert.Equal(newPost.PID, postList.First().PID);
+        Assert.Equal(newPost.UserName, postList.First().UserName);
+        Assert.Equal(newPost.PostTitle, postList.First().PostTitle);
+        Assert.Equal(newPost.PostBody, postList.First().PostBody);
+        Assert.Equal(newPost.Upvotes, postList.First().Upvotes);
+        Assert.Equal(newPost.Downvotes, postList.First().Downvotes);
+        Assert.Equal(newPost.DiaryEntry, postList.First().DiaryEntry);
+        Assert.Equal(newPost.Anonymous, postList.First().Anonymous);
+
+        // Clean up
+        await _cognitoActions.DeleteUser(TestUserEmail);
+        await _postActions.DeletePost(newPost.PID);
+    }
+
+    [Fact]
+    public async Task GetPostsByUser_ShouldReturnBadRequest_WithInvalidUsername()
+    {
+        // Act
+        var response = await _client.GetAsync($"/api/posts/getpostsByUser?userName={null}&diaryEntry={false}");
+        
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    #endregion
 }
