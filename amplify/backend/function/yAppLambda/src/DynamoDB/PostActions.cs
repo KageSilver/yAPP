@@ -1,5 +1,6 @@
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
+using Amazon.DynamoDBv2.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using yAppLambda.Models;
@@ -123,6 +124,57 @@ public class PostActions : IPostActions
         {
             Console.WriteLine("Failed to delete post: " + e.Message);
             return false;
+        }
+    }
+    
+    /// <summary>
+    /// Gets all recent posts
+    /// </summary>
+    /// <param name="since">Returns posts made after this time.</param>
+    /// <param name="maxResults">The maximum number of results to retrieve.</param>
+    /// <returns>A list of recent posts.</returns>
+    public async Task<List<Post>> GetRecentPosts(DateTime since, int maxResults)
+    {
+        try
+        {
+            var expressionAttributeValues = new Dictionary<string, DynamoDBEntry>();
+            expressionAttributeValues.Add(":diaryEntry", false);
+            expressionAttributeValues.Add(":since", since.ToString());
+            
+            var query = new QueryOperationConfig()
+            {
+                IndexName = "CreatedAtIndex",
+                KeyExpression = new Expression
+                {
+                    ExpressionStatement = "DiaryEntry = :diaryEntry AND CreatedAt > :since",
+                    ExpressionAttributeValues = expressionAttributeValues
+                },
+                Limit = maxResults,
+                AttributesToGet = new List<string>
+                {
+                    "PID"
+                },
+                Select = SelectValues.SpecificAttributes,
+                BackwardSearch = true
+            };
+
+            var result = await _dynamoDbContext.FromQueryAsync<Post>(query, _config).GetNextSetAsync();
+            
+            var posts = new List<Post>();
+            
+            foreach(Post post in result)
+            {
+                var thisPost = GetPostById(post.PID).Result.Value;
+                thisPost.UserName = "Anonymous";
+                posts.Add(thisPost);
+            }
+
+            return posts;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to get recent posts: " + e.Message);
+            return new List<Post>();
         }
     }
 }
