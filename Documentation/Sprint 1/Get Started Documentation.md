@@ -17,6 +17,7 @@ However, other teams can still run the unit tests for this project. Please refra
 
 1. **Install .NET 6 (SDK 6.0.425)**
     - More information [here](https://dotnet.microsoft.com/en-us/download/dotnet/6.0).
+    - Note that the localhost is running on Kestrel webserver. When you first run your localhost, you might need to trust the certificate.
 2. **Rider IDE**
     - Recommended for this project. A free one-year subscription is available for students.
         - More information [here](https://www.jetbrains.com/rider/)
