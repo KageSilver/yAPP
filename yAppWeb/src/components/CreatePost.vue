@@ -2,36 +2,56 @@
   import { useRouter } from 'vue-router'; // Import useRouter
   const router = useRouter(); // Use router hook
   var post = {
-    title: '',
-    content: ''
+    "UserName": '',
+    "PostTitle": '',
+    "PostBody": '',
+    "DiaryEntry": false,
+    "Anonymous": true
   };
+
   function createPost() {
     var postElements = document.getElementById("post").elements;
-    post.title = postElements[0].value;
-    post.content = postElements[1].value;
-    if ( post.title != '' && post.content != '' ) {
-      console.log('Post created:', post);
+    post.PostTitle = postElements[0].value;
+    post.PostBody = postElements[1].value;
+    if ( post.PostTitle != '' && post.PostBody != '' ) {
+      // TODO: change to actual user when that part is ready
+      var userName = "cs0716934@gmail.com";
+      post.UserName = userName;
       // Make API call to create the post
-      
+      var jsonPost = JSON.stringify(post);
+      fetch("/api/posts/createPost", {
+        method: "POST",
+        body: jsonPost,
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        }
+      });
+      console.log('Post created:', post);
+
       // Reset form fields after submission
-      post.title, postElements[0].value = '';
-      post.content, postElements[1].value = '';
+      post.UserName = '';
+      post.PostTitle, postElements[0].value = '';
+      post.PostBody, postElements[1].value = '';
       // Send to "home" page, later on to the post's page itself
       router.push({ name: 'HelloWorld' });
     }
   }
+
   function discardPost(event) {
-    console.log('Throwing away post...')
-    if ( post.title != '' || post.content != '' ) {
+    event.preventDefault();
+    var postElements = document.getElementById("post").elements;
+    post.PostTitle = postElements[0].value;
+    post.PostBody = postElements[1].value;
+    if ( post.PostTitle != '' || post.PostBody != '' ) {
+      console.log('Throwing away post...');
       if (confirm("Are you sure you want to throw away your changes??")) {
         // Send to "home" page
         router.push({ name: 'HelloWorld' });
-      } else {
-        event.preventDefault();
       }
     }
   }
   // This function is used for whether we want to show the anonymous toggle
+  // Modify the diary entry and anonymous values here
   function toggleAnonymous() {
     var anonymousToggle = document.getElementById("anonymous");
     if ( anonymousToggle.hidden == true ) {
