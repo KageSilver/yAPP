@@ -8,11 +8,11 @@ import MyAchievements from "./MyAchievements.vue";
 </script>
 
 <template>
+  <h1>My Dashboard</h1>
   <TabsRoot
     class="TabsRoot"
     default-value="tab1"
   >
-
 
     <TabsList
       class="TabsList"
@@ -43,7 +43,6 @@ import MyAchievements from "./MyAchievements.vue";
         My Achievements
       </TabsTrigger>
     </TabsList>
-
 
     <TabsContent
       class="TabsContent"
