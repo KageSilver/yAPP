@@ -7,8 +7,7 @@
   color: rgba(255, 255, 255, 0.87);
   
   background: rgb(139,80,105);
-  background: linear-gradient(180deg, rgba(139,80,105,1) 0%, rgba(114,57,94,1) 29%, rgba(25,35,75,1) 100%, rgba(6,24,48,1) 100%);
-    
+  background: linear-gradient(180deg, rgb(129, 47, 81) 0%, rgb(103, 47, 84) 29%, rgb(14, 23, 58) 85%, rgb(4, 20, 41) 100%);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -39,7 +38,6 @@ button {
   transition: border-color 0.25s;
 }
 
-
 .card {
   padding: 2em;
 }
@@ -49,3 +47,9 @@ button {
   margin: 0 auto;
   padding: 2rem;
 }
+
+.amplify-field-group :not(:first-child) .amplify-input {
+  border-start-start-radius: 5px;
+  border-end-start-radius: 5px;
+}
+

@@ -19,7 +19,8 @@ router.beforeEach(async to => {
 	try {
 		const session = await fetchAuthSession();
 	} catch (e: unknown) {
-		if (to.name == "/") {
+		// avoid infinite redirect
+		if (to.name !== "login") {
 			return {
 				name: "signin",
 				query: { redirect: to.name?.toString() },
