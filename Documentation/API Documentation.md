@@ -67,4 +67,4 @@
 ### UpdateUser
  - Updates a user's details.
  - POST: api/users/updateUser 
- - Request body:
+ - Request body: { "userName": "username", "nickName": "nickname", "name": "name" }
