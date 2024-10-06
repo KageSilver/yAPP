@@ -30,7 +30,7 @@ public class PostController : ControllerBase
 
     // POST: api/posts/createPost with body { "userName": "username", "postTitle": "title", "postBody": "body", "diaryEntry": false, "anonymous": false }
     /// <summary>
-    /// Creates a new post
+    /// Creates a new post.
     /// </summary>
     /// <param name="post">The post object containing the details of the post</param>
     /// <returns>An ActionResult containing the Post object if the request is successful, or an error message if it fails</returns>
@@ -80,7 +80,7 @@ public class PostController : ControllerBase
 
     // GET: api/posts/getPostById?pid={pid}
     /// <summary>
-    /// Retrieves a post by a unique identifier
+    /// Retrieves a post by a unique identifier.
     /// </summary>
     /// <param name="pid">The unique identifier for a post.</param>
     /// <returns>An ActionResult containing the Post object if found, or a NotFound result otherwise</returns>
@@ -106,7 +106,7 @@ public class PostController : ControllerBase
 
     // GET: api/posts/getPostsByUser?userName={userName}&diaryEntry={diaryEntry}
     /// <summary>
-    /// Retrieves all public posts from a user
+    /// Retrieves all posts from a user, either all public posts or all diary entries.
     /// </summary>
     /// <param name="userName">The username used to find all posts created by a user.</param>
     /// <param name="diaryEntry">If the query is for public posts or diary entries.</param>
@@ -128,7 +128,7 @@ public class PostController : ControllerBase
 
     // GET: api/posts/getRecentPosts?since={since}&maxResults={maxResults}
     /// <summary>
-    /// Gets all recent posts
+    /// Gets recent posts from before a specified time.
     /// </summary>
     /// <param name="since">Returns posts made after this time.</param>
     /// <param name="maxResults">The maximum number of results to retrieve.</param>
@@ -150,7 +150,7 @@ public class PostController : ControllerBase
     
     // DELETE: api/posts/deletePost?pid={pid}
     /// <summary>
-    /// Deletes a post from the database by a post id
+    /// Deletes a post from the database by a post id.
     /// </summary>
     /// <param name="pid">The id of the post to be deleted.</param>
     /// <returns>A boolean indicating whether the deletion was successful.</returns>
@@ -171,7 +171,7 @@ public class PostController : ControllerBase
 
     // PUT: api/posts/updatePost with body { "pid": "pid", "createdAt": "createdAt", "userName": "username", "postTitle": "title", "postBody": "body", "upvotes": "upvotes", "downvotes": "downvotes", "diaryEntry": false, "anonymous": false }
     /// <summary>
-    /// Edits an already existing post
+    /// Edits an already existing post.
     /// </summary>
     /// <param name="request">The new version of the post after editing.</param>
     /// <returns>An ActionResult containing the edited Post object if successful, or an error message if it fails.</returns>
