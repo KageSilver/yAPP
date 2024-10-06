@@ -121,6 +121,12 @@ public class PostActions : IPostActions
             // Load the post record to check if it exists
             var post = GetPostById(pid);
 
+            if (post.Result == null)
+            {
+                Console.WriteLine("Failed to retrieve post");
+                return false;
+            }
+
             // Delete the post from the database
             await _dynamoDbContext.DeleteAsync(post.Result, _config);
 
