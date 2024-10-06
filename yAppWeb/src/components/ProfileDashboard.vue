@@ -1,13 +1,22 @@
 <script setup>
 import { TabsContent, TabsIndicator, TabsList, TabsRoot, TabsTrigger } from 'radix-vue';
+import { useAuthenticator } from '@aws-amplify/ui-vue';
 
 import MyPosts from "./MyPosts.vue";
 import MyFriends from "./MyFriends.vue";
 import MyAchievements from "./MyAchievements.vue";
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
+
+const goBack = async () => {
+  router.push('/')
+}
 
 </script>
 
 <template>
+
   <h1>My Dashboard</h1>
   <TabsRoot
     class="TabsRoot"
@@ -73,6 +82,9 @@ import MyAchievements from "./MyAchievements.vue";
     </TabsContent>
 
   </TabsRoot>
+  <br>
+  <authenticator></authenticator>
+  <button class="signoutButton" @click="goBack">Back To Dashboard</button>
 </template>
 
 <style>

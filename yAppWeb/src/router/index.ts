@@ -9,15 +9,13 @@ const routes = [
 	{ path: '/profile', name: 'profile', component: ProfileDashboard},
 ]
 
-//TODO: FIX ROUTING AFTERWARDS
-
 const router = createRouter({
 	history: createWebHistory(),
     routes,
 });
 router.beforeEach(async to => {
 	try {
-		const session = await fetchAuthSession();
+		await fetchAuthSession();
 	} catch (e: unknown) {
 		// avoid infinite redirect
 		if (to.name !== "signin") {
