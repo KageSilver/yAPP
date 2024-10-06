@@ -143,9 +143,10 @@ public class PostActionsTests
         _dynamoDbContextMock.Setup(d => d.DeleteAsync(It.IsAny<Post>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()));
 
         // Act
-        await _postActionsMock.DeletePost(request.PID);
+        var result = await _postActionsMock.DeletePost(request.PID);
 
         // Assert
+        Assert.True(result);
         _dynamoDbContextMock.Verify(d => d.DeleteAsync(request, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()));
     }
 
@@ -170,10 +171,10 @@ public class PostActionsTests
             .ThrowsAsync(new Exception("Post does not exist"));
 
         // Act
-        var exception = await Record.ExceptionAsync(() => _postActionsMock.DeletePost(request.PID));
+        var result = await _postActionsMock.DeletePost(request.PID);
 
         // Assert
-        Assert.Null(exception);
+        Assert.False(result);
         _dynamoDbContextMock.Verify(d => d.LoadAsync<Post>(request.PID, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
