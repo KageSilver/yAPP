@@ -1,11 +1,15 @@
 import { fetchAuthSession } from "aws-amplify/auth";
 import { createRouter, createWebHistory } from "vue-router";
 
-import Authenticator from "../components/Authenticator.vue";
+import SignIn from "../components/SignIn.vue";
+import Home from "../components/Home.vue";
 
 const routes = [
-	{ path: '/', component: Authenticator}
+	{ path: '/', name: 'signin', component: SignIn},
+	{ path: '/home', name: 'home', component: Home},
 ]
+
+//TODO: FIX ROUTING AFTERWARDS
 
 const router = createRouter({
 	history: createWebHistory(),
@@ -14,11 +18,10 @@ const router = createRouter({
 router.beforeEach(async to => {
 	try {
 		const session = await fetchAuthSession();
-	
 	} catch (e: unknown) {
-		if (to.name !== "login") {
+		if (to.name == "/") {
 			return {
-				name: "login",
+				name: "signin",
 				query: { redirect: to.name?.toString() },
 			};
 		}
