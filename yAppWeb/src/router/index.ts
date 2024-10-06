@@ -4,7 +4,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Authenticator from "../components/Authenticator.vue";
 
 const routes = [
-	{ path: '/', component: Authenticator}
+	{ path: '/', name: 'login', component: Authenticator,},
 ]
 
 const router = createRouter({
@@ -14,8 +14,8 @@ const router = createRouter({
 router.beforeEach(async to => {
 	try {
 		const session = await fetchAuthSession();
-	
 	} catch (e: unknown) {
+		// avoid infinite redirect
 		if (to.name !== "login") {
 			return {
 				name: "login",

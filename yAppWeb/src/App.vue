@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import Authenticator from './components/Authenticator.vue';
-import SignUp from './components/SignUp.vue';
+import { RouterView } from 'vue-router';
+
 </script>
 
 <template>
   <div>
-    <Authenticator>
-    </Authenticator>
+    <RouterView />
   </div>
 </template>
 
