@@ -51,6 +51,12 @@ const goBack = async () => {
       >
         My Achievements
       </TabsTrigger>
+      <TabsTrigger
+        class="TabsTrigger"
+        value="tab4"
+      >
+        Account Settings
+      </TabsTrigger>
     </TabsList>
 
     <TabsContent
@@ -79,6 +85,14 @@ const goBack = async () => {
         Wow...it's kinda empty in here...
       </p>
       <MyAchievements></MyAchievements>
+    </TabsContent>
+    <TabsContent
+      class="TabsContent"
+      value="tab4"
+    >
+      <p class="Text">
+        Change your Password
+      </p>
     </TabsContent>
 
   </TabsRoot>
