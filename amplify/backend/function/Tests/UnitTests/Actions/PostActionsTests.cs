@@ -177,7 +177,6 @@ public class PostActionsTests
         Assert.False(result);
         _dynamoDbContextMock.Verify(d => d.LoadAsync<Post>(request.PID, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Once);
     }
-
     
     [Fact]
     public async Task DeletePost_ShouldHandleException_WhenDeletePostFails()
