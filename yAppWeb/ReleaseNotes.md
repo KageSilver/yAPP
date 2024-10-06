@@ -11,6 +11,8 @@
 * devTaskIssue#57-FeatureIssue#1-Issue #10 unit tests
 * devTaskIssue#58-FeatureIssue#1-Issue #10 integration tests
 * devTaskIssue#63-FeatureIssue#1-Create an endpoint to get all public question posts a user has made
+* devTaskIssue#67-FeatureIssue#1-Issue #9 unit tests
+* devTaskIssue#68-FeatureIssue#1-Issue #9 integration tests
 
 * devTaskIssue#38-FeatureIssue#5-Create an endpoint to allow user to update their information
 * devTaskIssue#39-FeatureIssue#5-Create an endpoint to get all friends

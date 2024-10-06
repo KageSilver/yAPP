@@ -61,11 +61,17 @@ public class PostActions : IPostActions
     /// </summary>
     /// <param name="pid">The id to find a post.</param>
     /// <returns>An ActionResult containing the Post object if found, or a NotFound result otherwise.</returns>
-    public async Task<ActionResult<Post>> GetPostById(string pid)
+    public async Task<Post> GetPostById(string pid)
     {
         try
         {
             var post = await _dynamoDbContext.LoadAsync<Post>(pid, _config);
+
+            if(post.Anonymous)
+            {
+                post.UserName = "Anonymous";
+            }
+            
             return post;
         }
         catch (Exception e)
@@ -113,10 +119,10 @@ public class PostActions : IPostActions
         try
         {
             // Load the post record to check if it exists
-            var post = GetPostById(pid).Result.Value;
+            var post = GetPostById(pid);
 
             // Delete the post from the database
-            await _dynamoDbContext.DeleteAsync(post, _config);
+            await _dynamoDbContext.DeleteAsync(post.Result, _config);
 
             return true;
         }
@@ -164,7 +170,7 @@ public class PostActions : IPostActions
             
             foreach(Post post in result)
             {
-                var thisPost = GetPostById(post.PID).Result.Value;
+                var thisPost = GetPostById(post.PID).Result;
                 thisPost.UserName = "Anonymous";
                 posts.Add(thisPost);
             }
