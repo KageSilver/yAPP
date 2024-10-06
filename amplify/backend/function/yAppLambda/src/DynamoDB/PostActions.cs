@@ -121,6 +121,12 @@ public class PostActions : IPostActions
             // Load the post record to check if it exists
             var post = GetPostById(pid);
 
+            if (post.Result == null)
+            {
+                Console.WriteLine("Failed to retrieve post");
+                return false;
+            }
+
             // Delete the post from the database
             await _dynamoDbContext.DeleteAsync(post.Result, _config);
 
@@ -130,6 +136,25 @@ public class PostActions : IPostActions
         {
             Console.WriteLine("Failed to delete post: " + e.Message);
             return false;
+        }
+    }
+    
+    /// <summary>
+    /// Updates an already existing post
+    /// </summary>
+    /// <param name="updatedPost">The new version of the post after editing.</param>
+    /// <returns>An ActionResult containing the edited Post object if successful, or an error message if it fails.</returns>
+    public async Task<ActionResult<Post>> UpdatePost(Post updatedPost)
+    {
+        try
+        {
+            await _dynamoDbContext.SaveAsync(updatedPost, _config);
+            return new OkObjectResult(updatedPost);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to update post: " + e.Message);
+            return new StatusCodeResult(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
     
