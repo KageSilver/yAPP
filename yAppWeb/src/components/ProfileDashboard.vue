@@ -1,6 +1,5 @@
 <script setup>
 import { TabsContent, TabsIndicator, TabsList, TabsRoot, TabsTrigger } from 'radix-vue';
-import { useAuthenticator } from '@aws-amplify/ui-vue';
 
 import MyPosts from "./MyPosts.vue";
 import MyFriends from "./MyFriends.vue";
