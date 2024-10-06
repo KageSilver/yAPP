@@ -47,7 +47,7 @@ However, other teams can still run the unit tests for this project. Please refra
             - [https://localhost:54053/swagger/index.html](https://localhost:54053/swagger/index.html)
             - Example:
             ![swagger_api](Examples/swagger_api.png)
-    - **Run the unit tests
+    - **Run the unit tests**
         - Find the UnitTests folder: yApp/amplify/backend/function/Tests/UnitTests
             - Example:
             ![run_unit](Examples/run_unit.png)
