@@ -1,7 +1,9 @@
 <script setup>
   import { Authenticator } from "@aws-amplify/ui-vue";
-  import "@aws-amplify/ui-vue/styles.css";
   import { RouterLink } from "vue-router";
+
+  import "@aws-amplify/ui-vue/styles.css";
+
 </script>
 
 <template>
@@ -17,7 +19,6 @@
       </div>
     </template>
 
-
     <!-- LANDING PAGE -->
     <template v-slot="{ user, signOut }" >
       <h1>Hello {{ user.username }}!</h1>
@@ -26,7 +27,6 @@
       <br>
       <button class="primary-button" @click="signOut">Sign Out</button>
     </template>
-
   </authenticator>
 </template>
 
@@ -61,12 +61,10 @@
     font-weight: bold !important;
   }
   
-
   [data-amplify-router] {
     box-shadow: 0 0 16px var(--amplify-colors-overlay-10);
     border-width: 0px;
     border-radius: 5px;
     opacity: 85%;
   }
-
 </style>

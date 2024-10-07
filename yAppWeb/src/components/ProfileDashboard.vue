@@ -1,11 +1,11 @@
 <script setup>
 import { TabsContent, TabsIndicator, TabsList, TabsRoot, TabsTrigger } from 'radix-vue';
+import { useRouter } from 'vue-router';
 
+import AccountSettings from "./AccountSettings.vue";
 import MyPosts from "./MyPosts.vue";
 import MyFriends from "./MyFriends.vue";
 import MyAchievements from "./MyAchievements.vue";
-import AccountSettings from "./AccountSettings.vue";
-import { useRouter } from 'vue-router';
 
 const router = useRouter()
 
@@ -13,10 +13,9 @@ const goBack = async () => {
   router.push('/')
 }
 
-const goAddFriends = async () => {
+const addFriend = async() => {
   router.push('/add-friends')
 }
-
 </script>
 
 <template>
@@ -83,7 +82,7 @@ const goAddFriends = async () => {
       </p>
       <MyFriends></MyFriends>
       <br>
-      <button class="primary-button" click="goAddFriends">+ Add Friends</button>
+      <button class="primary-button" @click="addFriend">+ Add Friends</button>
     </TabsContent>
 
     <TabsContent
@@ -104,7 +103,9 @@ const goAddFriends = async () => {
     </TabsContent>
 
   </TabsRoot>
+  
   <br>
+
   <button class="primary-button" @click="goBack">Back To Home</button>
 </template>
 
