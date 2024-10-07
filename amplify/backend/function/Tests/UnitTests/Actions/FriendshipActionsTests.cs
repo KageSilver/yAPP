@@ -270,4 +270,90 @@ public class FriendshipActionsTests
         _dynamoDbContextMock.Verify(d => d.LoadAsync<Friendship>(fromUserName, toUserName, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Once);
     }
     
+    #region DeleteFriendShip Tests
+
+    [Fact]
+    public async Task DeleteFriendship_ShouldCallDeleteAsync()
+    {
+        // Arrange
+        const string fromUserName = "user1@example.com";
+        const string toUserName = "user2@example.com";
+        var friendship = new Friendship
+        {
+            FromUserName = fromUserName,
+            ToUserName = toUserName,
+            Status = FriendshipStatus.Accepted
+        };
+        
+        // Sets up LoadAsync to return the friendship (for GetFriendship)
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Friendship>(fromUserName, toUserName, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(friendship);
+
+        // Sets up DeleteAsync to succeed            
+        _dynamoDbContextMock.Setup(d => d.DeleteAsync(It.IsAny<Friendship>, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()));
+
+        // Act
+        var result = await _friendshipActionsMock.DeleteFriendship(fromUserName, toUserName);
+
+        // Assert
+        Assert.True(result);
+        _dynamoDbContextMock.Verify(d => d.DeleteAsync(friendship, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()));
+    }
+
+    [Fact]
+    public async Task DeleteFriendship_ShouldHandleException_WhenPostDoesNotExist()
+    {
+        // Arrange
+        const string fromUserName = "user1@example.com";
+        const string toUserName = "user2@example.com";
+        var friendship = new Friendship
+        {
+            FromUserName = fromUserName,
+            ToUserName = toUserName,
+            Status = FriendshipStatus.Accepted
+        };
+        
+        // Sets up LoadAsync to return the friendship (for GetFriendship)
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Friendship>(fromUserName, toUserName,
+                It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new Exception("Friendship does not exist"));
+        
+        // Act
+        var result = await _friendshipActionsMock.DeleteFriendship(fromUserName, toUserName);
+        
+        // Assert
+        Assert.False(result);
+        _dynamoDbContextMock.Verify(d => d.LoadAsync<Friendship>(fromUserName, toUserName, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task DeleteFriendship_ShouldHandleException_WhenDeleteFriendshipFails()
+    {
+        // Arrange
+        const string fromUserName = "user1@example.com";
+        const string toUserName = "user2@example.com";
+        var friendship = new Friendship
+        {
+            FromUserName = fromUserName,
+            ToUserName = toUserName,
+            Status = FriendshipStatus.Accepted
+        };
+        
+        // Sets up LoadAsync to return the friendship (for GetFriendship)
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Friendship>(fromUserName, toUserName, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(friendship);
+        
+        // Sets up DeleteAsync to throw an exception           
+        _dynamoDbContextMock.Setup(d => d.DeleteAsync(It.IsAny<Friendship>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new Exception("Could not delete friendship"));
+        
+        // Act
+        var result = await _friendshipActionsMock.DeleteFriendship(fromUserName, toUserName);
+
+        // Assert
+        Assert.False(result);
+        _dynamoDbContextMock.Verify(d => d.DeleteAsync(friendship, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+    
+    #endregion
 }

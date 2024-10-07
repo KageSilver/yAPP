@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using yAppLambda.DynamoDB;
 using yAppLambda.Enum;
 
@@ -254,5 +256,46 @@ public class FriendControllerTests
         Assert.Equal("Failed to update friendship status", badRequestResult.Value);
     }
 
+    #region GetFriends Tests
+    
+    [Fact]
+    public async Task GetFriends_ShouldReturnFriends_WhenSuccessful()
+    {
+        // Arrange
+        var existingFriendship = new Friendship
+        {
+            FromUserName = "user1@example.com",
+            ToUserName = "user2@example.com",
+            Status = FriendshipStatus.Pending
+        };
 
+        var list = new List<Friendship>();
+        list.Add(existingFriendship);
+
+        _mockFriendshipStatusActions.Setup(s => s.GetFriendshipStatus(It.IsAny<int>())).Returns(FriendshipStatus.All);
+        _mockFriendshipActions.Setup(s => s.GetAllFriends(existingFriendship.FromUserName, It.IsAny<FriendshipStatus>())).ReturnsAsync(list);
+
+        // Act
+        var result = await _friendController.GetFriends(existingFriendship.FromUserName);
+
+        // Assert
+        var friendList = Assert.IsType<List<Friendship>>(result.Value);
+        Assert.Equal(1, friendList.Count);
+        Assert.Equal(existingFriendship.FromUserName, friendList.First().FromUserName);
+        Assert.Equal(existingFriendship.ToUserName, friendList.First().ToUserName);
+        Assert.Equal(existingFriendship.Status, friendList.First().Status);
+    }
+
+    [Fact]
+    public async Task GetFriends_ShouldReturnBadRequest_WhenUsernameIsMissing()
+    {
+        // Act
+        var result = _friendController.GetFriends(null);
+
+        // Assert
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result.Result);
+        Assert.Equal("username is required", badRequestResult.Value);
+    }
+    
+    #endregion
 }

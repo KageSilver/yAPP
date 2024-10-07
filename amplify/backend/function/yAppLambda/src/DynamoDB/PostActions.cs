@@ -1,5 +1,6 @@
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
+using Amazon.DynamoDBv2.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using yAppLambda.Models;
@@ -60,11 +61,17 @@ public class PostActions : IPostActions
     /// </summary>
     /// <param name="pid">The id to find a post.</param>
     /// <returns>An ActionResult containing the Post object if found, or a NotFound result otherwise.</returns>
-    public async Task<ActionResult<Post>> GetPostById(string pid)
+    public async Task<Post> GetPostById(string pid)
     {
         try
         {
             var post = await _dynamoDbContext.LoadAsync<Post>(pid, _config);
+
+            if(post.Anonymous)
+            {
+                post.UserName = "Anonymous";
+            }
+            
             return post;
         }
         catch (Exception e)
@@ -112,10 +119,16 @@ public class PostActions : IPostActions
         try
         {
             // Load the post record to check if it exists
-            var post = GetPostById(pid).Result.Value;
+            var post = GetPostById(pid);
+
+            if (post.Result == null)
+            {
+                Console.WriteLine("Failed to retrieve post");
+                return false;
+            }
 
             // Delete the post from the database
-            await _dynamoDbContext.DeleteAsync(post, _config);
+            await _dynamoDbContext.DeleteAsync(post.Result, _config);
 
             return true;
         }
@@ -123,6 +136,76 @@ public class PostActions : IPostActions
         {
             Console.WriteLine("Failed to delete post: " + e.Message);
             return false;
+        }
+    }
+    
+    /// <summary>
+    /// Updates an already existing post
+    /// </summary>
+    /// <param name="updatedPost">The new version of the post after editing.</param>
+    /// <returns>An ActionResult containing the edited Post object if successful, or an error message if it fails.</returns>
+    public async Task<ActionResult<Post>> UpdatePost(Post updatedPost)
+    {
+        try
+        {
+            await _dynamoDbContext.SaveAsync(updatedPost, _config);
+            return new OkObjectResult(updatedPost);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to update post: " + e.Message);
+            return new StatusCodeResult(statusCode: StatusCodes.Status500InternalServerError);
+        }
+    }
+    
+    /// <summary>
+    /// Gets all recent posts
+    /// </summary>
+    /// <param name="since">Returns posts made after this time.</param>
+    /// <param name="maxResults">The maximum number of results to retrieve.</param>
+    /// <returns>A list of recent posts.</returns>
+    public async Task<List<Post>> GetRecentPosts(DateTime since, int maxResults)
+    {
+        try
+        {
+            var expressionAttributeValues = new Dictionary<string, DynamoDBEntry>();
+            expressionAttributeValues.Add(":diaryEntry", false);
+            expressionAttributeValues.Add(":since", since.ToString());
+            
+            var query = new QueryOperationConfig()
+            {
+                IndexName = "CreatedAtIndex",
+                KeyExpression = new Expression
+                {
+                    ExpressionStatement = "DiaryEntry = :diaryEntry AND CreatedAt > :since",
+                    ExpressionAttributeValues = expressionAttributeValues
+                },
+                Limit = maxResults,
+                AttributesToGet = new List<string>
+                {
+                    "PID"
+                },
+                Select = SelectValues.SpecificAttributes,
+                BackwardSearch = true
+            };
+
+            var result = await _dynamoDbContext.FromQueryAsync<Post>(query, _config).GetNextSetAsync();
+            
+            var posts = new List<Post>();
+            
+            foreach(Post post in result)
+            {
+                var thisPost = GetPostById(post.PID).Result;
+                thisPost.UserName = "Anonymous";
+                posts.Add(thisPost);
+            }
+
+            return posts;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to get recent posts: " + e.Message);
+            return new List<Post>();
         }
     }
 }
