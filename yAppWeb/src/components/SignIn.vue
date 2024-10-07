@@ -21,10 +21,10 @@
     <!-- LANDING PAGE -->
     <template v-slot="{ user, signOut }" >
       <h1>Hello {{ user.username }}!</h1>
-      <RouterLink to="/profile" style="color:var(--amplify-colors-neutral-40);">Go to Dashboard</RouterLink>
+      <RouterLink to="/dashboard" style="color:var(--amplify-colors-neutral-40);">Go to Dashboard</RouterLink>
       <br>
       <br>
-      <button class="signoutButton" @click="signOut">Sign Out</button>
+      <button class="primary-button" @click="signOut">Sign Out</button>
     </template>
 
   </authenticator>
