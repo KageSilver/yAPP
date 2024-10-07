@@ -1,42 +1,36 @@
 <script setup>
-  import { Authenticator, useAuthenticator } from '@aws-amplify/ui-vue';
-  import { resetPassword } from 'aws-amplify/auth';
-  
-  // reference to access authenticated user
-  // https://ui.docs.amplify.aws/react/connected-components/authenticator/advanced
+  import { updatePassword } from 'aws-amplify/auth';
 
   // reference to changing password via auth
   // https://docs.amplify.aws/gen1/javascript/prev/build-a-backend/auth/manage-passwords/
-  // https://docs.amplify.aws/gen1/vue/build-a-backend/auth/manage-passwords/
 
-  const auth = useAuthenticator()
-  const user = auth.user
-
-  const services = {
-      async handleSignOut() {
-      return resetPassword({user}) // not correct
+  function onSubmit() {
+    const oldPassword = document.getElementById("oldPassword").value; 
+    const newPassword = document.getElementById("newPassword").value;
+    handleUpdatePassword(oldPassword, newPassword)
   }
-}
+
+  async function handleUpdatePassword(oldPassword, newPassword) {
+    try {
+      await updatePassword({ oldPassword, newPassword });
+    } catch (err) {
+      console.log(err);
+    }
+  }
 </script>
 
 <template>
-  <authenticator :services="services"></authenticator>
-
   <div class="fieldset">
-        <label>Old Password: </label>
-        <input class="input" id="oldPassword" type="password">
-      </div>
-
-      <br>
-
-      <div class="fieldset">
-        <label>New Password: </label>
-        <input class="input" id="newPassword" type="password">
-      </div>
-
-      <br>
-
-      <button>Submit Changes</button>
+    <label>Old Password: </label>
+    <input class="input" id="oldPassword" type="password">
+  </div>
+  <br>
+  <div class="fieldset">
+    <label>New Password: </label>
+    <input class="input" id="newPassword" type="password">
+  </div>
+  <br>
+  <button class="primary-button" @click="onSubmit">Submit Changes</button>
 </template>
 
 <style>

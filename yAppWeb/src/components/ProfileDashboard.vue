@@ -3,9 +3,9 @@ import { TabsContent, TabsIndicator, TabsList, TabsRoot, TabsTrigger } from 'rad
 import { useRouter } from 'vue-router';
 
 import AccountSettings from "./AccountSettings.vue";
-import MyPosts from "./MyPosts.vue";
-import MyFriends from "./MyFriends.vue";
 import MyAchievements from "./MyAchievements.vue";
+import MyFriends from "./MyFriends.vue";
+import MyPosts from "./MyPosts.vue";
 
 const router = useRouter()
 
