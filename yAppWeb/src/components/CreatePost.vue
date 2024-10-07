@@ -1,48 +1,62 @@
 <script setup lang="js">
+  import { post } from '@aws-amplify/api';
   import { useAuthenticator } from "@aws-amplify/ui-vue";
   import { useRouter } from 'vue-router'; // Import useRouter
   const auth = useAuthenticator(); // Grab authenticator for username
   const router = useRouter(); // Use router hook
-  var post = {
-    "UserName": '',
-    "PostTitle": '',
-    "PostBody": '',
-    "DiaryEntry": false,
-    "Anonymous": true
+  var newPost = {
+    "userName": "",
+    "postTitle": "",
+    "postBody": "",
+    "diaryEntry": false,
+    "anonymous": true
   };
 
-  function createPost() {
+  async function createPost(event) {
+    event.preventDefault();
     var postElements = document.getElementById("post").elements;
-    post.PostTitle = postElements[0].value;
-    post.PostBody = postElements[1].value;
-    if ( post.PostTitle != '' && post.PostBody != '' ) {
-      post.UserName = auth.user?.username;
+    newPost.postTitle = postElements[0].value;
+    newPost.postBody = postElements[1].value;
+    if ( newPost.postTitle != '' && newPost.postBody != '' ) {
+      newPost.userName = auth.user?.username;
       // Make API call to create the post
-      var jsonPost = JSON.stringify(post);
-      fetch("/api/posts/createPost", {
-        method: "POST",
-        body: jsonPost,
-        headers: {
-          "Content-type": "application/json; charset=UTF-8"
-        }
-      });
-      console.log('Post created:', post);
+      try {
+        const sendPostRequest = post({
+          apiName: "yapp",
+          path: "/api/posts/createPost",
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          options: {
+            body: newPost
+          }
+        });
+        const {body} = await sendPostRequest.response;
+        const response = await body.json();
 
-      // Reset form fields after submission
-      post.UserName = '';
-      post.PostTitle, postElements[0].value = '';
-      post.PostBody, postElements[1].value = '';
-      // Send to home page
-      router.push({ name: 'profile' });
+        console.log("POST call succeeded", response);
+        
+        // Reset form fields after submission
+        newPost.userName = '';
+        newPost.postTitle, postElements[0].value = '';
+        newPost.postBody, postElements[1].value = '';
+        // Send to home page
+        router.push({ name: 'profile' });
+        // TODO: Show confirmation
+        alert("Posted!");
+      } catch (e) {
+        console.log("POST call failed: ", e);
+        alert("Post failed to create... Try agin!");
+      }
     }
   }
 
   function discardPost(event) {
     event.preventDefault();
     var postElements = document.getElementById("post").elements;
-    post.PostTitle = postElements[0].value;
-    post.PostBody = postElements[1].value;
-    if ( post.PostTitle != '' || post.PostBody != '' ) {
+    newPost.postTitle = postElements[0].value;
+    newPost.postBody = postElements[1].value;
+    if ( newPost.postTitle != '' || newPost.postBody != '' ) {
       console.log('Throwing away post...');
       if (confirm("Are you sure you want to throw away your changes??")) {
         // Send to home page
@@ -52,6 +66,7 @@
       router.push({ name: 'profile' });
     }
   }
+
   // This function is used for whether we want to show the anonymous toggle
   // Modify the diary entry and anonymous values here
   function toggleAnonymous() {
