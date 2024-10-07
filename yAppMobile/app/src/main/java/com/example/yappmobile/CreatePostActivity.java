@@ -16,47 +16,58 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import android.util.Log;
+import com.amplifyframework.AmplifyException;
+import com.amplifyframework.api.aws.AWSApiPlugin;
+import com.amplifyframework.core.Amplify;
+import com.amplifyframework.api.rest.RestOptions;
 
 public class CreatePostActivity extends AppCompatActivity {
-    private JSONObject post;
+    private JSONObject newPost;
     private TextInputLayout titleText;
     private TextInputLayout contentText;
-    private Button discardPost;
+    private AlertDialog successDialog;
+    private AlertDialog failureDialog;
+
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_post);
 
-        post = new JSONObject();
         try {
-            post.put("UserName", "");
-            post.put("PostTitle", "");
-            post.put("PostBody", "");
-            post.put("DiaryEntry", false);
-            post.put("Anonymous", true);
+            Amplify.addPlugin(new AWSApiPlugin());
+            Amplify.configure(this);
+
+            Log.i("AmplifyInit", "Initialized Amplify.");
+        } catch (AmplifyException error) {
+            System.out.println("Could not initialize Amplify." + error);
+        }
+
+        newPost = new JSONObject();
+        try {
+            newPost.put("userName", "");
+            newPost.put("postTitle", "");
+            newPost.put("postBody", "");
+            newPost.put("diaryEntry", false);
+            newPost.put("anonymous", true);
         } catch (Exception e) {
             System.out.println("Exception occurred when adding elements to json object: " + e);
         }
         titleText = findViewById(R.id.post_title);
         contentText = findViewById(R.id.post_content);
 
-        discardPost = findViewById(R.id.discard_button);
-        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setTitle("Discard Changes??");
-        alertDialog.setMessage("Are you really sure that you want to discard your changes??");
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
+        // Discard button alert dialog
+        Button discardPost = findViewById(R.id.discard_button);
+        AlertDialog discardDialog = new AlertDialog.Builder(this).create();
+        discardDialog.setTitle("Discard Changes??");
+        discardDialog.setMessage("Are you really sure that you want to discard your changes??");
+        discardDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 Intent intent = new Intent(CreatePostActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         });
-        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No, keep editing", new DialogInterface.OnClickListener() {
+        discardDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No, keep editing", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 System.out.println("Keep editing");
             }
@@ -67,11 +78,30 @@ public class CreatePostActivity extends AppCompatActivity {
             public void onClick(View v)
             {
                 if ( discardPost() ) {
-                    alertDialog.show();
+                    discardDialog.show();
                 } else {
                     Intent intent = new Intent(CreatePostActivity.this, MainActivity.class);
                     startActivity(intent);
                 }
+            }
+        });
+
+        // Create post alert dialog
+        successDialog = new AlertDialog.Builder(this).create();
+        successDialog.setTitle("Post successfully created!");
+        successDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Heck yeah", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                Intent intent = new Intent(CreatePostActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        // Create post alert dialog
+        failureDialog = new AlertDialog.Builder(this).create();
+        failureDialog.setTitle("Post failed to create... Try again!");
+        failureDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Aw man...", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                failureDialog.dismiss();
             }
         });
     }//end onCreate
@@ -82,24 +112,22 @@ public class CreatePostActivity extends AppCompatActivity {
         String postBody = contentText.getEditText().getText().toString();
         if ( !postTitle.equals("") && !postBody.equals("") ) {
             // TODO: change to actual user when that part is ready
-            String userName = "cs0716934@gmail.com";
+            String userName = "taralb6@gmail.com";
             try {
-                post.put("PostTitle", postTitle);
-                post.put("PostBody", postBody);
-                post.put("UserName", userName);
+                newPost.put("postTitle", postTitle);
+                newPost.put("postBody", postBody);
+                newPost.put("userName", userName);
             } catch (Exception e) {
                 System.out.println("Exception occurred when adding elements to json object: " + e);
             }
             try {
-                String stringPost = post.toString();
-                String response = sendPost("/api/posts/createPost", stringPost);
-                System.out.println(response);
+                String stringPost = newPost.toString();
+                sendPost("/api/posts/createPost", stringPost);
+                successDialog.show();
             } catch (Exception e) {
                 e.printStackTrace();
+                failureDialog.show();
             }
-            // Send to "home" page, later on to the post's page itself
-            Intent intent = new Intent(CreatePostActivity.this, MainActivity.class);
-            startActivity(intent);
         } else if ( postTitle.equals("") ) {
             int red = Color.parseColor("#FF0000");
             titleText.setBoxStrokeColor(red);
@@ -113,40 +141,15 @@ public class CreatePostActivity extends AppCompatActivity {
         }
     }//end createPost
 
-    private String sendPost(String apiUrl, String postData) throws Exception {
-        // Create the URL
-        URL url = new URL(apiUrl);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-        // Set the request method to POST
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "application/json; utf-8");
-        connection.setRequestProperty("Accept", "application/json");
-        connection.setDoOutput(true); // Enable writing output to the connection
-
-        // Send the POST data
-        try (OutputStream os = connection.getOutputStream()) {
-            byte[] input = postData.getBytes(StandardCharsets.UTF_8);
-            os.write(input, 0, input.length);
-        }
-
-        // Get the response code
-        int responseCode = connection.getResponseCode();
-        if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_CREATED) { // success
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
-
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-
-            // Return the response as a string
-            return response.toString();
-        } else {
-            return "POST request failed: " + responseCode;
-        }
+    private void sendPost(String apiUrl, String postData) throws Exception {
+        RestOptions options = RestOptions.builder()
+                .addPath(apiUrl)
+                .addBody(postData.getBytes())
+                .build();
+        Amplify.API.post(options,
+                response -> Log.i("API", "POST response: " + response.getData().asString()),
+                error -> Log.e("API", "POST request failed", error)
+                );
     }
 
     private boolean discardPost() {

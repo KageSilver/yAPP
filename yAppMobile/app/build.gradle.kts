@@ -48,6 +48,8 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:2.6.0")
     // Amplify core dependency
     implementation("com.amplifyframework:core:2.19.1")
+    implementation("com.amplifyframework:aws-api:1.38.8")
+    implementation("com.amplifyframework:aws-auth-cognito:1.38.8")
     // Support for Java 8 features
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
     testImplementation("junit:junit:4.13.2")
