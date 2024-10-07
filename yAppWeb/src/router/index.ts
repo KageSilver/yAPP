@@ -4,19 +4,18 @@ import { createRouter, createWebHistory } from "vue-router";
 import SignIn from "../components/SignIn.vue";
 import ProfileDashboard from "../components/ProfileDashboard.vue";
 import CreatePost from "../components/CreatePost.vue";
-import HelloWorld from "../components/HelloWorld.vue";
 
 const routes = [
 	{ path: '/', name: 'signin', component: SignIn},
 	{ path: '/profile', name: 'profile', component: ProfileDashboard},
-	{ path: 'create-post', name: 'createPost', component: CreatePost},
+	{ path: '/create-post', name: 'createPost', component: CreatePost},
 ]
 
 const router = createRouter({
 	history: createWebHistory(),
     routes,
 });
-/*router.beforeEach(async to => {
+router.beforeEach(async to => {
 	try {
 		await fetchAuthSession();
 	} catch (e: unknown) {
@@ -28,7 +27,7 @@ const router = createRouter({
 			};
 		}
 	}
-});*/
+});
 
 router.onError((error, to) => {
 	if (

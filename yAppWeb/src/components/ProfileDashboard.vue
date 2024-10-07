@@ -12,6 +12,10 @@ const goBack = async () => {
   router.push('/')
 }
 
+const goToCreatePost = async () => {
+  router.push('/create-post')
+}
+
 </script>
 
 <template>
@@ -97,7 +101,8 @@ const goBack = async () => {
   </TabsRoot>
   <br>
   <authenticator></authenticator>
-  <button class="signoutButton" @click="goBack">Back To Dashboard</button>
+  <button class="signoutButton" @click="goBack">Back To Login</button>
+  <button class="createPostButton signoutButton" type="button" @click="goToCreatePost">Make a new post!</button>
 </template>
 
 <style>
@@ -172,5 +177,9 @@ const goBack = async () => {
     border-bottom-left-radius: 6px;
     border-bottom-right-radius: 6px;
     outline: none;
+  }
+
+  .createPostButton {
+    float: right !important;
   }
 </style>

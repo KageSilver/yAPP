@@ -1,5 +1,7 @@
 <script setup lang="js">
+  import { useAuthenticator } from "@aws-amplify/ui-vue";
   import { useRouter } from 'vue-router'; // Import useRouter
+  const auth = useAuthenticator(); // Grab authenticator for username
   const router = useRouter(); // Use router hook
   var post = {
     "UserName": '',
@@ -14,9 +16,7 @@
     post.PostTitle = postElements[0].value;
     post.PostBody = postElements[1].value;
     if ( post.PostTitle != '' && post.PostBody != '' ) {
-      // TODO: change to actual user when that part is ready
-      var userName = "cs0716934@gmail.com";
-      post.UserName = userName;
+      post.UserName = auth.user?.username;
       // Make API call to create the post
       var jsonPost = JSON.stringify(post);
       fetch("/api/posts/createPost", {
@@ -32,8 +32,8 @@
       post.UserName = '';
       post.PostTitle, postElements[0].value = '';
       post.PostBody, postElements[1].value = '';
-      // Send to "home" page, later on to the post's page itself
-      router.push({ name: 'HelloWorld' });
+      // Send to home page
+      router.push({ name: 'profile' });
     }
   }
 
@@ -45,9 +45,11 @@
     if ( post.PostTitle != '' || post.PostBody != '' ) {
       console.log('Throwing away post...');
       if (confirm("Are you sure you want to throw away your changes??")) {
-        // Send to "home" page
-        router.push({ name: 'HelloWorld' });
+        // Send to home page
+        router.push({ name: 'profile' });
       }
+    } else {
+      router.push({ name: 'profile' });
     }
   }
   // This function is used for whether we want to show the anonymous toggle
@@ -101,7 +103,7 @@
       </div>
 
       <button title="Discard Post" class="back-button" @click="discardPost">Discard</button>
-      <button title="Create Post" type="submit" @click="createPost">Create Post</button>
+      <button title="Create Post" class="createPostButton signoutButton" type="submit" @click="createPost">Create Post</button>
     </form>
   </div>
 </template>
@@ -119,6 +121,7 @@
     padding: 20px;
     background-color: #fae9f4;
     border-radius: 8px;
+    text-align: center;
   }
   
   .form-group {
@@ -140,18 +143,6 @@
     border-radius: 4px;
   }
   
-  button {
-    padding: 10px 20px;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #72395e;
-  }
-
   .back-button {
     padding: 5px;
     color: white;
@@ -159,7 +150,14 @@
     border-radius: 5px;
     cursor: pointer;
     background-color: #19234b;
-    margin: 0 15px;
+    margin: 0 50px;
+  }
+  .back-button:hover {
+    background-color: #72395e;
+  }
+
+  .createPostButton {
+    float: none !important;
   }
 
   /* Section is all for the diary entries. 
