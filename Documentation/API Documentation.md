@@ -45,7 +45,7 @@
 ### UpdatePost
  - Edits an already existing post.
  - PUT: api/posts/updatePost
- - Request body: { "pid": "pid", "createdAt": "createdAt", "userName": "username", "postTitle": "title", "postBody": "body", "upvotes": "upvotes", "downvotes": "downvotes", "diaryEntry": false, "anonymous": false }
+ - Request body: { "pid": "pid", "createdAt": "createdAt", "userName": "username", "postTitle": "title", "postBody": "body", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": false }
 
 ### DeletePost
  - Deletes a post from the database by a post id.
