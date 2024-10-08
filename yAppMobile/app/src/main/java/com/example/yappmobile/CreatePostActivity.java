@@ -134,6 +134,7 @@ public class CreatePostActivity extends AppCompatActivity {
         RestOptions options = RestOptions.builder()
                 .addPath(apiUrl)
                 .addBody(postData.getBytes())
+                .addHeader("Content-Type", "application/json")
                 .build();
         System.out.println("POST DATA IS HERE: " + postData);
         Amplify.API.post(options,
