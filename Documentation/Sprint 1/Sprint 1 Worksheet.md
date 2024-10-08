@@ -1,7 +1,7 @@
 # yApp
 
 ## Test Plan
- - The [test plan](Test%20Plan.md) for sprint 1 goes over
+ - The test plan for our project can be found [here]()
 
 ## Unit/Integration/Acceptance Tests
 ### Backend
@@ -30,14 +30,20 @@
 
 ## Test Importance
 ### Our 3 most important unit tests
-1. 
-2. 
-3. 
+1. CreateUser_ShouldCallAdminCreateUserAsync() - from CognitoActionsTests
+    - This tests if the method CreateUser() calls .AdminCreateUserAsync(), which is required to create a user in the database, and sends the correct response when a user is created successfully.
+2. CreateFriendship_ShouldReturnOk_WhenFriendshipIsCreatedSuccessfully() - from FriendshipActionsTests
+    - This tests if the method CreateFriendship() calls .SaveAsync(), which is required to create a friendship in the database, and sends the correct response when a friendship is created successfully. 
+3. CreatePost_ShouldReturnOK_WhenPostIsCreatedSuccessfully() - from PostActionsTests
+    - This tests if the method CreatePost() calls .SaveAsync(), which is required to create a post in the database, and sends the correct response when a post is created successfully.
 
 ### Our 3 most important integration tests
-1. 
-2. 
-3. 
+1. GetUserById_ShouldReturnFound_WhenUserExist() - from UserControllerTests
+    - This tests if a user exists in the database by the user ID, which will return a user object if the user if found.
+2. SendFriendRequest_ValidRequest_ReturnsFriendship() - from FriendControllerTests
+    - This tests if a friend request was created successfully in the database, which will return a new friendship object.
+3. CreatePost_ValidRequest_ReturnsPost() - from PostControllerTests
+    - This tests if a post was created successfuly in the database, which will return the new post object.
 
 ### Our 3 most important acceptance tests
 1. 
