@@ -2,6 +2,8 @@ package com.example.yappmobile;
 
 import android.app.Application;
 import android.util.Log;
+
+import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin;
 import com.amplifyframework.core.Amplify;
 import com.amplifyframework.api.aws.AWSApiPlugin;
 import com.amplifyframework.AmplifyException;
@@ -14,6 +16,7 @@ public class yAPPMain extends Application {
         try {
             // Initialize plugins
             Amplify.addPlugin(new AWSApiPlugin());
+            Amplify.addPlugin(new AWSCognitoAuthPlugin());
             Amplify.configure(getApplicationContext());
             Log.i("AmplifyConfig", Amplify.API.getPlugin("awsAPIPlugin").toString());
             Log.i("AmplifyInit", "Initialized Amplify");
