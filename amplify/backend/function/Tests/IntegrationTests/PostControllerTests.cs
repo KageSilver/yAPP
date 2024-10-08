@@ -60,6 +60,8 @@ public class PostControllerIntegrationTests
         _postActions = new PostActions(_appSettings, dynamoDbContext);
     }
 
+    #region CreatePost Tests
+
     [Fact, Order(1)]
     public async Task CreatePost_ValidRequest_ReturnsPost()
     {
@@ -76,7 +78,7 @@ public class PostControllerIntegrationTests
         var newPost = new NewPost
         {
             UserName = TestUserEmail,
-            PostTitle = "title",
+            PostTitle = "CreatePost_ValidRequest_ReturnsPost()",
             PostBody = "body",
             DiaryEntry = false,
             Anonymous = true
@@ -106,7 +108,7 @@ public class PostControllerIntegrationTests
         // Test user is deleted in GetPostsByUser_ShouldReturnPosts_WhenSuccessful()
     }
 
-    [Fact]
+    [Fact, Order(2)]
     public async Task CreatePost_PosterNotFound_ReturnsNotFound()
     {
         // Arrange
@@ -129,7 +131,7 @@ public class PostControllerIntegrationTests
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 
-    [Fact]
+    [Fact, Order(3)]
     public async Task CreatePost_InvalidRequest_ReturnsBadRequest()
     {
         // Arrange
@@ -152,8 +154,7 @@ public class PostControllerIntegrationTests
         Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
     }
 
-    
-    [Fact, Order(2)]
+    [Fact, Order(4)]
     public async Task GetRecentPosts_ShouldReturnPosts_WhenRequestIsSuccessful()
     {
         // Uses the test user set up in CreatePost_ValidRequest_ReturnsPost()
@@ -161,7 +162,7 @@ public class PostControllerIntegrationTests
         var newPost = new NewPost
         {
             UserName = TestUserEmail,
-            PostTitle = "title",
+            PostTitle = "GetRecentPosts_ShouldReturnPosts_WhenRequestIsSuccessful()",
             PostBody = "body",
             DiaryEntry = false,
             Anonymous = true
@@ -199,7 +200,7 @@ public class PostControllerIntegrationTests
         // Test user is deleted in GetPostsByUser_ShouldReturnPosts_WhenSuccessful()
     }
     
-    [Fact]
+    [Fact, Order(5)]
     public async Task GetRecentPosts_ShouldReturnBadRequest_WithInvalidRequest()
     {
         // Act
@@ -209,9 +210,11 @@ public class PostControllerIntegrationTests
         Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
     }
 
+    #endregion
+
     #region DeletePost Tests
     
-    [Fact, Order(3)]
+    [Fact, Order(6)]
     public async Task DeletePost_ShouldReturnTrue_WhenPostIsDeletedSuccessfully()
     {
         // Uses the test user set up in CreatePost_ValidRequest_ReturnsPost()
@@ -219,7 +222,7 @@ public class PostControllerIntegrationTests
         var newPost = new NewPost
         {
             UserName = TestUserEmail,
-            PostTitle = "title",
+            PostTitle = "DeletePost_ShouldReturnTrue_WhenPostIsDeletedSuccessfully()",
             PostBody = "body",
             DiaryEntry = false,
             Anonymous = true
@@ -246,7 +249,7 @@ public class PostControllerIntegrationTests
         // Test user is deleted in GetPostsByUser_ShouldReturnPosts_WhenSuccessful()
     }
     
-    [Fact]
+    [Fact, Order(7)]
     public async Task DeletePost_ShouldReturnBadRequest_WhenPostIdIsNull()
     {
         // Act
@@ -256,7 +259,7 @@ public class PostControllerIntegrationTests
         Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
     }
     
-    [Fact]
+    [Fact, Order(8)]
     public async Task DeletePost_ShouldReturnFalse_WhenDeleteFails()
     {
         // Act
@@ -272,8 +275,7 @@ public class PostControllerIntegrationTests
 
     #region UpdatePost Tests
 
-    
-    [Fact, Order(4)]
+    [Fact, Order(9)]
     public async Task UpdatePost_ShouldReturnOk_WhenPostIsUpdatedSuccessfully()
     {
         // Uses the test user set up in CreatePost_ValidRequest_ReturnsPost()
@@ -325,7 +327,7 @@ public class PostControllerIntegrationTests
         // Test user is deleted in GetPostsByUser_ShouldReturnPosts_WhenSuccessful()
     }
     
-    [Fact]
+    [Fact, Order(10)]
     public async Task UpdatePost_ShouldReturnBadRequest_WhenRequestIsNull()
     {
         // Arrange
@@ -343,7 +345,7 @@ public class PostControllerIntegrationTests
     
     #region GetPostById Tests
     
-    [Fact, Order(5)]
+    [Fact, Order(11)]
     public async Task GetPostById_ShouldReturnPost_WhenSuccessful()
     {
         // Uses the test user set up in CreatePost_ValidRequest_ReturnsPost()
@@ -388,7 +390,7 @@ public class PostControllerIntegrationTests
         // Test user is deleted in GetPostsByUser_ShouldReturnPosts_WhenSuccessful()
     }
 
-    [Fact]
+    [Fact, Order(12)]
     public async Task GetPostById_ShouldReturnNotFound_WhenPostNotFound()
     {
         // Act
@@ -399,7 +401,7 @@ public class PostControllerIntegrationTests
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
-    [Fact]
+    [Fact, Order(13)]
     public async Task GetPostById_ShouldReturnBadRequest_WithInvalidPostId()
     {
         // Act
@@ -413,7 +415,7 @@ public class PostControllerIntegrationTests
 
     #region GetPostsByUser Tests
 
-    [Fact, Order(6)]
+    [Fact, Order(14)]
     public async Task GetPostsByUser_ShouldReturnPosts_WhenSuccessful()
     {
         // Uses the test user set up in CreatePost_ValidRequest_ReturnsPost()
@@ -422,7 +424,7 @@ public class PostControllerIntegrationTests
         var request = new NewPost
         {
             UserName = TestUserEmail,
-            PostTitle = "title",
+            PostTitle = "GetPostsByUser_ShouldReturnPosts_WhenSuccessful()",
             PostBody = "body",
             DiaryEntry = false,
             Anonymous = true
@@ -458,7 +460,7 @@ public class PostControllerIntegrationTests
         await _postActions.DeletePost(newPost.PID);
     }
 
-    [Fact]
+    [Fact, Order(15)]
     public async Task GetPostsByUser_ShouldReturnBadRequest_WithInvalidUsername()
     {
         // Act
