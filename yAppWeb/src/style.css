@@ -58,6 +58,7 @@ button {
   background-color: var(--amplify-colors-neutral-10);
   color: var(--amplify-colors-purple-100);
   font-weight: bold;
+  float: left;
 }
 .primary-button:hover {
   background-color: var(--amplify-colors-neutral-40);

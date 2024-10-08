@@ -1,4 +1,4 @@
-<script setup>
+yes<script setup>
 import { TabsContent, TabsIndicator, TabsList, TabsRoot, TabsTrigger } from 'radix-vue';
 import { useRouter } from 'vue-router';
 
@@ -12,9 +12,11 @@ const router = useRouter()
 const goBack = async () => {
   router.push('/')
 }
-
 const addFriend = async() => {
   router.push('/add-friends')
+}
+const goToCreatePost = async () => {
+  router.push('/create-post')
 }
 </script>
 
@@ -72,6 +74,7 @@ const addFriend = async() => {
         Wow...it's kinda empty in here...
       </p>
       <MyPosts></MyPosts>
+      <button class="primary-button" type="button" @click="goToCreatePost">Make a new post!</button>
     </TabsContent>
 
     <TabsContent
@@ -103,8 +106,8 @@ const addFriend = async() => {
     </TabsContent>
 
   </TabsRoot>
-  
-  
+  <br>
+  <authenticator></authenticator>
 </template>
 
 <style>
@@ -179,5 +182,5 @@ const addFriend = async() => {
     border-bottom-left-radius: 6px;
     border-bottom-right-radius: 6px;
     outline: none;
-  }
+  }  
 </style>

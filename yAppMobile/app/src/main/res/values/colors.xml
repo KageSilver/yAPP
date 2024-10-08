@@ -2,4 +2,6 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="button">#a75779</color>
+    <color name="discard">#19234b</color>
 </resources>
