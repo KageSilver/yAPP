@@ -3,10 +3,12 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import SignIn from "../components/SignIn.vue";
 import ProfileDashboard from "../components/ProfileDashboard.vue";
+import CreatePost from "../components/CreatePost.vue";
 
 const routes = [
 	{ path: '/', name: 'signin', component: SignIn},
 	{ path: '/profile', name: 'profile', component: ProfileDashboard},
+	{ path: '/create-post', name: 'createPost', component: CreatePost},
 ]
 
 const router = createRouter({
