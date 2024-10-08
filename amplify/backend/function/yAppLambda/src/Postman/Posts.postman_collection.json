@@ -28,7 +28,7 @@
           "header": [],
           "body": {
             "mode": "raw",
-            "raw": "{\n\t\"userName\": \"\",\n\t\"postTitle\": \"\",\n\t\"postBody\": \"\",\n\t\"diaryEntry\": false,\n\t\"anonymous\": false\n}",
+            "raw": "{\n\t\"userName\": \"\",\n\t\"postTitle\": \"\",\n\t\"postBody\": \"\",\n\t\"diaryEntry\": false,\n\t\"anonymous\": true\n}",
             "options": {
               "raw": {
                 "language": "json"
@@ -111,6 +111,77 @@
             ]
           },
           "description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on.\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+        },
+        "response": []
+      },
+      {
+        "name": "DeletePost",
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test(\"Successful DELETE request\", function () {",
+                "    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
+                "});",
+                ""
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ],
+        "request": {
+          "method": "DELETE",
+          "header": [],
+          "url": {
+            "raw": "{{base_url}}/deletePost?pid=${pid}",
+            "host": ["{{base_url}}"],
+            "path": ["api", "posts", "deletePost"],
+            "query": [
+              {
+                "key": "pid",
+                "value": ""
+              }
+            ]
+          },
+          "description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
+        },
+        "response": []
+      },
+      {
+        "name": "UpdatePost",
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test(\"Successful PUT request\", function () {",
+                "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+                "});",
+                ""
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ],
+        "request": {
+          "method": "PUT",
+          "header": [],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n\t\"pid\": \"\",\n\t\"createdAt\": \"\",\n\t\"userName\": \"\",\n\t\"postTitle\": \"\",\n\t\"postBody\": \"\",\n\t\"upvotes\": 0,\n\t\"downvotes\": 0,\n\t\"diaryEntry\": false,\n\t\"anonymous\": true\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          },
+          "url": {
+            "raw": "{{base_url}}/api/posts/updatePost",
+            "host": ["{{base_url}}"],
+            "path": ["api", "posts", "updatePost"]
+          },
+          "description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
         },
         "response": []
       },
