@@ -1,7 +1,7 @@
 <script setup>
   import { Authenticator } from "@aws-amplify/ui-vue";
   import "@aws-amplify/ui-vue/styles.css";
-  
+  import { RouterLink } from "vue-router";
 </script>
 
 <template>
@@ -19,8 +19,11 @@
 
 
     <!-- LANDING PAGE -->
-    <template v-slot="{ user, signOut }">
+    <template v-slot="{ user, signOut }" >
       <h1>Hello {{ user.username }}!</h1>
+      <RouterLink to="/profile" style="color:var(--amplify-colors-neutral-40);">Go to Dashboard</RouterLink>
+      <br>
+      <br>
       <button class="signoutButton" @click="signOut">Sign Out</button>
     </template>
 
@@ -66,13 +69,4 @@
     opacity: 85%;
   }
 
-  .signoutButton {
-    background-color: var(--amplify-colors-neutral-10);
-    color: var(--amplify-colors-purple-100);
-    font-weight: bold;
-  }
-  .signoutButton:hover {
-    background-color: var(--amplify-colors-neutral-40);
-    color: var(--amplify-colors-purple-80);
-  }
 </style>

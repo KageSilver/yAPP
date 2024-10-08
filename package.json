@@ -1,0 +1,5 @@
+{
+	"dependencies": {
+		"radix-vue": "^1.9.6"
+	}
+}

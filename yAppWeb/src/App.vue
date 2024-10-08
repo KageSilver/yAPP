@@ -8,10 +8,3 @@ import { RouterView } from 'vue-router';
     <RouterView />
   </div>
 </template>
-
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-}
-</style>

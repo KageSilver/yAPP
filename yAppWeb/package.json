@@ -17,7 +17,8 @@
 		"@types/node": "^20.12.4",
 		"@popperjs/core": "^2.11.8",
 		"@vue/compiler-sfc": "^3.4.21",
-		"vitest": "^1.4.0"
+		"vitest": "^1.4.0",
+		"radix-vue": "^1.9.6"
 	},
 	"devDependencies": {
 		"@vitejs/plugin-vue": "^5.1.2",
