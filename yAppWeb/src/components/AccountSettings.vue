@@ -39,7 +39,7 @@
     <label style="margin-bottom: 10px;">New Password: </label>
     <input class="input" id="newPassword" type="password">
   </div>
- 
+  <br>
   <button class="primary-button" @click="onSubmit">Submit Changes</button>
 </template>
 

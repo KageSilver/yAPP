@@ -44,7 +44,7 @@
         newPost.postBody, postElements[1].value = '';
         createButton.disabled = true;
         // Send to home page
-        router.push({ name: 'profile' });
+        router.push({ name: 'dashboard' });
         // TODO: Show confirmation
         alert("Posted!");
       } catch (e) {
@@ -64,10 +64,10 @@
       console.log('Throwing away post...');
       if (confirm("Are you sure you want to throw away your changes??")) {
         // Send to home page
-        router.push({ name: 'profile' });
+        router.push({ name: 'dashboard' });
       }
     } else {
-      router.push({ name: 'profile' });
+      router.push({ name: 'dashboard' });
     }
   }
 
