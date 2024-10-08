@@ -1,7 +1,9 @@
 # Sequence Diagrams
 
-## Sprint 1
-
 ### Profile Management
 
+![image](./profileManagementSequenceDiagram.png)
+
 ### Posting
+
+![image](./postingSequenceDiagram.png)
