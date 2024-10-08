@@ -181,8 +181,14 @@ However, other teams can still run the unit tests for this project. Please refra
 1. **Install Android Studio**
     - More Information  [here](https://developer.android.com/studio?gad_source=1&gclid=Cj0KCQjw6oi4BhD1ARIsAL6pox09idOtTxBZLFgvXvQHLXXL8d9oZJSnCtvuCGeCs51jH7a2puaDobQaAiseEALw_wcB&gclsrc=aw.ds).
     - Set up the SDK platform with minimal api level: 34. By default, we would like to recommend to use Neuxs 7 API 34 device.
+2. **Configure SSL**
+   - Go to Settings 
+   - Click the Server Certificate on the right 
+   - Check the "Accept non-trusted certificate automatically"
+     - Example:
+         ![ssl](Examples/ssl.png)
 
-2. **Run the project**
+3. **Run the project**
     - Open the yAppMobile folder in the Android Studio and click the play button on the top.
 
 
