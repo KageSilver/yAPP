@@ -17,8 +17,6 @@ import com.google.android.material.textfield.TextInputLayout;
 import org.json.JSONObject;
 
 import android.util.Log;
-import com.amplifyframework.AmplifyException;
-import com.amplifyframework.api.aws.AWSApiPlugin;
 import com.amplifyframework.core.Amplify;
 import com.amplifyframework.api.rest.RestOptions;
 
@@ -33,15 +31,6 @@ public class CreatePostActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_post);
-
-        try {
-            Amplify.addPlugin(new AWSApiPlugin());
-            Amplify.configure(this);
-
-            Log.i("AmplifyInit", "Initialized Amplify.");
-        } catch (AmplifyException error) {
-            System.out.println("Could not initialize Amplify." + error);
-        }
 
         newPost = new JSONObject();
         try {
@@ -146,6 +135,7 @@ public class CreatePostActivity extends AppCompatActivity {
                 .addPath(apiUrl)
                 .addBody(postData.getBytes())
                 .build();
+        System.out.println("POST DATA IS HERE: " + postData);
         Amplify.API.post(options,
                 response -> Log.i("API", "POST response: " + response.getData().asString()),
                 error -> Log.e("API", "POST request failed", error)

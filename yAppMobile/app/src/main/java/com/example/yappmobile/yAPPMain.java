@@ -15,6 +15,7 @@ public class yAPPMain extends Application {
             // Initialize plugins
             Amplify.addPlugin(new AWSApiPlugin());
             Amplify.configure(getApplicationContext());
+            Log.i("AmplifyConfig", Amplify.API.getPlugin("awsAPIPlugin").toString());
             Log.i("AmplifyInit", "Initialized Amplify");
         } catch (AmplifyException error) {
             System.out.println("Could not initialize Amplify." + error);
