@@ -1,5 +1,5 @@
 <script setup lang="js">
-  import { post } from '@aws-amplify/api';
+  import { post } from "aws-amplify/api";
   import { useAuthenticator } from "@aws-amplify/ui-vue";
   import { useRouter } from 'vue-router'; // Import useRouter
   const auth = useAuthenticator(); // Grab authenticator for username
@@ -15,6 +15,8 @@
   async function createPost(event) {
     event.preventDefault();
     var postElements = document.getElementById("post").elements;
+    var createButton = document.getElementById("create-button");
+    createButton.disabled = true;
     newPost.postTitle = postElements[0].value;
     newPost.postBody = postElements[1].value;
     if ( newPost.postTitle != '' && newPost.postBody != '' ) {
@@ -40,6 +42,7 @@
         newPost.userName = '';
         newPost.postTitle, postElements[0].value = '';
         newPost.postBody, postElements[1].value = '';
+        createButton.disabled = true;
         // Send to home page
         router.push({ name: 'profile' });
         // TODO: Show confirmation
@@ -47,6 +50,7 @@
       } catch (e) {
         console.log("POST call failed: ", e);
         alert("Post failed to create... Try agin!");
+        createButton.disabled = true;
       }
     }
   }
@@ -118,7 +122,7 @@
       </div>
 
       <button title="Discard Post" class="back-button" @click="discardPost">Discard</button>
-      <button title="Create Post" class="createPostButton signoutButton" type="submit" @click="createPost">Create Post</button>
+      <button title="Create Post" id="create-button" class="createPostButton signoutButton" type="submit" @click="createPost">Create Post</button>
     </form>
   </div>
 </template>
