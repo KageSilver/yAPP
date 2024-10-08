@@ -1,59 +1,63 @@
-<script setup>
+yes<script setup>
 import { TabsContent, TabsIndicator, TabsList, TabsRoot, TabsTrigger } from 'radix-vue';
-
-import MyPosts from "./MyPosts.vue";
-import MyFriends from "./MyFriends.vue";
-import MyAchievements from "./MyAchievements.vue";
 import { useRouter } from 'vue-router';
+
+import AccountSettings from "./AccountSettings.vue";
+import MyAchievements from "./MyAchievements.vue";
+import MyFriends from "./MyFriends.vue";
+import MyPosts from "./MyPosts.vue";
 
 const router = useRouter()
 
 const goBack = async () => {
   router.push('/')
 }
-
+const addFriend = async() => {
+  router.push('/add-friends')
+}
 const goToCreatePost = async () => {
   router.push('/create-post')
 }
-
 </script>
 
 <template>
+  <div class="button-bar" style="display:flex; justify-content:right; margin-bottom:35px;">
+    <button class="primary-button" @click="goBack" style="margin-right:35px;">Back To Home</button>
+    <button class="primary-button" @click="addFriend">+ Add Friends</button>
+  </div>
 
   <h1>My Dashboard</h1>
+  
   <TabsRoot
     class="TabsRoot"
     default-value="tab1"
   >
-
     <TabsList
       class="TabsList"
       aria-label="Manage your account"
     >
-      <TabsIndicator class="TagsIndicator ">
-        <div
-          style="width: 100%; height: 100%"
-          class="bg-grass8 w-full h-full"
-        />
-      </TabsIndicator>
+
       <TabsTrigger
         class="TabsTrigger"
         value="tab1"
       >
         My Posts
       </TabsTrigger>
+
       <TabsTrigger
         class="TabsTrigger"
         value="tab2"
       >
         My Friends
       </TabsTrigger>
+
       <TabsTrigger
         class="TabsTrigger"
         value="tab3"
       >
         My Achievements
       </TabsTrigger>
+
       <TabsTrigger
         class="TabsTrigger"
         value="tab4"
@@ -70,7 +74,9 @@ const goToCreatePost = async () => {
         Wow...it's kinda empty in here...
       </p>
       <MyPosts></MyPosts>
+      <button class="primary-button" type="button" @click="goToCreatePost">Make a new post!</button>
     </TabsContent>
+
     <TabsContent
       class="TabsContent"
       value="tab2"
@@ -79,7 +85,9 @@ const goToCreatePost = async () => {
         Wow...it's kinda empty in here...
       </p>
       <MyFriends></MyFriends>
+      <br>
     </TabsContent>
+
     <TabsContent
       class="TabsContent"
       value="tab3"
@@ -89,27 +97,25 @@ const goToCreatePost = async () => {
       </p>
       <MyAchievements></MyAchievements>
     </TabsContent>
+
     <TabsContent
       class="TabsContent"
       value="tab4"
     >
-      <p class="Text">
-        Change your Password
-      </p>
+      <AccountSettings></AccountSettings>
     </TabsContent>
 
   </TabsRoot>
   <br>
   <authenticator></authenticator>
-  <button class="signoutButton" @click="goBack">Back To Login</button>
-  <button class="createPostButton signoutButton" type="button" @click="goToCreatePost">Make a new post!</button>
 </template>
 
 <style>
   .TabsRoot {
+    box-shadow: 0 2px 10px var(--black-a4);
     display: flex;
     flex-direction: column;
-    box-shadow: 0 2px 10px var(--black-a4);
+    padding-bottom: 50px;
   }
 
   .TabsList {
@@ -120,6 +126,7 @@ const goToCreatePost = async () => {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     border-width: 1px;
+    margin-bottom:1px;
   }
 
   .TagsIndicator {
@@ -145,7 +152,7 @@ const goToCreatePost = async () => {
     justify-content: center;
     font-size: 15px;
     line-height: 1;
-    color: var(--amplify-colors-purple-100);
+    color: var(--amplify-colors-neutral-80);
     font-weight: bold;
     user-select: none;
   }
@@ -161,25 +168,19 @@ const goToCreatePost = async () => {
   }
   .TabsTrigger[data-state='active'] {
     color: var(--amplify-colors-purple-80);
-    border-bottom-color: var(--amplify-colors-purple-80);
-    border-width: 2px;
+
   }
   .TabsTrigger:focus {
     position: relative;
-    
   }
 
   .TabsContent {
     flex-grow: 1;
     padding: 20px;
     color:var(--amplify-colors-purple-100);
-    background-color: var(--amplify-colors-neutral-20);
+    background-color: var(--amplify-colors-neutral-40);
     border-bottom-left-radius: 6px;
     border-bottom-right-radius: 6px;
     outline: none;
-  }
-
-  .createPostButton {
-    float: right !important;
-  }
+  }  
 </style>

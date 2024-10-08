@@ -3,11 +3,13 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import SignIn from "../components/SignIn.vue";
 import ProfileDashboard from "../components/ProfileDashboard.vue";
+import AddFriends from "../components/AddFriends.vue";
 import CreatePost from "../components/CreatePost.vue";
 
 const routes = [
-	{ path: '/', name: 'signin', component: SignIn},
-	{ path: '/profile', name: 'profile', component: ProfileDashboard},
+	{ path: '/', name: 'signIn', component: SignIn},
+	{ path: '/dashboard', name: 'dashboard', component: ProfileDashboard},
+	{ path: '/add-friends', name: 'addFriends', component: AddFriends},
 	{ path: '/create-post', name: 'createPost', component: CreatePost},
 ]
 
@@ -20,9 +22,9 @@ router.beforeEach(async to => {
 		await fetchAuthSession();
 	} catch (e: unknown) {
 		// avoid infinite redirect
-		if (to.name !== "signin") {
+		if (to.name !== "signIn") {
 			return {
-				name: "signin",
+				name: "signIn",
 				query: { redirect: to.name?.toString() },
 			};
 		}

@@ -1,6 +1,5 @@
-<script>
+<script setup>
 </script>
 
 <template>
-    (insert achievements here)
 </template>
