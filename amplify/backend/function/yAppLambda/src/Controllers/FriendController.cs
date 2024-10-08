@@ -168,7 +168,4 @@ public class FriendController : ControllerBase
 
         return friendships;
     }
-    
-    
-    
 }

@@ -18,23 +18,19 @@ const goBack = async() =>
 
 function onSubmit() 
 {
-    try 
+    const sender = auth.user?.username;
+    const receiver = document.getElementById("to-username").value;
+    var requestButton = document.getElementById("request-button");
+
+    if(receiver !== '') 
     {
-        const sender = auth.user?.username;
-        const receiver = document.getElementById("to-username").value;
-        if(receiver !== '') 
-        {
-            alert(`From: ${sender} and To: ${receiver}`);
-            test(sender, receiver);
-        } 
-        else 
-        {
-        alert('Enter in a username!');
-        }
+        requestButton.disabled = true;
+        test(sender, receiver);
+        requestButton.disabled = false;
     } 
-    catch (err) 
+    else 
     {
-      console.log(err);
+    alert('Enter in a username!');
     }
 }
 
@@ -61,9 +57,11 @@ async function test(fromUser, toUser)
             }
         });
 
-        const { body } = await sendPostRequest.response;
-        const response = body.json;
-        alert(response);
+        //TODO: Have Yappers send friend requests either 
+        // through username or something else
+        // instead of user-id (sub)
+        await sendPostRequest.response;
+        alert('Successfully sent friend request!');
         document.getElementById("to-username").value = '';
     } 
     catch (err)
@@ -94,7 +92,7 @@ async function test(fromUser, toUser)
     </div>
 
     <br>
-    <button class="primary-button" @click="onSubmit">
+    <button class="primary-button" @click="onSubmit" id="request-button">
         Send Request
     </button>
 </template>
