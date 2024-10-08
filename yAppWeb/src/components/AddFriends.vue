@@ -1,33 +1,43 @@
 <script setup>
-import { RouterLink } from 'vue-router';
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
+
+const goHome = async () => {
+  router.push('/')
+}
+
+const goBack = async() => {
+  router.push('/dashboard')
+}
 
 function onSubmit() {
     const receiver = document.getElementById("to-username").value
-    console.log('sending friend request to: ', receiver)
+    alert('sending friend request to: ' + receiver)
 }
 </script>
 
 <template>
+    <div class="button-bar" style="display:flex; justify-content:right; margin-bottom:35px;">
+        <button class="primary-button" @click="goBack" style="margin-right:35px;">Dashboard</button>
+        <button class="primary-button" @click="goHome">Home</button>
+    </div>
+
     <h1>Add a Friend!</h1>
-    <flex-box class="nav">
-        <RouterLink to="/dashboard">Dashboard</RouterLink>
-        <RouterLink to="/">Back to Home</RouterLink>
-    </flex-box>
-    <br>
+    
     <div class="fieldset">
-        <label style="margin-right:50px;">Their username: </label>
+        <label style="margin-bottom: 10px;">Enter in their username: </label>
         <input class="input" id="to-username" type="text">
     </div>
 
     <br>
-    <button class="primary-button" @click="onSubmit">Submit Changes</button>
+    <button class="primary-button" @click="onSubmit">Send Request</button>
 </template>
 
 <style scoped>
 .fieldset {
-    display: flex;
-    justify-content: space-between;
-    padding: 50px;
+    align-items: left;
+    padding: 30px;
     background-color: var(--amplify-colors-neutral-40);
     color: var(--amplify-colors-neutral-100);
     border-radius: 5px;

@@ -19,9 +19,13 @@ const addFriend = async() => {
 </script>
 
 <template>
+  <div class="button-bar" style="display:flex; justify-content:right; margin-bottom:35px;">
+    <button class="primary-button" @click="goBack" style="margin-right:35px;">Back To Home</button>
+    <button class="primary-button" @click="addFriend">+ Add Friends</button>
+  </div>
 
   <h1>My Dashboard</h1>
-
+  
   <TabsRoot
     class="TabsRoot"
     default-value="tab1"
@@ -30,9 +34,6 @@ const addFriend = async() => {
       class="TabsList"
       aria-label="Manage your account"
     >
-      <TabsIndicator class="TagsIndicator ">
-        <div style="width: 80%; height: 100%"/>
-      </TabsIndicator>
 
       <TabsTrigger
         class="TabsTrigger"
@@ -82,7 +83,6 @@ const addFriend = async() => {
       </p>
       <MyFriends></MyFriends>
       <br>
-      <button class="primary-button" @click="addFriend">+ Add Friends</button>
     </TabsContent>
 
     <TabsContent
@@ -104,16 +104,15 @@ const addFriend = async() => {
 
   </TabsRoot>
   
-  <br>
-
-  <button class="primary-button" @click="goBack">Back To Home</button>
+  
 </template>
 
 <style>
   .TabsRoot {
+    box-shadow: 0 2px 10px var(--black-a4);
     display: flex;
     flex-direction: column;
-    box-shadow: 0 2px 10px var(--black-a4);
+    padding-bottom: 50px;
   }
 
   .TabsList {
@@ -124,6 +123,7 @@ const addFriend = async() => {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     border-width: 1px;
+    margin-bottom:1px;
   }
 
   .TagsIndicator {
@@ -149,7 +149,7 @@ const addFriend = async() => {
     justify-content: center;
     font-size: 15px;
     line-height: 1;
-    color: var(--amplify-colors-purple-100);
+    color: var(--amplify-colors-neutral-80);
     font-weight: bold;
     user-select: none;
   }
@@ -165,12 +165,10 @@ const addFriend = async() => {
   }
   .TabsTrigger[data-state='active'] {
     color: var(--amplify-colors-purple-80);
-    border-bottom-color: var(--amplify-colors-purple-80);
-    border-width: 2px;
+
   }
   .TabsTrigger:focus {
     position: relative;
-    
   }
 
   .TabsContent {
