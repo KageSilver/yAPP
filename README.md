@@ -33,9 +33,7 @@ Nothing to see here... YET.
  - Here is our [test plan](./Documentation/Sprint%201/Test%20Plan.md)
 
 ## Architecture
-- What the planned [High Level Architecture Diagram](./Documentation/Sprint%200/yAPP%20HLA.png) is for the project as of sprint 0.
-- Here is our updated [High Level Architecture Diagram](./Documentation/Sprint%201/Images/NewHLA.png) as of sprint 1. We have it separated into three different layers; the Presentation Layer where all of the UI code resides, the Logic Layer where all of the computation code and authentication resides, and the Data Layer which contains the database we'll be using.
-- Here is a more detailed [Architecture Diagram]() from sprint 1 that outlines the tiers of our application and the layers within these tiers, as well as highlighting important components and classes of our application.
+ - Here is our [architecture](./Documentation/Architecture.md) for our project.
 
 ## Sequence Diagrams
  - Here are our [sequence diagrams](./Documentation/Sequence%20Diagrams/Sequence%20Diagrams.md) for the project.
