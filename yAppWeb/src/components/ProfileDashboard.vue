@@ -1,29 +1,36 @@
-yes<script setup>
-import { TabsContent, TabsIndicator, TabsList, TabsRoot, TabsTrigger } from 'radix-vue';
-import { useRouter } from 'vue-router';
+<script setup>
+  import { TabsContent, TabsList, TabsRoot, TabsTrigger } from 'radix-vue';
+  import { useRouter } from 'vue-router';
 
-import AccountSettings from "./AccountSettings.vue";
-import MyAchievements from "./MyAchievements.vue";
-import MyFriends from "./MyFriends.vue";
-import MyPosts from "./MyPosts.vue";
+  import AccountSettings from "./AccountSettings.vue";
+  import MyAchievements from "./MyAchievements.vue";
+  import MyFriends from "./MyFriends.vue";
+  import MyPosts from "./MyPosts.vue";
 
-const router = useRouter()
+  const router = useRouter();
 
-const goBack = async () => {
-  router.push('/')
-}
-const addFriend = async() => {
-  router.push('/add-friends')
-}
-const goToCreatePost = async () => {
-  router.push('/create-post')
-}
+  const goBack = async () => 
+  {
+    router.push('/');
+  }
+  const addFriend = async() => 
+  {
+    router.push('/add-friends');
+  }
+  const goToCreatePost = async () => 
+  {
+    router.push('/create-post');
+  }
 </script>
 
 <template>
   <div class="button-bar" style="display:flex; justify-content:right; margin-bottom:35px;">
-    <button class="primary-button" @click="goBack" style="margin-right:35px;">Back To Home</button>
-    <button class="primary-button" @click="addFriend">+ Add Friends</button>
+    <button class="primary-button" @click="goBack" style="margin-right:35px;">
+      Back To Home
+    </button>
+    <button class="primary-button" @click="addFriend">
+      + Add Friends
+    </button>
   </div>
 
   <h1>My Dashboard</h1>
@@ -70,20 +77,16 @@ const goToCreatePost = async () => {
       class="TabsContent"
       value="tab1"
     >
-      <p class="Text">
-        Wow...it's kinda empty in here...
-      </p>
       <MyPosts></MyPosts>
-      <button class="primary-button" type="button" @click="goToCreatePost">Make a new post!</button>
+      <button class="primary-button" type="button" @click="goToCreatePost">
+        Make a new post!
+      </button>
     </TabsContent>
 
     <TabsContent
       class="TabsContent"
       value="tab2"
     >
-      <p class="Text">
-        Wow...it's kinda empty in here...
-      </p>
       <MyFriends></MyFriends>
       <br>
     </TabsContent>
@@ -92,9 +95,6 @@ const goToCreatePost = async () => {
       class="TabsContent"
       value="tab3"
     >
-    <p class="Text">
-        Wow...it's kinda empty in here...
-      </p>
       <MyAchievements></MyAchievements>
     </TabsContent>
 

@@ -2,6 +2,7 @@
   import { post } from "aws-amplify/api";
   import { useAuthenticator } from "@aws-amplify/ui-vue";
   import { useRouter } from 'vue-router'; // Import useRouter
+
   const auth = useAuthenticator(); // Grab authenticator for username
   const router = useRouter(); // Use router hook
   var newPost = {
@@ -12,24 +13,29 @@
     "anonymous": true
   };
 
-  async function createPost(event) {
+  async function createPost(event) 
+  {
     event.preventDefault();
     var postElements = document.getElementById("post").elements;
     var createButton = document.getElementById("create-button");
     createButton.disabled = true;
     newPost.postTitle = postElements[0].value;
     newPost.postBody = postElements[1].value;
-    if ( newPost.postTitle != '' && newPost.postBody != '' ) {
+    if ( newPost.postTitle !== '' && newPost.postBody !== '' ) 
+    {
       newPost.userName = auth.user?.username;
       // Make API call to create the post
-      try {
+      try 
+      {
         const sendPostRequest = post({
           apiName: "yapp",
           path: "/api/posts/createPost",
-          headers: {
+          headers: 
+          {
             'Content-Type': 'application/json'
           },
-          options: {
+          options: 
+          {
             body: newPost
           }
         });
@@ -47,37 +53,47 @@
         router.push({ name: 'dashboard' });
         // TODO: Show confirmation
         alert("Posted!");
-      } catch (e) {
-        console.log("POST call failed: ", e);
+      } 
+      catch (e) 
+      {
         alert("Post failed to create... Try agin!");
         createButton.disabled = true;
       }
     }
   }
 
-  function discardPost(event) {
+  function discardPost(event) 
+  {
     event.preventDefault();
     var postElements = document.getElementById("post").elements;
     newPost.postTitle = postElements[0].value;
     newPost.postBody = postElements[1].value;
-    if ( newPost.postTitle != '' || newPost.postBody != '' ) {
+    if ( newPost.postTitle != '' || newPost.postBody != '' ) 
+    {
       console.log('Throwing away post...');
-      if (confirm("Are you sure you want to throw away your changes??")) {
+      if (confirm("Are you sure you want to throw away your changes??")) 
+      {
         // Send to home page
         router.push({ name: 'dashboard' });
       }
-    } else {
+    } 
+    else 
+    {
       router.push({ name: 'dashboard' });
     }
   }
 
   // This function is used for whether we want to show the anonymous toggle
   // Modify the diary entry and anonymous values here
-  function toggleAnonymous() {
+  function toggleAnonymous() 
+  {
     var anonymousToggle = document.getElementById("anonymous");
-    if ( anonymousToggle.hidden == true ) {
+    if ( anonymousToggle.hidden == true ) 
+    {
       anonymousToggle.hidden = false;
-    } else {
+    } 
+    else 
+    {
       anonymousToggle.hidden = true;
     }
   }
@@ -121,8 +137,12 @@
         </label>
       </div>
 
-      <button title="Discard Post" class="back-button" @click="discardPost">Discard</button>
-      <button title="Create Post" id="create-button" class="createPostButton signoutButton" type="submit" @click="createPost">Create Post</button>
+      <button title="Discard Post" class="back-button" @click="discardPost">
+        Discard
+      </button>
+      <button title="Create Post" id="create-button" class="createPostButton signoutButton" type="submit" @click="createPost">
+        Create Post
+      </button>
     </form>
   </div>
 </template>
@@ -252,4 +272,3 @@
     margin: 10px;
   }
 </style>
-  
