@@ -13,6 +13,8 @@
   async function handleUpdatePassword(oldPassword, newPassword) {
     try {
       await updatePassword({ oldPassword, newPassword });
+      alert('password updated!')
+      console.log('password updated!')
     } catch (err) {
       console.log(err);
     }
