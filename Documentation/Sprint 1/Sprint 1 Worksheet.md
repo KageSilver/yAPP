@@ -22,6 +22,12 @@
  - Our frontend has no logic layer, so we did not need to write any tests for that.
 
 #### Acceptance tests
+ - We've written automated acceptances tests using JUnit for our Android app.
+    - These can be found under yAppMobile > app > src > androidTest > tests.
+    - We chose this way of testing our app to make it easier and quicker to run these tests.
+ - We've written manual acceptance tests for our website.
+    - We chose this way of testing our website because we were unsure of how to write automated tests for our website, but we still want to ensure everything is running properly. 
+    - For this, we've provided detailed instructions for running through each of our user stories under Documentation > Acceptance Tests.
 
 ### Other information on our testing approach
  - Due to the way we set up our project, we need to run system tests to test the integration of the logic/api layer with the database. We called these integration tests, which is what the information in our integration tests section is referring to.
@@ -46,9 +52,12 @@
     - This tests if a post was created successfuly in the database, which will return the new post object.
 
 ### Our 3 most important acceptance tests
-1. 
-2. 
-3. 
+1. Creating a new post - Documentation > Acceptance Tests > Posting.md > "Creating New Post" section
+    - This tests the user experience of creating a new post as well as tests the connection between the frontend and backend when creating a new post.
+2. Creating a new account - Documentation > Acceptance Tests > Profile Management.md > "Account Creation" section
+    - This tests the user experience of creating a new account as well as tests the connection between the frontend and backend when creating a new account.
+3. Logging into an existing account - Documentation > Acceptance Tests > Profile Management.md > "Account Login" section
+    - This tests the user experience of logging into an existing account as well as tests the connection between the frontend and backend when logging into an account.
 
 ## Reproducible Environments
 #### Was the documentation clear enough to run their software? Did you get it running? Now long did it take, was it hard?
