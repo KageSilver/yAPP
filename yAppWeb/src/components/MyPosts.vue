@@ -2,7 +2,9 @@
     import { get } from 'aws-amplify/api';
 	import { useAuthenticator } from "@aws-amplify/ui-vue";
     import { onMounted, ref } from 'vue';
+	import { useRouter } from 'vue-router'; // Import useRouter
 	
+	const router = useRouter(); // Use router hook
     const auth = useAuthenticator(); // Grab authenticator for username
 
     const jsonData = ref([]); // Reacted array to hold the list of posts
@@ -38,9 +40,8 @@
         }
     }
 
-    function clickPost(id) {
-        // Send to that post's "page"
-        // Will be implemented in sprint 2!
+    function clickPost(pid) {
+        router.push({ name: 'postDetails', params: { pid } });
     }
 
     function truncateText(text) 
