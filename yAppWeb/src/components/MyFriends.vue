@@ -36,15 +36,21 @@
 
     function onSubmit(friendship)
     {
+        
+
         if(friendship.ToUserName !== username)
         {
-           alert(`Unfollowing ${friendship.ToUserName}...`); 
-           unfollowFriend(friendship.ToUserName, "receiver");
+            if (confirm(`Are you sure you want to unfollow ${friendship.ToUserName}?`)) 
+            {
+                unfollowFriend(friendship.ToUserName, "receiver");
+            }    
         }
         else 
         {
-            alert(`Unfollowing ${friendship.FromUserName}...`);
-            unfollowFriend(friendship.FromUserName, "sender");
+            if (confirm(`Are you sure you want to unfollow ${friendship.FromUserName}?`)) 
+            {
+                unfollowFriend(friendship.FromUserName, "sender");
+            }
         }
         
     }
