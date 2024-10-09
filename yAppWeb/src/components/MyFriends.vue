@@ -30,5 +30,39 @@
 </script>
 
 <template>
-    <li v-for="friendship in jsonData">{{  friendship.ToUserName }}</li>
+    <div class="flex-box">
+        <div class="request" v-for="request in jsonData">
+            <h4>{{  request.ToUserName }}</h4>
+            <div class="request-actions">
+                <button class="action-button" style="margin-right:10px;">
+                    Following
+                </button>
+            </div>
+        </div>
+    </div>
 </template>
+
+<style>
+.request {
+    display: flex;
+    justify-content: space-between;
+    background-color: var(--amplify-colors-neutral-10);
+    margin-bottom: 15px;
+    padding: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
+    border-radius: 5px;
+    place-items: center;
+}
+
+.flex-box {
+    flex-direction: column;
+}
+
+.action-button {
+  background-color: rgba(183, 143, 175, 0.577);
+  color: var(--amplify-colors-purple-100);
+  font-weight: bold;
+  float: left;
+}
+</style>

@@ -1,17 +1,22 @@
 <script setup>
-    import { get } from 'aws-amplify/api';
+    import { get, post } from 'aws-amplify/api';
     import { ref, onMounted } from 'vue';
     import { useAuthenticator } from '@aws-amplify/ui-vue';
 
     const auth = useAuthenticator();
+    const username = auth.user?.username;
     const jsonData = ref([]); // Reacted array to hold the list of friendships
 
     // Get list of friends as JSON 
     onMounted(async () => 
     {
+        getRequests();
+    });
+
+    async function getRequests() 
+    {
         try 
         {
-            const username = auth.user?.username;
             const restOperation = await get({
                 apiName: 'yapp',
                 path: `/api/friends/getFriendsByStatus?userName=${username}&status=0`
@@ -26,9 +31,113 @@
         {
             console.log('GET call failed', error);
         }
-    });
+    }
+
+    async function acceptRequest(toUser) 
+    {
+        try 
+        {
+            const newRequest = 
+            {
+                "fromUserName": username,
+                "toUserName": toUser,
+                "status": 1
+            };
+
+            const sendPostRequest = post({
+                apiName: "yapp",
+                path: "/api/friends/updateFriendRequest",
+                headers: 
+                {
+                    'Content-type': 'application/json'
+                },
+                options: 
+                {
+                    body: newRequest
+                }
+            });
+            console.log(await sendPostRequest.response);
+            alert(`Accepted ${toUser} request!`);
+            getRequests();
+        } 
+        catch (err)
+        {
+            alert('Failed to accept friend request. Please try again!')
+            console.error(err);
+        }
+    }
+
+    async function declineRequest(toUser) {
+        try 
+        {
+            const newRequest = 
+            {
+                "fromUserName": username,
+                "toUserName": toUser,
+                "status": 2
+            };
+
+            const sendPostRequest = post({
+                apiName: "yapp",
+                path: "/api/friends/updateFriendRequest",
+                headers: 
+                {
+                    'Content-type': 'application/json'
+                },
+                options: 
+                {
+                    body: newRequest
+                }
+            });
+            console.log(await sendPostRequest.response);
+            alert(`Declined ${toUser} request!`);
+            getRequests();
+        } 
+        catch (err)
+        {
+            alert('Failed to decline friend request. Please try again!')
+            console.error(err);
+        }
+    }
 </script>
 
 <template>
-    <li v-for="request in jsonData">{{  request.ToUserName }}</li>
+    <div class="flex-box">
+        <div class="request" v-for="request in jsonData">
+            <h4>{{  request.ToUserName }}</h4>
+            <div class="request-actions">
+                <button class="action-button" @click="acceptRequest(request.ToUserName)" style="margin-right:10px;">
+                    Accept
+                </button>
+                <button class="action-button" @click="declineRequest(request.ToUserName)">
+                    Decline
+                </button>
+            </div>
+        </div>
+    </div>
 </template>
+
+<style>
+.request {
+    display: flex;
+    justify-content: space-between;
+    background-color: var(--amplify-colors-neutral-10);
+    margin-bottom: 15px;
+    padding: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
+    border-radius: 5px;
+    place-items: center;
+}
+
+.flex-box {
+    flex-direction: column;
+}
+
+.action-button {
+  background-color: rgba(183, 143, 175, 0.577);
+  color: var(--amplify-colors-purple-100);
+  font-weight: bold;
+  float: left;
+}
+</style>
