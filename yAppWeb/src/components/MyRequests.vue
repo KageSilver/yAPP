@@ -25,6 +25,7 @@
             const response = await ((await body.blob()).arrayBuffer());
             const decoder = new TextDecoder('utf-8'); // Use TextDecoder to decode the ArrayBuffer to a string
             const decodedText = decoder.decode(response);
+            console.log(decodedText);
             jsonData.value = JSON.parse(decodedText); // Update with parsed JSON
         } 
         catch(error)
@@ -39,8 +40,8 @@
         {
             const newRequest = 
             {
-                "fromUserName": username,
-                "toUserName": toUser,
+                "fromUserName": toUser,
+                "toUserName": username,
                 "status": 1
             };
 
@@ -72,8 +73,8 @@
         {
             const newRequest = 
             {
-                "fromUserName": username,
-                "toUserName": toUser,
+                "fromUserName": toUser,
+                "toUserName": username,
                 "status": 2
             };
 
@@ -103,41 +104,43 @@
 
 <template>
     <div class="flex-box">
-        <div class="request" v-for="request in jsonData">
-            <h4>{{  request.ToUserName }}</h4>
-            <div class="request-actions">
-                <button class="action-button" @click="acceptRequest(request.ToUserName)" style="margin-right:10px;">
-                    Accept
-                </button>
-                <button class="action-button" @click="declineRequest(request.ToUserName)">
-                    Decline
-                </button>
+        <div v-for="request in jsonData">
+            <div class="request" v-if="request.FromUserName !== username">
+                <h4>{{ request.FromUserName }}</h4>
+                <div class="request-actions">
+                    <button class="action-button" @click="acceptRequest(request.FromUserName)" style="margin-right:10px;">
+                        Accept
+                    </button>
+                    <button class="action-button" @click="declineRequest(request.FromUserName)">
+                        Decline
+                    </button>
+                </div> 
             </div>
         </div>
     </div>
 </template>
 
 <style>
-.request {
-    display: flex;
-    justify-content: space-between;
-    background-color: var(--amplify-colors-neutral-10);
-    margin-bottom: 15px;
-    padding: 10px;
-    padding-left: 30px;
-    padding-right: 30px;
-    border-radius: 5px;
-    place-items: center;
-}
+    .request {
+        display: flex;
+        justify-content: space-between;
+        background-color: var(--amplify-colors-neutral-10);
+        margin-bottom: 15px;
+        padding: 10px;
+        padding-left: 30px;
+        padding-right: 30px;
+        border-radius: 5px;
+        place-items: center;
+    }
 
-.flex-box {
-    flex-direction: column;
-}
+    .flex-box {
+        flex-direction: column;
+    }
 
-.action-button {
-  background-color: rgba(183, 143, 175, 0.577);
-  color: var(--amplify-colors-purple-100);
-  font-weight: bold;
-  float: left;
-}
+    .action-button {
+    background-color: rgba(183, 143, 175, 0.577);
+    color: var(--amplify-colors-purple-100);
+    font-weight: bold;
+    float: left;
+    }
 </style>
