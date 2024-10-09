@@ -9,7 +9,8 @@ yAPP is an anonymous chatting application to provide users, known as Yappers, a 
  - [Documentation](./Documentation/)
 
 ## Running Details
-Nothing to see here... YET.
+ - Here is our [Getting Started](./Documentation/Sprint%201/Get%20Started%20Documentation.md) Documentation to run our project.
+ - Here are our [Acceptance Test](./Documentation/Acceptance%20Tests/), which provide instructions for how to run manual acceptance tests on our website.
 
 ## Login Information
 Nothing to see here... YET.
