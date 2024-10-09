@@ -6,6 +6,7 @@
   import MyAchievements from "./MyAchievements.vue";
   import MyFriends from "./MyFriends.vue";
   import MyPosts from "./MyPosts.vue";
+  import MyRequests from './MyRequests.vue';
   import GlobalPosts from "./GlobalPosts.vue";
 
   const router = useRouter();
@@ -51,6 +52,7 @@
       >
         Public Posts
       </TabsTrigger>
+
       <TabsTrigger
         class="TabsTrigger"
         value="tab1"
@@ -120,7 +122,7 @@
       class="TabsContent"
       value="tab3"
     >
-    <MyRequests></MyRequests>
+      <MyRequests></MyRequests>
       <br>
     </TabsContent>
 
