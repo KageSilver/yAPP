@@ -46,7 +46,7 @@
                 "status": 1
             };
 
-            const sendPostRequest = put({
+            const sendPutRequest = put({
                 apiName: "yapp",
                 path: "/api/friends/updateFriendRequest",
                 headers: 
@@ -58,7 +58,7 @@
                     body: newRequest
                 }
             });
-            console.log(await sendPostRequest.response);
+            console.log(await sendPutRequest.response);
             alert(`Accepted ${toUser} request!`);
             getRequests(); // Update the view of pending requests
         } 
@@ -92,7 +92,7 @@
                     body: newRequest
                 }
             });
-            console.log(await sendPostRequest.response);
+            console.log(await sendPutRequest.response);
             alert(`Declined ${toUser} request!`);
             getRequests(); // Update the view of pending requests
         } 
