@@ -22,6 +22,9 @@
     try {
       await updatePassword({ oldPassword, newPassword });
       alert('Password updated!')
+      document.getElementById("oldPassword").value = '';
+      document.getElementById("newPassword").value = '';
+
     } catch (err) {
       alert('Password reset failed! Please ensure you entered your old password correctly and that your new password is a minimum of 8 characters')
       console.log(err)
