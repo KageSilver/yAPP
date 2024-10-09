@@ -3,7 +3,6 @@
     import { ref, onMounted } from 'vue';
 
     const jsonData = ref([]); // Reacted array to hold the list of posts
-    const expandedIndex = ref(null); // Holds the index of the card to expand
     const maxResults = 10;
 
     // Get list of most recent posts as JSON
@@ -33,7 +32,7 @@
     });
 
     function clickPost(index) {
-        expandedIndex.value = expandedIndex.value === index ? null : index; // Toggle the expanded post
+        // Send to that post's "page"
     }
 </script>
 
@@ -80,7 +79,6 @@
 .card-header h3 {
   margin: 0;
   font-size: 1.5rem;
-  color: #4a148c;
 }
 
 .card-header p {
@@ -90,6 +88,5 @@
 
 .card-body p {
   font-size: 1rem;
-  color: #5e35b1;
 }
 </style>
