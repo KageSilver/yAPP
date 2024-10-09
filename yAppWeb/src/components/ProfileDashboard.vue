@@ -164,6 +164,7 @@
 		border-top-right-radius: 5px;
 		border-width: 1px;
 		margin-bottom:1px;
+		padding: 10px;
 	}
 
 	.TagsIndicator {
