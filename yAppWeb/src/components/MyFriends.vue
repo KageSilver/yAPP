@@ -10,17 +10,17 @@
     // Get list of friends as JSON 
     onMounted(async () => 
     {
-        getRequests();
+        getFriends();
     });
 
     // Get authenticated user's friend requests
-    async function getRequests() 
+    async function getFriends() 
     {
         try 
         {
             const restOperation = get({
                 apiName: 'yapp',
-                path: `/api/friends/getFriendsByStatus?userName=${username}&status=0`
+                path: `/api/friends/getFriendsByStatus?userName=${username}&status=1`
             });
             const { body } = await restOperation.response;
             const response = await ((await body.blob()).arrayBuffer());
