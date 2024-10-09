@@ -1,5 +1,5 @@
 <script setup>
-    import { get } from 'aws-amplify/api';
+    import { get, put } from 'aws-amplify/api';
     import { onMounted, ref } from 'vue';
     import { useAuthenticator } from '@aws-amplify/ui-vue';
 
@@ -33,6 +33,66 @@
             console.log('GET call failed', error);
         }
     }
+
+    function onSubmit(friendship)
+    {
+        if(friendship.ToUserName !== username)
+        {
+           alert(`Unfollowing ${friendship.ToUserName}...`); 
+           unfollowFriend(friendship.ToUserName, "receiver");
+        }
+        else 
+        {
+            alert(`Unfollowing ${friendship.FromUserName}...`);
+            unfollowFriend(friendship.FromUserName, "sender");
+        }
+        
+    }
+
+    // Unfollow sent friend
+    async function unfollowFriend(exFriend, role) {
+        try 
+        {
+            var newRequest = 
+            {
+                "fromUserName": "",
+                "toUserName": "",
+                "status": 2
+            };
+
+            if(role === "receiver") 
+            {
+                newRequest.fromUserName = username;
+                newRequest.toUserName = exFriend;
+            } 
+            else 
+            {
+                newRequest.fromUserName = exFriend;
+                newRequest.toUserName = username;
+            }
+
+            const sendPutRequest = put({
+                apiName: "yapp",
+                path: "/api/friends/updateFriendRequest",
+                headers: 
+                {
+                    'Content-type': 'application/json'
+                },
+                options: 
+                {
+                    body: newRequest
+                }
+            });
+            console.log(await sendPutRequest.response);
+            getFriends(); // Update the list of friends
+        } 
+        catch (err)
+        {
+            alert('Failed to decline friend request. Please try again!')
+            console.error(err);
+        }
+    }
+
 </script>
 
 <template>
@@ -41,7 +101,7 @@
             <h4 v-if="friendship.ToUserName !== username">{{ friendship.ToUserName }}</h4>
             <h4 v-else>{{ friendship.FromUserName }}</h4>
             <div class="request-actions">
-                <button class="action-button" style="margin-right:10px;">
+                <button class="action-button" @click="onSubmit(friendship)" style="margin-right:10px;">
                     Following
                 </button>
             </div>

@@ -80,7 +80,7 @@
                 "status": 2
             };
 
-            const sendPostRequest = put({
+            const sendPutRequest = put({
                 apiName: "yapp",
                 path: "/api/friends/updateFriendRequest",
                 headers: 

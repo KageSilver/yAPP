@@ -34,27 +34,6 @@
         }
     }
 
-    // Get authenticated user's friend requests
-    async function getUsername(userID) 
-    {
-        try 
-        {
-            const restOperation = get({
-                apiName: 'yapp',
-                path: `/api/cognito/getUserByName?username=${userID}`
-            });
-            const { body } = await restOperation.response;
-            const response = await ((await body.blob()).arrayBuffer());
-            const decoder = new TextDecoder('utf-8'); // Use TextDecoder to decode the ArrayBuffer to a string
-            const decodedText = decoder.decode(response);
-            jsonData.value = JSON.parse(decodedText); // Update with parsed JSON
-        } 
-        catch(error)
-        {
-            console.log('GET call failed', error);
-        }
-    }
-
     async function sendFriendRequest(fromUser, toUser) 
     {
         try 
