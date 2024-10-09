@@ -8,7 +8,7 @@
                     "endpointType": "REST",
                     "endpoint": "https://cw1eg57r56.execute-api.us-east-2.amazonaws.com/test",
                     "region": "us-east-2",
-                    "authorizationType": "AWS_IAM"
+                    "authorizationType": "NONE"
                 }
             }
         }
