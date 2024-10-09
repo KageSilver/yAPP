@@ -1,5 +1,5 @@
 <script setup>
-    import { post } from 'aws-amplify/api';
+    import { get, post } from 'aws-amplify/api';
     import { useAuthenticator } from '@aws-amplify/ui-vue';
     import { useRouter } from 'vue-router';
 
@@ -16,7 +16,7 @@
         router.push('/dashboard');
     }
 
-    function onSubmit() 
+    async function onSubmit() 
     {
         const sender = auth.user?.username;
         const receiver = document.getElementById("to-username").value;
@@ -30,7 +30,7 @@
         } 
         else 
         {
-            alert('Enter in a username!');
+            alert('Enter in their UUID!');
         }
     }
 
@@ -56,9 +56,6 @@
                     body: newRequest
                 }
             });
-
-            //TODO: Have Yappers send friend requests through username, 
-			// see bug fix issue 139
             await sendPostRequest.response;
             alert('Successfully sent friend request!');
             document.getElementById("to-username").value = '';
@@ -86,7 +83,7 @@
     <h1>Add a Friend!</h1>
     
     <div class="fieldset">
-        <label style="margin-bottom: 10px;">Enter in their username: </label>
+        <label style="margin-bottom: 10px;">Enter in their UUID: </label>
         <input class="input" id="to-username" type="text">
     </div>
 
