@@ -3,6 +3,7 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
     <string name="post_list_title">Public Posts</string>
+    <string name="my_post_list_title">My Posts</string>
     <string name="create_post">Create a new post!</string>
     <string name="create_button">Post it!</string>
     <string name="discard_button">Discard</string>
