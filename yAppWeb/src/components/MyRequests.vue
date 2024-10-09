@@ -1,5 +1,5 @@
 <script setup>
-    import { get, post } from 'aws-amplify/api';
+    import { get, put } from 'aws-amplify/api';
     import { ref, onMounted } from 'vue';
     import { useAuthenticator } from '@aws-amplify/ui-vue';
 
@@ -13,11 +13,12 @@
         getRequests();
     });
 
+    // Get authenticated user's friend requests
     async function getRequests() 
     {
         try 
         {
-            const restOperation = await get({
+            const restOperation = get({
                 apiName: 'yapp',
                 path: `/api/friends/getFriendsByStatus?userName=${username}&status=0`
             });
@@ -25,7 +26,6 @@
             const response = await ((await body.blob()).arrayBuffer());
             const decoder = new TextDecoder('utf-8'); // Use TextDecoder to decode the ArrayBuffer to a string
             const decodedText = decoder.decode(response);
-            console.log(decodedText);
             jsonData.value = JSON.parse(decodedText); // Update with parsed JSON
         } 
         catch(error)
@@ -34,6 +34,7 @@
         }
     }
 
+    // Accept toUser's friend request to authenticated user
     async function acceptRequest(toUser) 
     {
         try 
@@ -45,7 +46,7 @@
                 "status": 1
             };
 
-            const sendPostRequest = post({
+            const sendPostRequest = put({
                 apiName: "yapp",
                 path: "/api/friends/updateFriendRequest",
                 headers: 
@@ -59,7 +60,7 @@
             });
             console.log(await sendPostRequest.response);
             alert(`Accepted ${toUser} request!`);
-            getRequests();
+            getRequests(); // Update the view of pending requests
         } 
         catch (err)
         {
@@ -68,6 +69,7 @@
         }
     }
 
+    // Decline toUser's friend request to authenticated user
     async function declineRequest(toUser) {
         try 
         {
@@ -78,7 +80,7 @@
                 "status": 2
             };
 
-            const sendPostRequest = post({
+            const sendPostRequest = put({
                 apiName: "yapp",
                 path: "/api/friends/updateFriendRequest",
                 headers: 
@@ -92,7 +94,7 @@
             });
             console.log(await sendPostRequest.response);
             alert(`Declined ${toUser} request!`);
-            getRequests();
+            getRequests(); // Update the view of pending requests
         } 
         catch (err)
         {
@@ -138,9 +140,9 @@
     }
 
     .action-button {
-    background-color: rgba(183, 143, 175, 0.577);
-    color: var(--amplify-colors-purple-100);
-    font-weight: bold;
-    float: left;
+        background-color: rgba(183, 143, 175, 0.577);
+        color: var(--amplify-colors-purple-100);
+        font-weight: bold;
+        float: left;
     }
 </style>

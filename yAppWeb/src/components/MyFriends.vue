@@ -1,18 +1,24 @@
 <script setup>
     import { get } from 'aws-amplify/api';
-    import { ref, onMounted } from 'vue';
+    import { onMounted, ref } from 'vue';
     import { useAuthenticator } from '@aws-amplify/ui-vue';
 
     const auth = useAuthenticator();
+    const username = auth.user?.username;
     const jsonData = ref([]); // Reacted array to hold the list of friendships
 
     // Get list of friends as JSON 
     onMounted(async () => 
     {
+        getFriends();
+    });
+
+    // Get authenticated user's friend requests
+    async function getFriends() 
+    {
         try 
         {
-            const username = auth.user?.username;
-            const restOperation = await get({
+            const restOperation = get({
                 apiName: 'yapp',
                 path: `/api/friends/getFriendsByStatus?userName=${username}&status=1`
             });
@@ -26,13 +32,13 @@
         {
             console.log('GET call failed', error);
         }
-    });
+    }
 </script>
 
 <template>
     <div class="flex-box">
         <div class="request" v-for="request in jsonData">
-            <h4>{{  request.ToUserName }}</h4>
+            <h4>{{ request.ToUserName }}</h4>
             <div class="request-actions">
                 <button class="action-button" style="margin-right:10px;">
                     Following
@@ -43,26 +49,26 @@
 </template>
 
 <style>
-.request {
-    display: flex;
-    justify-content: space-between;
-    background-color: var(--amplify-colors-neutral-10);
-    margin-bottom: 15px;
-    padding: 10px;
-    padding-left: 30px;
-    padding-right: 30px;
-    border-radius: 5px;
-    place-items: center;
-}
+    .request {
+        display: flex;
+        justify-content: space-between;
+        background-color: var(--amplify-colors-neutral-10);
+        margin-bottom: 15px;
+        padding: 10px;
+        padding-left: 30px;
+        padding-right: 30px;
+        border-radius: 5px;
+        place-items: center;
+    }
 
-.flex-box {
-    flex-direction: column;
-}
+    .flex-box {
+        flex-direction: column;
+    }
 
-.action-button {
-  background-color: rgba(183, 143, 175, 0.577);
-  color: var(--amplify-colors-purple-100);
-  font-weight: bold;
-  float: left;
-}
+    .action-button {
+        background-color: rgba(183, 143, 175, 0.577);
+        color: var(--amplify-colors-purple-100);
+        font-weight: bold;
+        float: left;
+    }
 </style>
