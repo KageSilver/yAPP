@@ -27,6 +27,7 @@
             const decoder = new TextDecoder('utf-8'); // Use TextDecoder to decode the ArrayBuffer to a string
             const decodedText = decoder.decode(response);
             jsonData.value = JSON.parse(decodedText); // Update with parsed JSON
+            console.log(jsonData);
         } 
         catch(error)
         {
@@ -71,44 +72,45 @@
 
     // Decline toUser's friend request to authenticated user
     async function declineRequest(toUser) {
-        try 
+        if (confirm("Are you sure you want to decline the request?"))
         {
-            const newRequest = 
+            try 
             {
-                "fromUserName": toUser,
-                "toUserName": username,
-                "status": 2
-            };
+                const newRequest = 
+                {
+                    "fromUserName": toUser,
+                    "toUserName": username,
+                    "status": 2
+                };
 
-            const sendPutRequest = put({
-                apiName: "yapp",
-                path: "/api/friends/updateFriendRequest",
-                headers: 
-                {
-                    'Content-type': 'application/json'
-                },
-                options: 
-                {
-                    body: newRequest
-                }
-            });
-            console.log(await sendPutRequest.response);
-            if (confirm("Are you sure you want to decline the request?"))
-            {
+                const sendPutRequest = put({
+                    apiName: "yapp",
+                    path: "/api/friends/updateFriendRequest",
+                    headers: 
+                    {
+                        'Content-type': 'application/json'
+                    },
+                    options: 
+                    {
+                        body: newRequest
+                    }
+                });
+                console.log(await sendPutRequest.response);
+
                 alert(`Declined ${toUser} request!`);
+                getRequests(); // Update the view of pending requests
             }
-            getRequests(); // Update the view of pending requests
+            catch (err)
+            {
+                alert('Failed to decline friend request. Please try again!')
+                console.error(err);
+            }
         } 
-        catch (err)
-        {
-            alert('Failed to decline friend request. Please try again!')
-            console.error(err);
-        }
     }
 </script>
 
 <template>
-    <div v-if="jsonData.length === 0">
+    <div v-if="jsonData.length === 0 || jsonData.length === 1">
         <h4>Nobody wants to friend you...</h4>
     </div>
     <div v-else class="flex-box">
