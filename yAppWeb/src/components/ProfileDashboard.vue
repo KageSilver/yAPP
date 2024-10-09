@@ -6,6 +6,7 @@
   import MyAchievements from "./MyAchievements.vue";
   import MyFriends from "./MyFriends.vue";
   import MyPosts from "./MyPosts.vue";
+  import MyRequests from './MyRequests.vue';
 
   const router = useRouter();
 
@@ -62,12 +63,19 @@
         class="TabsTrigger"
         value="tab3"
       >
-        My Achievements
+        My Friend Requests
       </TabsTrigger>
 
       <TabsTrigger
         class="TabsTrigger"
         value="tab4"
+      >
+        My Achievements
+      </TabsTrigger>
+
+      <TabsTrigger
+        class="TabsTrigger"
+        value="tab5"
       >
         Account Settings
       </TabsTrigger>
@@ -95,12 +103,20 @@
       class="TabsContent"
       value="tab3"
     >
-      <MyAchievements></MyAchievements>
+    <MyRequests></MyRequests>
+      <br>
     </TabsContent>
 
     <TabsContent
       class="TabsContent"
       value="tab4"
+    >
+      <MyAchievements></MyAchievements>
+    </TabsContent>
+
+    <TabsContent
+      class="TabsContent"
+      value="tab5"
     >
       <AccountSettings></AccountSettings>
     </TabsContent>
