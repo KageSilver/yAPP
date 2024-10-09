@@ -5,7 +5,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
+using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
+using Amazon.Extensions.NETCore.Setup;
 using Unchase.Swashbuckle.AspNetCore.Extensions.Extensions;
+using yAppLambda.Common;
+using yAppLambda.DynamoDB;
+using yAppLambda.Models;
 
 namespace yAppLambda;
 
@@ -13,6 +20,8 @@ public class Startup
 {
     public IConfiguration Configuration { get; set; }
     private bool IsLocal { get; set; }
+
+    private IAppSettings _appSettings; // the settings file for current lambda
 
     /// <summary>
     /// Startup constructor
@@ -35,7 +44,6 @@ public class Startup
         
         try
         {
-
             services.AddEndpointsApiExplorer();
             services.AddHttpLogging(_ => { });
             if (IsLocal)
@@ -46,6 +54,19 @@ public class Startup
                 });
             }
 
+            // convert the settings to the class object
+            _appSettings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(@"appSettings.json"), new JsonSerializerOptions { ReadCommentHandling = JsonCommentHandling.Skip });
+            Console.WriteLine($"Environment: {_appSettings.Environment}" );
+            Console.WriteLine($"Cognito: {_appSettings.UserPoolId}");
+            Console.WriteLine($"Region: {_appSettings.AwsRegionEndpoint}");
+            
+            // Manually configure AWS options
+            var awsOptions = new AWSOptions
+            {
+                Region = _appSettings.AwsRegionEndpoint
+            };
+            
+            services.AddDefaultAWSOptions(awsOptions);// Register AmazonDynamoDBClient as a singleton
             services.AddCognitoIdentity();
             //TODO: Add authentication & authorization service with cognito
 
@@ -70,8 +91,27 @@ public class Startup
                 options.JsonSerializerOptions.WriteIndented = true;
             });
             
-            //TODO: add singletons
             //Inject shared connection wrappers if they don't exist
+            services.AddSingleton<IAppSettings>(_appSettings);
+            services.AddSingleton<ICognitoActions,CognitoActions>();
+            services.AddSingleton<IFriendshipStatusActions, FriendshipStatusActions>();  
+            
+           
+            // Register AmazonDynamoDBClient as a singleton with the specified region
+            services.AddSingleton<IAmazonDynamoDB>(sp =>
+            {
+                var config = new AmazonDynamoDBConfig
+                {
+                    RegionEndpoint = _appSettings.AwsRegionEndpoint
+                };
+                return new AmazonDynamoDBClient(config);
+            });
+
+            // Register DynamoDBContext as a scoped service
+            services.AddScoped<IDynamoDBContext, DynamoDBContext>();
+            services.AddScoped<IFriendshipActions, FriendshipActions>();
+            services.AddScoped<IPostActions, PostActions>();
+
         }
         catch (Exception e)
         {

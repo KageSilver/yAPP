@@ -160,7 +160,8 @@
                   }
                 ]
               }
-            },  {
+            },
+            {
               "Effect": "Allow",
               "Action": [
                 "dynamodb:CreateTable",
@@ -175,7 +176,7 @@
                 "dynamodb:DescribeTable",
                 "dynamodb:PartiQLUpdate"
               ],
-              "Resource":"*"
+              "Resource": "*"
             }
           ]
         }

@@ -1,0 +1,9 @@
+# Architecture
+
+- What the planned [High Level Architecture Diagram](./Sprint%200/yAPP%20HLA.png) is for the project as of sprint 0.
+- Here is our updated [High Level Architecture Diagram](./Sprint%201/Images/NewHLA.png) as of sprint 1. We have it separated into three different layers; the Presentation Layer where all of the UI code resides, the Logic Layer where all of the computation code and authentication resides, and the Data Layer which contains the database we'll be using.
+- Here is a more detailed [Architecture Diagram](./Sprint%201/Images/architectureDiagram.png) from sprint 1 that outlines the tiers of our application and the layers within these tiers, as well as highlighting important components and classes of our application.
+    - Our presentation layer consists of two different UIs, a website and an Android mobile app. In this layer, we have both a presentation tier and fetching tier, though these two are built into the same files due to the software we are using to build these UIs.
+    - Our logic layer is split into two tiers, controllers, which interact with the client through our API, and actions, which interact the database. We also have AWS interactions within our logic layer as we use some 3rd party software to outsource validation.
+    - Our objects/models do not exist within a single layer, as they are passed between the layers of the application.
+    - Our data layer consists of a DynamoDB database hosted with AWS.

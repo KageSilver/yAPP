@@ -9,20 +9,22 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
-		"aws-amplify": "^6.6.2",
-		"vue": "^3.4.37",
-		"vue-router": "^4.4.5",
-		"@tanstack/vue-query": "^5.51.1",
 		"@aws-amplify/ui-vue": "^4.2.3",
-		"@types/node": "^20.12.4",
 		"@popperjs/core": "^2.11.8",
+		"@tanstack/vue-query": "^5.51.1",
+		"@types/node": "^20.12.4",
 		"@vue/compiler-sfc": "^3.4.21",
-		"vitest": "^1.4.0"
+		"aws-amplify": "^6.6.2",
+		"radix-vue": "^1.9.6",
+		"vitest": "^1.4.0",
+		"vue": "^3.4.37",
+		"vue-router": "^4.4.5"
 	},
 	"devDependencies": {
 		"@vitejs/plugin-vue": "^5.1.2",
 		"autoprefixer": "^10.4.20",
 		"eslint": "^9.10.0",
+		"eslint-config-airbnb-base": "^15.0.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-prettier": "^5.2.1",
 		"eslint-plugin-vue": "^9.28.0",

@@ -1,22 +1,32 @@
 import { fetchAuthSession } from "aws-amplify/auth";
 import { createRouter, createWebHistory } from "vue-router";
 
+import SignIn from "../components/SignIn.vue";
+import ProfileDashboard from "../components/ProfileDashboard.vue";
+import AddFriends from "../components/AddFriends.vue";
+import CreatePost from "../components/CreatePost.vue";
+import PostDetails from "../components/PostDetails.vue";
 
+const routes = [
+	{ path: '/', name: 'signIn', component: SignIn},
+	{ path: '/dashboard', name: 'dashboard', component: ProfileDashboard},
+	{ path: '/add-friends', name: 'addFriends', component: AddFriends},
+	{ path: '/create-post', name: 'createPost', component: CreatePost},
+	{ path: '/post/:pid', name: 'postDetails', component: PostDetails},
+]
 
 const router = createRouter({
 	history: createWebHistory(),
-    routes: [
-        //TODO:Create login view with AWS Amplify Authenticator
-    ]
+    routes,
 });
 router.beforeEach(async to => {
 	try {
-		const session = await fetchAuthSession();
-	
+		await fetchAuthSession();
 	} catch (e: unknown) {
-		if (to.name !== "login") {
+		// avoid infinite redirect
+		if (to.name !== "signIn") {
 			return {
-				name: "login",
+				name: "signIn",
 				query: { redirect: to.name?.toString() },
 			};
 		}
