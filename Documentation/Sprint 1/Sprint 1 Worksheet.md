@@ -53,11 +53,11 @@
 
 ### Our 3 most important acceptance tests
 1. Creating a new post - Documentation > Acceptance Tests > Posting.md > "Creating New Post" section
-    - This tests the user experience of creating a new post as well as tests the connection between the frontend and backend when creating a new post.
+    - This tests the user experience of creating a new post as well as tests the connection between the frontend and backend when creating a new post. This is tesing our [Make Public Question Posts](https://github.com/KageSilver/yAPP/issues/7) user story.
 2. Creating a new account - Documentation > Acceptance Tests > Profile Management.md > "Account Creation" section
-    - This tests the user experience of creating a new account as well as tests the connection between the frontend and backend when creating a new account.
+    - This tests the user experience of creating a new account as well as tests the connection between the frontend and backend when creating a new account. This is testing our [Account Creation](https://github.com/KageSilver/yAPP/issues/20) user story.
 3. Logging into an existing account - Documentation > Acceptance Tests > Profile Management.md > "Account Login" section
-    - This tests the user experience of logging into an existing account as well as tests the connection between the frontend and backend when logging into an account.
+    - This tests the user experience of logging into an existing account as well as tests the connection between the frontend and backend when logging into an account. This is testing our [Account Login](https://github.com/KageSilver/yAPP/issues/21) user story.
 
 ## Reproducible Environments
 #### Was the documentation clear enough to run their software? Did you get it running? Now long did it take, was it hard?
