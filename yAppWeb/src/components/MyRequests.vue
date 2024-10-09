@@ -93,7 +93,10 @@
                 }
             });
             console.log(await sendPutRequest.response);
-            alert(`Declined ${toUser} request!`);
+            if (confirm("Are you sure you want to decline the request?"))
+            {
+                alert(`Declined ${toUser} request!`);
+            }
             getRequests(); // Update the view of pending requests
         } 
         catch (err)
@@ -105,7 +108,10 @@
 </script>
 
 <template>
-    <div class="flex-box">
+    <div v-if="jsonData.length === 0">
+        <h4>Nobody wants to friend you...</h4>
+    </div>
+    <div v-else class="flex-box">
         <div v-for="request in jsonData">
             <div class="request" v-if="request.FromUserName !== username">
                 <h4>{{ request.FromUserName }}</h4>
