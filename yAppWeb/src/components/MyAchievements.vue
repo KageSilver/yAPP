@@ -2,5 +2,5 @@
 </script>
 
 <template>
-    <p>Wow...it's kinda empty in here...</p>
+    <p>This will be implemented in a future sprint!</p>
 </template>
