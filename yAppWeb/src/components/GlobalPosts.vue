@@ -43,7 +43,7 @@
 
     function truncateText(text) 
     {
-        const modifiedText = text
+        var modifiedText = text
         if ( text.length > maxLength ) 
         {
             modifiedText = text.substring(0, maxLength) + "...";
