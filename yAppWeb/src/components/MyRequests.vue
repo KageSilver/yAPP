@@ -1,5 +1,5 @@
 <script setup>
-    import { get, post } from 'aws-amplify/api';
+    import { get, put } from 'aws-amplify/api';
     import { ref, onMounted } from 'vue';
     import { useAuthenticator } from '@aws-amplify/ui-vue';
 
@@ -46,7 +46,7 @@
                 "status": 1
             };
 
-            const sendPostRequest = post({
+            const sendPostRequest = put({
                 apiName: "yapp",
                 path: "/api/friends/updateFriendRequest",
                 headers: 
@@ -80,7 +80,7 @@
                 "status": 2
             };
 
-            const sendPostRequest = post({
+            const sendPostRequest = put({
                 apiName: "yapp",
                 path: "/api/friends/updateFriendRequest",
                 headers: 
