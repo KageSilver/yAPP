@@ -1,12 +1,27 @@
-<script setup>
-	import { Authenticator } from "@aws-amplify/ui-vue";
+<script setup lang>
+	import { Authenticator, translations } from "@aws-amplify/ui-vue";
+	import { I18n } from "aws-amplify/utils";
 	import { RouterLink } from "vue-router";
+	import { signUp } from "aws-amplify/auth";
+
 	import "@aws-amplify/ui-vue/styles.css";
+
+	// Tweak labels of sign up component by using Internationalization
+	// https://ui.docs.amplify.aws/vue/connected-components/authenticator/customization
+	I18n.putVocabularies(translations);
+	I18n.setLanguage('en');
+	I18n.putVocabularies({
+		en: {
+			'Username': 'Email',
+			'Enter your Username': 'Enter your Email',
+			'Email': 'Confirm Email',
+			'Enter your Email': 'Please confirm your Email'
+		}
+	});
 </script>
 
 <template>
-  <authenticator>
-
+	<authenticator :services="services">
     <!-- HEADER -->
     <template v-slot:header>
       <div style="padding: var(--amplify-space-large); text-align: center">
