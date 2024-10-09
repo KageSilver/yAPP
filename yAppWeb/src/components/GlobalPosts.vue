@@ -4,6 +4,7 @@
 
     const jsonData = ref([]); // Reacted array to hold the list of posts
     const maxResults = 10;
+    const maxLength = 100;
 
     // Get list of most recent posts as JSON
     onMounted(async () => 
@@ -21,7 +22,6 @@
             const decoder = new TextDecoder('utf-8'); // Use TextDecoder to decode the ArrayBuffer to a string
             const decodedText = decoder.decode(response);
             jsonData.value = JSON.parse(decodedText); // Update with parsed JSON
-            console.log(jsonData.value);
             const tabContent = document.querySelector(".TabsContent .Text");
             tabContent.innerHTML = "";
         } 
@@ -34,6 +34,14 @@
     function clickPost(index) {
         // Send to that post's "page"
     }
+
+    function truncateText(text) {
+        const modifiedText = text
+        if ( text.length > maxLength ) {
+            modifiedText = text.substring(0, maxLength) + "...";
+        }
+        return modifiedText;
+    }
 </script>
 
 <template>
@@ -44,7 +52,7 @@
                 <p><strong>Created At:</strong> {{ new Date(post.createdAt).toLocaleString() }}</p>
             </div>
             <div class="card-body">
-                <p>{{ post.postBody }}</p>
+                <p>{{ truncateText(post.postBody) }}</p>
             </div>
         </div>
     </div>
