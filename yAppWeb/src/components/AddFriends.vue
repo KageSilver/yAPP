@@ -25,7 +25,7 @@ function onSubmit()
     if(receiver !== '') 
     {
         requestButton.disabled = true;
-        test(sender, receiver);
+        sendFriendRequest(sender, receiver);
         requestButton.disabled = false;
     } 
     else 
@@ -34,7 +34,7 @@ function onSubmit()
     }
 }
 
-async function test(fromUser, toUser) 
+async function sendFriendRequest(fromUser, toUser) 
 {
     try 
     {
@@ -57,9 +57,7 @@ async function test(fromUser, toUser)
             }
         });
 
-        //TODO: Have Yappers send friend requests either 
-        // through username or something else
-        // instead of user-id (sub)
+        //TODO: Have Yappers send friend requests through username
         await sendPostRequest.response;
         alert('Successfully sent friend request!');
         document.getElementById("to-username").value = '';
