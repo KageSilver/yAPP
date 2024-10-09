@@ -5,12 +5,14 @@ import SignIn from "../components/SignIn.vue";
 import ProfileDashboard from "../components/ProfileDashboard.vue";
 import AddFriends from "../components/AddFriends.vue";
 import CreatePost from "../components/CreatePost.vue";
+import PostDetails from "../components/PostDetails.vue";
 
 const routes = [
 	{ path: '/', name: 'signIn', component: SignIn},
 	{ path: '/dashboard', name: 'dashboard', component: ProfileDashboard},
 	{ path: '/add-friends', name: 'addFriends', component: AddFriends},
 	{ path: '/create-post', name: 'createPost', component: CreatePost},
+	{ path: '/post/:pid', name: 'postDetails', component: PostDetails},
 ]
 
 const router = createRouter({
