@@ -78,7 +78,7 @@ const goToCreatePost = async () => {
       value="tab0"
     >
       <p class="Text">
-        Wow...it's kinda empty in here...
+        Wow...the world must be dead...
       </p>
       <GlobalPosts></GlobalPosts>
       <button class="primary-button" type="button" @click="goToCreatePost">Make a new post!</button>
