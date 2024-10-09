@@ -36,7 +36,7 @@
         }
     }
 
-    function clickPost(index) {
+    function clickPost(id) {
         // Send to that post's "page"
         // Will be implemented in sprint 2!
     }
@@ -54,7 +54,7 @@
 
 <template>
     <div class="card-container">
-        <div class="card" v-for="(post, index) in jsonData" :key="post.pid" @click="clickPost(index)">
+        <div class="card" v-for="post in jsonData" :key="post.pid" @click="clickPost(post.id)">
             <div class="card-header">
                 <h3>{{ post.postTitle }}</h3>
                 <p><strong>Created At:</strong> {{ new Date(post.createdAt).toLocaleString() }}</p>
