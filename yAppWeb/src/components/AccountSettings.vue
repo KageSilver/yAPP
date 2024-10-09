@@ -30,6 +30,9 @@
       alert('Password reset failed!' + 
             'Please ensure you entered your old password correctly' + 
             'and that your new password is a minimum of 8 characters')
+
+      document.getElementById("oldPassword").value = '';
+      document.getElementById("newPassword").value = '';
     }
   }
 </script>

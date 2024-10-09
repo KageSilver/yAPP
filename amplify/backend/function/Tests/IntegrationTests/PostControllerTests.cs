@@ -60,7 +60,9 @@ public class PostControllerIntegrationTests
         _postActions = new PostActions(_appSettings, dynamoDbContext);
     }
 
-    [Fact]
+    #region CreatePost Tests
+
+    [Fact, Order(1)]
     public async Task CreatePost_ValidRequest_ReturnsPost()
     {
         //setup the user for testing
@@ -76,7 +78,7 @@ public class PostControllerIntegrationTests
         var newPost = new NewPost
         {
             UserName = TestUserEmail,
-            PostTitle = "title",
+            PostTitle = "CreatePost_ValidRequest_ReturnsPost()",
             PostBody = "body",
             DiaryEntry = false,
             Anonymous = true
@@ -102,11 +104,11 @@ public class PostControllerIntegrationTests
         Assert.Equal(newPost.Anonymous, post.Anonymous);
 
         // Clean up
-        await _cognitoActions.DeleteUser(TestUserEmail);
         await _postActions.DeletePost(post.PID);
+        // Test user is deleted in GetPostsByUser_ShouldReturnPosts_WhenSuccessful()
     }
 
-    [Fact]
+    [Fact, Order(2)]
     public async Task CreatePost_PosterNotFound_ReturnsNotFound()
     {
         // Arrange
@@ -129,7 +131,7 @@ public class PostControllerIntegrationTests
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 
-    [Fact]
+    [Fact, Order(3)]
     public async Task CreatePost_InvalidRequest_ReturnsBadRequest()
     {
         // Arrange
@@ -152,24 +154,15 @@ public class PostControllerIntegrationTests
         Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
     }
 
-    
-    [Fact]
+    [Fact, Order(4)]
     public async Task GetRecentPosts_ShouldReturnPosts_WhenRequestIsSuccessful()
     {
-        //setup the user for testing
-        await _cognitoActions.CreateUser(TestUserEmail);
-        await Task.Delay(TimeSpan.FromSeconds(5)); // make sure the user is created
-
-        var responseId = await _client.GetAsync($"/api/users/getUserByName?username={TestUserEmail}");
-        Assert.Equal(HttpStatusCode.OK, responseId.StatusCode);
-        var responseIdString = await responseId.Content.ReadAsStringAsync();
-        var user = JsonConvert.DeserializeObject<User>(responseIdString);
-
+        // Uses the test user set up in CreatePost_ValidRequest_ReturnsPost()
         // Arrange
         var newPost = new NewPost
         {
             UserName = TestUserEmail,
-            PostTitle = "title",
+            PostTitle = "GetRecentPosts_ShouldReturnPosts_WhenRequestIsSuccessful()",
             PostBody = "body",
             DiaryEntry = false,
             Anonymous = true
@@ -203,11 +196,11 @@ public class PostControllerIntegrationTests
         Assert.Equal(newPost.Anonymous, responseList.First().Anonymous);
 
         // Clean up
-        await _cognitoActions.DeleteUser(TestUserEmail);
         await _postActions.DeletePost(responsePost.PID);
+        // Test user is deleted in GetPostsByUser_ShouldReturnPosts_WhenSuccessful()
     }
     
-    [Fact]
+    [Fact, Order(5)]
     public async Task GetRecentPosts_ShouldReturnBadRequest_WithInvalidRequest()
     {
         // Act
@@ -217,25 +210,19 @@ public class PostControllerIntegrationTests
         Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
     }
 
+    #endregion
+
     #region DeletePost Tests
     
-    [Fact]
+    [Fact, Order(6)]
     public async Task DeletePost_ShouldReturnTrue_WhenPostIsDeletedSuccessfully()
     {
-        //setup the user for testing
-        await _cognitoActions.CreateUser(TestUserEmail);
-        await Task.Delay(TimeSpan.FromSeconds(5)); // make sure the user is created
-
-        var responseId = await _client.GetAsync($"/api/users/getUserByName?username={TestUserEmail}");
-        Assert.Equal(HttpStatusCode.OK, responseId.StatusCode);
-        var responseIdString = await responseId.Content.ReadAsStringAsync();
-        var user = JsonConvert.DeserializeObject<User>(responseIdString);
-
+        // Uses the test user set up in CreatePost_ValidRequest_ReturnsPost()
         // Arrange
         var newPost = new NewPost
         {
             UserName = TestUserEmail,
-            PostTitle = "title",
+            PostTitle = "DeletePost_ShouldReturnTrue_WhenPostIsDeletedSuccessfully()",
             PostBody = "body",
             DiaryEntry = false,
             Anonymous = true
@@ -259,11 +246,10 @@ public class PostControllerIntegrationTests
         // Assert
         Assert.True(result);
 
-        // Clean up
-        await _cognitoActions.DeleteUser(TestUserEmail);
+        // Test user is deleted in GetPostsByUser_ShouldReturnPosts_WhenSuccessful()
     }
     
-    [Fact]
+    [Fact, Order(7)]
     public async Task DeletePost_ShouldReturnBadRequest_WhenPostIdIsNull()
     {
         // Act
@@ -273,7 +259,7 @@ public class PostControllerIntegrationTests
         Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
     }
     
-    [Fact]
+    [Fact, Order(8)]
     public async Task DeletePost_ShouldReturnFalse_WhenDeleteFails()
     {
         // Act
@@ -289,18 +275,10 @@ public class PostControllerIntegrationTests
 
     #region UpdatePost Tests
 
-    
-    [Fact]
+    [Fact, Order(9)]
     public async Task UpdatePost_ShouldReturnOk_WhenPostIsUpdatedSuccessfully()
     {
-        //setup the user for testing
-        await _cognitoActions.CreateUser(TestUserEmail);
-        await Task.Delay(TimeSpan.FromSeconds(5)); // make sure the user is created
-
-        var responseId = await _client.GetAsync($"/api/users/getUserByName?username={TestUserEmail}");
-        Assert.Equal(HttpStatusCode.OK, responseId.StatusCode);
-        var responseIdString = await responseId.Content.ReadAsStringAsync();
-        var user = JsonConvert.DeserializeObject<User>(responseIdString);
+        // Uses the test user set up in CreatePost_ValidRequest_ReturnsPost()
 
         // Arrange
         var newPost = new NewPost
@@ -345,11 +323,11 @@ public class PostControllerIntegrationTests
         Assert.Equal(responsePost.Anonymous, updatedPost.Anonymous);
 
         // Clean up
-        await _cognitoActions.DeleteUser(TestUserEmail);
         await _postActions.DeletePost(responsePost.PID);
+        // Test user is deleted in GetPostsByUser_ShouldReturnPosts_WhenSuccessful()
     }
     
-    [Fact]
+    [Fact, Order(10)]
     public async Task UpdatePost_ShouldReturnBadRequest_WhenRequestIsNull()
     {
         // Arrange
@@ -367,17 +345,10 @@ public class PostControllerIntegrationTests
     
     #region GetPostById Tests
     
-    [Fact]
+    [Fact, Order(11)]
     public async Task GetPostById_ShouldReturnPost_WhenSuccessful()
     {
-        //setup the user for testing
-        await _cognitoActions.CreateUser(TestUserEmail);
-        await Task.Delay(TimeSpan.FromSeconds(5)); // make sure the user is created
-
-        var responseId = await _client.GetAsync($"/api/users/getUserByName?username={TestUserEmail}");
-        Assert.Equal(HttpStatusCode.OK, responseId.StatusCode);
-        var responseIdString = await responseId.Content.ReadAsStringAsync();
-        var user = JsonConvert.DeserializeObject<User>(responseIdString);
+        // Uses the test user set up in CreatePost_ValidRequest_ReturnsPost()
 
         // Arrange
         var request = new NewPost
@@ -415,12 +386,11 @@ public class PostControllerIntegrationTests
         Assert.Equal(newPost.Anonymous, post.Anonymous);
 
         // Clean up
-        await _cognitoActions.DeleteUser(TestUserEmail);
         await _postActions.DeletePost(post.PID);
-        
+        // Test user is deleted in GetPostsByUser_ShouldReturnPosts_WhenSuccessful()
     }
 
-    [Fact]
+    [Fact, Order(12)]
     public async Task GetPostById_ShouldReturnNotFound_WhenPostNotFound()
     {
         // Act
@@ -431,7 +401,7 @@ public class PostControllerIntegrationTests
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
-    [Fact]
+    [Fact, Order(13)]
     public async Task GetPostById_ShouldReturnBadRequest_WithInvalidPostId()
     {
         // Act
@@ -445,23 +415,16 @@ public class PostControllerIntegrationTests
 
     #region GetPostsByUser Tests
 
-    [Fact]
+    [Fact, Order(14)]
     public async Task GetPostsByUser_ShouldReturnPosts_WhenSuccessful()
     {
-        //setup the user for testing
-        await _cognitoActions.CreateUser(TestUserEmail);
-        await Task.Delay(TimeSpan.FromSeconds(5)); // make sure the user is created
-
-        var responseId = await _client.GetAsync($"/api/users/getUserByName?username={TestUserEmail}");
-        Assert.Equal(HttpStatusCode.OK, responseId.StatusCode);
-        var responseIdString = await responseId.Content.ReadAsStringAsync();
-        var user = JsonConvert.DeserializeObject<User>(responseIdString);
+        // Uses the test user set up in CreatePost_ValidRequest_ReturnsPost()
 
         // Arrange
         var request = new NewPost
         {
             UserName = TestUserEmail,
-            PostTitle = "title",
+            PostTitle = "GetPostsByUser_ShouldReturnPosts_WhenSuccessful()",
             PostBody = "body",
             DiaryEntry = false,
             Anonymous = true
@@ -497,7 +460,7 @@ public class PostControllerIntegrationTests
         await _postActions.DeletePost(newPost.PID);
     }
 
-    [Fact]
+    [Fact, Order(15)]
     public async Task GetPostsByUser_ShouldReturnBadRequest_WithInvalidUsername()
     {
         // Act
