@@ -1,10 +1,16 @@
 <script setup lang>
 	import { Authenticator, translations } from "@aws-amplify/ui-vue";
 	import { I18n } from "aws-amplify/utils";
-	import { RouterLink } from "vue-router";
-	import { signUp } from "aws-amplify/auth";
+	import { useRouter } from "vue-router";
 
 	import "@aws-amplify/ui-vue/styles.css";
+
+	const router = useRouter();
+
+	const goToDashboard= async () => 
+	{
+		router.push('/dashboard');
+	}
 
 	// Tweak labels of sign up component by using Internationalization
 	// https://ui.docs.amplify.aws/vue/connected-components/authenticator/customization
@@ -46,13 +52,21 @@
 
     <!-- LANDING PAGE -->
     <template v-slot="{ user, signOut }" >
-      <h1>Hello {{ user.username }}!</h1>
-      <RouterLink to="/dashboard" style="color:var(--amplify-colors-neutral-40);">
-        Go to Dashboard
-      </RouterLink>
-      <br>
-      <br>
-      <button class="primary-button" @click="signOut">Sign Out</button>
+		<div class="button-bar" style="display:flex; justify-content:right; margin-bottom:35px;">
+			<button class="primary-button" @click="goToDashboard" style="margin-right:35px;">
+				Go to Dashboard
+			</button>
+			<button class="primary-button" @click="signOut">
+				Sign Out
+			</button>
+		</div>
+		<br>
+		<h1>
+			Hello {{ user.username }}!
+		</h1>
+		<text class="UUID">
+			UUID: {{ user.userId }}
+		</text>		
     </template>
 
   </authenticator>
@@ -106,5 +120,9 @@
 		border-width: 0px;
 		border-radius: 5px;
 		opacity: 95%;
+	}
+
+	.UUID {
+		font-size: x-large;
 	}
 </style>
