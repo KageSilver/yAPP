@@ -5,6 +5,10 @@ yAPP is an anonymous chatting application to provide users, known as Yappers, a 
 ## Note
 We have not completed the mobile development of the features we planned for sprint 1 at this point. We will continue this work in sprint 2.
 
+## Website
+ - You can view our website on our main environment [here](https://dqn0i6zpqfsuv.cloudfront.net/).
+ - We also have a dev environment [here](https://dezluqsjxnkgt.cloudfront.net/).
+
 ## Folder Structure
  - [Backend - Amplify](./amplify/)
  - [Frontend - Mobile](./yAppMobile/)

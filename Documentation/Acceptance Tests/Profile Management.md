@@ -36,7 +36,7 @@
     - Username, which will be the email address (for now)
     - Password
 4. Select the "Sign In" button at the bottom of the panel
-5. Select the "Go to Dashboard" text
+5. Select the "Go to Dashboard" button
 6. Select the "Account Settings" tab at the top-right of the panel
 7. To change your password:
     - Enter your old password in the textfield below "Old Password"
@@ -52,10 +52,12 @@
     - Username, which will be the email address (for now)
     - Password
 4. Select the "Sign In" button at the bottom of the panel
-5. Select the "Go to Dashboard" text
+5. Select the "Go to Dashboard" button
 6. To make a friend request:
     - Select the "+ Add Friend" button on the top-right of the screen
-    - 
+    - Enter in your friend's UUID in the textfield below "Enter in their UUID:"
+    - Select "Send Friend Request"
+    - A pop-up should appear verifying the friend request has been sent
 7. To accept/decline a friend request:
     - Select the "My Friend Requests" tab on the top of the panel
     - All pending friendships will be listed here
