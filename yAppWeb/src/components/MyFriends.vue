@@ -37,8 +37,9 @@
 
 <template>
     <div class="flex-box" v-for="friendship in jsonData">
-        <div class="request" v-if="friendship.ToUserName !== username">
-            <h4>{{ friendship.ToUserName }}</h4>
+        <div class="request">
+            <h4 v-if="friendship.ToUserName !== username">{{ friendship.ToUserName }}</h4>
+            <h4 v-else>{{ friendship.FromUserName }}</h4>
             <div class="request-actions">
                 <button class="action-button" style="margin-right:10px;">
                     Following
