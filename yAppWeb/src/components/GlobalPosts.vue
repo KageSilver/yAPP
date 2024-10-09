@@ -1,7 +1,9 @@
 <script setup="js">
     import { get } from 'aws-amplify/api';
     import { onMounted, ref } from 'vue';
+	import { useRouter } from 'vue-router'; // Import useRouter
 
+	const router = useRouter(); // Use router hook
     const jsonData = ref([]); // Reacted array to hold the list of posts
     const maxResults = 10;
     const maxLength = 100;
@@ -36,9 +38,9 @@
         }
     }
 
-    function clickPost(id) {
-        // Send to that post's "page"
-        // Will be implemented in sprint 2!
+    function clickPost(pid) {
+        console.log(pid);
+        router.push({ name: 'postDetails', params: { pid } });
     }
 
     function truncateText(text) 
@@ -54,7 +56,7 @@
 
 <template>
     <div class="card-container">
-        <div class="card" v-for="post in jsonData" :key="post.pid" @click="clickPost(post.id)">
+        <div class="card" v-for="post in jsonData" :key="post.pid" @click="clickPost(post.pid)">
             <div class="card-header">
                 <h3>{{ post.postTitle }}</h3>
                 <p><strong>Created At:</strong> {{ new Date(post.createdAt).toLocaleString() }}</p>
