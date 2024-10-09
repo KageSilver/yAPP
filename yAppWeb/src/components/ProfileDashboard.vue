@@ -6,6 +6,7 @@
   import MyAchievements from "./MyAchievements.vue";
   import MyFriends from "./MyFriends.vue";
   import MyPosts from "./MyPosts.vue";
+  import GlobalPosts from "./GlobalPosts.vue";
 
   const router = useRouter();
 
@@ -37,13 +38,19 @@
   
   <TabsRoot
     class="TabsRoot"
-    default-value="tab1"
+    default-value="tab0"
   >
     <TabsList
       class="TabsList"
       aria-label="Manage your account"
     >
 
+      <TabsTrigger
+        class="TabsTrigger"
+        value="tab0"
+      >
+        Public Posts
+      </TabsTrigger>
       <TabsTrigger
         class="TabsTrigger"
         value="tab1"
@@ -72,6 +79,17 @@
         Account Settings
       </TabsTrigger>
     </TabsList>
+
+    <TabsContent
+      class="TabsContent"
+      value="tab0"
+    >
+      <p class="Text">
+        Wow...the world must be dead...
+      </p>
+      <GlobalPosts></GlobalPosts>
+      <button class="primary-button" type="button" @click="goToCreatePost">Make a new post!</button>
+    </TabsContent>
 
     <TabsContent
       class="TabsContent"

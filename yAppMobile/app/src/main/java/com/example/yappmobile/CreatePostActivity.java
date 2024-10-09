@@ -30,7 +30,7 @@ public class CreatePostActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.create_post);
+        setContentView(R.layout.activity_create_post);
 
         newPost = new JSONObject();
         try {

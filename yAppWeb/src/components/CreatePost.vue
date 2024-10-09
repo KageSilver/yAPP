@@ -48,7 +48,7 @@
         newPost.userName = '';
         newPost.postTitle, postElements[0].value = '';
         newPost.postBody, postElements[1].value = '';
-        createButton.disabled = true;
+        createButton.disabled = false;
         // Send to home page
         router.push({ name: 'dashboard' });
         // TODO: Show confirmation
@@ -57,7 +57,7 @@
       catch (e) 
       {
         alert("Post failed to create... Try agin!");
-        createButton.disabled = true;
+        createButton.disabled = false;
       }
     }
   }
