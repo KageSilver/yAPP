@@ -102,7 +102,7 @@
             <h4 v-else>{{ friendship.FromUserName }}</h4>
             <div class="request-actions">
                 <button class="action-button" @click="onSubmit(friendship)" style="margin-right:10px;">
-                    Following
+                    Unfollow
                 </button>
             </div>
         </div>
