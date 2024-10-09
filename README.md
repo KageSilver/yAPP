@@ -13,7 +13,8 @@ yAPP is an anonymous chatting application to provide users, known as Yappers, a 
  - Here are our [Acceptance Test](./Documentation/Acceptance%20Tests/), which provide instructions for how to run manual acceptance tests on our website.
 
 ## Login Information
-Nothing to see here... YET.
+ - To create a yAPP account follow the instructions under the section "Account Creation" [here](./Documentation/Acceptance%20Tests/Profile%20Management.md).
+ - To log into an existing a yAPP account follow the instructions under the section "Account Login" [here](./Documentation/Acceptance%20Tests/Profile%20Management.md).
 
 ## Proposal
 - Here is the [Project Proposal](./Documentation/Sprint%200/Project%20Proposal.md) for Iteration 0.
