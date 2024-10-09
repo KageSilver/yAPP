@@ -1,5 +1,5 @@
 <script setup>
-    import { get } from 'aws-amplify/api';
+    import { get, put } from 'aws-amplify/api';
     import { onMounted, ref } from 'vue';
     import { useAuthenticator } from '@aws-amplify/ui-vue';
 
@@ -33,16 +33,76 @@
             console.log('GET call failed', error);
         }
     }
+
+    function onSubmit(friendship)
+    {
+        if(friendship.ToUserName !== username)
+        {
+            if (confirm(`Are you sure you want to unfollow ${friendship.ToUserName}?`)) 
+            {
+                unfollowFriend(friendship.ToUserName, "receiver");
+            }    
+        }
+        else 
+        {
+            if (confirm(`Are you sure you want to unfollow ${friendship.FromUserName}?`)) 
+            {
+                unfollowFriend(friendship.FromUserName, "sender");
+            }
+        }
+    }
+
+    // Unfollow sent friend
+    async function unfollowFriend(exFriend, role) {
+        try 
+        {
+            const newRequest = 
+            {
+                "fromUserName": role === "receiver" ? username : exFriend,
+                "toUserName": role === "receiver" ? exFriend : username,
+                "status": 2
+            };
+
+            const sendPutRequest = put({
+                apiName: "yapp",
+                path: "/api/friends/updateFriendRequest",
+                headers: 
+                {
+                    'Content-type': 'application/json'
+                },
+                options: 
+                {
+                    body: newRequest
+                }
+            });
+            console.log(await sendPutRequest.response);
+            getFriends(); // Update the list of friends
+        } 
+        catch (err)
+        {
+            alert('Failed to decline friend request. Please try again!');
+            console.error(err);
+        }
+    }
 </script>
 
 <template>
-    <div class="flex-box">
-        <div class="request" v-for="request in jsonData">
-            <h4>{{ request.ToUserName }}</h4>
-            <div class="request-actions">
-                <button class="action-button" style="margin-right:10px;">
-                    Following
-                </button>
+    <!-- Show this message if the friend list is empty -->
+    <div v-if="jsonData.length === 0">
+        <h4>Wow... you have no friends!</h4>
+    </div>
+
+    <!-- Display friend list if available -->
+    <div v-else>
+        <div class="flex-box" v-for="friendship in jsonData" :key="friendship.ToUserName || friendship.FromUserName">
+            <div class="request">
+                <h4 v-if="friendship.ToUserName !== username">{{ friendship.ToUserName }}</h4>
+                <h4 v-else>{{ friendship.FromUserName }}</h4>
+                <div class="request-actions">
+                    <button class="action-button" @click="onSubmit(friendship)" style="margin-right:10px;">
+                        Unfollow
+                    </button>
+                </div>
             </div>
         </div>
     </div>
