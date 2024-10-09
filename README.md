@@ -2,6 +2,9 @@
 
 yAPP is an anonymous chatting application to provide users, known as Yappers, a safe and secure space to share their thoughts, ask questions to the general public, and open up to their friends, all anonymously. The anonymity yAPP provides allows Yappers to separate their personal lives with their online personas. On traditional social media platforms, actions such as posting, commenting, or viewing are all tied to accounts, leaving identities vulnerable to being traced or even exposed.
 
+## Note
+We have not completed the mobile development of the features we planned for sprint 1 at this point. We will continue this work in sprint 2.
+
 ## Folder Structure
  - [Backend - Amplify](./amplify/)
  - [Frontend - Mobile](./yAppMobile/)
@@ -31,8 +34,11 @@ yAPP is an anonymous chatting application to provide users, known as Yappers, a 
 ## User Stories
 - Click [here](https://github.com/KageSilver/yAPP/labels/user%20story) to see the open User Stories for our project!
 
+## API Documentation
+ - Here is our [API documentation](./Documentation/API%20Documentation.md) for our project.
+
 ## Test plan
- - Here is our [test plan](./Documentation/Sprint%201/Test%20Plan.md)
+ - Here is our [test plan](./Documentation/Sprint%201/Test%20Plan.md) for our project.
 
 ## Architecture
  - Here is our [architecture](./Documentation/Architecture.md) for our project.
