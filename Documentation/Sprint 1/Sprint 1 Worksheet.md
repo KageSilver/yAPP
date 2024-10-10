@@ -1,12 +1,8 @@
 # yAPP // Sprint 1 Worksheet
 
-## Test Plan
- - The test plan for our project can be found [here](../Test%20Plan.md)
-
----
-
 ## Unit/Integration/Acceptance Tests
-
+- Our **test plan** for our project can be found [here](../Test%20Plan.md).
+  
 ### Backend
 
 #### API layer coverage
@@ -41,8 +37,6 @@
  - To have our integration tests run in a timely manner, we re-use the same test user in our live database. We do this by creating a user in one integration test and deleting it in another, which we ensure runs smoothly by enforcing the order these integration tests are executed. We start with the test that creates the test user, then any of the other tests that also use that user, and finally we run the test that will delete the user.
  - We are only able to provide a line coverage report as Rider, the IDE we’re using for development, does not offer class or method coverage reports.
 
----
-
 ## Test Importance
 
 ### Our 3 most important unit tests
@@ -72,8 +66,6 @@
 3. Logging into an existing account - [Documentation > Acceptance Tests > Profile Management.md > "Account Login"](https://github.com/KageSilver/yAPP/blob/dev/Documentation/Acceptance%20Tests/Profile%20Management.md#account-login) section
     - This tests the user experience of logging into an existing account as well as tests the connection between the frontend and backend when logging into an account. This is testing our [Account Login](https://github.com/KageSilver/yAPP/issues/21) user story.
 
----
-
 ## Reproducible Environments
 
 #### Was the documentation clear enough to run their software? Did you get it running? How long did it take, was it hard?
@@ -88,7 +80,7 @@
 
 - I was able to run both test suites provided (`test` and `integrationTest`) with the following results: 
 
-    ![image](./Images/CombatCritters/gradleTestOutput.png)
+    ![image](./Images/CombatCritters/gradleTestOutput.PNG)
 
 
 #### Were there any issues you found when running the software? Connection issues, other problems, especially with it being a distributed system.
