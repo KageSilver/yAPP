@@ -1,10 +1,14 @@
-# yApp
+# yAPP // Sprint 1 Worksheet
 
 ## Test Plan
- - The test plan for our project can be found [here]()
+ - The test plan for our project can be found [here](../Test%20Plan.md)
+
+---
 
 ## Unit/Integration/Acceptance Tests
+
 ### Backend
+
 #### API layer coverage
 ![image](./Images/APIunitTestCoverage.png)
  - Every method in our API layer has been tested up to at least 80% of the lines in the methods.
@@ -20,6 +24,7 @@
  - Integration tests can be found under [amplify > backend > function > Tests > IntegrationTests](https://github.com/KageSilver/yAPP/tree/dev/amplify/backend/function/Tests/IntegrationTests)
 
 ### Frontend
+
 #### Frontend logic layer
  - Our frontend has no logic layer, so we did not need to write any tests for that.
 
@@ -36,8 +41,12 @@
  - To have our integration tests run in a timely manner, we re-use the same test user in our live database. We do this by creating a user in one integration test and deleting it in another, which we ensure runs smoothly by enforcing the order these integration tests are executed. We start with the test that creates the test user, then any of the other tests that also use that user, and finally we run the test that will delete the user.
  - We are only able to provide a line coverage report as Rider, the IDE we’re using for development, does not offer class or method coverage reports.
 
+---
+
 ## Test Importance
+
 ### Our 3 most important unit tests
+
 1. [CreateUser_ShouldCallAdminCreateUserAsync() - from CognitoActionsTests](https://github.com/KageSilver/yAPP/blob/dev/amplify/backend/function/Tests/UnitTests/Actions/CognitoActionsTests.cs#L213-L229)
     - This tests if the method CreateUser() calls .AdminCreateUserAsync(), which is required to create a user in the database, and sends the correct response when a user is created successfully.
 2. [CreateFriendship_ShouldReturnOk_WhenFriendshipIsCreatedSuccessfully() - from FriendshipActionsTests](https://github.com/KageSilver/yAPP/blob/dev/amplify/backend/function/Tests/UnitTests/Actions/FriendshipActionsTests.cs#L39-L69)
@@ -46,6 +55,7 @@
     - This tests if the method CreatePost() calls .SaveAsync(), which is required to create a post in the database, and sends the correct response when a post is created successfully.
 
 ### Our 3 most important integration tests
+
 1. [GetUserById_ShouldReturnFound_WhenUserExist() - from UserControllerTests](https://github.com/KageSilver/yAPP/blob/dev/amplify/backend/function/Tests/IntegrationTests/UserControllerTests.cs#L75-L87)
     - This tests if a user exists in the database by the user ID, which will return a user object if the user if found.
 2. [SendFriendRequest_ValidRequest_ReturnsFriendship() - from FriendControllerTests](https://github.com/KageSilver/yAPP/blob/dev/amplify/backend/function/Tests/IntegrationTests/FriendControllerTests.cs#L68-L103)
@@ -54,6 +64,7 @@
     - This tests if a post was created successfuly in the database, which will return the new post object.
 
 ### Our 3 most important acceptance tests
+
 1. Creating a new post - [Documentation > Acceptance Tests > Posting.md > "Creating New Post"](https://github.com/KageSilver/yAPP/blob/dev/Documentation/Acceptance%20Tests/Posting.md#creating-new-post) section
     - This tests the user experience of creating a new post as well as tests the connection between the frontend and backend when creating a new post. This is tesing our [Make Public Question Posts](https://github.com/KageSilver/yAPP/issues/7) user story.
 2. Creating a new account - [Documentation > Acceptance Tests > Profile Management.md > "Account Creation"](https://github.com/KageSilver/yAPP/blob/dev/Documentation/Acceptance%20Tests/Profile%20Management.md#account-creation) section
@@ -61,10 +72,27 @@
 3. Logging into an existing account - [Documentation > Acceptance Tests > Profile Management.md > "Account Login"](https://github.com/KageSilver/yAPP/blob/dev/Documentation/Acceptance%20Tests/Profile%20Management.md#account-login) section
     - This tests the user experience of logging into an existing account as well as tests the connection between the frontend and backend when logging into an account. This is testing our [Account Login](https://github.com/KageSilver/yAPP/issues/21) user story.
 
+---
+
 ## Reproducible Environments
-#### Was the documentation clear enough to run their software? Did you get it running? Now long did it take, was it hard?
- - 
-#### Could you run the unit tests (SHOW IMAGES)? Did they all work? What about integration tests and other tests?
- - 
+
+#### Was the documentation clear enough to run their software? Did you get it running? How long did it take, was it hard?
+
+- After getting past the intimidation of Group 5 having 5 repositories, running their software locally went relatively smoothly. It took me around an hour to figure everything out. Here is the output for building their project:
+
+    ![image](./Images/CombatCritters/gradleBuildOutput.png)
+
+- There's definitely room for improvement in terms of their documentation , especially given the size of their project. A brief explanation on the software's organization, and how all five repos connect together, would've been great. More specifically, explaining that the main repository contains the backend would've cleared up initial confusion.  
+
+#### Could you run the unit tests? Did they all work? What about integration tests and other tests?
+
+- I was able to run both test suites provided (`test` and `integrationTest`) with the following results: 
+
+    ![image](./Images/CombatCritters/gradleTestOutput.png)
+
+
 #### Were there any issues you found when running the software? Connection issues, other problems, especially with it being a distributed system.
- - 
+
+- There were some "issues" I found when running `./gradlew critterSpring:bootRun`. It just kept building after a long time, and I wasn't quite sure what I was supposed to do next or what the expected output was. Again, this may have been solved with better documentation, especially if this connects to a different component. 
+  
+    ![image](./Images/CombatCritters/gradleRunOutput.png)
