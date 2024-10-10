@@ -5,7 +5,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
 
-import com.example.yappmobile.MainActivity;
+import com.example.yappmobile.PublicPostsActivity;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
 @LargeTest
 public class ProfileManagementAT {
     @Rule
-    public ActivityTestRule<MainActivity> activityRule = new ActivityTestRule<>(MainActivity.class);
+    public ActivityTestRule<PublicPostsActivity> activityRule = new ActivityTestRule<>(PublicPostsActivity.class);
 
     //@Test
     public void accountCreation()

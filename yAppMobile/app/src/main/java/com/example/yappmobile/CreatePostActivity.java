@@ -52,7 +52,7 @@ public class CreatePostActivity extends AppCompatActivity {
         discardDialog.setMessage("Are you really sure that you want to discard your changes??");
         discardDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                Intent intent = new Intent(CreatePostActivity.this, MainActivity.class);
+                Intent intent = new Intent(CreatePostActivity.this, PublicPostsActivity.class);
                 startActivity(intent);
             }
         });
@@ -69,7 +69,7 @@ public class CreatePostActivity extends AppCompatActivity {
                 if ( discardPost() ) {
                     discardDialog.show();
                 } else {
-                    Intent intent = new Intent(CreatePostActivity.this, MainActivity.class);
+                    Intent intent = new Intent(CreatePostActivity.this, PublicPostsActivity.class);
                     startActivity(intent);
                 }
             }
@@ -80,7 +80,7 @@ public class CreatePostActivity extends AppCompatActivity {
         successDialog.setTitle("Post successfully created!");
         successDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Heck yeah", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                Intent intent = new Intent(CreatePostActivity.this, MainActivity.class);
+                Intent intent = new Intent(CreatePostActivity.this, PublicPostsActivity.class);
                 startActivity(intent);
             }
         });
