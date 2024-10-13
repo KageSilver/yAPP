@@ -21,12 +21,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class MyPostsActivity extends AppCompatActivity implements ItemListCardInterface {
+public class MyPostsActivity extends AppCompatActivity implements ItemListCardInterface
+{
     private RecyclerView rvPosts;
     private List<JSONObject> postList;
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_posts);
 
@@ -64,30 +66,34 @@ public class MyPostsActivity extends AppCompatActivity implements ItemListCardIn
         rvPosts.setAdapter(adapter);
 
         // Fetch posts
-        CompletableFuture<String> future = getMyPosts();
+        // TODO: change to actual user when that part is ready
+        String userName = "taralb6@gmail.com";
+        boolean diaryEntry = false;
+        String myPostsAPI = "/api/posts/getPostsByUser?userName="+userName+"&diaryEntry="+diaryEntry;
+        CompletableFuture<String> future = getPosts(myPostsAPI);
 
-        future.thenAccept(jsonData -> {
+        future.thenAccept(jsonData ->
+        {
             // Handle API response
             Log.d("API", "Received data: " + jsonData);
             postList = handleData(jsonData);
             // Notify the adapter that the list updated:
-            runOnUiThread(() -> {
+            runOnUiThread(() ->
+            {
                 adapter.updatePostList(postList);
                 adapter.notifyDataSetChanged();
             });
-        }).exceptionally(throwable -> {
+        }).exceptionally(throwable ->
+        {
             Log.e("API", "Error fetching data", throwable);
             return null;
         });
     }//end onCreate
 
-    private CompletableFuture<String> getMyPosts() {
+    public static CompletableFuture<String> getPosts(String apiUrl)
+    {
         CompletableFuture<String> future = new CompletableFuture<>();
         // Invoke an API call and return a list of JSON objects containing the posts
-        // TODO: change to actual user when that part is ready
-        String userName = "taralb6@gmail.com";
-        boolean diaryEntry = false;
-        String apiUrl = "/api/posts/getPostsByUser?userName="+userName+"&diaryEntry="+diaryEntry;
         RestOptions options = RestOptions.builder()
                 .addPath(apiUrl)
                 .addHeader("Content-Type", "application/json")
@@ -96,31 +102,42 @@ public class MyPostsActivity extends AppCompatActivity implements ItemListCardIn
         return future;
     }
 
-    private void retryAPICall(RestOptions options, CompletableFuture<String> future, int retriesLeft) {
+    private static void retryAPICall(RestOptions options, CompletableFuture<String> future, int retriesLeft)
+    {
         Amplify.API.get(options,
-            response -> {
+            response ->
+            {
                 Log.i("API", "GET response: " + response.getData().asString());
                 future.complete(response.getData().asString());
             },
-            error -> {
-                if (retriesLeft > 0 && error.getCause() instanceof java.net.SocketTimeoutException) {
+            error ->
+            {
+                if (retriesLeft > 0 && error.getCause() instanceof java.net.SocketTimeoutException)
+                {
                     Log.i("API", "Retrying... Attempts left: " + retriesLeft);
                     retryAPICall(options, future, retriesLeft - 1); // Retry the request
-                } else {
+                }
+                else
+                {
                     Log.e("API", "GET request failed", error);
                     future.completeExceptionally(error);
                 }
             });
     }
-    private List<JSONObject> handleData( String jsonData ) {
+
+    public static List<JSONObject> handleData( String jsonData )
+    {
         // Convert the data returned by the function
         List<JSONObject> parsedPosts = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(jsonData);
-            for ( int i=0; i<jsonArray.length(); i++ ) {
+            for ( int i=0; i<jsonArray.length(); i++ )
+            {
                 parsedPosts.add(jsonArray.getJSONObject(i));
             }
-        } catch (JSONException jsonException) {
+        }
+        catch (JSONException jsonException)
+        {
             Log.e("JSON", "Error parsing JSON", jsonException);
         }
         return parsedPosts;
