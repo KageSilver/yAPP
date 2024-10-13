@@ -33,6 +33,9 @@
         <activity
             android:name=".MyPostsActivity"
             android:exported="false" />
+        <activity
+            android:name=".PostEntryActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

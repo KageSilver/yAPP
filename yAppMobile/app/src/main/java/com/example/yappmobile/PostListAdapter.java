@@ -36,7 +36,7 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.myView
     @Override
     public PostListAdapter.myViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
     {
-        // create each post list card (each view) to be displayed
+        // Create each post list card (each view) to be displayed
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.post_list_row, parent, false);
         return new PostListAdapter.myViewHolder(view, postListCardInterface);
@@ -45,7 +45,7 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.myView
     @Override
     public void onBindViewHolder(PostListAdapter.myViewHolder holder, int position)
     {
-        // setup what is displayed on each post list card (each of the views)
+        // Setup what is displayed on each post list card (each of the views)
         // based on position of the recycler view
         try {
             String title = postList.get(position).get("postTitle").toString();
@@ -53,9 +53,11 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.myView
 
             holder.postTitle.setText(title);
             holder.postBody.setText(body);
-        } catch (JSONException jsonException) {
+        }
+        catch (JSONException jsonException)
+        {
             Log.e("JSON", "Error parsing JSON", jsonException);
-    }
+        }
     }
 
     @Override
@@ -67,7 +69,7 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.myView
         this.postList = newPostList;
     }
 
-    // class to create items inside a post list card (inside a view)
+    // Class to create items inside a post list card (inside a view)
     public static class myViewHolder extends RecyclerView.ViewHolder
     {
         public TextView postTitle, postBody;
@@ -80,7 +82,7 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.myView
             postBody = (TextView) itemView.findViewById(R.id.post_body);
             postCard = (CardView) itemView.findViewById(R.id.post_card);
 
-            // setup on click listener for the post list card
+            // Setup an on click listener for the post list card
             itemView.setOnClickListener(new View.OnClickListener()
             {
                 @Override

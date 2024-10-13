@@ -78,6 +78,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/post_title"
                 android:layout_width="match_parent"
+                android:minWidth="225dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -86,6 +87,8 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:maxLength="150"
+                    android:maxHeight="100dp"
                     android:hint="Enter post title here." />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -104,6 +107,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/post_content"
                 android:layout_width="match_parent"
+                android:minWidth="225dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="1dp"
@@ -112,8 +116,9 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/post_content_text"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:maxHeight="500dp"
                     android:hint="Enter post content here" />
             </com.google.android.material.textfield.TextInputLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

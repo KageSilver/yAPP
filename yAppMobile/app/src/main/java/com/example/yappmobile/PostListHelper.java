@@ -18,7 +18,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicReference;
 
 
 public class PostListHelper extends AppCompatActivity
@@ -26,6 +25,14 @@ public class PostListHelper extends AppCompatActivity
     private final Context context;
     private final ItemListCardInterface postListCardInterface;
     private final ProgressBar loadingSpinner;
+    private List<JSONObject> postList;
+
+    public PostListHelper(Context context)
+    {
+        this.context = context;
+        this.postListCardInterface = null;
+        this.loadingSpinner = null;
+    }
 
     public PostListHelper(Context context, ItemListCardInterface itemListCardInterface, ProgressBar loadingSpinner)
     {
@@ -36,11 +43,10 @@ public class PostListHelper extends AppCompatActivity
 
     public void loadPosts(String apiUrl, RecyclerView rvPosts)
     {
-        loadingSpinner.setIndeterminate(true);
         loadingSpinner.setVisibility(View.VISIBLE);
         // Initially setup the adapter with an empty list that'll then be populated after
-        AtomicReference<List<JSONObject>> postList = new AtomicReference<>(new ArrayList<>());
-        PostListAdapter adapter = new PostListAdapter(context, postList.get(), postListCardInterface);
+        postList = new ArrayList<>();
+        PostListAdapter adapter = new PostListAdapter(context, postList, postListCardInterface);
         rvPosts.setAdapter(adapter);
 
         // Fetch posts
@@ -50,13 +56,13 @@ public class PostListHelper extends AppCompatActivity
         {
             // Handle API response
             Log.d("API", "Received data: " + jsonData);
-            postList.set(handleData(jsonData));
+            postList = handleData(jsonData);
             // Notify the adapter that the list updated:
             runOnUiThread(() ->
             {
                 // Hide loading spinner
                 loadingSpinner.setVisibility(View.GONE);
-                adapter.updatePostList(postList.get());
+                adapter.updatePostList(postList);
                 adapter.notifyDataSetChanged();
             });
         }).exceptionally(throwable ->
@@ -66,7 +72,7 @@ public class PostListHelper extends AppCompatActivity
         });
     }
 
-    public static CompletableFuture<String> getPosts(String apiUrl)
+    public CompletableFuture<String> getPosts(String apiUrl)
     {
         CompletableFuture<String> future = new CompletableFuture<>();
         // Invoke an API call and return a list of JSON objects containing the posts
@@ -78,7 +84,7 @@ public class PostListHelper extends AppCompatActivity
         return future;
     }
 
-    private static void retryAPICall(RestOptions options, CompletableFuture<String> future, int retriesLeft)
+    private void retryAPICall(RestOptions options, CompletableFuture<String> future, int retriesLeft)
     {
         Amplify.API.get(options,
                 response ->
@@ -101,7 +107,7 @@ public class PostListHelper extends AppCompatActivity
                 });
     }
 
-    public static List<JSONObject> handleData( String jsonData )
+    public List<JSONObject> handleData( String jsonData )
     {
         // Convert the data returned by the function
         List<JSONObject> parsedPosts = new ArrayList<>();
@@ -117,6 +123,20 @@ public class PostListHelper extends AppCompatActivity
             Log.e("JSON", "Error parsing JSON", jsonException);
         }
         return parsedPosts;
+    }
+
+    public String getPID( int position )
+    {
+        String pid = null;
+        try
+        {
+            pid = postList.get(position).get("pid").toString();
+        }
+        catch (JSONException jsonException)
+        {
+            Log.e("JSON", "Error parsing JSON", jsonException);
+        }
+        return pid;
     }
 
 }

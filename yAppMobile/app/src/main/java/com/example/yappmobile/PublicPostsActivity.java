@@ -16,15 +16,13 @@ public class PublicPostsActivity extends AppCompatActivity implements ItemListCa
 {
     private RecyclerView rvPosts;
     private ProgressBar loadingSpinner;
+    private PostListHelper functionHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_public_posts);
-
-        // setup recycler view to display quiz list cards
-        rvPosts = (RecyclerView) findViewById(R.id.public_posts_list);
 
         // Post creation button code
         Button newPost = findViewById(R.id.new_post_button);
@@ -52,23 +50,25 @@ public class PublicPostsActivity extends AppCompatActivity implements ItemListCa
 
         loadingSpinner = (ProgressBar) findViewById(R.id.indeterminateBar);
         // Calling function helper class to keep repetition down
-        PostListHelper functionHelper = new PostListHelper(this, this, loadingSpinner);
-
-        // setup recycler view to display post list cards
-        rvPosts = (RecyclerView) findViewById(R.id.public_posts_list);
-        rvPosts.setLayoutManager(new LinearLayoutManager(this));
+        functionHelper = new PostListHelper(this, this, loadingSpinner);
 
         LocalDateTime since = LocalDateTime.now();
         String maxResults = "10";
         String publicPostsAPI = "/api/posts/getRecentPosts?since="+since+"&maxResults="+maxResults;
+
+        // Setup recycler view to display post list cards
+        rvPosts = (RecyclerView) findViewById(R.id.public_posts_list);
+        rvPosts.setLayoutManager(new LinearLayoutManager(this));
 
         functionHelper.loadPosts(publicPostsAPI, rvPosts);
     }//end onCreate
 
     @Override
     public void onItemClick(int position) {
-        // setup activity switch when a post list card is pressed
+        // Setup activity switch when a post list card is pressed
         Intent intent = new Intent(PublicPostsActivity.this, PostEntryActivity.class);
+        String pid = functionHelper.getPID(position);
+        intent.putExtra("pid", pid);
         startActivity(intent);
     }
 }
