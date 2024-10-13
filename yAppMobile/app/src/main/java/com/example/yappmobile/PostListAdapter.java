@@ -21,7 +21,7 @@ import com.example.yappmobile.ItemListCardInterface;
 
 public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.myViewHolder>
 {
-    private Context context;
+    private final Context context;
     private List<JSONObject> postList;
     private final ItemListCardInterface postListCardInterface;
 
@@ -50,8 +50,6 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.myView
         try {
             String title = postList.get(position).get("postTitle").toString();
             String body = postList.get(position).get("postBody").toString();
-
-            Log.i("HELP", "This is the adapter " + holder);
 
             holder.postTitle.setText(title);
             holder.postBody.setText(body);
