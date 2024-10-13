@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.*;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 public class PublicPostsActivity extends AppCompatActivity implements ItemListCardInterface
 {
     private RecyclerView rvPosts;
+    private ProgressBar loadingSpinner;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -48,8 +50,9 @@ public class PublicPostsActivity extends AppCompatActivity implements ItemListCa
             }
         });
 
+        loadingSpinner = (ProgressBar) findViewById(R.id.indeterminateBar);
         // Calling function helper class to keep repetition down
-        PostListHelper functionHelper = new PostListHelper(this, this);
+        PostListHelper functionHelper = new PostListHelper(this, this, loadingSpinner);
 
         // setup recycler view to display post list cards
         rvPosts = (RecyclerView) findViewById(R.id.public_posts_list);

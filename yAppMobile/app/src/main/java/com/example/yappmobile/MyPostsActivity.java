@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public class MyPostsActivity extends AppCompatActivity implements ItemListCardInterface
 {
     private RecyclerView rvPosts;
+    private ProgressBar loadingSpinner;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -44,8 +46,9 @@ public class MyPostsActivity extends AppCompatActivity implements ItemListCardIn
             }
         });
 
+        loadingSpinner = (ProgressBar) findViewById(R.id.indeterminateBar);
         // Calling function helper class to keep repetition down
-        PostListHelper functionHelper = new PostListHelper(this, this);
+        PostListHelper functionHelper = new PostListHelper(this, this, loadingSpinner);
 
         // TODO: change to actual user when that part is ready
         String userName = "taralb6@gmail.com";

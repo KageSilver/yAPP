@@ -2,6 +2,8 @@ package com.example.yappmobile;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,15 +25,19 @@ public class PostListHelper extends AppCompatActivity
 {
     private final Context context;
     private final ItemListCardInterface postListCardInterface;
+    private final ProgressBar loadingSpinner;
 
-    public PostListHelper(Context context, ItemListCardInterface itemListCardInterface)
+    public PostListHelper(Context context, ItemListCardInterface itemListCardInterface, ProgressBar loadingSpinner)
     {
         this.context = context;
         this.postListCardInterface = itemListCardInterface;
+        this.loadingSpinner = loadingSpinner;
     }
 
     public void loadPosts(String apiUrl, RecyclerView rvPosts)
     {
+        loadingSpinner.setIndeterminate(true);
+        loadingSpinner.setVisibility(View.VISIBLE);
         // Initially setup the adapter with an empty list that'll then be populated after
         AtomicReference<List<JSONObject>> postList = new AtomicReference<>(new ArrayList<>());
         PostListAdapter adapter = new PostListAdapter(context, postList.get(), postListCardInterface);
@@ -49,6 +55,7 @@ public class PostListHelper extends AppCompatActivity
             runOnUiThread(() ->
             {
                 // Hide loading spinner
+                loadingSpinner.setVisibility(View.GONE);
                 adapter.updatePostList(postList.get());
                 adapter.notifyDataSetChanged();
             });
