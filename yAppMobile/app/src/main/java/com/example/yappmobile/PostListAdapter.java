@@ -2,6 +2,7 @@ package com.example.yappmobile;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,18 +48,25 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.myView
         // setup what is displayed on each post list card (each of the views)
         // based on position of the recycler view
         try {
-            String body = postList.get(position).get("body").toString();
+            String title = postList.get(position).get("postTitle").toString();
+            String body = postList.get(position).get("postBody").toString();
 
-            holder.postTitle.setText(postList.get(position).get("title").toString());
+            Log.i("HELP", "This is the adapter " + holder);
+
+            holder.postTitle.setText(title);
             holder.postBody.setText(body);
         } catch (JSONException jsonException) {
-            System.out.println("Something happened when reading the json objects...." + jsonException);
+            Log.e("JSON", "Error parsing JSON", jsonException);
     }
     }
 
     @Override
     public int getItemCount() {
         return postList.size();
+    }
+
+    public void updatePostList(List<JSONObject> newPostList) {
+        this.postList = newPostList;
     }
 
     // class to create items inside a post list card (inside a view)
@@ -74,7 +82,7 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.myView
             postBody = (TextView) itemView.findViewById(R.id.post_body);
             postCard = (CardView) itemView.findViewById(R.id.post_card);
 
-            // setup on click listener for the quiz list card
+            // setup on click listener for the post list card
             itemView.setOnClickListener(new View.OnClickListener()
             {
                 @Override

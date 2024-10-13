@@ -13,7 +13,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.core.Amplify;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -52,20 +56,29 @@ public class MyPostsActivity extends AppCompatActivity implements ItemListCardIn
 
         // setup recycler view to display post list cards
         rvPosts = (RecyclerView) findViewById(R.id.my_posts_list);
+        rvPosts.setLayoutManager(new LinearLayoutManager(this));
+
+        // Initially setup the adapter with an empty list that'll then be populated after
+        postList = new ArrayList<>();
+        PostListAdapter adapter = new PostListAdapter(this, postList, this);
+        rvPosts.setAdapter(adapter);
+
+        // Fetch posts
         CompletableFuture<String> future = getMyPosts();
 
         future.thenAccept(jsonData -> {
             // Handle API response
             Log.d("API", "Received data: " + jsonData);
             postList = handleData(jsonData);
+            // Notify the adapter that the list updated:
+            runOnUiThread(() -> {
+                adapter.updatePostList(postList);
+                adapter.notifyDataSetChanged();
+            });
         }).exceptionally(throwable -> {
             Log.e("API", "Error fetching data", throwable);
             return null;
         });
-
-        PostListAdapter adapter = new PostListAdapter(this, postList, this);
-        rvPosts.setAdapter(adapter);
-        rvPosts.setLayoutManager(new LinearLayoutManager(this));
     }//end onCreate
 
     private CompletableFuture<String> getMyPosts() {
@@ -79,23 +92,38 @@ public class MyPostsActivity extends AppCompatActivity implements ItemListCardIn
                 .addPath(apiUrl)
                 .addHeader("Content-Type", "application/json")
                 .build();
-        Amplify.API.get(options,
-                response -> {
-                    Log.i("API", "GET response: " + response.getData().asString());
-                    future.complete(response.getData().asString());
-                },
-                error -> {
-                    Log.e("API", "GET request failed", error);
-                    future.completeExceptionally(error);
-                }
-        );
+        retryAPICall(options, future, 5);
         return future;
     }
 
+    private void retryAPICall(RestOptions options, CompletableFuture<String> future, int retriesLeft) {
+        Amplify.API.get(options,
+            response -> {
+                Log.i("API", "GET response: " + response.getData().asString());
+                future.complete(response.getData().asString());
+            },
+            error -> {
+                if (retriesLeft > 0 && error.getCause() instanceof java.net.SocketTimeoutException) {
+                    Log.i("API", "Retrying... Attempts left: " + retriesLeft);
+                    retryAPICall(options, future, retriesLeft - 1); // Retry the request
+                } else {
+                    Log.e("API", "GET request failed", error);
+                    future.completeExceptionally(error);
+                }
+            });
+    }
     private List<JSONObject> handleData( String jsonData ) {
         // Convert the data returned by the function
-        System.out.println("JSON DATA" + jsonData);
-        return null;
+        List<JSONObject> parsedPosts = new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(jsonData);
+            for ( int i=0; i<jsonArray.length(); i++ ) {
+                parsedPosts.add(jsonArray.getJSONObject(i));
+            }
+        } catch (JSONException jsonException) {
+            Log.e("JSON", "Error parsing JSON", jsonException);
+        }
+        return parsedPosts;
     }
 
     @Override
