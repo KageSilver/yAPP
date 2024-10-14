@@ -8,6 +8,7 @@
     const auth = useAuthenticator(); // Grab authenticator
     const userName = auth.user?.username;
     const diaryEntry = false; // Replace with logic for setting whether it's diary entries or not
+    // Retrieve the necessary data and function from the helper
     const { jsonData, loading, truncateText } = usePostHelper(`/api/posts/getPostsByUser?userName=${userName}&diaryEntry=${diaryEntry}`);
 
     function clickPost(pid) 

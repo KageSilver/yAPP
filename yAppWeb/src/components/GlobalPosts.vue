@@ -4,9 +4,10 @@
     import './PostListStyles.css';
 
     const router = useRouter(); // Use router hook
-    var maxResults = 10;
-    const currentDateTime = new Date();
-    const since = currentDateTime.toLocaleString();
+    var maxResults = 10; // Default is 10
+    var currentDateTime = new Date(); // Setting for on creation
+    var since = currentDateTime.toLocaleString();
+    // Retrieve the necessary data and function from the helper
     const { jsonData, loading, truncateText, getPosts, updatePath } = usePostHelper(`/api/posts/getRecentPosts?since=${since}&maxResults=${maxResults}`);
 
     function clickPost(pid) 
@@ -17,6 +18,8 @@
     function loadMore()
     {
         maxResults += 10;
+        var currentDateTime = new Date(); // Setting for the current time
+        var since = currentDateTime.toLocaleString();
         loading.value = true;
         updatePath(`/api/posts/getRecentPosts?since=${since}&maxResults=${maxResults}`);
         getPosts();
