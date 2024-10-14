@@ -106,6 +106,9 @@
 			class="TabsContent"
 			value="tab1"
 		>
+			<p class="Text">
+				You still haven't said anything...
+			</p>
 			<MyPosts></MyPosts>
 			<button class="primary-button" type="button" @click="goToCreatePost">
 				Make a new post!
