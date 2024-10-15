@@ -65,5 +65,8 @@
         width: 100%;
         max-width: 800px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        word-wrap: break-word;
+        white-space: pre-wrap;
+        overflow: hidden;
     }
 </style>
