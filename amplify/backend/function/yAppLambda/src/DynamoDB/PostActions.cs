@@ -170,14 +170,14 @@ public class PostActions : IPostActions
         {
             var expressionAttributeValues = new Dictionary<string, DynamoDBEntry>();
             expressionAttributeValues.Add(":diaryEntry", false);
-            expressionAttributeValues.Add(":since", since.ToString());
+            expressionAttributeValues.Add(":since", since);
             
             var query = new QueryOperationConfig()
             {
                 IndexName = "CreatedAtIndex",
                 KeyExpression = new Expression
                 {
-                    ExpressionStatement = "DiaryEntry = :diaryEntry AND CreatedAt > :since",
+                    ExpressionStatement = "DiaryEntry = :diaryEntry AND CreatedAt < :since",
                     ExpressionAttributeValues = expressionAttributeValues
                 },
                 Limit = maxResults,
