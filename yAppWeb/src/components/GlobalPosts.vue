@@ -4,11 +4,12 @@
     import './PostListStyles.css';
 
     const router = useRouter(); // Use router hook
-    var maxResults = 10; // Default is 10
-    var currentDateTime = new Date(); // Setting for on creation
-    var since = currentDateTime.toLocaleString();
+    const maxResults = 10; // Default is 10
+    const currentDateTime = new Date(); // Setting for on creation
+    const since = currentDateTime.toJSON();
     // Retrieve the necessary data and function from the helper
     const { jsonData, loading, truncateText, getPosts, updatePath } = usePostHelper(`/api/posts/getRecentPosts?since=${since}&maxResults=${maxResults}`);
+
 
     function clickPost(pid) 
     {
@@ -17,12 +18,22 @@
 
     function loadMore()
     {
-        maxResults += 10;
-        var currentDateTime = new Date(); // Setting for the current time
-        var since = currentDateTime.toLocaleString();
+        var since = new Date(getLastPostTime());
+        since = since.toJSON();
         loading.value = true;
         updatePath(`/api/posts/getRecentPosts?since=${since}&maxResults=${maxResults}`);
         getPosts();
+    }
+
+    function getLastPostTime()
+    {
+        var holder = null;
+        if ( jsonData.value.length > 0 )
+        {
+            var lastPost = jsonData.value[jsonData.value.length-1];
+            holder = lastPost.createdAt;
+        }
+        return holder;
     }
 </script>
 

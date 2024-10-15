@@ -17,10 +17,21 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@color/white">
+            android:layout_gravity="center">
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleLarge"
+                android:id="@+id/indeterminateBar"
+                android:indeterminate="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/post_list_title"/>
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/public_posts_list"
                 android:layout_width="360dp"
                 android:layout_height="360dp"
                 android:layout_marginTop="16dp"
@@ -37,6 +48,7 @@
                 android:fontFamily="monospace"
                 android:text="@string/post_list_title"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                android:textColor="@color/white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -108,6 +120,18 @@
                 android:text="New Post"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
+
+            <Button
+                android:id="@+id/load_more_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginStart="16dp"
+                android:backgroundTint="@color/discard"
+                android:text="Load more"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
