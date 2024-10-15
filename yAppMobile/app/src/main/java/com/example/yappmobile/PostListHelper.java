@@ -142,11 +142,15 @@ public class PostListHelper extends AppCompatActivity
 
     public String getLastPostTime()
     {
-        String since = null;
+        String since = null, start = null, end = null;
+        StringBuilder builder = new StringBuilder();
         try
         {
             since = postList.get(postList.size()-1).get("createdAt").toString();
-            since = since.substring(0, since.length()-6);
+            builder.append(since.substring(0, since.length()-6));
+            builder.append("-");
+            builder.append(since.substring(since.length()-5));
+            since = builder.toString();
         }
         catch (JSONException jsonException)
         {
