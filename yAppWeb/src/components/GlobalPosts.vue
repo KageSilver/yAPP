@@ -5,20 +5,20 @@
 
 	const router = useRouter(); // Use router hook
     const jsonData = ref([]); // Reacted array to hold the list of posts
-    var maxResults = 10;
+    const maxResults = 10;
     const maxLength = 100;
     var loading = ref(true); // Reactive boolean for loading spinner
 
     // Get list of most recent posts as JSON
     onMounted(async () => 
     {
-        getPosts();
+        const currentDateTime = new Date();
+        const since = currentDateTime.toJSON();
+        getPosts(since);
     });
 
-    async function getPosts() 
+    async function getPosts(since) 
     {
-        const currentDateTime = new Date();
-        const since = currentDateTime.toLocaleString();
         try 
         {
             const restOperation = await get({
@@ -60,9 +60,21 @@
 
     function loadMore()
     {
-        maxResults += 10;
         loading.value = true;
-        getPosts();
+        var since = new Date(getLastPostTime());
+        since = since.toJSON();
+        getPosts(since);
+    }
+
+    function getLastPostTime()
+    {
+        var holder = null;
+        if ( jsonData.value.length > 0 )
+        {
+            var lastPost = jsonData.value[jsonData.value.length-1];
+            holder = lastPost.createdAt;
+        }
+        return holder;
     }
 </script>
 
