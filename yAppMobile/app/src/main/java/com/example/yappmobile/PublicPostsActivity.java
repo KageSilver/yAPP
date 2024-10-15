@@ -17,6 +17,7 @@ public class PublicPostsActivity extends AppCompatActivity implements ItemListCa
     private RecyclerView rvPosts;
     private ProgressBar loadingSpinner;
     private PostListHelper functionHelper;
+    private int maxResults = 10;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -48,20 +49,36 @@ public class PublicPostsActivity extends AppCompatActivity implements ItemListCa
             }
         });
 
-        loadingSpinner = (ProgressBar) findViewById(R.id.indeterminateBar);
+        // Load more posts button code
+        Button loadMore = findViewById(R.id.load_more_button);
+        loadMore.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                maxResults += 10;
+                refreshPosts();
+            }
+        });
+
+        refreshPosts();
+    }//end onCreate
+
+    private void refreshPosts()
+    {
+        loadingSpinner = findViewById(R.id.indeterminateBar);
         // Calling function helper class to keep repetition down
         functionHelper = new PostListHelper(this, this, loadingSpinner);
 
         LocalDateTime since = LocalDateTime.now();
-        String maxResults = "10";
         String publicPostsAPI = "/api/posts/getRecentPosts?since="+since+"&maxResults="+maxResults;
 
         // Setup recycler view to display post list cards
-        rvPosts = (RecyclerView) findViewById(R.id.public_posts_list);
+        rvPosts = findViewById(R.id.public_posts_list);
         rvPosts.setLayoutManager(new LinearLayoutManager(this));
 
         functionHelper.loadPosts(publicPostsAPI, rvPosts);
-    }//end onCreate
+    }
 
     @Override
     public void onItemClick(int position) {
