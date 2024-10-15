@@ -123,6 +123,9 @@
     .card-header h3 {
         margin: 0;
         font-size: 1.5rem;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+        overflow: hidden;
     }
 
     .card-header p {
@@ -132,6 +135,9 @@
 
     .card-body p {
         font-size: 1rem;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+        overflow: hidden;
     }
 
     .spinner {

@@ -12,7 +12,7 @@
 		"diaryEntry": false,
 		"anonymous": true
 	};
-
+	
 	async function createPost(event) 
 	{
 		event.preventDefault();
@@ -100,8 +100,13 @@
 </script>
 
 <template>
+	<div class="button-bar" style="display:flex; justify-content:right; margin-bottom:35px;">
+        <button class="primary-button" @click="discardPost" style="margin-right:35px;">
+            Dashboard
+        </button>
+    </div>
+	<h1>Create a New Post!</h1>
 	<div class="create-post">
-		<h2 class="post-heading">Create a New Post!</h2>
 		<form class="post-heading" id="post">
 			<div class="form-group">
 				<label for="title">Title:</label>
@@ -140,7 +145,7 @@
 			<button title="Discard Post" class="back-button" @click="discardPost">
 				Discard
 			</button>
-			<button title="Create Post" id="create-button" class="createPostButton signoutButton" type="submit" @click="createPost">
+			<button title="Create Post" id="create-button" class="createPostButton primary-button" type="submit" @click="createPost">
 				Create Post
 			</button>
 		</form>
@@ -148,6 +153,19 @@
 </template>
 	
 <style scoped>
+	.fieldset {
+        align-items: left;
+        padding: 30px;
+        background-color: var(--amplify-colors-neutral-40);
+        color: var(--amplify-colors-neutral-100);
+        border-radius: 5px;
+    }
+
+    .nav {
+        display: flex;
+        justify-content: space-between;
+    }
+	
 	.post-heading {
 		color: #000000;
 	}
@@ -158,18 +176,20 @@
 		height: auto;
 		margin: 0 auto;
 		padding: 20px;
-		background-color: #fae9f4;
+		background-color: #fff;
 		border-radius: 8px;
 		text-align: center;
 	}
 	
 	.form-group {
 		margin-bottom: 15px;
+		margin-top: 15px;
 	}
 	
 	.form-group label {
 		display: block;
 		margin-bottom: 5px;
+		font-weight: bold;
 	}
 	
 	.form-group input,
