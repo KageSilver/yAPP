@@ -17,14 +17,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@color/white"
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.437">
 
+            <ProgressBar
+                style="?android:attr/progressBarStyleLarge"
+                android:id="@+id/indeterminateBar"
+                android:indeterminate="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/my_post_list_title"/>
+
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/my_posts_list"
                 android:layout_width="360dp"
                 android:layout_height="360dp"
                 android:layout_marginTop="16dp"
@@ -40,6 +51,7 @@
                 android:layout_marginTop="116dp"
                 android:fontFamily="monospace"
                 android:text="@string/my_post_list_title"
+                android:textColor="@color/white"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

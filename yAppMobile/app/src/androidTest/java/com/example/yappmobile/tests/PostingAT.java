@@ -9,7 +9,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
 
-import com.example.yappmobile.MainActivity;
+import com.example.yappmobile.PublicPostsActivity;
 import com.example.yappmobile.R;
 
 import org.junit.Rule;
@@ -20,7 +20,7 @@ import org.junit.runner.RunWith;
 @LargeTest
 public class PostingAT {
     @Rule
-    public ActivityTestRule<MainActivity> activityRule = new ActivityTestRule<>(MainActivity.class);
+    public ActivityTestRule<PublicPostsActivity> activityRule = new ActivityTestRule<>(PublicPostsActivity.class);
 
     @Test
     public void makePublicPost()
