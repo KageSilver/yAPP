@@ -15,6 +15,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -137,6 +138,26 @@ public class PostListHelper extends AppCompatActivity
             Log.e("JSON", "Error parsing JSON", jsonException);
         }
         return pid;
+    }
+
+    public String getLastPostTime()
+    {
+        String since = null, start = null, end = null;
+        StringBuilder builder = new StringBuilder();
+        try
+        {
+            since = postList.get(postList.size()-1).get("createdAt").toString();
+            builder.append(since.substring(0, since.length()-6));
+            builder.append("-");
+            builder.append(since.substring(since.length()-5));
+            since = builder.toString();
+        }
+        catch (JSONException jsonException)
+        {
+            Log.e("JSON", "Error parsing JSON", jsonException);
+        }
+
+        return since;
     }
 
 }

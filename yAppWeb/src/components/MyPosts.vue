@@ -9,6 +9,7 @@
 
     const jsonData = ref([]); // Reacted array to hold the list of posts
     const maxLength = 100;
+    var loading = ref(true); // Reactive boolean for loading spinner
 
     // Get list of most recent posts as JSON
     onMounted(async () => 
@@ -31,16 +32,21 @@
             const decoder = new TextDecoder('utf-8'); // Use TextDecoder to decode the ArrayBuffer to a string
             const decodedText = decoder.decode(response);
             jsonData.value = JSON.parse(decodedText); // Update with parsed JSON
-            const tabContent = document.querySelector(".TabsContent .Text");
-            tabContent.innerHTML = "";
+            loading.value = false;
         } 
         catch(error)
         {
             console.log('GET call failed', error);
         }
+        if ( jsonData.value.length > 0 )
+        {
+            const tabContent = document.querySelector(".TabsContent .Text");
+            tabContent.innerHTML = "";
+        }
     }
 
-    function clickPost(pid) {
+    function clickPost(pid) 
+    {
         router.push({ name: 'postDetails', params: { pid } });
     }
 
@@ -57,7 +63,8 @@
 
 <template>
     <div class="card-container">
-        <div class="card" v-for="post in jsonData" :key="post.pid" @click="clickPost(post.pid)">
+        <div v-if="loading" class="spinner"></div>
+        <div v-else class="card" v-for="post in jsonData" :key="post.pid" @click="clickPost(post.pid)">
             <div class="card-header">
                 <h3>{{ post.postTitle }}</h3>
                 <p><strong>Created At:</strong> {{ new Date(post.createdAt).toLocaleString() }}</p>
@@ -107,5 +114,22 @@
 
     .card-body p {
         font-size: 1rem;
+    }
+    
+    .spinner {
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border-left-color: #09f;
+        animation: spin 1s ease infinite;
+    }
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
     }
 </style>

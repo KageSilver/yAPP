@@ -25,6 +25,10 @@ public class PublicPostsActivity extends AppCompatActivity implements ItemListCa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_public_posts);
 
+        loadingSpinner = findViewById(R.id.indeterminateBar);
+        // Calling function helper class to keep repetition down
+        functionHelper = new PostListHelper(this, this, loadingSpinner);
+
         // Post creation button code
         Button newPost = findViewById(R.id.new_post_button);
         newPost.setOnClickListener(new View.OnClickListener()
@@ -50,27 +54,22 @@ public class PublicPostsActivity extends AppCompatActivity implements ItemListCa
         });
 
         // Load more posts button code
+        String since = LocalDateTime.now().toString();
         Button loadMore = findViewById(R.id.load_more_button);
         loadMore.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                maxResults += 10;
-                refreshPosts();
+                refreshPosts(functionHelper.getLastPostTime());
             }
         });
 
-        refreshPosts();
+        refreshPosts(since);
     }//end onCreate
 
-    private void refreshPosts()
+    private void refreshPosts(String since)
     {
-        loadingSpinner = findViewById(R.id.indeterminateBar);
-        // Calling function helper class to keep repetition down
-        functionHelper = new PostListHelper(this, this, loadingSpinner);
-
-        LocalDateTime since = LocalDateTime.now();
         String publicPostsAPI = "/api/posts/getRecentPosts?since="+since+"&maxResults="+maxResults;
 
         // Setup recycler view to display post list cards

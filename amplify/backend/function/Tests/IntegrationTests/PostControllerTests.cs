@@ -173,7 +173,7 @@ public class PostControllerIntegrationTests
 
         // Create a new post for testing
         var response1 = await _client.PostAsync("/api/posts/createPost", content);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(10)); // Adjust the delay duration as needed
 
         var responseString = await response1.Content.ReadAsStringAsync();
         var responsePost = JsonConvert.DeserializeObject<Post>(responseString);
@@ -182,11 +182,17 @@ public class PostControllerIntegrationTests
         list.Add(responsePost);
 
         // Act
-        var response2 = await _client.GetAsync($"/api/posts/getRecentPosts?since={DateTime.Now}&maxResults={1}");
+        var time = new TimeSpan(0, 0, 0, 1);
+        var date = DateTime.Now.Add(time).ToString("yyyy-MM-ddTHH:mm:ss.fffffffK");
+        var response2 = await _client.GetAsync($"/api/posts/getRecentPosts?since={date}&maxResults={1}");
 
         var responseString2 = response2.Content.ReadAsStringAsync().Result;
         var responseList = JsonConvert.DeserializeObject<List<Post>>(responseString2);
-
+        
+        // Clean up
+        await _postActions.DeletePost(responsePost.PID);
+        // Test user is deleted in GetPostsByUser_ShouldReturnPosts_WhenSuccessful()
+        
         // Assert
         Assert.Equal(1, responseList.Count);
         Assert.Equal("Anonymous", responseList.First().UserName);
@@ -194,10 +200,6 @@ public class PostControllerIntegrationTests
         Assert.Equal(newPost.PostBody, responseList.First().PostBody);
         Assert.Equal(newPost.DiaryEntry, responseList.First().DiaryEntry);
         Assert.Equal(newPost.Anonymous, responseList.First().Anonymous);
-
-        // Clean up
-        await _postActions.DeletePost(responsePost.PID);
-        // Test user is deleted in GetPostsByUser_ShouldReturnPosts_WhenSuccessful()
     }
     
     [Fact, Order(5)]
