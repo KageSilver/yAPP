@@ -1,17 +1,18 @@
 package com.example.yappmobile;
 
-import android.content.Intent;
 import android.os.Bundle;
+
+import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.*;
 
+import java.time.LocalDateTime;
 
-public class MyPostsActivity extends AppCompatActivity implements ItemListCardInterface
+public class PublicPostsActivity extends AppCompatActivity implements ItemListCardInterface
 {
     private RecyclerView rvPosts;
     private ProgressBar loadingSpinner;
@@ -21,7 +22,7 @@ public class MyPostsActivity extends AppCompatActivity implements ItemListCardIn
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_posts);
+        setContentView(R.layout.activity_public_posts);
 
         // Post creation button code
         Button newPost = findViewById(R.id.new_post_button);
@@ -30,19 +31,19 @@ public class MyPostsActivity extends AppCompatActivity implements ItemListCardIn
             @Override
             public void onClick(View v)
             {
-                Intent intent = new Intent(MyPostsActivity.this, CreatePostActivity.class);
+                Intent intent = new Intent(PublicPostsActivity.this, CreatePostActivity.class);
                 startActivity(intent);
             }
         });
 
-        // Global posts button code view
-        Button globalPosts = findViewById(R.id.global_posts_button);
-        globalPosts.setOnClickListener(new View.OnClickListener()
+        // My posts button code view
+        Button myPosts = findViewById(R.id.my_posts_button);
+        myPosts.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                Intent intent = new Intent(MyPostsActivity.this, PublicPostsActivity.class);
+                Intent intent = new Intent(PublicPostsActivity.this, MyPostsActivity.class);
                 startActivity(intent);
             }
         });
@@ -51,24 +52,21 @@ public class MyPostsActivity extends AppCompatActivity implements ItemListCardIn
         // Calling function helper class to keep repetition down
         functionHelper = new PostListHelper(this, this, loadingSpinner);
 
-        // TODO: change to actual user when that part is ready
-        String userName = "taralb6@gmail.com";
-        boolean diaryEntry = false;
-        String myPostsAPI = "/api/posts/getPostsByUser?userName="+userName+"&diaryEntry="+diaryEntry;
+        LocalDateTime since = LocalDateTime.now();
+        String maxResults = "10";
+        String publicPostsAPI = "/api/posts/getRecentPosts?since="+since+"&maxResults="+maxResults;
 
         // Setup recycler view to display post list cards
-        rvPosts = (RecyclerView) findViewById(R.id.my_posts_list);
+        rvPosts = (RecyclerView) findViewById(R.id.public_posts_list);
         rvPosts.setLayoutManager(new LinearLayoutManager(this));
 
-        functionHelper.loadPosts(myPostsAPI, rvPosts);
-
+        functionHelper.loadPosts(publicPostsAPI, rvPosts);
     }//end onCreate
 
     @Override
-    public void onItemClick(int position)
-    {
+    public void onItemClick(int position) {
         // Setup activity switch when a post list card is pressed
-        Intent intent = new Intent(MyPostsActivity.this, PostEntryActivity.class);
+        Intent intent = new Intent(PublicPostsActivity.this, PostEntryActivity.class);
         String pid = functionHelper.getPID(position);
         intent.putExtra("pid", pid);
         startActivity(intent);
