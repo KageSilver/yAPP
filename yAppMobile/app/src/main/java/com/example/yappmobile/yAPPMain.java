@@ -19,6 +19,7 @@ public class yAPPMain extends Application {
             Amplify.addPlugin(new AWSCognitoAuthPlugin());
             Amplify.configure(getApplicationContext());
             Log.i("AmplifyConfig", Amplify.API.getPlugin("awsAPIPlugin").toString());
+            Log.i("AmplifyConfig",Amplify.Auth.getPlugin("awsCognitoAuthPlugin").toString());
             Log.i("AmplifyInit", "Initialized Amplify");
         } catch (AmplifyException error) {
             System.out.println("Could not initialize Amplify." + error);
