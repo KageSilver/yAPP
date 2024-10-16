@@ -46,8 +46,10 @@
                             "Scopes": [
                                 "email",
                                 "openid",
-                                "profile"
-                            ]
+                                "profile",
+                                "phone"
+                            ],
+                            "ResponseType": "code"
                         },
                         "authenticationFlowType": "USER_SRP_AUTH"
                     }
