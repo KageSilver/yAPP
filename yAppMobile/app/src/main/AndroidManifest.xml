@@ -52,7 +52,6 @@
          <activity
             android:name=".PublicPostsActivity"
             android:exported="false" />
-
     </application>
 
 </manifest>

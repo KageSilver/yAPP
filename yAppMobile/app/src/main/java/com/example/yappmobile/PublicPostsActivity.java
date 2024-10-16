@@ -80,7 +80,8 @@ public class PublicPostsActivity extends AppCompatActivity implements ItemListCa
     }
 
     @Override
-    public void onItemClick(int position) {
+    public void onItemClick(int position)
+    {
         // Setup activity switch when a post list card is pressed
         Intent intent = new Intent(PublicPostsActivity.this, PostEntryActivity.class);
         String pid = functionHelper.getPID(position);
