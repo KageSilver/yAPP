@@ -32,31 +32,27 @@
                 "CognitoUserPool": {
                     "Default": {
                         "PoolId": "us-east-2_DpPbDoSUa",
-                        "AppClientId": "3flunq4pgdt420vi18h6e14d8j",
+                        "AppClientId": "6viqaq2cddmsumc67gbqvfkav9",
                         "Region": "us-east-2"
                     }
                 },
                 "Auth": {
                     "Default": {
-                        "authenticationFlowType": "USER_SRP_AUTH",
-                        "socialProviders": [],
-                        "usernameAttributes": [],
-                        "signupAttributes": [
-                            "EMAIL"
-                        ],
-                        "passwordProtectionSettings": {
-                            "passwordPolicyMinLength": 8,
-                            "passwordPolicyCharacters": []
+                        "OAuth": {
+                            "WebDomain": "yapp.auth.us-east-2.amazoncognito.com",
+                            "AppClientId": "6viqaq2cddmsumc67gbqvfkav9",
+                            "SignInRedirectURI": "yapp://callback/",
+                            "SignOutRedirectURI": "yapp://signout/",
+                            "Scopes": [
+                                "email",
+                                "openid",
+                                "profile"
+                            ]
                         },
-                        "mfaConfiguration": "OFF",
-                        "mfaTypes": [
-                            "SMS"
-                        ],
-                        "verificationMechanisms": [
-                            "EMAIL"
-                        ]
+                        "authenticationFlowType": "USER_SRP_AUTH"
                     }
                 }
+
             }
         }
     }
