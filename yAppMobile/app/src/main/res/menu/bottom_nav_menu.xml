@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/page_1"
+        android:enabled="true"
+        android:icon="@drawable/ic_authenticator_visible"
+        android:title="Profile" />
+    <item
+        android:id="@+id/page_2"
+        android:enabled="true"
+        android:icon="@drawable/ic_authenticator_visible"
+        android:title="Home" />
+    <item
+        android:id="@+id/page_3"
+        android:enabled="true"
+        android:icon="@drawable/ic_authenticator_visible"
+        android:title="Calendar" />
+    <item
+        android:id="@+id/page_4"
+        android:enabled="true"
+        android:icon="@drawable/ic_authenticator_visible"
+        android:title="New Post" />
+</menu>

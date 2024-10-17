@@ -9,115 +9,75 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="84dp"
         android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#502A44"
+            android:orientation="horizontal"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="125dp"
+                android:layout_height="59dp"
+                app:srcCompat="@drawable/yapp_icon_light" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="yAPP"
+                android:textColor="@color/white"
+                android:textSize="34sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="721dp"
             android:layout_gravity="center">
 
             <ProgressBar
-                style="?android:attr/progressBarStyleLarge"
                 android:id="@+id/indeterminateBar"
-                android:indeterminate="true"
+                style="?android:attr/progressBarStyleLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:indeterminate="true"
+                app:layout_constraintBottom_toBottomOf="@+id/public_posts_list"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/post_list_title"/>
+                app:layout_constraintTop_toTopOf="@+id/public_posts_list" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/public_posts_list"
                 android:layout_width="360dp"
-                android:layout_height="360dp"
-                android:layout_marginTop="16dp"
+                android:layout_height="555dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/post_list_title" />
-
-            <TextView
-                android:id="@+id/post_list_title"
-                android:layout_width="340dp"
-                android:layout_height="62dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="116dp"
-                android:fontFamily="monospace"
-                android:text="@string/post_list_title"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-                android:textColor="@color/white"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <Button
-                android:id="@+id/global_posts_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:backgroundTint="@color/discard"
-                android:textColor="@color/white"
-                android:text="Global Posts"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <Button
-                android:id="@+id/my_posts_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:backgroundTint="@color/discard"
-                android:textColor="@color/white"
-                android:text="My Posts"
-                app:layout_constraintStart_toEndOf="@+id/global_posts_button"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <Button
-                android:id="@+id/my_achievements_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:backgroundTint="@color/discard"
-                android:textColor="@color/white"
-                android:text="My Achievements"
-                app:layout_constraintEnd_toStartOf="@+id/account_settings_button"
-                app:layout_constraintTop_toBottomOf="@+id/global_posts_button" />
-
-            <Button
-                android:id="@+id/my_friends_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:backgroundTint="@color/discard"
-                android:textColor="@color/white"
-                android:text="My Friends"
-                app:layout_constraintStart_toEndOf="@+id/my_posts_button"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <Button
-                android:id="@+id/account_settings_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="56dp"
-                android:layout_marginEnd="16dp"
-                android:backgroundTint="@color/discard"
-                android:textColor="@color/white"
-                android:text="Account Settings"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.25" />
 
             <Button
                 android:id="@+id/new_post_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginBottom="52dp"
                 android:backgroundTint="@color/button"
                 android:onClick="newPost"
-                android:textColor="@color/white"
                 android:text="New Post"
+                android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
@@ -125,15 +85,23 @@
                 android:id="@+id/load_more_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginBottom="52dp"
                 android:backgroundTint="@color/discard"
                 android:text="Load more"
                 android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </LinearLayout>
 
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navigation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:labelVisibilityMode="labeled"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:menu="@menu/bottom_nav_menu" />
+
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

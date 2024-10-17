@@ -16,7 +16,7 @@ public class AuthenticatorActivity extends AppCompatActivity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_authenticator);
 
         // Check if we need to sign in or not
         Amplify.Auth.getCurrentUser(
