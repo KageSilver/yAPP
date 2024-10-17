@@ -1,7 +1,6 @@
 package com.example.yappmobile;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,12 +11,10 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.List;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.example.yappmobile.ItemListCardInterface;
+import java.util.List;
 
 public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.myViewHolder>
 {
@@ -25,7 +22,9 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.myView
     private List<JSONObject> postList;
     private final ItemListCardInterface postListCardInterface;
 
-    public PostListAdapter(Context context, List<JSONObject> postList, ItemListCardInterface itemListCardInterface)
+    public PostListAdapter(Context context,
+                           List<JSONObject> postList,
+                           ItemListCardInterface itemListCardInterface)
     {
         this.context = context;
         this.postList = postList;
@@ -47,7 +46,8 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.myView
     {
         // Setup what is displayed on each post list card (each of the views)
         // based on position of the recycler view
-        try {
+        try
+        {
             String title = postList.get(position).get("postTitle").toString();
             String body = postList.get(position).get("postBody").toString();
 
@@ -61,11 +61,13 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.myView
     }
 
     @Override
-    public int getItemCount() {
+    public int getItemCount()
+    {
         return postList.size();
     }
 
-    public void updatePostList(List<JSONObject> newPostList) {
+    public void updatePostList(List<JSONObject> newPostList)
+    {
         this.postList = newPostList;
     }
 

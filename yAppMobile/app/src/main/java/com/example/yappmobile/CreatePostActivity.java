@@ -1,24 +1,22 @@
 package com.example.yappmobile;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
-
-import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
+import com.amplifyframework.api.rest.RestOptions;
+import com.amplifyframework.core.Amplify;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONObject;
-
-import android.util.Log;
-import com.amplifyframework.core.Amplify;
-import com.amplifyframework.api.rest.RestOptions;
 
 public class CreatePostActivity extends AppCompatActivity
 {
@@ -33,7 +31,6 @@ public class CreatePostActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_post);
-        
 
         newPost = new JSONObject();
         try
@@ -82,7 +79,8 @@ public class CreatePostActivity extends AppCompatActivity
                 }
                 else
                 {
-                    Intent intent = new Intent(CreatePostActivity.this, PublicPostsActivity.class);
+                    Intent intent = new Intent(CreatePostActivity.this,
+                            PublicPostsActivity.class);
                     startActivity(intent);
                 }
             }

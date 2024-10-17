@@ -1,10 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/gradient_background">
-
+    android:layout_height="match_parent">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -33,24 +32,12 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="A" />
-
-                <Space
-                    android:layout_width="153dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
-
                 <Button
                     android:id="@+id/profile_requests_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="A" />
-
-                <Space
-                    android:layout_width="27dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
                 <Button
                     android:id="@+id/profile_options_button"
                     android:layout_width="wrap_content"
@@ -72,7 +59,6 @@
                     android:layout_height="135dp"
                     android:layout_marginLeft="16dp"
                     app:srcCompat="@drawable/yapp_icon_light" />
-
                 <TextView
                     android:id="@+id/profile_username_text"
                     android:layout_width="match_parent"
@@ -82,7 +68,6 @@
                     android:textColor="@color/white"
                     android:textSize="34sp"
                     android:textStyle="bold" />
-
                 <TextView
                     android:id="@+id/profile_bio_text"
                     android:layout_width="match_parent"
@@ -101,19 +86,16 @@
             android:id="@+id/profile_tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/profile_my_posts_tab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="My Posts" />
-
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/profile_my_friends_tab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="My Friends" />
-
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/profile_my_achievements_tab"
                 android:layout_width="wrap_content"
@@ -128,7 +110,6 @@
             android:layout_marginTop="@dimen/fab_margin" />
 
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 

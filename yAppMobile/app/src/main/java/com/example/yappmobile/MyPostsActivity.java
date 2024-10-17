@@ -13,8 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class MyPostsActivity extends AppCompatActivity implements ItemListCardInterface
 {
-    private RecyclerView rvPosts;
-    private ProgressBar loadingSpinner;
     private PostListHelper functionHelper;
 
     @Override
@@ -35,19 +33,7 @@ public class MyPostsActivity extends AppCompatActivity implements ItemListCardIn
             }
         });
 
-        // Global posts button code view
-        Button globalPosts = findViewById(R.id.global_posts_button);
-        globalPosts.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                Intent intent = new Intent(MyPostsActivity.this, PublicPostsActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        loadingSpinner = (ProgressBar) findViewById(R.id.indeterminateBar);
+        ProgressBar loadingSpinner = (ProgressBar) findViewById(R.id.indeterminateBar);
         // Calling function helper class to keep repetition down
         functionHelper = new PostListHelper(this, this, loadingSpinner);
 
@@ -57,12 +43,11 @@ public class MyPostsActivity extends AppCompatActivity implements ItemListCardIn
         String myPostsAPI = "/api/posts/getPostsByUser?userName="+userName+"&diaryEntry="+diaryEntry;
 
         // Setup recycler view to display post list cards
-        rvPosts = (RecyclerView) findViewById(R.id.my_posts_list);
+        RecyclerView rvPosts = (RecyclerView) findViewById(R.id.my_posts_list);
         rvPosts.setLayoutManager(new LinearLayoutManager(this));
 
         functionHelper.loadPosts(myPostsAPI, rvPosts);
-
-    }//end onCreate
+    }
 
     @Override
     public void onItemClick(int position)

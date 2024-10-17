@@ -15,7 +15,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -35,7 +34,9 @@ public class PostListHelper extends AppCompatActivity
         this.loadingSpinner = null;
     }
 
-    public PostListHelper(Context context, ItemListCardInterface itemListCardInterface, ProgressBar loadingSpinner)
+    public PostListHelper(Context context,
+                          ItemListCardInterface itemListCardInterface,
+                          ProgressBar loadingSpinner)
     {
         this.context = context;
         this.postListCardInterface = itemListCardInterface;
@@ -156,8 +157,6 @@ public class PostListHelper extends AppCompatActivity
         {
             Log.e("JSON", "Error parsing JSON", jsonException);
         }
-
         return since;
     }
-
 }

@@ -1,23 +1,25 @@
 package com.example.yappmobile;
 
-import android.os.Bundle;
-
 import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.*;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.navigation.NavigationBarView;
 
 import java.time.LocalDateTime;
 
 public class PublicPostsActivity extends AppCompatActivity implements ItemListCardInterface
 {
-    private RecyclerView rvPosts;
-    private ProgressBar loadingSpinner;
     private PostListHelper functionHelper;
-    private int maxResults = 10;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -25,35 +27,10 @@ public class PublicPostsActivity extends AppCompatActivity implements ItemListCa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_public_posts);
 
-        loadingSpinner = findViewById(R.id.indeterminateBar);
-        // Calling function helper class to keep repetition down
+        ProgressBar loadingSpinner = findViewById(R.id.indeterminateBar);
         functionHelper = new PostListHelper(this, this, loadingSpinner);
 
-        // Post creation button code
-        Button newPost = findViewById(R.id.new_post_button);
-        newPost.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                Intent intent = new Intent(PublicPostsActivity.this, CreatePostActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        // My posts button code view
-        Button myPosts = findViewById(R.id.my_posts_button);
-        myPosts.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                Intent intent = new Intent(PublicPostsActivity.this, MyPostsActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        // Load more posts button code
+        // "Load more posts" button code
         String since = LocalDateTime.now().toString();
         Button loadMore = findViewById(R.id.load_more_button);
         loadMore.setOnClickListener(new View.OnClickListener()
@@ -64,16 +41,61 @@ public class PublicPostsActivity extends AppCompatActivity implements ItemListCa
                 refreshPosts(functionHelper.getLastPostTime());
             }
         });
-
         refreshPosts(since);
-    }//end onCreate
+
+        // References:
+        // https://stackoverflow.com/a/75360800
+        // https://github.com/material-components/material-components-android/blob/master/docs/components/BottomNavigation.md
+        // TODO: make public posts and calendar into fragments instead
+        NavigationBarView bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener()
+        {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item)
+            {
+                final int PROFILE = R.id.profile;
+                final int HOME = R.id.public_posts;
+                final int CREATE_POST = R.id.create_post;
+
+                int itemId = item.getItemId();
+
+                Intent intent;
+
+                if(itemId == PROFILE)
+                {
+                    // Switch to profile page, which will have no nav bar
+                    intent = new Intent(PublicPostsActivity.this,
+                            ProfileActivity.class);
+                    startActivity(intent);
+                }
+                else if (itemId == HOME)
+                {
+                    // Swap content for public posts
+                    intent = new Intent(PublicPostsActivity.this,
+                            PublicPostsActivity.class);
+                }
+                else if (itemId == CREATE_POST)
+                {
+                    // Swap content for diary entries
+                    intent = new Intent(PublicPostsActivity.this,
+                            CreatePostActivity.class);
+                }
+                else
+                {
+                    Log.i("Rerouting", "OOF! We haven't done this yet");
+                }
+                return true;
+            }
+        });
+    }
 
     private void refreshPosts(String since)
     {
-        String publicPostsAPI = "/api/posts/getRecentPosts?since="+since+"&maxResults="+maxResults;
+        int maxResults = 10;
+        String publicPostsAPI = "/api/posts/getRecentPosts?since="+since+"&maxResults="+ maxResults;
 
         // Setup recycler view to display post list cards
-        rvPosts = findViewById(R.id.public_posts_list);
+        RecyclerView rvPosts = findViewById(R.id.public_posts_list);
         rvPosts.setLayoutManager(new LinearLayoutManager(this));
 
         functionHelper.loadPosts(publicPostsAPI, rvPosts);

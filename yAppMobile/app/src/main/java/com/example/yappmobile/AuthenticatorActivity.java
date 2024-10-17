@@ -10,7 +10,8 @@ import com.amplifyframework.core.Amplify;
 
 public class AuthenticatorActivity extends AppCompatActivity
 {
-    // NOTE: You no longer need to override onActivityResult.
+    // Reference:
+    // https://docs.amplify.aws/gen1/android/prev/build-a-backend/auth/sign-in-with-web-ui/
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -30,24 +31,22 @@ public class AuthenticatorActivity extends AppCompatActivity
                     invokeSignIn();
                 }
         );
-        Log.i("Re-route", "Rerouting to Home Activity...");
+        Log.i("Routing", "Rerouting to Public Posts Activity...");
         startActivity(new Intent(AuthenticatorActivity.this,
                 PublicPostsActivity.class));
     }
 
     private void invokeSignIn()
     {
-        // Trigger the Hosted UI sign-in process
+        // Trigger the Hosted UI sign-in process and log end result
         Amplify.Auth.signInWithWebUI(
                 this,
                 result ->
                 {
-                    // Handle success
                     Log.d("Auth", "Sign in success");
                 },
                 error ->
                 {
-                    // Handle failure
                     Log.e("AuthQuickStart", "Sign in failed", error);
                 }
         );
