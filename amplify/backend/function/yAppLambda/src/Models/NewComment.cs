@@ -10,6 +10,9 @@ public class NewComment
     [JsonPropertyName("userName")]
     public string UserName { get; set ; }
 
-    [JsonPropertyName("postBody")]
-    public string PostBody { get; set; }
+    [JsonPropertyName("commentBody")]
+    public string CommentBody { get; set; }
+    
+    [JsonPropertyName("pid")]
+    public string PID { get; set; }
 }
