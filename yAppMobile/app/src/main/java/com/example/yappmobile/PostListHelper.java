@@ -142,7 +142,7 @@ public class PostListHelper extends AppCompatActivity
 
     public String getLastPostTime()
     {
-        String since = null, start = null, end = null;
+        String since = null;
         StringBuilder builder = new StringBuilder();
         try
         {
