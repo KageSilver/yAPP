@@ -16,82 +16,107 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:id="@+id/constraintLayout"
+        <ScrollView
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="24dp"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/post_title_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Insert interesting title here."
-                android:maxLength="150"
-                android:textColor="@color/white"
-                android:textColorHint="#99FFFFFF"
-                android:textSize="40sp"
-                android:textStyle="bold" />
-
-            <View
-                android:id="@+id/divider"
-                android:layout_width="match_parent"
-                android:layout_height="3dp"
-                android:background="?android:attr/listDivider" />
-
-            <Switch
-                android:id="@+id/switch1"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:padding="12dp"
-                android:switchMinWidth="50dp"
-                android:text="Switch"
-                android:textColor="#B3FFFFFF"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:trackTint="@color/black" />
-
-            <Switch
-                android:id="@+id/switch2"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:padding="12dp"
-                android:switchMinWidth="50dp"
-                android:text="Switch"
-                android:textColor="#B3FFFFFF"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:thumbTint="@color/white" />
-
-            <View
-                android:id="@+id/divider2"
-                android:layout_width="match_parent"
-                android:layout_height="3dp"
-                android:background="?android:attr/listDivider" />
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/post_content_text"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="top"
-                android:hint="Insert very interesting post content here."
-                android:textColor="@color/white"
-                android:textColorHint="#99C3AEBD"
-                android:textSize="18sp" />
-        </LinearLayout>
+                android:orientation="vertical"
+                android:paddingLeft="12dp"
+                android:paddingTop="12dp"
+                android:paddingRight="12dp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/post_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLength="150"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeWidthFocused="1dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/title">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:maxLength="150"
+                        android:selectAllOnFocus="true"
+                        android:singleLine="false"
+                        android:text="Insert interesting title here."
+                        android:textColor="@color/white"
+                        android:textSize="38sp"
+                        android:textStyle="bold" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_margin="3dp"
+                    android:background="@color/white" />
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:checked="true"
+                    android:padding="12dp"
+                    android:text="Public"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:checked="true"
+                    android:padding="12dp"
+                    android:text="Anonymous"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:id="@+id/divider2"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_margin="3dp"
+                    android:background="@color/white" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/post_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeWidthFocused="1dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/content">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/post_content_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="80dp"
+                        android:gravity="top"
+                        android:minHeight="500dp"
+                        android:text="Insert very interesting content here."
+                        android:textColor="@color/white"
+                        android:textSize="18sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </ScrollView>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/linearLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="#32000000"
+            android:background="#040E1C"
             android:padding="12dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

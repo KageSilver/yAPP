@@ -35,8 +35,7 @@ public class PostListHelper extends AppCompatActivity
     }
 
     public PostListHelper(Context context,
-                          ItemListCardInterface itemListCardInterface,
-                          ProgressBar loadingSpinner)
+                          ItemListCardInterface itemListCardInterface, ProgressBar loadingSpinner)
     {
         this.context = context;
         this.postListCardInterface = itemListCardInterface;
@@ -54,7 +53,7 @@ public class PostListHelper extends AppCompatActivity
         // Fetch posts
         CompletableFuture<String> future = getPosts(apiUrl);
 
-        future.thenAccept(jsonData ->
+        future.thenAccept (jsonData ->
         {
             // Handle API response
             Log.d("API", "Received data: " + jsonData);
@@ -67,7 +66,7 @@ public class PostListHelper extends AppCompatActivity
                 adapter.updatePostList(postList);
                 adapter.notifyDataSetChanged();
             });
-        }).exceptionally(throwable ->
+        }).exceptionally (throwable ->
         {
             Log.e("API", "Error fetching data", throwable);
             return null;
@@ -86,7 +85,8 @@ public class PostListHelper extends AppCompatActivity
         return future;
     }
 
-    private void retryAPICall(RestOptions options, CompletableFuture<String> future, int retriesLeft)
+    private void retryAPICall(RestOptions options,
+                              CompletableFuture<String> future, int retriesLeft)
     {
         Amplify.API.get(options,
                 response ->
@@ -99,7 +99,7 @@ public class PostListHelper extends AppCompatActivity
                     if (retriesLeft > 0 && error.getCause() instanceof java.net.SocketTimeoutException)
                     {
                         Log.i("API", "Retrying... Attempts left: " + retriesLeft);
-                        retryAPICall(options, future, retriesLeft - 1); // Retry the request
+                        retryAPICall(options, future, retriesLeft - 1);
                     }
                     else
                     {
@@ -109,13 +109,14 @@ public class PostListHelper extends AppCompatActivity
                 });
     }
 
-    public List<JSONObject> handleData( String jsonData )
+    public List<JSONObject> handleData(String jsonData)
     {
         // Convert the data returned by the function
         List<JSONObject> parsedPosts = new ArrayList<>();
-        try {
+        try
+        {
             JSONArray jsonArray = new JSONArray(jsonData);
-            for ( int i=0; i<jsonArray.length(); i++ )
+            for (int i=0; i<jsonArray.length(); i++)
             {
                 parsedPosts.add(jsonArray.getJSONObject(i));
             }
@@ -127,7 +128,7 @@ public class PostListHelper extends AppCompatActivity
         return parsedPosts;
     }
 
-    public String getPID( int position )
+    public String getPID(int position)
     {
         String pid = null;
         try
@@ -143,7 +144,7 @@ public class PostListHelper extends AppCompatActivity
 
     public String getLastPostTime()
     {
-        String since = null, start = null, end = null;
+        String since = null;
         StringBuilder builder = new StringBuilder();
         try
         {

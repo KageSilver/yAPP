@@ -30,6 +30,14 @@ public class CreatePostActivity extends AppCompatActivity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        View decorView = getWindow().getDecorView();
+        // Hide both the navigation bar and the status bar.
+        // SYSTEM_UI_FLAG_FULLSCREEN is only available on Android 4.1 and higher, but as
+        // a general rule, you should design your app to hide the status bar whenever you
+        // hide the navigation bar.
+        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
         setContentView(R.layout.activity_create_post);
 
         newPost = new JSONObject();
@@ -45,8 +53,8 @@ public class CreatePostActivity extends AppCompatActivity
         {
             System.out.println("Exception occurred when adding elements to json object: " + e);
         }
-        titleText = findViewById(R.id.post_title_text);
-        contentText = findViewById(R.id.post_content_text);
+        titleText = findViewById(R.id.post_title);
+        contentText = findViewById(R.id.post_content);
 
         // Discard button alert dialog
         Button discardPost = findViewById(R.id.discard_button);

@@ -10,10 +10,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-
 public class MyPostsActivity extends AppCompatActivity implements ItemListCardInterface
 {
-    private PostListHelper functionHelper;
+    private PostListHelper postListHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -34,8 +33,7 @@ public class MyPostsActivity extends AppCompatActivity implements ItemListCardIn
         });
 
         ProgressBar loadingSpinner = (ProgressBar) findViewById(R.id.indeterminateBar);
-        // Calling function helper class to keep repetition down
-        functionHelper = new PostListHelper(this, this, loadingSpinner);
+        postListHelper = new PostListHelper(this, this, loadingSpinner);
 
         // TODO: change to actual user when that part is ready
         String userName = "taralb6@gmail.com";
@@ -46,7 +44,7 @@ public class MyPostsActivity extends AppCompatActivity implements ItemListCardIn
         RecyclerView rvPosts = (RecyclerView) findViewById(R.id.my_posts_list);
         rvPosts.setLayoutManager(new LinearLayoutManager(this));
 
-        functionHelper.loadPosts(myPostsAPI, rvPosts);
+        postListHelper.loadPosts(myPostsAPI, rvPosts);
     }
 
     @Override
@@ -54,7 +52,7 @@ public class MyPostsActivity extends AppCompatActivity implements ItemListCardIn
     {
         // Setup activity switch when a post list card is pressed
         Intent intent = new Intent(MyPostsActivity.this, PostEntryActivity.class);
-        String pid = functionHelper.getPID(position);
+        String pid = postListHelper.getPID(position);
         intent.putExtra("pid", pid);
         startActivity(intent);
     }

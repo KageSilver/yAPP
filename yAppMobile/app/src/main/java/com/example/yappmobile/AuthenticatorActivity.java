@@ -24,7 +24,6 @@ public class AuthenticatorActivity extends AppCompatActivity
                 result ->
                 {
                     Log.d("Auth", "There is already a user signed in!");
-                    rerouteToHome();
                 },
                 error ->
                 {
@@ -32,17 +31,18 @@ public class AuthenticatorActivity extends AppCompatActivity
                     invokeSignIn();
                 }
         );
+        // TODO: Fix user pool configuration bug and move rerouting
+        rerouteToHome();
     }
 
+    // Trigger the Hosted UI sign-in process
     private void invokeSignIn()
     {
-        // Trigger the Hosted UI sign-in process and log end result
         Amplify.Auth.signInWithWebUI(
                 this,
                 result ->
                 {
                     Log.d("Auth", "Sign in success");
-                    rerouteToHome();
                 },
                 error ->
                 {

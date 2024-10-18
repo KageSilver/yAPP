@@ -3,21 +3,21 @@
     <item
         android:id="@+id/profile"
         android:enabled="true"
-        android:icon="@drawable/ic_authenticator_visible"
+        android:icon="@drawable/baseline_account_circle_24"
         android:title="Profile" />
     <item
         android:id="@+id/public_posts"
         android:enabled="true"
-        android:icon="@drawable/ic_authenticator_visible"
+        android:icon="@drawable/baseline_home_filled_24"
         android:title="Home" />
     <item
         android:id="@+id/calendar"
         android:enabled="true"
-        android:icon="@drawable/ic_authenticator_visible"
+        android:icon="@drawable/baseline_calendar_today_24"
         android:title="Calendar" />
     <item
         android:id="@+id/create_post"
         android:enabled="true"
-        android:icon="@drawable/ic_authenticator_visible"
-        android:title="Create a Post" />
+        android:icon="@drawable/baseline_add_circle_outline_24"
+        android:title="New Post" />
 </menu>
