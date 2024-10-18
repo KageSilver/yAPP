@@ -45,8 +45,8 @@ public class CreatePostActivity extends AppCompatActivity
         {
             System.out.println("Exception occurred when adding elements to json object: " + e);
         }
-        titleText = findViewById(R.id.post_title);
-        contentText = findViewById(R.id.post_content);
+        titleText = findViewById(R.id.post_title_text);
+        contentText = findViewById(R.id.post_content_text);
 
         // Discard button alert dialog
         Button discardPost = findViewById(R.id.discard_button);

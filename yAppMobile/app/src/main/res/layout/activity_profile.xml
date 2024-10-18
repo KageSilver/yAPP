@@ -3,12 +3,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -21,7 +24,7 @@
 
             <LinearLayout
                 android:id="@+id/profile_button_display"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="24dp"
                 android:orientation="horizontal">
@@ -31,19 +34,21 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="A" />
+                    android:text="Back" />
+
                 <Button
                     android:id="@+id/profile_requests_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="A" />
+                    android:text="Requests" />
+
                 <Button
                     android:id="@+id/profile_options_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="A"
+                    android:text="Options"
                     android:textColorLink="@color/black" />
             </LinearLayout>
 
@@ -55,10 +60,11 @@
 
                 <ImageView
                     android:id="@+id/profile_yapp_icon"
-                    android:layout_width="141dp"
-                    android:layout_height="135dp"
+                    android:layout_width="122dp"
+                    android:layout_height="115dp"
                     android:layout_marginLeft="16dp"
                     app:srcCompat="@drawable/yapp_icon_light" />
+
                 <TextView
                     android:id="@+id/profile_username_text"
                     android:layout_width="match_parent"
@@ -68,6 +74,7 @@
                     android:textColor="@color/white"
                     android:textSize="34sp"
                     android:textStyle="bold" />
+
                 <TextView
                     android:id="@+id/profile_bio_text"
                     android:layout_width="match_parent"
@@ -86,16 +93,19 @@
             android:id="@+id/profile_tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/profile_my_posts_tab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="My Posts" />
+
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/profile_my_friends_tab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="My Friends" />
+
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/profile_my_achievements_tab"
                 android:layout_width="wrap_content"
@@ -106,10 +116,21 @@
         <ListView
             android:id="@+id/profile_list_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/fab_margin" />
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:menu="@menu/bottom_nav_menu"></com.google.android.material.bottomnavigation.BottomNavigationView>
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 
