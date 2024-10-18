@@ -17,9 +17,13 @@ import com.google.android.material.navigation.NavigationBarView;
 
 import java.time.LocalDateTime;
 
+// References:
+// https://stackoverflow.com/a/75360800
+// https://github.com/material-components/material-components-android/blob/master/docs/components/BottomNavigation.md
+
 public class PublicPostsActivity extends AppCompatActivity implements ItemListCardInterface
 {
-    private PostListHelper functionHelper;
+    private PostListHelper postListHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -28,7 +32,7 @@ public class PublicPostsActivity extends AppCompatActivity implements ItemListCa
         setContentView(R.layout.activity_public_posts);
 
         ProgressBar loadingSpinner = findViewById(R.id.indeterminateBar);
-        functionHelper = new PostListHelper(this, this, loadingSpinner);
+        postListHelper = new PostListHelper(this, this, loadingSpinner);
 
         // "Load more posts" button code
         String since = LocalDateTime.now().toString();
@@ -38,15 +42,13 @@ public class PublicPostsActivity extends AppCompatActivity implements ItemListCa
             @Override
             public void onClick(View v)
             {
-                refreshPosts(functionHelper.getLastPostTime());
+                refreshPosts(postListHelper.getLastPostTime());
             }
         });
         refreshPosts(since);
 
-        // References:
-        // https://stackoverflow.com/a/75360800
-        // https://github.com/material-components/material-components-android/blob/master/docs/components/BottomNavigation.md
-        // TODO: make public posts and calendar into fragments instead
+        // TODO: mayhaps make public posts and calendar into fragments instead
+        // TODO: update navbar selected to reflect current page
         NavigationBarView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener()
         {
@@ -73,12 +75,14 @@ public class PublicPostsActivity extends AppCompatActivity implements ItemListCa
                     // Swap content for public posts
                     intent = new Intent(PublicPostsActivity.this,
                             PublicPostsActivity.class);
+                    startActivity(intent);
                 }
                 else if (itemId == CREATE_POST)
                 {
                     // Swap content for diary entries
                     intent = new Intent(PublicPostsActivity.this,
                             CreatePostActivity.class);
+                    startActivity(intent);
                 }
                 else
                 {
@@ -91,14 +95,16 @@ public class PublicPostsActivity extends AppCompatActivity implements ItemListCa
 
     private void refreshPosts(String since)
     {
-        int maxResults = 10;
-        String publicPostsAPI = "/api/posts/getRecentPosts?since="+since+"&maxResults="+ maxResults;
+        // Created formatted API path
+        final int MAX_RESULTS = 10;
+        String apiPath = "/api/posts/getRecentPosts?since=%s&maxResults=%d";
+        String formattedPath = String.format(apiPath, since, MAX_RESULTS);
 
         // Setup recycler view to display post list cards
         RecyclerView rvPosts = findViewById(R.id.public_posts_list);
         rvPosts.setLayoutManager(new LinearLayoutManager(this));
 
-        functionHelper.loadPosts(publicPostsAPI, rvPosts);
+        postListHelper.loadPosts(formattedPath, rvPosts);
     }
 
     @Override
@@ -106,7 +112,7 @@ public class PublicPostsActivity extends AppCompatActivity implements ItemListCa
     {
         // Setup activity switch when a post list card is pressed
         Intent intent = new Intent(PublicPostsActivity.this, PostEntryActivity.class);
-        String pid = functionHelper.getPID(position);
+        String pid = postListHelper.getPID(position);
         intent.putExtra("pid", pid);
         startActivity(intent);
     }

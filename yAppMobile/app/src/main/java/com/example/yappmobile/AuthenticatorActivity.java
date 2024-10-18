@@ -8,11 +8,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.amplifyframework.core.Amplify;
 
+// Reference:
+// https://docs.amplify.aws/gen1/android/prev/build-a-backend/auth/sign-in-with-web-ui/
+
 public class AuthenticatorActivity extends AppCompatActivity
 {
-    // Reference:
-    // https://docs.amplify.aws/gen1/android/prev/build-a-backend/auth/sign-in-with-web-ui/
-
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -24,16 +24,14 @@ public class AuthenticatorActivity extends AppCompatActivity
                 result ->
                 {
                     Log.d("Auth", "There is already a user signed in!");
+                    rerouteToHome();
                 },
                 error ->
                 {
-                    Log.e("Auth", "There is no user that is signed in!");
+                    Log.e("Auth", "There's a problem signing in!", error);
                     invokeSignIn();
                 }
         );
-        Log.i("Routing", "Rerouting to Public Posts Activity...");
-        startActivity(new Intent(AuthenticatorActivity.this,
-                PublicPostsActivity.class));
     }
 
     private void invokeSignIn()
@@ -44,11 +42,19 @@ public class AuthenticatorActivity extends AppCompatActivity
                 result ->
                 {
                     Log.d("Auth", "Sign in success");
+                    rerouteToHome();
                 },
                 error ->
                 {
-                    Log.e("AuthQuickStart", "Sign in failed", error);
+                    Log.e("Auth", "Sign in failed", error);
                 }
         );
+    }
+
+    private void rerouteToHome()
+    {
+        Log.i("Routing", "Rerouting to Public Posts Activity...");
+        startActivity(new Intent(AuthenticatorActivity.this,
+                PublicPostsActivity.class));
     }
 }
