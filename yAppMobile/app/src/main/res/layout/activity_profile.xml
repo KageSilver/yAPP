@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background">
@@ -22,48 +23,47 @@
             android:background="#48C51162"
             android:orientation="vertical">
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/profile_button_display"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="24dp"
-                android:orientation="horizontal">
+                android:paddingTop="24dp">
 
-                <Button
-                    android:id="@+id/profile_back_button"
+                <ImageButton
+                    android:id="@+id/profile_view_requests_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Back" />
+                    android:backgroundTint="#00FFFFFF"
+                    app:layout_constraintEnd_toStartOf="@+id/profile_more_button"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/baseline_group_24" />
 
-                <Button
-                    android:id="@+id/profile_requests_button"
+                <ImageButton
+                    android:id="@+id/profile_more_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Requests" />
+                    android:backgroundTint="#00FFFFFF"
+                    android:src="@drawable/baseline_more_vert_24"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/profile_view_requests_button" />
 
-                <Button
-                    android:id="@+id/profile_options_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Options"
-                    android:textColorLink="@color/black" />
-            </LinearLayout>
+                <ImageView
+                    android:id="@+id/profile_yapp_icon"
+                    android:layout_width="122dp"
+                    android:layout_height="115dp"
+                    android:layout_marginStart="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/yapp_icon_light" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
                 android:id="@+id/profile_info_display"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
-                <ImageView
-                    android:id="@+id/profile_yapp_icon"
-                    android:layout_width="122dp"
-                    android:layout_height="115dp"
-                    android:layout_marginLeft="16dp"
-                    app:srcCompat="@drawable/yapp_icon_light" />
 
                 <TextView
                     android:id="@+id/profile_username_text"

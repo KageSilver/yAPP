@@ -17,10 +17,6 @@ import com.google.android.material.navigation.NavigationBarView;
 
 import java.time.LocalDateTime;
 
-// References:
-// https://stackoverflow.com/a/75360800
-// https://github.com/material-components/material-components-android/blob/master/docs/components/BottomNavigation.md
-
 public class PublicPostsActivity extends AppCompatActivity implements ItemListCardInterface
 {
     private PostListHelper postListHelper;
@@ -30,13 +26,14 @@ public class PublicPostsActivity extends AppCompatActivity implements ItemListCa
     {
         super.onCreate(savedInstanceState);
 
-        View decorView = getWindow().getDecorView();
         // Hide both the navigation bar and the status bar.
         // SYSTEM_UI_FLAG_FULLSCREEN is only available on Android 4.1 and higher, but as
         // a general rule, you should design your app to hide the status bar whenever you
         // hide the navigation bar.
+        View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
+
         setContentView(R.layout.activity_public_posts);
 
         ProgressBar loadingSpinner = findViewById(R.id.indeterminateBar);
@@ -94,9 +91,10 @@ public class PublicPostsActivity extends AppCompatActivity implements ItemListCa
                 }
                 else
                 {
-                    Log.i("Rerouting", "OOF! We haven't done this yet");
+                    Log.i("Rerouting", "OOF! Sorry, we haven't done this yet");
                 }
-                return true;
+                //TODO: Change after nav bar is fixed lol
+                return false;
             }
         });
     }

@@ -8,9 +8,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.amplifyframework.core.Amplify;
 
-// Reference:
-// https://docs.amplify.aws/gen1/android/prev/build-a-backend/auth/sign-in-with-web-ui/
-
 public class AuthenticatorActivity extends AppCompatActivity
 {
     @Override
@@ -38,6 +35,16 @@ public class AuthenticatorActivity extends AppCompatActivity
     // Trigger the Hosted UI sign-in process
     private void invokeSignIn()
     {
+        Amplify.Auth.getCurrentUser(
+                result ->
+                {
+                    Log.d("Auth", String.valueOf(result));
+                },
+                error ->
+                {
+                    Log.e("Auth", "Oh shit! Current user is giving us problems", error);
+                });
+
         Amplify.Auth.signInWithWebUI(
                 this,
                 result ->
