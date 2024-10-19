@@ -118,9 +118,9 @@ async function getRequests() {
                 <BackBtn class="mt-2" />
                 <h1 class="text-white text-4xl font-bold ml-8">Friend Requests</h1>
             </div>
-            <button class="text-white bg-deep-dark hover:bg-purple font-bold py-2 px-4 rounded text-2xl">
+            <a class="text-white bg-deep-dark hover:bg-purple font-bold py-2 px-4 rounded text-2xl"  href="/profile/addFriends">
                 Add a Friend !
-            </button>
+            </a>
         </div>
 
         <!-- Show this message if the friend list is empty -->
