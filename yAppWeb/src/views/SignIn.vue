@@ -2,9 +2,10 @@
 	import { Authenticator, translations } from "@aws-amplify/ui-vue";
 	import { I18n } from "aws-amplify/utils";
 	import { useRouter } from 'vue-router'; // Import useRouter		
-
-
+	import { getCurrentUser } from 'aws-amplify/auth';
+	import { watchEffect ,watch ,onMounted,ref} from 'vue';
 	import "@aws-amplify/ui-vue/styles.css";
+	import { Hub } from "aws-amplify/utils";
 
 	const router = useRouter();
 
@@ -21,16 +22,21 @@
 		}
 	});
 
-//after user signs in, redirect to home page
-	function handleAuthStateChange(state) {
-		if (state === 'signedin') {
-			router.push('/home');
-		}
+const currentUser = ref(null);
+
+Hub.listen("auth", async data => {
+	const { payload } = data;
+	if (payload.event === "signedIn") {
+		currentUser.value = await getCurrentUser();
+		router.push('/home');
 	}
+	if (payload.event === "signedOut") {
+		currentUser.value = null;
+	}
+});
+	// Services to be federated
 
-	const services = ['SignIn', 'SignUp', 'ForgotPassword'];
-
-	// Redirect to home page if user is already signed in
+const services = ['SignIn', 'SignUp', 'ForgotPassword'];
 	
 
 </script>
