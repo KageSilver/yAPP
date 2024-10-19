@@ -91,6 +91,8 @@ module.exports = {
 					"linear-gradient(to top, #253162 38%, #141D3F 79%, #0D1225 100%)",
 				"hero-gradient":
 					"linear-gradient(180deg, #72355A 0%, #432D54 19.67%, #2F2850 45.17%, #19234B 74.17%, #061830 95%)",
+				"signin-gradient":
+					"linear-gradient(to bottom, #A75779 0%, #72395E 18.5%, #19234B 66.5%, #061830 95%)",
 			},
 			fontSize: {
 				"custom-lg": "10.375rem", // Equivalent to approximately 166px (for large screens)
