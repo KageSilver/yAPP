@@ -45,6 +45,8 @@ module.exports = {
 				"dark-purple": "#593359",
 				"deep-blue": "#19234B",
 				"navy-blue": "#061830",
+        "purple": "#EFB2CE",
+        "dark-purple": "#3E1F3C",
 			},
 			borderRadius: {
 				4: "4px",
