@@ -17,7 +17,7 @@ function toggleSidebar() {
 
 <template>
 
-    <div class="">
+
         <!-- Menu toggle button for mobile view -->
         <button id="menu-toggle" class="text-3xl text-white bg-light-pink fixed top-4 right-0 z-30 mt-[7rem] w-18"
             @click="toggleSidebar">
@@ -34,7 +34,7 @@ function toggleSidebar() {
                     <li class="group hover:bg-purple-300 transition-all duration-300  w-full">
                         <a href="#" class="flex flex-col items-center justify-center p-2">
                             <img src="../assets/navigation/home.svg" alt="Home Icon"
-                                :class="{ 'w-full h-full': true, 'bg-purple-300 p-2 rounded-full': isActive('/') }">
+                                :class="{ 'w-full h-full': true, 'bg-purple-300 p-2 rounded-full': isActive('/home') }">
                             <span class="font-medium">Home</span>
                         </a>
                     </li>
@@ -85,7 +85,7 @@ function toggleSidebar() {
                 </ul>
             </div>
         </div>
-    </div>
+    
 </template>
 
 <style scoped>
