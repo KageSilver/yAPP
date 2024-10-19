@@ -35,7 +35,11 @@ export function usePostHelper( apiPath )
         if ( jsonData.value.length > 0 )
         {
             const tabContent = document.querySelector(".TabsContent .Text");
-            tabContent.innerHTML = "";
+            if ( tabContent )
+            {
+               tabContent.innerHTML = "";
+            }
+            
         }
     }
     
