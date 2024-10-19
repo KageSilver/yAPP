@@ -30,14 +30,10 @@
         }
     });
 
-	const goBack = async () => 
-	{
-		router.push('/home');
-	}
 </script>
 
 <template>
-    <div class="flex flex-row items-start justify-center min-h-screen gap-4 mb-5 px-4">
+    <div class="flex flex-row items-start justify-center min-h-screen gap-4 mb-5 px-4 pt-[10rem]">
         <BackBtn class="self-start mt-2" />
 
         <div v-if="post"
