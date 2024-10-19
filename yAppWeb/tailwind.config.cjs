@@ -39,7 +39,9 @@ module.exports = {
 				"surface-900": "rgb(var(--surface-900))",
 				"surface-950": "rgb(var(--surface-950))",
 
-				"top-pink": "background: #A55678",
+				dark: "#000000",
+				"light-pink": "#A55678",
+				"dark-pink": " #80455E",
 				"dark-purple": "#593359",
 				"deep-blue": "#19234B",
 				"navy-blue": "#061830",
@@ -83,8 +85,13 @@ module.exports = {
 				7: "repeat(7, minmax(0, 1fr))",
 			},
 			backgroundImage: {
-        'gradient-to-b': 'linear-gradient(to bottom, #593359 38%, #19234B 79%, #061830 100%)'
-      },
+				"gradient-to-b":
+					"linear-gradient(to bottom, #593359 38%, #19234B 79%, #061830 100%)",
+				"gradient-to-t":
+					"linear-gradient(to top, #253162 38%, #141D3F 79%, #0D1225 100%)",
+				"hero-gradient":
+					"linear-gradient(180deg, #72355A 0%, #432D54 19.67%, #2F2850 45.17%, #19234B 74.17%, #061830 95%)",
+			},
 			fontSize: {
 				"custom-lg": "10.375rem", // Equivalent to approximately 166px (for large screens)
 				"custom-md": "6.25rem", // Equivalent to approximately 100px (for medium screens)
