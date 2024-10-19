@@ -39,14 +39,15 @@ module.exports = {
 				"surface-900": "rgb(var(--surface-900))",
 				"surface-950": "rgb(var(--surface-950))",
 
-				dark: "#000000",
+				"dark": "#000000",
+				"light-purple": "#E8DEF8",
 				"light-pink": "#A55678",
 				"dark-pink": " #80455E",
-				"dark-purple": "#593359",
 				"deep-blue": "#19234B",
 				"navy-blue": "#061830",
         "purple": "#EFB2CE",
-        "dark-purple": "#3E1F3C",
+        "deep-dark":"#00000080",
+				"dark-purple": "#3E1F3C",
 			},
 			borderRadius: {
 				4: "4px",
@@ -95,6 +96,8 @@ module.exports = {
 					"linear-gradient(180deg, #72355A 0%, #432D54 19.67%, #2F2850 45.17%, #19234B 74.17%, #061830 95%)",
 				"signin-gradient":
 					"linear-gradient(to bottom, #A75779 0%, #72395E 18.5%, #19234B 66.5%, #061830 95%)",
+				"profile-gradient":
+					"linear-gradient(to bottom, #432D54 0%, #2F2850 31.5%, #19234B 60%, #061830 95%)",
 			},
 			fontSize: {
 				"custom-lg": "10.375rem", // Equivalent to approximately 166px (for large screens)
