@@ -1,9 +1,22 @@
 <script setup lang="js">
 	import { post } from "aws-amplify/api";
-	import { useAuthenticator } from "@aws-amplify/ui-vue";
-	import { useRouter } from 'vue-router'; // Import useRouter
+import { useRouter } from 'vue-router'; // Import useRoute
+import { getCurrentUser } from 'aws-amplify/auth';
+import { onMounted, ref } from 'vue';
 
-	const auth = useAuthenticator(); // Grab authenticator for username
+
+const username = ref('');
+const jsonData = ref([]);
+const loading = false;
+
+const diaryEntry = false; // Replace with logic for setting whether it's diary entries or not
+// Retrieve the necessary data and function from the helper
+onMounted(async () => {
+	const user = await getCurrentUser();
+	username.value = user.username;
+
+});
+
 	const router = useRouter(); // Use router hook
 	var newPost = {
 		"userName": "",
@@ -23,7 +36,7 @@
 		newPost.postBody = postElements[1].value;
 		if ( newPost.postTitle !== '' && newPost.postBody !== '' ) 
 		{
-			newPost.userName = auth.user?.username;
+			newPost.userName = username.value;
 			// Make API call to create the post
 			try 
 			{
@@ -50,7 +63,7 @@
 				newPost.postBody, postElements[1].value = '';
 				createButton.disabled = false;
 				// Send to home page
-				router.push({ name: 'dashboard' });
+				router.push("/profile/myposts");
 				// TODO: Show confirmation
 				alert("Posted!");
 			} 
@@ -74,12 +87,12 @@
 			if (confirm("Are you sure you want to throw away your changes??")) 
 			{
 				// Send to home page
-				router.push({ name: 'dashboard' });
+				router.push({ name: 'home' });
 			}
 		} 
 		else 
 		{
-			router.push({ name: 'dashboard' });
+			router.push({ name: 'home' });
 		}
 	}
 
@@ -100,55 +113,50 @@
 </script>
 
 <template>
-	<div class="button-bar" style="display:flex; justify-content:right; margin-bottom:35px;">
-        <button class="primary-button" @click="discardPost" style="margin-right:35px;">
-            Dashboard
-        </button>
-    </div>
-	<h1>Create a New Post!</h1>
-	<div class="create-post">
-		<form class="post-heading" id="post">
-			<div class="form-group">
-				<label for="title">Title:</label>
-				<input
-					type="text"
-					id="title"
-					required
-					placeholder="Enter post title"
-				/>
-			</div>
-			
-			<div class="form-group">
-				<label for="content">Content:</label>
-				<textarea
-					id="content"
-					required
-					placeholder="Enter post content"
-				></textarea>
-			</div>
-<!-- This area is for when we add in the diary entry creation. Remove the hidden tag from the first div when ready. -->
-			<div hidden>
-				<label class="switch-label">Diary Post?</label>
-				<label class="switch">
-					<input type="checkbox" @click="toggleAnonymous">
-					<span class="slider round"></span>
-				</label>
-			</div>
-			<div hidden id="anonymous">
-				<label class="switch-label">Anonymous?</label>
-				<label class="switch">
-					<input type="checkbox">
-					<span class="slider round"></span>
-				</label>
-			</div>
 
-			<button title="Discard Post" class="back-button" @click="discardPost">
-				Discard
-			</button>
-			<button title="Create Post" id="create-button" class="createPostButton primary-button" type="submit" @click="createPost">
-				Create Post
-			</button>
-		</form>
+	<div class="pt-[10rem] px-16 pr-32 ">
+		<div class="flex justify-between items-center w-full pl-16">
+			<div class="flex items-center">
+				<h1 class="text-white text-4xl font-bold ml-8">Create a new post !</h1>
+			</div>
+		</div>
+
+		<div class="w-full p-16 ">
+			<form class="post-heading bg-white p-8 rounded-lg" id="post">
+				<div class="form-group w-full">
+					<label for="title">Title:</label>
+					<input type="text" id="title" required placeholder="Enter post title" />
+				</div>
+
+				<div class="form-group">
+					<label for="content">Content:</label>
+					<textarea id="content" required placeholder="Enter post content"></textarea>
+				</div>
+				<!-- This area is for when we add in the diary entry creation. Remove the hidden tag from the first div when ready. -->
+				<div hidden>
+					<label class="switch-label">Diary Post?</label>
+					<label class="switch">
+						<input type="checkbox" @click="toggleAnonymous">
+						<span class="slider round"></span>
+					</label>
+				</div>
+				<div hidden id="anonymous">
+					<label class="switch-label">Anonymous?</label>
+					<label class="switch">
+						<input type="checkbox">
+						<span class="slider round"></span>
+					</label>
+				</div>
+
+				<button title="Discard Post" class="bg-dark-purple text-white p-5 rounded-xl m-2 " @click="discardPost">
+					Discard
+				</button>
+				<button title="Create Post" id="create-button" class="bg-dark text-white p-5 rounded-xl m-2" type="submit"
+					@click="createPost">
+					Create Post
+				</button>
+			</form>
+		</div>
 	</div>
 </template>
 	
