@@ -17,7 +17,7 @@ function toggleSidebar() {
 
 function logOut() {
     signOut();
-    router.push('/signin');
+    router.push('/signIn');
 }
 </script>
 
