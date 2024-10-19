@@ -3,7 +3,9 @@ import { get, put } from 'aws-amplify/api';
 import { ref, onMounted } from 'vue';
 import { getCurrentUser } from 'aws-amplify/auth';
 import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 
+const router = useRouter(); // Use router hook
 
 const username = ref(''); // Reacted variable to hold the username
 const userId = ref(''); // Reacted variable to hold the userId
@@ -13,7 +15,7 @@ const route = useRoute();  // This composable provides access to the current rou
 
 // Function to determine if the current route's path matches the given path
 const isActive = (path) => {
-    return route.path === path;
+    return route.path.includes(path);
 };
 
 // Get list of friends as JSON 
@@ -80,13 +82,13 @@ async function getRequests() {
     <ul class="hidden text-sm font-medium text-center text-gray-900 sm:flex" id="fullWidthTab"
         data-tabs-toggle="#fullWidthTabContent" role="tablist">
         <li class="w-full">
-            <button
-                :class="['inline-block w-full p-4 focus:outline-none bg-white hover:bg-dark-purple hover:text-white', isActive('/profile') ? 'text-light-pink' : '']">
+            <button @click="router.push('/profile/myPosts')"
+                :class="['inline-block w-full p-4 focus:outline-none bg-white hover:bg-dark-purple hover:text-white', isActive('/myPosts') ? 'text-light-pink' : '']">
                 My Posts
             </button>
         </li>
         <li class="w-full">
-            <button
+            <button @click="router.push('/profile/friends')"
                 :class="['inline-block w-full p-4 focus:outline-none bg-white hover:bg-dark-purple hover:text-white', isActive('/friends') ? 'text-light-pink' : '']">
                 My Friends
             </button>
@@ -104,5 +106,5 @@ async function getRequests() {
 </template>
 
 <style scoped>
-/* Additional styling if needed */
+
 </style>
