@@ -37,7 +37,7 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.myView
     {
         // Create each post list card (each view) to be displayed
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.post_list_row, parent, false);
+        View view = inflater.inflate(R.layout.post_card, parent, false);
         return new PostListAdapter.myViewHolder(view, postListCardInterface);
     }
 
@@ -82,7 +82,7 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.myView
 
             postTitle = (TextView) itemView.findViewById(R.id.post_title);
             postBody = (TextView) itemView.findViewById(R.id.post_body);
-            postCard = (CardView) itemView.findViewById(R.id.post_card);
+            postCard = (CardView) itemView.findViewById(R.id.current_friend_card);
 
             // Setup an on click listener for the post list card
             itemView.setOnClickListener(new View.OnClickListener()

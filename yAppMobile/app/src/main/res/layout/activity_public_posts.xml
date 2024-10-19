@@ -19,6 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/pink"
+            android:elevation="8dp"
             android:orientation="horizontal"
             android:paddingTop="16dp"
             android:paddingBottom="16dp">
@@ -62,11 +63,11 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/public_posts_list"
-                android:layout_width="363dp"
+                android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
                 android:layout_marginBottom="70dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
                 app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -92,6 +93,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:padding="12dp"
+                app:elevation="8dp"
                 app:labelVisibilityMode="labeled"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
