@@ -7,8 +7,11 @@ const route = useRoute();
 const router = useRouter();
 const currentPath = computed(() => route.path);
 const isActive = (path) => {
-    return computed(() => route.path === path).value;
-}
+    return route.path.includes(path);
+};
+
+
+
 
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
@@ -37,35 +40,35 @@ function logOut() {
             <!-- Top Items -->
             <ul class="text-gray-700 flex flex-col items-center justify-start py-8">
                 <!-- Home Item -->
-                <li class="group hover:bg-purple-300 transition-all duration-300  w-full">
+                <li class="group hover:bg-light-purple transition-all duration-300  w-full">
                     <a href="/home" class="flex flex-col items-center justify-center p-2">
                         <img src="../assets/navigation/home.svg" alt="Home Icon"
-                            :class="{ 'w-full h-full': true, 'bg-purple-300 p-2 rounded-full': isActive('/home') }">
+                            :class="{ 'w-full h-full': true, 'bg-light-purple p-2 rounded-full': isActive('/home') }">
                         <span class="font-medium">Home</span>
                     </a>
                 </li>
                 <!-- Profile Item -->
-                <li class="group hover:bg-purple-300 transition-all duration-300  w-full">
-                    <a href="/profile" class="flex flex-col items-center justify-center p-2">
+                <li class="group hover:bg-light-purple transition-all duration-300  w-full">
+                    <a href="/profile/myposts" class="flex flex-col items-center justify-center p-2">
                         <img src="../assets/navigation/profile.svg" alt="Profile Icon"
-                            :class="{ 'w-full h-full': true, 'bg-purple-300 p-2 rounded-full': isActive('/profile') }">
+                            :class="{ 'w-full h-full': true, 'bg-light-purple p-2 rounded-full': isActive('/profile') }">
                         <span class="font-medium">Profile</span>
                     </a>
                 </li>
                 <!-- Calendar Item -->
-                <li class="group hover:bg-purple-300 transition-all duration-300  w-full">
-                    <a href="/calendar" class="flex flex-col items-center justify-center p-2">
+                <li class="group hover:bg-light-purple transition-all duration-300  w-full">
+                    <a href="#" class="flex flex-col items-center justify-center p-2">
                         <img src="../assets/navigation/calendar.svg" alt="Calendar Icon"
-                            :class="{ 'w-full h-full': true, 'bg-purple-300 p-2 rounded-full': isActive('/calendar') }">
+                            :class="{ 'w-full h-full': true, 'bg-light-purple p-2 rounded-full': isActive('/calendar') }">
                         <span class="font-medium">Calendar</span>
                     </a>
                 </li>
 
                 <!-- Add post Item -->
-                <li class="group hover:bg-purple-300 transition-all duration-300  w-full">
-                    <a href="/add-post" class="flex flex-col items-center justify-center p-2">
+                <li class="group hover:bg-light-purple transition-all duration-300  w-full">
+                    <a href="#" class="flex flex-col items-center justify-center p-2">
                         <img src="../assets/navigation/add-post.svg" alt="Add Icon"
-                            :class="{ 'w-full h-full': true, 'bg-purple-300 p-2 rounded-full': isActive('/add') }">
+                            :class="{ 'w-full h-full': true, 'bg-light-purple p-2 rounded-full': isActive('/add').value }">
                         <span class="font-medium">Create Post</span>
                     </a>
                 </li>
@@ -73,16 +76,16 @@ function logOut() {
             <!-- Bottom Items -->
             <ul class="text-gray-700 flex flex-col items-center justify-start mt-auto pb-8">
                 <!-- Settings Item -->
-                <li class="group hover:bg-purple-300 transition-all duration-300 w-full"
+                <li class="group hover:bg-light-purple transition-all duration-300 w-full"
                     v-if="currentPath === '/settings'">
                     <a href="#" class="flex flex-col items-center justify-center p-2">
                         <img src="../assets/navigation/settings.svg" alt="Add Icon"
-                            :class="{ 'w-full h-full': true, 'bg-purple-300 p-2 rounded-full': isActive('/settings') }">
+                            :class="{ 'w-full h-full': true, 'bg-light-purple p-2 rounded-full': isActive('/settings') }">
                         <span class="font-medium">Settings</span>
                     </a>
                 </li>
                 <!-- Logout Item -->
-                <li class="group hover:bg-purple-300 transition-all duration-300  w-full">
+                <li class="group hover:bg-light-purple transition-all duration-300  w-full">
                     <button class="flex flex-col items-center justify-center p-2" @click="logOut">
                         <img src="../assets/navigation/logout.svg" alt="Add Icon" class="h-full w-full">
                         <span class="font-medium">Logout</span>
