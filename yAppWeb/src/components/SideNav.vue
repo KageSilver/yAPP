@@ -38,7 +38,7 @@ function logOut() {
             <ul class="text-gray-700 flex flex-col items-center justify-start py-8">
                 <!-- Home Item -->
                 <li class="group hover:bg-purple-300 transition-all duration-300  w-full">
-                    <a href="#" class="flex flex-col items-center justify-center p-2">
+                    <a href="/home" class="flex flex-col items-center justify-center p-2">
                         <img src="../assets/navigation/home.svg" alt="Home Icon"
                             :class="{ 'w-full h-full': true, 'bg-purple-300 p-2 rounded-full': isActive('/home') }">
                         <span class="font-medium">Home</span>
@@ -46,7 +46,7 @@ function logOut() {
                 </li>
                 <!-- Profile Item -->
                 <li class="group hover:bg-purple-300 transition-all duration-300  w-full">
-                    <a href="#" class="flex flex-col items-center justify-center p-2">
+                    <a href="/profile" class="flex flex-col items-center justify-center p-2">
                         <img src="../assets/navigation/profile.svg" alt="Profile Icon"
                             :class="{ 'w-full h-full': true, 'bg-purple-300 p-2 rounded-full': isActive('/profile') }">
                         <span class="font-medium">Profile</span>
@@ -54,7 +54,7 @@ function logOut() {
                 </li>
                 <!-- Calendar Item -->
                 <li class="group hover:bg-purple-300 transition-all duration-300  w-full">
-                    <a href="#" class="flex flex-col items-center justify-center p-2">
+                    <a href="/calendar" class="flex flex-col items-center justify-center p-2">
                         <img src="../assets/navigation/calendar.svg" alt="Calendar Icon"
                             :class="{ 'w-full h-full': true, 'bg-purple-300 p-2 rounded-full': isActive('/calendar') }">
                         <span class="font-medium">Calendar</span>
@@ -63,7 +63,7 @@ function logOut() {
 
                 <!-- Add post Item -->
                 <li class="group hover:bg-purple-300 transition-all duration-300  w-full">
-                    <a href="#" class="flex flex-col items-center justify-center p-2">
+                    <a href="/add-post" class="flex flex-col items-center justify-center p-2">
                         <img src="../assets/navigation/add-post.svg" alt="Add Icon"
                             :class="{ 'w-full h-full': true, 'bg-purple-300 p-2 rounded-full': isActive('/add') }">
                         <span class="font-medium">Create Post</span>
