@@ -30,7 +30,7 @@ public class ProfileActivity extends AppCompatActivity
             public void onClick(View v)
             {
                 Intent intent = new Intent(ProfileActivity.this,
-                        MyRequestsActivity.class);
+                        MyPostsActivity.class);
                 startActivity(intent);
             }
         });
@@ -41,8 +41,7 @@ public class ProfileActivity extends AppCompatActivity
             @Override
             public void onTabSelected(TabLayout.Tab tab)
             {
-                int chosenTabId = tab.getId();
-                Log.d("OnClick", String.format("Woah! You clicked me: %d", chosenTabId));
+
             }
 
             @Override

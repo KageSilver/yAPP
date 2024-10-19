@@ -1,73 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background_2">
 
     <LinearLayout
+        android:id="@+id/linearLayout4"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="84dp"
         android:orientation="vertical"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.437">
-
-            <ProgressBar
-                style="?android:attr/progressBarStyleLarge"
-                android:id="@+id/indeterminateBar"
-                android:indeterminate="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/my_post_list_title"/>
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/my_posts_list"
-                android:layout_width="360dp"
-                android:layout_height="360dp"
-                android:layout_marginTop="16dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/my_post_list_title" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
 
-            <TextView
-                android:id="@+id/my_post_list_title"
-                android:layout_width="340dp"
-                android:layout_height="62dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="116dp"
-                android:fontFamily="monospace"
-                android:text="@string/my_post_list_title"
-                android:textColor="@color/white"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <Button
-                android:id="@+id/new_post_button"
+            <ProgressBar
+                android:id="@+id/indeterminateBar"
+                style="?android:attr/progressBarStyleLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"
-                android:backgroundTint="@color/button"
-                android:onClick="newPost"
-                android:textColor="@color/white"
-                android:text="New Post"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                android:layout_gravity="center"
+                android:indeterminate="true"
+                app:layout_constraintBottom_toBottomOf="@+id/my_posts_list"
+                app:layout_constraintEnd_toEndOf="@+id/my_posts_list"
+                app:layout_constraintStart_toStartOf="@+id/my_posts_list"
+                app:layout_constraintTop_toTopOf="@+id/my_posts_list" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

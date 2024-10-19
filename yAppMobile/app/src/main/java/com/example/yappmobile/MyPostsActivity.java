@@ -2,8 +2,7 @@ package com.example.yappmobile;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
+
 import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,18 +22,6 @@ public class MyPostsActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_posts);
-
-        // Post creation button code
-        Button newPost = findViewById(R.id.new_post_button);
-        newPost.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                Intent intent = new Intent(MyPostsActivity.this, CreatePostActivity.class);
-                startActivity(intent);
-            }
-        });
 
         ProgressBar loadingSpinner = (ProgressBar) findViewById(R.id.indeterminateBar);
         postListHelper = new CardListHelper(this, loadingSpinner, "POST", this);
