@@ -9,7 +9,8 @@ const username = ref('');
 const jsonData = ref([]);
 const loading = false;
 
-const diaryEntry = false; // Replace with logic for setting whether it's diary entries or not
+var diaryEntry = false;
+var anonymous = true;
 // Retrieve the necessary data and function from the helper
 onMounted(async () => {
 	const user = await getCurrentUser();
@@ -34,6 +35,14 @@ onMounted(async () => {
 		createButton.disabled = true;
 		newPost.postTitle = postElements[0].value;
 		newPost.postBody = postElements[1].value;
+		newPost.diaryEntry = diaryEntry;
+		newPost.anonymous = anonymous;
+
+		if ( diaryEntry )
+		{
+			checkDiaryEntryLimit();
+		}
+
 		if ( newPost.postTitle !== '' && newPost.postBody !== '' ) 
 		{
 			newPost.userName = username.value;
@@ -98,17 +107,30 @@ onMounted(async () => {
 
 	// This function is used for whether we want to show the anonymous toggle
 	// Modify the diary entry and anonymous values here
-	function toggleAnonymous() 
+	function toggleDiaryEntry() 
 	{
+		diaryEntry = !diaryEntry;
 		var anonymousToggle = document.getElementById("anonymous");
 		if ( anonymousToggle.hidden == true ) 
 		{
 			anonymousToggle.hidden = false;
+			anonymous = false;
 		} 
 		else 
 		{
 			anonymousToggle.hidden = true;
+			anonymous = true;
 		}
+	}
+
+	function toggleAnonymous()
+	{
+		anonymous = !anonymous;
+	}
+
+	function checkDiaryEntryLimit()
+	{
+		// check if a diary entry has been made by this user that day already
 	}
 </script>
 
@@ -132,20 +154,21 @@ onMounted(async () => {
 					<label for="content">Content:</label>
 					<textarea id="content" required placeholder="Enter post content"></textarea>
 				</div>
-				<!-- This area is for when we add in the diary entry creation. Remove the hidden tag from the first div when ready. -->
-				<div hidden>
+				<div>
 					<label class="switch-label">Diary Post?</label>
 					<label class="switch">
-						<input type="checkbox" @click="toggleAnonymous">
+						<input type="checkbox" @click="toggleDiaryEntry">
 						<span class="slider round"></span>
 					</label>
+					<text>Diary posts are only visible to your friends</text>
 				</div>
 				<div hidden id="anonymous">
 					<label class="switch-label">Anonymous?</label>
 					<label class="switch">
-						<input type="checkbox">
+						<input type="checkbox" @click="toggleAnonymous">
 						<span class="slider round"></span>
 					</label>
+					<text>Anonymous diary posts will not show your username to your friends</text>
 				</div>
 
 				<button title="Discard Post" class="bg-dark-purple text-white p-5 rounded-xl m-2 " @click="discardPost">
