@@ -10,6 +10,8 @@ const isActive = (path) => {
     return route.path.includes(path);
 };
 
+const isProfile = computed(() => route.path.includes('profile'));
+
 
 
 
@@ -66,9 +68,9 @@ function logOut() {
 
                 <!-- Add post Item -->
                 <li class="group hover:bg-light-purple transition-all duration-300  w-full">
-                    <a href="#" class="flex flex-col items-center justify-center p-2">
+                    <a href="/addPost" class="flex flex-col items-center justify-center p-2">
                         <img src="../assets/navigation/add-post.svg" alt="Add Icon"
-                            :class="{ 'w-full h-full': true, 'bg-light-purple p-2 rounded-full': isActive('/add').value }">
+                            :class="{ 'w-full h-full': true, 'bg-light-purple p-2 rounded-full': isActive('/addPost') }">
                         <span class="font-medium">Create Post</span>
                     </a>
                 </li>
@@ -77,8 +79,8 @@ function logOut() {
             <ul class="text-gray-700 flex flex-col items-center justify-start mt-auto pb-8">
                 <!-- Settings Item -->
                 <li class="group hover:bg-light-purple transition-all duration-300 w-full"
-                    v-if="currentPath === '/settings'">
-                    <a href="#" class="flex flex-col items-center justify-center p-2">
+                    v-if="isProfile">
+                    <a href="/settings" class="flex flex-col items-center justify-center p-2">
                         <img src="../assets/navigation/settings.svg" alt="Add Icon"
                             :class="{ 'w-full h-full': true, 'bg-light-purple p-2 rounded-full': isActive('/settings') }">
                         <span class="font-medium">Settings</span>
