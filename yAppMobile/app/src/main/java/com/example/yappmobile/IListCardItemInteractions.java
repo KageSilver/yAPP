@@ -1,6 +1,6 @@
 package com.example.yappmobile;
 
-public interface ItemListCardInterface
+public interface IListCardItemInteractions
 {
     public void onItemClick(int position);
 }

@@ -10,9 +10,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class MyPostsActivity extends AppCompatActivity implements ItemListCardInterface
+import com.example.yappmobile.CardList.CardListHelper;
+
+public class MyPostsActivity
+        extends AppCompatActivity
+        implements IListCardItemInteractions
 {
-    private PostListHelper postListHelper;
+    private CardListHelper postListHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -33,7 +37,7 @@ public class MyPostsActivity extends AppCompatActivity implements ItemListCardIn
         });
 
         ProgressBar loadingSpinner = (ProgressBar) findViewById(R.id.indeterminateBar);
-        postListHelper = new PostListHelper(this, this, loadingSpinner);
+        postListHelper = new CardListHelper(this, loadingSpinner, "POST", this);
 
         // TODO: change to actual user when that part is ready
         String userName = "taralb6@gmail.com";
@@ -44,7 +48,7 @@ public class MyPostsActivity extends AppCompatActivity implements ItemListCardIn
         RecyclerView rvPosts = (RecyclerView) findViewById(R.id.my_posts_list);
         rvPosts.setLayoutManager(new LinearLayoutManager(this));
 
-        postListHelper.loadPosts(myPostsAPI, rvPosts);
+        postListHelper.loadItems(myPostsAPI, rvPosts);
     }
 
     @Override

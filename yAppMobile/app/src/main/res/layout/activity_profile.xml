@@ -107,10 +107,10 @@
                 android:text="My Friends" />
 
             <com.google.android.material.tabs.TabItem
-                android:id="@+id/profile_my_achievements_tab"
+                android:id="@+id/profile_my_awards_tab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="My Achievements" />
+                android:text="My Awards" />
         </com.google.android.material.tabs.TabLayout>
 
         <ListView
@@ -130,7 +130,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
-        app:menu="@menu/bottom_nav_menu"></com.google.android.material.bottomnavigation.BottomNavigationView>
+        app:menu="@menu/bottom_nav_menu">
+    </com.google.android.material.bottomnavigation.BottomNavigationView>
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 

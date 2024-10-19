@@ -13,13 +13,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.yappmobile.CardList.CardListHelper;
 import com.google.android.material.navigation.NavigationBarView;
 
 import java.time.LocalDateTime;
 
-public class PublicPostsActivity extends AppCompatActivity implements ItemListCardInterface
+public class PublicPostsActivity extends AppCompatActivity implements IListCardItemInteractions
 {
-    private PostListHelper postListHelper;
+    private CardListHelper postListHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -37,7 +38,7 @@ public class PublicPostsActivity extends AppCompatActivity implements ItemListCa
         setContentView(R.layout.activity_public_posts);
 
         ProgressBar loadingSpinner = findViewById(R.id.indeterminateBar);
-        postListHelper = new PostListHelper(this, this, loadingSpinner);
+        postListHelper = new CardListHelper(this, loadingSpinner, "POST", this);
 
         // "Load more posts" button code
         String since = LocalDateTime.now().toString();
@@ -110,7 +111,7 @@ public class PublicPostsActivity extends AppCompatActivity implements ItemListCa
         RecyclerView rvPosts = findViewById(R.id.public_posts_list);
         rvPosts.setLayoutManager(new LinearLayoutManager(this));
 
-        postListHelper.loadPosts(formattedPath, rvPosts);
+        postListHelper.loadItems(formattedPath, rvPosts);
     }
 
     @Override

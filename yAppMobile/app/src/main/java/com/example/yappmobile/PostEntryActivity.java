@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.yappmobile.CardList.CardListHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
@@ -19,7 +20,7 @@ import java.util.concurrent.CompletableFuture;
 public class PostEntryActivity extends AppCompatActivity
 {
     private TextView postTitle, postBody;
-    private PostListHelper functionHelper;
+    private CardListHelper functionHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -39,7 +40,7 @@ public class PostEntryActivity extends AppCompatActivity
             }
         });
 
-        functionHelper = new PostListHelper(this);
+        functionHelper = new CardListHelper(this);
         // Setup content view to display post content
         String pid = getIntent().getStringExtra("pid");
         postTitle = (TextView) findViewById(R.id.post_title);
@@ -53,7 +54,7 @@ public class PostEntryActivity extends AppCompatActivity
     private void loadPost(String apiUrl)
     {
         // Fetch post (only singular, should return the same thing based on the url passed
-        CompletableFuture<String> future = functionHelper.getPosts(apiUrl);
+        CompletableFuture<String> future = functionHelper.getItemsFromAPI(apiUrl);
         future.thenAccept(jsonData ->
         {
             try
