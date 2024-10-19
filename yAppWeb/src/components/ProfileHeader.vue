@@ -56,7 +56,8 @@ async function getRequests() {
         <h5 class="mb-2 text-3xl font-bold text-white">Welcome back, {{ username }}</h5>
         <!-- Button positioned at the top-right corner -->
         <button
-            class="absolute top-0 right-2 mt-2 mr-16  hover:bg-dark-pink-800 text-white font-bold rounded-lg px-4 py-2">
+            class="absolute top-0 right-2 mt-2 mr-16  hover:bg-dark-pink-800 text-white font-bold rounded-lg px-4 py-2"
+            @click="router.push('/profile/friendRequests')">
             <span class="material-icons">group_add</span>
             <!-- Notification Badge -->
             <span
