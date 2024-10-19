@@ -10,7 +10,7 @@ const isActive = (path) => {
     return route.path.includes(path);
 };
 
-const isProfile = computed(() => route.path.includes('profile'));
+const isProfile = computed(() => route.path.includes('profile')||route.path.includes('settings'));
 
 
 
