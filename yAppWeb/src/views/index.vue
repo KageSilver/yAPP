@@ -1,26 +1,33 @@
 
 <script setup lang="js">
-import SideNav from "../components/SideNav.vue";
-import TopNav from "../components/TopNav.vue";
+import SideNav from '../components/SideNav.vue';
+import TopNav from '../components/TopNav.vue';
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+const currentPath = computed(() => route.path.includes('profile'));
+console.log(currentPath.value);
+
+
+
 </script>
 
 <template>
     <div class="flex h-screen overflow-hidden bg-hero-gradient">
-        <div class="flex h-screen overflow-hidden">
-            <!-- Sidebar on the right, no padding -->
-            <div class="w-64 bg-dark-green h-full">
-                <SideNav />
-            </div>
-
-            <!-- Main content area on the left, no padding -->
-            <div class="flex-1 flex flex-col">
-                <TopNav />
-                <!-- Page content -->
-                <main class="flex-1 overflow-y-auto">
-                    <router-view></router-view> <!-- Vue Router Outlet -->
-                </main>
-            </div>
+        <!-- Sidebar -->
+        <div class="">
+            <SideNav />
         </div>
-</div>
-</template>
 
+        <!-- Main content area -->
+        <div class="flex-1 flex flex-col">
+            <TopNav />
+            <main
+                :class="`flex flex-col flex-1 overflow-y-auto ${currentPath.value ? 'justify-center pt-[22rem]' : ''}`">
+                <router-view></router-view>
+            </main>
+
+        </div>
+    </div>
+</template>
