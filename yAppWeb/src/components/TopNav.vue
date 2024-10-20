@@ -1,6 +1,6 @@
 <template>
     <div
-        class="fixed top-0 left-0 w-full bg-gradient-to-t from-blue-700 to-blue-500 text-white shadow-md z-50 h-[8rem]">
+        class="fixed top-0 left-0 w-full bg-gradient-to-t text-white shadow-top z-50 h-[8rem]">
         <div class="max-w-7xl mx-auto px-2 sm:px-2 lg:px-2 py-4 flex justify-between items-center h-full">
             
             <div class="shrink-0 mr-4">
