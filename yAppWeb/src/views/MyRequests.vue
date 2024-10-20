@@ -119,7 +119,7 @@ async function getRequests() {
                 <h1 class="text-white text-4xl font-bold ml-8">Friend Requests</h1>
             </div>
             <a class="text-white bg-deep-dark hover:bg-purple font-bold py-2 px-4 rounded text-2xl"  href="/profile/addFriends">
-                Add a Friend !
+                Add a Friend!
             </a>
         </div>
 

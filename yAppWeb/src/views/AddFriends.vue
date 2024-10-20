@@ -80,12 +80,12 @@
         <div class="flex justify-between items-center w-full px-16 pr-32">
             <div class="flex items-center">
                 <BackBtn class="mt-2" />
-                <h1 class="text-white text-4xl font-bold ml-8">Add a new Friends! </h1>
+                <h1 class="text-white text-4xl font-bold ml-8">Add a new Friend! </h1>
             </div>
         </div>
         <div class="flex justify-start items-center w-full px-16 pr-32">
             <div class="flex items-center px-16">
-                <h1 class="text-white text-sm font-bold ml-5">Your uuid:{{ userId }}</h1>
+                <h1 class="text-white text-sm font-bold ml-5">Your uuid: {{ userId }}</h1>
             </div>
         </div>
     </div>
