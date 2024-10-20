@@ -117,7 +117,7 @@ onMounted(async () => {
 	<div class="pt-[10rem] px-16 pr-32 ">
 		<div class="flex justify-between items-center w-full pl-16">
 			<div class="flex items-center">
-				<h1 class="text-white text-4xl font-bold ml-8">Create a new post !</h1>
+				<h1 class="text-white text-4xl font-bold ml-8">Create a new post!</h1>
 			</div>
 		</div>
 
