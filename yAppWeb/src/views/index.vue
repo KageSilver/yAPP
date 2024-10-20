@@ -24,7 +24,7 @@ console.log(currentPath.value);
         <div class="flex-1 flex flex-col">
             <TopNav />
             <main
-                :class="`flex flex-col flex-1 overflow-y-auto ${currentPath.value ? 'justify-center pt-[22rem]' : ''}`">
+                :class="`flex flex-col flex-1 overflow-y-auto min-h-screen ${currentPath.value ? 'justify-center py-[22rem]' : ''}`">
                 <router-view></router-view>
             </main>
 

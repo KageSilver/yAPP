@@ -1,6 +1,6 @@
 <script setup>
 	import { useRouter } from 'vue-router'; // Import useRouter
-    import { usePostHelper } from '../composables/usePostHelper'; // Import the helper
+import { usePostHelper } from '../composables/usePostHelper'; // Import the helper
    
     const router = useRouter(); // Use router hook
     const maxResults = 10; // Default is 10
@@ -8,7 +8,7 @@
     const since = currentDateTime.toJSON();
     // Retrieve the necessary data and function from the helper
     const { jsonData, loading, truncateText, getPosts, updatePath } = usePostHelper(`/api/posts/getRecentPosts?since=${since}&maxResults=${maxResults}`);
-
+    console.log(jsonData);
 
     function clickPost(pid) 
     {
@@ -38,7 +38,7 @@
 
 <template>
 
-    <div class="flex flex-col justify-center items-center min-h-screen gap-4 mb-5 mt-[20rem]">
+    <div class="relative w-full pt-[8rem] pl-8  items-center justify-center">
         <div v-if="loading" class="flex justify-center items-center">
             <div class="spinner animate-spin border-4 border-t-transparent rounded-full w-10 h-10"></div>
         </div>
@@ -72,12 +72,14 @@
                     </button>
                 </div>
 
-        </div>
-    </div>
-    <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded self-center" type="button"
+        
+            </div>
+                <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded self-center " type="button"
         @click="loadMore()">
         Load more!
     </button>
+    </div>
+
     </div>
 </template>
 
