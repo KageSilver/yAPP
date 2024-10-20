@@ -50,17 +50,17 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         {
             case "FRIEND_REQUEST":
             {
-                View view = inflater.inflate(R.layout.friend_request_card, parent, false);
+                View view = inflater.inflate(R.layout.card_friend_request, parent, false);
                 return new FriendRequestViewHolder(view);
             }
             case "CURRENT_FRIEND":
             {
-                View view = inflater.inflate(R.layout.current_friend_card, parent, false);
-                return new CurrentFriendViewHolder(view);
+                View view = inflater.inflate(R.layout.card_current_friend, parent, false);
+                return new CurrentFriendViewHolder(view, itemInteractions);
             }
             case "POST":
             {
-                View view = inflater.inflate(R.layout.post_card, parent, false);
+                View view = inflater.inflate(R.layout.card_post, parent, false);
                 return new PostViewHolder(view, itemInteractions);
             }
         }
@@ -125,17 +125,40 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public TextView friendName;
         public Button unfriendButton;
 
-        public CurrentFriendViewHolder(View itemView)
+        public CurrentFriendViewHolder(View itemView, IListCardItemInteractions friendCardInteractions)
         {
             super(itemView);
             friendName = itemView.findViewById(R.id.friend_username);
             unfriendButton = itemView.findViewById(R.id.unfollow_button);
+
+            // Set up an onClickListener for the post list card
+            itemView.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    if(friendCardInteractions != null)
+                    {
+                        int position = getAdapterPosition();
+                        if(position != RecyclerView.NO_POSITION)
+                        {
+                            friendCardInteractions.onItemClick(position);
+                        }
+                    }
+                }
+            });
         }
 
         public void bind(JSONObject card)
         {
-            // friendName.setText(card.getFriendName());
-            // TODO: Add unfriendButton click listener here
+            try
+            {
+                friendName.setText(card.get("").toString());
+            }
+            catch (JSONException jsonException)
+            {
+                Log.e("JSON", "Error parsing JSON", jsonException);
+            }
         }
     }
 
@@ -143,7 +166,7 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     {
         public TextView postTitle, postDate, postBody;
 
-        public PostViewHolder(View itemView, IListCardItemInteractions cardItemInteractions)
+        public PostViewHolder(View itemView, IListCardItemInteractions postCardInteractions)
         {
             super(itemView);
 
@@ -157,12 +180,12 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 @Override
                 public void onClick(View v)
                 {
-                    if(cardItemInteractions != null)
+                    if(postCardInteractions != null)
                     {
                         int position = getAdapterPosition();
                         if(position != RecyclerView.NO_POSITION)
                         {
-                            cardItemInteractions.onItemClick(position);
+                            postCardInteractions.onItemClick(position);
                         }
                     }
                 }
