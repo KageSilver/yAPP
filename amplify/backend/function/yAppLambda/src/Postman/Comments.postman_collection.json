@@ -28,7 +28,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n\t\"userName\": \"\",\n\t\"commentBody\": \"\",\n\t\"pid\": \"\"}",
+          "raw": "{\n\t\"userName\": \"\",\n\t\"commentBody\": \"\",\n\t\"pid\": \"\"\n}",
           "options": {
             "raw": {
               "language": "json"
