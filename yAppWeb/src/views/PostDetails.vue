@@ -48,7 +48,7 @@
             <div class="text-gray-700 mb-4 whitespace-pre-wrap break-words">{{ post.postBody }}</div>
 
             <!-- Icons for upvote, downvote, and reply with counts -->
-            <div class="flex justify-start space-x-4 mt-4">
+            <!-- <div class="flex justify-start space-x-4 mt-4">
                 <button @click.stop="upvote(post.pid)" class="flex items-center space-x-2">
                     <img src="../assets/post/upvote.svg" alt="Upvote" class="w-6 h-6">
                     <span>10</span>
@@ -57,7 +57,7 @@
                     <img src="../assets/post/downvote.svg" alt="Downvote" class="w-6 h-6">
                     <span>20</span>
                 </button>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>
