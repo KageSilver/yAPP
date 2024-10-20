@@ -1,5 +1,40 @@
 # API Documentation
 
+## Comments
+
+### GetPostByCid
+ - Gets the post a comment was made on from a comment ID
+ - GET: api/comments/getPostByCid?cid={cid}
+    - cid: The comment id to find the parent post
+ - Response: returns the post object associated with the comment based on the specified id
+ - Status codes
+    - 200 OK
+    - 400 Bad Request: Comment ID is required
+    - 404 Not Found: Post does not exist
+
+### GetCommentById
+
+### GetCommentsByUser
+
+### GetCommentsByPid
+
+### CreateComment
+ - Creates a comment.
+ - POST: api/comments/createComment
+ - Request body: { "userName": "username", "commentBody": "body", "pid": "pid" }
+ - Response: returns the comment objects created from the new comment
+    - 
+ - Status codes
+    - 200 OK
+    - 400 Bad Request: 
+        - request body is required and must contain commenter's username, comment body, and the original post's id.
+        - Failed to create comment
+    - 404 Not Found: Comment creator not found
+
+### UpdateComment
+
+### DeleteComment
+
 ## Friends
 
 ### GetFriendsByStatus
