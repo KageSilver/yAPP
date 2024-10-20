@@ -3,20 +3,44 @@
 ## Comments
 
 ### GetPostByCid
- - Gets the post a comment was made on from a comment ID
+ - Gets the post a comment was made on from a comment ID.
  - GET: api/comments/getPostByCid?cid={cid}
     - cid: The comment id to find the parent post
  - Response: returns the post object associated with the comment based on the specified id
- - Status codes
+ - Status codes:
     - 200 OK
     - 400 Bad Request: Comment ID is required
     - 404 Not Found: Post does not exist
 
 ### GetCommentById
+ - Gets the comment from a comment ID.
+ - GET: api/comments/getCommentById?cid={cid}
+    - cid: The comment id to find the comment
+ - Response: returns the comment with the specified id
+ - Status codes:
+    - 200 OK
+    - 400 Bad Request: Comment ID is required
+    - 404 Not Found: Comment does not exist  
 
 ### GetCommentsByUser
+ - Gets all comments with given username.
+ - GET: api/comments/getCommentsByUser?userName={userName}
+    - username: the username used to find all comments by that user
+ - Response: returns a list of comment objects made by the specified user
+    -
+ - Status codes:
+    - 200 OK
+    - 400 Bad Request: Username is required
 
 ### GetCommentsByPid
+ - Gets all comments with a given parent post id.
+ - GET: api/comments/getCommentsByPid?pid={pid}
+    - pid: the parent post id used to find associated comments
+ - Response: returns a list of comments made on the parent post
+    - 
+ - Status codes:
+    - 200 OK
+    - 400 Bad Request: Post ID is required
 
 ### CreateComment
  - Creates a comment.
@@ -24,7 +48,7 @@
  - Request body: { "userName": "username", "commentBody": "body", "pid": "pid" }
  - Response: returns the comment objects created from the new comment
     - 
- - Status codes
+ - Status codes:
     - 200 OK
     - 400 Bad Request: 
         - request body is required and must contain commenter's username, comment body, and the original post's id.
@@ -32,8 +56,24 @@
     - 404 Not Found: Comment creator not found
 
 ### UpdateComment
+ - Updates a comment.
+ - PUT: api/comments/updateComment
+ - Request body: { "cid": "cid", "pid": "pid", "createdAt": "createdAt", "updatedAt": "updatedAt", "userName": "username", "commentBody": "body", "upvotes": "upvotes", "downvotes": "downvotes" }
+ - Response: returns the updated comment object
+    - 
+ - Status codes:
+    - 200 OK
+    - 400 Bad Request: Request body is required and must contain username and comment body
 
 ### DeleteComment
+ - Deletes a comment.
+ - DELETE: api/comments/deleteComment?cid={cid}
+    - cid: the comment id of the comment to delete
+ - Response: returns whether the deletion was successful
+    - true/false
+ - Status codes:
+    - 200 OK
+    - 400 Bad Request: Comment ID is required
 
 ## Friends
 
@@ -44,7 +84,7 @@
     - status: The status of the friendships to filter by (-1:All requests, 0: Pending, 1: Accepted, 2: Declined).
  - Response: returns the updated friend object
     - [ { "FromUserName": "string", "ToUserName": "string", "Status": 0, "CreatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "UpdatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ" } ]
- - Status codes
+ - Status codes:
     - 200 OK
     - 400 Bad Request: username is required
 
@@ -67,7 +107,7 @@
  - Request body: { "fromUserName": "username", "toUserName": "username", "status": 1 }
  - Response: returns a list of friend objects with that status
     - { "FromUserName": "string", "ToUserName": "string", "Status": 0, "CreatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "UpdatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ" }
- - Status codes
+ - Status codes:
     - 200 OK
     - 400 Bad Request: 
         - request body is required and must contain username and friend's username
@@ -82,7 +122,7 @@
     - pid: The unique identifier for a post
  - Response: returns the post with the specified id
     - { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "userName": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true }
- - Status codes
+ - Status codes:
     - 200 OK
     - 400 Bad Request: Post ID is required
     - 404 Not Found: Post does not exist
@@ -94,7 +134,7 @@
     - diaryEntry: If the query is for public posts or diary entries
  - Response: returns a list of posts by the specified user
     - [ { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "userName": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true } ]
- - Status codes
+ - Status codes:
     - 200 OK
     - 400 Bad Request: username is required
 
@@ -105,7 +145,7 @@
     - maxResults: The maximum number of results to retrieve.
  - Response: returns a list of posts created before a specified time with a specified maximum length
     - [ { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "userName": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true } ]
- - Status codes
+ - Status codes:
     - 200 OK
     - 400 Bad Request: requires valid max result number and valid time
 
@@ -115,7 +155,7 @@
  - Request body: { "userName": "username", "postTitle": "title", "postBody": "body", "diaryEntry": false, "anonymous": false }
  - Response: returns the post object created from the new post
     - { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "userName": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true }
- - Status codes
+ - Status codes:
     - 200 OK
     - 400 Bad Request:
         - request body is required and must contain poster's username, post title and post body
@@ -128,7 +168,7 @@
  - Request body: { "pid": "pid", "createdAt": "createdAt", "userName": "username", "postTitle": "title", "postBody": "body", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": false }
  - Response: returns the updated post object
     - { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "userName": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true }
- - Status codes
+ - Status codes:
     - 200 OK
     - 400 Bad Request: request body is required and must contain username, post title, post body
 
@@ -138,7 +178,7 @@
     - pid: The id of the post to be deleted
  - Response: returns whether the deletion was successful
     - true/false
- - Status codes
+ - Status codes:
     - 200 OK
     - 400 Bad Request: Post id is required
 
@@ -150,7 +190,7 @@
     - id: The unique identifier of the user
  - Response: returns the user object with the specified id
     - { "userName": "string", "nickName": "string", "id": "string", "name": "string", "email": "string", "Attributes": { "additionalProp1": "string", "additionalProp2": "string", "additionalProp3": "string" } }
- - Status codes
+ - Status codes:
     - 200 OK
     - 400 Bad Request: Id is required
     - 404 Not Found: User not found
@@ -161,7 +201,7 @@
     - userName: The username of the user to retrieve
  - Response: returns the user object with the specified username
     - { "userName": "string", "nickName": "string", "id": "string", "name": "string", "email": "string", "Attributes": { "additionalProp1": "string", "additionalProp2": "string", "additionalProp3": "string" } }
- - Status codes
+ - Status codes:
     - 200 OK
     - 400 Bad Request: username is required
     - 404 Not Found: User not found
@@ -172,7 +212,7 @@
  - Request body: { "userName": "username", "nickName": "nickname", "name": "name" }
  - Response: returns the updated user object
     - { "userName": "string", "nickName": "string", "id": "string", "name": "string", "email": "string", "Attributes": { "additionalProp1": "string", "additionalProp2": "string", "additionalProp3": "string" } }
- - Status codes
+ - Status codes:
     - 200 OK
     - 400 Bad Request: request body is required and must contain username and name
     - 404 Not Found: User not found
