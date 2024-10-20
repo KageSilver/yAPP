@@ -61,7 +61,7 @@ function clickPost(pid) {
                 </p>
             </div>
             <!-- Icons for upvote, downvote, and reply -->
-            <div class="flex space-x-4 mt-8">
+            <!-- <div class="flex space-x-4 mt-8">
                 <button @click.stop="upvote(post.pid)">
                     <img src="../assets/post/upvote.svg" alt="Upvote" class="w-6 h-6">
                     10
@@ -70,7 +70,7 @@ function clickPost(pid) {
                     <img src="../assets/post/downvote.svg" alt="Downvote" class="w-6 h-6">
                     20
                 </button>
-            </div>
+            </div> -->
 
         </div>
     </div>
