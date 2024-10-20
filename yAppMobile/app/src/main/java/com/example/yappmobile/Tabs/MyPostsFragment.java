@@ -2,6 +2,7 @@ package com.example.yappmobile.Tabs;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.CardList.CardListHelper;
 import com.example.yappmobile.IListCardItemInteractions;
 import com.example.yappmobile.PostEntryActivity;
@@ -45,6 +47,19 @@ public class MyPostsFragment extends Fragment implements IListCardItemInteractio
         rvPosts.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
         postListHelper.loadItems(myPostsAPI, rvPosts);
+
+//        Amplify.Auth.getCurrentUser(
+//                result ->
+//                {
+//                    String userName = result.getUsername();
+//                    String myRequestsAPI = "/api/friends/getFriendsByStatus?userName="+userName+"?status=1";
+//                    postListHelper.loadItems(myRequestsAPI, rvPosts);
+//                },
+//                error ->
+//                {
+//                    Log.e("Auth", "Uh oh! THere's trouble getting the current user", error);
+//                }
+//        );
     }
 
     public void onItemClick(int position)

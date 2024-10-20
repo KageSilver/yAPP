@@ -20,39 +20,35 @@ public class AuthenticatorActivity extends AppCompatActivity
         Amplify.Auth.getCurrentUser(
                 result ->
                 {
-                    Log.d("Auth", "There is already a user signed in!");
+                    Log.i("Auth", "There is already a user signed in!");
                 },
                 error ->
                 {
-                    Log.e("Auth", "There's a problem signing in!", error);
-                    invokeSignIn();
+                    Log.i("Auth", "There is no user signed in!!");
                 }
         );
-        // TODO: Fix user pool configuration bug and move rerouting
-        rerouteToHome();
+        invokeSignIn();
     }
 
     // Trigger the Hosted UI sign-in process
     private void invokeSignIn()
     {
-        Amplify.Auth.getCurrentUser(
-                result ->
-                {
-                    Log.d("Auth", String.valueOf(result));
-                },
-                error ->
-                {
-                    Log.e("Auth", "Oh shit! Current user is giving us problems", error);
-                });
-
         Amplify.Auth.signInWithWebUI(
                 this,
                 result ->
                 {
-                    Log.d("Auth", "Sign in success");
+                    Log.i("Auth", "Sign in success");
+                    rerouteToHome();
                 },
                 error ->
                 {
+                    Amplify.Auth.signOut(
+                            result ->
+                            {
+                                Log.i("Auth", "Signing out previous user...");
+                                invokeSignIn();
+                            }
+                    );
                     Log.e("Auth", "Sign in failed", error);
                 }
         );

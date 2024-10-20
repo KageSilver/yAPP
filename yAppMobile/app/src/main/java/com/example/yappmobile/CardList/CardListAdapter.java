@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.IListCardItemInteractions;
 import com.example.yappmobile.R;
 
@@ -22,10 +23,10 @@ import java.util.List;
 // Manages the creation, data population, and click events of individual CardItems
 public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {
+    private final IListCardItemInteractions itemInteractions; // Handles CardItem click events
     private final Context context; // Where the CardItems are contained
     private final String cardType;
     private List<JSONObject> itemList; // List of CardItems
-    private IListCardItemInteractions itemInteractions;
 
     public CardListAdapter(Context context, List<JSONObject> itemList,
                            String cardType, IListCardItemInteractions itemInteractions)
@@ -110,11 +111,33 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             sender = itemView.findViewById(R.id.friend_username);
             acceptButton = itemView.findViewById(R.id.accept_button);
             declineButton = itemView.findViewById(R.id.decline_button);
+
+            acceptButton.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+
+            declineButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    
+                }
+            });
         }
 
         public void bind(JSONObject card)
         {
-            // username.setText(card.getSender());
+            try
+            {
+                sender.setText(card.get("FromUserName").toString());
+            }
+            catch (JSONException jsonException)
+            {
+                Log.e("JSON", "Error parsing JSON", jsonException);
+            }
             // TODO: Add acceptButton and declineButton click listeners here
         }
     }
@@ -147,13 +170,42 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     }
                 }
             });
+
+            unfriendButton.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    Log.i("OnClick", "Woah! you clicked me :(");
+                }
+            });
         }
 
         public void bind(JSONObject card)
         {
             try
             {
-                friendName.setText(card.get("").toString());
+                String personA = card.get("FromUserName").toString();
+                String personB = card.get("ToUserName").toString();
+                Amplify.Auth.getCurrentUser(
+                        result ->
+                        {
+                            if(personA.equals(result.getUsername()))
+                            {
+                                friendName.setText(personB);
+                            }
+                            else
+                            {
+                                friendName.setText(personA);
+                            }
+                        },
+                        error ->
+                        {
+                            Log.e("CardListAdapter", "Error populating Friend card", error);
+                        }
+                );
+
+
             }
             catch (JSONException jsonException)
             {

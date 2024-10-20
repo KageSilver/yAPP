@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.CardList.CardListHelper;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -27,10 +28,6 @@ public class PublicPostsActivity extends AppCompatActivity implements IListCardI
     {
         super.onCreate(savedInstanceState);
 
-        // Hide both the navigation bar and the status bar.
-        // SYSTEM_UI_FLAG_FULLSCREEN is only available on Android 4.1 and higher, but as
-        // a general rule, you should design your app to hide the status bar whenever you
-        // hide the navigation bar.
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
@@ -98,6 +95,34 @@ public class PublicPostsActivity extends AppCompatActivity implements IListCardI
                 return false;
             }
         });
+
+        Button logOutButton = findViewById(R.id.log_out_button);
+        logOutButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Amplify.Auth.signOut(
+                        result ->
+                        {
+                            Log.i("Auth", "Signing out user...");
+                            Intent intent = new Intent(PublicPostsActivity.this, AuthenticatorActivity.class);
+                            startActivity(intent);
+                        }
+                );
+            }
+        });
+
+        Amplify.Auth.getCurrentUser(
+                result ->
+                {
+                    Log.i("Auth", "Current user: " + result.getUsername());
+                },
+                error ->
+                {
+                    Log.e("Auth", "FUCK", error);
+                }
+        );
     }
 
     private void refreshPosts(String since)
@@ -107,7 +132,7 @@ public class PublicPostsActivity extends AppCompatActivity implements IListCardI
         String apiPath = "/api/posts/getRecentPosts?since=%s&maxResults=%d";
         String formattedPath = String.format(apiPath, since, MAX_RESULTS);
 
-        // Setup recycler view to display post list cards
+        // Setup recycler view to display post cards
         RecyclerView rvPosts = findViewById(R.id.public_posts_list);
         rvPosts.setLayoutManager(new LinearLayoutManager(this));
 

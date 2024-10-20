@@ -46,9 +46,6 @@
             android:name=".CreatePostActivity"
             android:exported="false" />
         <activity
-            android:name=".MyPostsActivity"
-            android:exported="false" />
-        <activity
             android:name=".PostEntryActivity"
             android:exported="false" />
          <activity

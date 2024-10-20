@@ -11,12 +11,15 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.CardList.CardListHelper;
 import com.example.yappmobile.IListCardItemInteractions;
 import com.example.yappmobile.R;
 
 public class MyFriendsFragment extends Fragment implements IListCardItemInteractions
 {
+    private CardListHelper friendListHelper;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -29,17 +32,24 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
         super.onCreate(savedInstanceState);
 
         ProgressBar loadingSpinner = (ProgressBar) view.findViewById(R.id.indeterminateBar);
-        CardListHelper friendListHelper = new CardListHelper(this.getContext(), loadingSpinner, "CURRENT_FRIEND", this);
-
-        // TODO: change to actual user when that part is ready
-        String userName = "taralb6@gmail.com";
-        String myRequestsAPI = "api/friends/getFriendsByStatus?userName="+userName+"?status=1";
+        friendListHelper = new CardListHelper(this.getContext(), loadingSpinner, "CURRENT_FRIEND", this);
 
         // Setup recycler view to display post list cards
         RecyclerView rvFriends = (RecyclerView) view.findViewById(R.id.my_friends_list);
         rvFriends.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
-        friendListHelper.loadItems(myRequestsAPI, rvFriends);
+        Amplify.Auth.getCurrentUser(
+                result ->
+                {
+                    String userName = "ksvillamayor@gmail.com";
+                    String myRequestsAPI = "/api/friends/getFriendsByStatus?userName="+userName+"&status=1";
+                    friendListHelper.loadItems(myRequestsAPI, rvFriends);
+                },
+                error ->
+                {
+                    Log.e("Auth", "Uh oh! THere's trouble getting the current user", error);
+                }
+        );
     }
 
     @Override
