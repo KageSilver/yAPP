@@ -66,10 +66,6 @@ import { usePostHelper } from '../composables/usePostHelper'; // Import the help
                         <img src="../assets/post/downvote.svg" alt="Downvote" class="w-6 h-6">
                         20
                     </button>
-                    <button @click.stop="reply(post.pid)">
-                        <img src="../assets/post/reply.svg" alt="Reply" class="w-6 h-6" @click="clickPost(post.pid)">
-                        Reply
-                    </button>
                 </div>
 
         
