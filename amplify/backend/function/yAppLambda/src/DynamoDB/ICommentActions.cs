@@ -40,17 +40,4 @@ public interface ICommentActions
     /// <returns>A list of comments created by a user.</returns>
     Task<List<Comment>> GetCommentsByUser(string userName);
     
-    /// <summary>
-    /// Deletes a comment from the database by a comment id
-    /// </summary>
-    /// <param name="cid">The id of the comment to be deleted.</param>
-    /// <returns>A boolean indicating whether the deletion was successful.</returns>
-    Task<bool> DeleteComment(string cid);
-
-    /// <summary>
-    /// Edits an already existing comment
-    /// </summary>
-    /// <param name="updatedComment">The new version of the comment after editing.</param>
-    /// <returns>An ActionResult containing the edited Comment object if successful, or an error message if it fails.</returns>
-    Task<ActionResult<Comment>> UpdateComment(Comment updatedComment);
 }

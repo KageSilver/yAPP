@@ -169,45 +169,4 @@ public class CommentController : ControllerBase
         return comments;
     }
 
-    // DELETE: api/comments/deleteComment?cid={cid}
-    /// <summary>
-    /// Deletes a comment from the database by a comment id.
-    /// </summary>
-    /// <param name="cid">The id of the comment to be deleted.</param>
-    /// <returns>A boolean indicating whether the deletion was successful.</returns>
-    [HttpDelete("deleteComment")]
-    [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<bool>> DeleteComment(string cid)
-    {
-        if(string.IsNullOrEmpty(cid))
-        {
-            return BadRequest("Comment ID is required");
-        }
-
-        var deleted = await _commentActions.DeleteComment(cid);
-
-        return deleted;
-    }
-
-    // PUT: api/comments/updateComment with body { "cid": "cid", "pid": "pid", "createdAt": "createdAt", "updatedAt": "updatedAt", "userName": "username", "commentBody": "body", "upvotes": "upvotes", "downvotes": "downvotes" }
-    /// <summary>
-    /// Edits an already existing comment.
-    /// </summary>
-    /// <param name="request">The new version of the comment after editing.</param>
-    /// <returns>An ActionResult containing the edited Comment object if successful, or an error message if it fails.</returns>
-    [HttpPut("updateComment")]
-    [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Comment>> UpdateComment([FromBody] Comment request)
-    {
-        if(request == null || string.IsNullOrEmpty(request.UserName) || string.IsNullOrEmpty(request.CommentBody))
-        {
-            return BadRequest("Request body is required and must contain username and comment body");
-        }
-
-        var comment = await _commentActions.UpdateComment(request);
-
-        return comment;
-    }
 }
