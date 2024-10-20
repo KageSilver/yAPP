@@ -11,39 +11,35 @@
 1. Navigate to the yAPP website
 2. If not already selected, select the "Sign In" tab at the top of the panel
 3. Enter account details
-    - Username, which will be the email address (for now)
+    - Email
     - Password
 4. Select the "Sign In" button at the bottom of the panel
-5. Select the "Go to Dashboard" text
-6. If not already select, select the "Public Posts" tab on the top of the panel
-7. Select the "Make a new post!" button on the bottom of the panel
-8. Enter a post title in the textfield under "Title:"
-9. Enter the post contents in the textfield under "Content:"
-10. To discard the post, select the "Discard" button at the bottom of the panel
-11. To create the post, select the "Create Post" button at the bottom of the panel
-12. A pop-up should appear confirming you have created a new post
-13. Done!
+5. Select the "Create Post" button on the panel on the right of the screen
+6. Enter a post title in the textfield under "Title:"
+7. Enter the post contents in the textfield under "Content:"
+8. To discard the post, select the "Discard" button at the bottom of the panel
+9. To create the post, select the "Create Post" button at the bottom of the panel
+10. A pop-up should appear confirming you have created a new post
+11. Done!
 
  ### Viewing User's Own Posts
 1. Navigate to the yAPP website
 2. If not already selected, select the "Sign In" tab at the top of the panel
 3. Enter account details
-    - Username, which will be the email address (for now)
+    - Email
     - Password
-4. Select the "Sign In" button at the bottom of the panel
-5. Select the "Go to Dashboard" text
-6. Select the "My Posts" tab on the top of the panel
-7. Any posts you make will appear here
-8. Done!
+4. Select the "Profile" button on the panel on the right of the screen
+5. Select the "My Posts" tab on the panel if not already selected
+6. Any public posts you make will appear here
+7. Done!
 
  ### Viewing Public Posts
 1. Navigate to the yAPP website
 2. If not already selected, select the "Sign In" tab at the top of the panel
 3. Enter account details
-    - Username, which will be the email address (for now)
+    - Email
     - Password
 4. Select the "Sign In" button at the bottom of the panel
-5. Select the "Go to Dashboard" text
-6. If not already select, select the "Public Posts" tab on the top of the panel
-7. Posts made by any user will appear here, sorted by posts made most recently
-8. Done!
+5. Select the "Home" button on the panel on the right of the screen if not already selected
+6. Public posts made by any user will appear here, sorted by posts made most recent
+7. Done!
