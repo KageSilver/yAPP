@@ -43,17 +43,17 @@ public class CommentController : ControllerBase
 
         if(request == null || string.IsNullOrEmpty(request.CommentBody) || string.IsNullOrEmpty(request.UserName) || string.IsNullOrEmpty(request.PID))
         {
-            result = BadRequest("request body is required and must contain commenter's username, comment body, and the original post's id.");
+            result = BadRequest("Request body is required and must contain commenter's username, comment body, and the original post's id.");
         }
         else
         {
             Console.WriteLine("Post request from: " + request.UserName + " with pid: " + request.PID);
 
-            var poster = await _cognitoActions.GetUser(request.UserName);
+            var commenter = await _cognitoActions.GetUser(request.UserName);
 
-            if(poster == null)
+            if(commenter == null)
             {
-                result = NotFound("Post creator not found");
+                result = NotFound("Comment creator not found");
             }
             else
             {
@@ -61,6 +61,7 @@ public class CommentController : ControllerBase
                 {
                     UserName = request.UserName,
                     CommentBody = request.CommentBody,
+                    PID = request.PID,
                     Upvotes = 0,
                     Downvotes = 0
                 };
