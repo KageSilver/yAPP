@@ -50,8 +50,6 @@ public class PublicPostsActivity extends AppCompatActivity implements IListCardI
         });
         refreshPosts(since);
 
-        // TODO: mayhaps make public posts and calendar into fragments instead
-        // TODO: update navbar selected to reflect current page
         NavigationBarView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener()
         {
@@ -112,17 +110,6 @@ public class PublicPostsActivity extends AppCompatActivity implements IListCardI
                 );
             }
         });
-
-        Amplify.Auth.getCurrentUser(
-                result ->
-                {
-                    Log.i("Auth", "Current user: " + result.getUsername());
-                },
-                error ->
-                {
-                    Log.e("Auth", "FUCK", error);
-                }
-        );
     }
 
     private void refreshPosts(String since)

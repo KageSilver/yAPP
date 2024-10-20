@@ -21,13 +21,14 @@ public class AuthenticatorActivity extends AppCompatActivity
                 result ->
                 {
                     Log.i("Auth", "There is already a user signed in!");
+                    rerouteToHome();
                 },
                 error ->
                 {
                     Log.i("Auth", "There is no user signed in!!");
+                    invokeSignIn();
                 }
         );
-        invokeSignIn();
     }
 
     // Trigger the Hosted UI sign-in process
@@ -42,6 +43,7 @@ public class AuthenticatorActivity extends AppCompatActivity
                 },
                 error ->
                 {
+                    Log.e("Auth", "Sign in failed. Trying again...", error);
                     Amplify.Auth.signOut(
                             result ->
                             {
@@ -49,7 +51,6 @@ public class AuthenticatorActivity extends AppCompatActivity
                                 invokeSignIn();
                             }
                     );
-                    Log.e("Auth", "Sign in failed", error);
                 }
         );
     }

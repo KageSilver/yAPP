@@ -115,15 +115,18 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             acceptButton.setOnClickListener(new View.OnClickListener()
             {
                 @Override
-                public void onClick(View v) {
-
+                public void onClick(View v)
+                {
+                    Log.i("OnClick", "OMG! You wanted to be my friend!? :D");
                 }
             });
 
-            declineButton.setOnClickListener(new View.OnClickListener() {
+            declineButton.setOnClickListener(new View.OnClickListener()
+            {
                 @Override
-                public void onClick(View v) {
-                    
+                public void onClick(View v)
+                {
+                    Log.i("OnClick", "Wait...You don't want to be my friend!? D:");
                 }
             });
         }
@@ -138,7 +141,6 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             {
                 Log.e("JSON", "Error parsing JSON", jsonException);
             }
-            // TODO: Add acceptButton and declineButton click listeners here
         }
     }
 
@@ -176,7 +178,7 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 @Override
                 public void onClick(View v)
                 {
-                    Log.i("OnClick", "Woah! you clicked me :(");
+                    Log.i("OnClick", "Woah! Why would you want to unfollow me??");
                 }
             });
         }

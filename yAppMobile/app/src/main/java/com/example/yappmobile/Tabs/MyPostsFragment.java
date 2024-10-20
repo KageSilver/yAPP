@@ -37,29 +37,14 @@ public class MyPostsFragment extends Fragment implements IListCardItemInteractio
         ProgressBar loadingSpinner = (ProgressBar) view.findViewById(R.id.indeterminateBar);
         postListHelper = new CardListHelper(this.getContext(), loadingSpinner, "POST", this);
 
-        // TODO: change to actual user when that part is ready
-        String userName = "taralb6@gmail.com";
-        boolean diaryEntry = false;
-        String myPostsAPI = "/api/posts/getPostsByUser?userName="+userName+"&diaryEntry="+diaryEntry;
-
         // Setup recycler view to display post list cards
         RecyclerView rvPosts = (RecyclerView) view.findViewById(R.id.my_posts_list);
         rvPosts.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
+        // TODO: fix this. there's some weird error im getting w the hierarchy/life cycle shit so ask the team
+        String userName ="tara";
+        String myPostsAPI = "/api/posts/getPostsByUser?userName="+userName+"&diaryEntry=false";
         postListHelper.loadItems(myPostsAPI, rvPosts);
-
-//        Amplify.Auth.getCurrentUser(
-//                result ->
-//                {
-//                    String userName = result.getUsername();
-//                    String myRequestsAPI = "/api/friends/getFriendsByStatus?userName="+userName+"?status=1";
-//                    postListHelper.loadItems(myRequestsAPI, rvPosts);
-//                },
-//                error ->
-//                {
-//                    Log.e("Auth", "Uh oh! THere's trouble getting the current user", error);
-//                }
-//        );
     }
 
     public void onItemClick(int position)

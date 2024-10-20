@@ -41,7 +41,7 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
         Amplify.Auth.getCurrentUser(
                 result ->
                 {
-                    String userName = "ksvillamayor@gmail.com";
+                    String userName = result.getUsername();
                     String myRequestsAPI = "/api/friends/getFriendsByStatus?userName="+userName+"&status=1";
                     friendListHelper.loadItems(myRequestsAPI, rvFriends);
                 },
