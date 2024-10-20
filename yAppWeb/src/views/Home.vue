@@ -38,7 +38,7 @@
 
 <template>
 
-    <div class="flex flex-col justify-center items-center min-h-screen gap-4 mb-5">
+    <div class="flex flex-col justify-center items-center min-h-screen gap-4 mb-5 mt-[20rem]">
         <div v-if="loading" class="flex justify-center items-center">
             <div class="spinner animate-spin border-4 border-t-transparent rounded-full w-10 h-10"></div>
         </div>
