@@ -11,9 +11,8 @@
 1. Navigate to the yAPP website
 2. Select the "Create Account" tab at the top of the login panel
 3. Enter account details
-    - Username needs to be the same as the email address (this will be fixed later)
+    - Enter and confirm a valid email address you have access to, as you will need to retrieve the confirmation code for a later step
     - Enter and confirm your password
-    - Enter a valid email address you have access to, as you will need to retrieve the confirmation code for a later step
 4. Select the "Create Account" button at the bottom of the panel
 5. Enter the confirmation code abtained from the email address entered in step 3
     - If the confirmation code was lost, select the "Resend Code" button and repeat this step
@@ -24,7 +23,7 @@
 1. Navigate to the yAPP website
 2. If not already selected, select the "Sign In" tab at the top of the panel
 3. Enter account details
-    - Username, which will be the email address (for now)
+    - Email
     - Password
 4. Select the "Sign In" button at the bottom of the panel
 5. Done!
@@ -36,8 +35,8 @@
     - Username, which will be the email address (for now)
     - Password
 4. Select the "Sign In" button at the bottom of the panel
-5. Select the "Go to Dashboard" button
-6. Select the "Account Settings" tab at the top-right of the panel
+5. Select the "Profile" button on the panel on the right of the screen
+6. Select the "Settings" button on the bottom of the panel on the right of the screen
 7. To change your password:
     - Enter your old password in the textfield below "Old Password"
     - Enter your new password in the textfield below "New Password"
@@ -49,17 +48,18 @@
 1. Navigate to the yAPP website
 2. If not already selected, select the "Sign In" tab at the top of the panel
 3. Enter account details
-    - Username, which will be the email address (for now)
+    - Email
     - Password
 4. Select the "Sign In" button at the bottom of the panel
-5. Select the "Go to Dashboard" button
+5. Select the "Profile" button on the panel on the right of the screen
 6. To make a friend request:
-    - Select the "+ Add Friend" button on the top-right of the screen
+    - Select the icon at the top right of the screen, just left of the navigation panel
+    - Select the "Add a Friend!" button on the top right f the screen
     - Enter in your friend's UUID in the textfield below "Enter in their UUID:"
-    - Select "Send Friend Request"
+    - Select "Send Request"
     - A pop-up should appear verifying the friend request has been sent
 7. To accept/decline a friend request:
-    - Select the "My Friend Requests" tab on the top of the panel
+    - Select the icon at the top right of the screen, just left of the navigation panel
     - All pending friendships will be listed here
     - To accept a friend request, select the "Accept" button correlating to a specific user
     - To decline a friend request, select the "Decline" button correlating to a specific user
