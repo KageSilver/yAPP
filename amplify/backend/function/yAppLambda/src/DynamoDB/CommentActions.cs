@@ -60,7 +60,7 @@ public class CommentActions : ICommentActions
     /// </summary>
     /// <param name="cid">The id to find a post given a comment id.</param>
     /// <returns>The post associated to the comment.</returns>
-    Task<Post> GetPostByCid(string cid)
+    public async Task<Post> GetPostByCid(string cid)
     {
         try
         {
@@ -85,16 +85,12 @@ public class CommentActions : ICommentActions
     /// </summary>
     /// <param name="cid">The id to find a comment given a comment id.</param>
     /// <returns>The comment associated to the cid.</returns>
-    Task<Comment> GetCommentById(string cid)
+    public async Task<Comment> GetCommentById(string cid)
     {
         try
         {
             var comment = await _dynamoDbContext.LoadAsync<Comment>(cid, _config);
-
-            if(comment.Anonymous)
-            {
-                comment.UserName = "Anonymous";
-            }
+            comment.UserName = "Anonymous"; // Setting user name to anonymous
             
             return comment;
         }
@@ -106,42 +102,44 @@ public class CommentActions : ICommentActions
     }
 
     /// <summary>
-    /// Gets all comments with given post ID
+    /// Gets all comments with given username
     /// </summary>
-    /// <param name="pid">The id to find a post and comment thread.</param>
-    /// <returns>A list of comments made under a post.</returns>
-    Task<List<Comment>> GetCommentsByPid(string pid)
+    /// <param name="userName">The username to find all comments a user has made.</param>
+    /// <returns>A list of comments made by a user.</returns>
+    public async Task<List<Comment>> GetCommentsByUser(string userName)
     {
         try
         {
-            var post = await _dynamoDbContext.LoadAsync<Post>(pid, _config);
-
-            if(post.Anonymous)
+            List<ScanCondition> scanConditions = new List<ScanCondition>
             {
-                post.UserName = "Anonymous";
-            }
-            
-            return post;
+                new ScanCondition("UserName", ScanOperator.Equal, userName)
+            };
+
+            // Query comments where the commenter's username is 'userName' and is equal to the input
+            var comments = await _dynamoDbContext.ScanAsync<Comment>(scanConditions, _config).GetRemainingAsync();
+
+            return comments;
         }
         catch (Exception e)
         {
-            Console.WriteLine("Failed to get post: " + e.Message);
-            return null;
+            Console.WriteLine("Failed to get comments: " + e.Message);
+            return new List<Comment>();
         }
     }
-
+    
     /// <summary>
     /// Gets all comments with given post ID
     /// </summary>
     /// <param name="pid">The id to find a post and comment thread.</param>
     /// <returns>A list of comments made under a post.</returns>
-    Task<List<Comment>> GetCommentsByPid(string pid)
+    public async Task<List<Comment>> GetCommentsByPid(string pid)
     {
         try
         {
-            ScanCondition scanCondition = new ScanCondition(
+            List<ScanCondition> scanCondition = new List<ScanCondition>
+            {
                 new ScanCondition("pid", ScanOperator.Equal, pid)
-            );
+            };
 
             // Query comments where their pid is 'pid'
             var comments = await _dynamoDbContext.ScanAsync<Comment>(scanCondition, _config).GetRemainingAsync();
@@ -155,14 +153,14 @@ public class CommentActions : ICommentActions
         }
     }
     
-    
     /// <summary>
     /// Deletes a comment from the database by a comment id
     /// </summary>
     /// <param name="cid">The id of the comment to be deleted.</param>
     /// <returns>A boolean indicating whether the deletion was successful.</returns>
-    Task<bool> DeleteComment(string cid)
+    public async Task<bool> DeleteComment(string cid)
     {
+        bool result = true;
         try
         {
             // Load the comment record to check if it exists
@@ -171,19 +169,20 @@ public class CommentActions : ICommentActions
             if (comment.Result == null)
             {
                 Console.WriteLine("Failed to retrieve comment");
-                return false;
+                result = false;
             }
-
-            // Delete the comment from the database
-            await _dynamoDbContext.DeleteAsync(comment.Result, _config);
-
-            return true;
+            else
+            {
+                // Delete the comment from the database
+                await _dynamoDbContext.DeleteAsync(comment.Result, _config);
+            }
         }
         catch (Exception e)
         {
             Console.WriteLine("Failed to delete comment: " + e.Message);
-            return false;
+            result = false;
         }
+        return result;
     }
     
     /// <summary>
@@ -191,7 +190,7 @@ public class CommentActions : ICommentActions
     /// </summary>
     /// <param name="updatedComment">The new version of the comment after editing.</param>
     /// <returns>An ActionResult containing the edited Comment object if successful, or an error message if it fails.</returns>
-    Task<ActionResult<Comment>> UpdateComment(Comment updatedComment)
+    public async Task<ActionResult<Comment>> UpdateComment(Comment updatedComment)
     {
         try
         {

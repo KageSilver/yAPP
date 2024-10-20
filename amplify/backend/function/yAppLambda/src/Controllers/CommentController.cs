@@ -110,7 +110,7 @@ public class CommentController : ControllerBase
     [HttpGet("getCommentById")]
     [ProducesResponseType(typeof(Comment), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Post>> GetCommentById(string cid)
+    public async Task<ActionResult<Comment>> GetCommentById(string cid)
     {
         if(string.IsNullOrEmpty(cid))
         {
@@ -127,6 +127,26 @@ public class CommentController : ControllerBase
         return comment;
     }
 
+    // GET: api/comments/getCommentsByUser?userName={userName}
+    /// Gets all comments with given username
+    /// </summary>
+    /// <param name="userName">The username to find all comments a user has made.</param>
+    /// <returns>A list of comments made by a user.</returns>
+    [HttpGet("getCommentsByUser")]
+    [ProducesResponseType(typeof(List<Comment>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<List<Comment>>> GetCommentsByUser(string userName)
+    {
+        if(string.IsNullOrEmpty(userName))
+        {
+            return BadRequest("Username is required");
+        }
+
+        var comments = await _commentActions.GetCommentsByUser(userName);
+
+        return comments;
+    }
+
     // GET: api/comments/getCommentsByPid?pid={pid}
     /// <summary>
     /// Gets all comments with given post ID
@@ -136,79 +156,57 @@ public class CommentController : ControllerBase
     [HttpGet("getCommentsByPid")]
     [ProducesResponseType(typeof(List<Comment>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<List<Comment>>> GetPostsByUser(string userName, bool diaryEntry)
-    {
-        if(string.IsNullOrEmpty(userName))
-        {
-            return BadRequest("username is required");
-        }
-
-        var posts = await _postActions.GetPostsByUser(userName, diaryEntry);
-
-        return posts;
-    }
-
-    // GET: api/posts/getRecentPosts?since={since}&maxResults={maxResults}
-    /// <summary>
-    /// Gets recent posts from before a specified time.
-    /// </summary>
-    /// <param name="since">Returns posts made after this time.</param>
-    /// <param name="maxResults">The maximum number of results to retrieve.</param>
-    /// <returns>A list of recent posts.</returns>
-    [HttpGet("getRecentPosts")]
-    [ProducesResponseType(typeof(List<Post>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<List<Post>>> GetRecentPosts(DateTime since, int maxResults)
-    {
-        if(maxResults < 0 || !DateTime.TryParse(since.ToString(), out since))
-        {
-            return BadRequest("requires valid max result number and valid time");
-        }
-
-        var posts = await _postActions.GetRecentPosts(since, maxResults);
-
-        return posts;
-    }
-    
-    // DELETE: api/posts/deletePost?pid={pid}
-    /// <summary>
-    /// Deletes a post from the database by a post id.
-    /// </summary>
-    /// <param name="pid">The id of the post to be deleted.</param>
-    /// <returns>A boolean indicating whether the deletion was successful.</returns>
-    [HttpDelete("deletePost")]
-    [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<bool>> DeletePost(string pid)
+    public async Task<ActionResult<List<Comment>>> GetCommentsByPid(string pid)
     {
         if(string.IsNullOrEmpty(pid))
         {
-            return BadRequest("Post id is required");
+            return BadRequest("Post ID is required");
         }
 
-        var deleted = await _postActions.DeletePost(pid);
+        var comments = await _commentActions.GetCommentsByPid(pid);
+
+        return comments;
+    }
+
+    // DELETE: api/comments/deleteComment?cid={cid}
+    /// <summary>
+    /// Deletes a comment from the database by a comment id.
+    /// </summary>
+    /// <param name="cid">The id of the comment to be deleted.</param>
+    /// <returns>A boolean indicating whether the deletion was successful.</returns>
+    [HttpDelete("deleteComment")]
+    [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<bool>> DeleteComment(string cid)
+    {
+        if(string.IsNullOrEmpty(cid))
+        {
+            return BadRequest("Comment ID is required");
+        }
+
+        var deleted = await _commentActions.DeleteComment(cid);
 
         return deleted;
     }
 
-    // PUT: api/posts/updatePost with body { "pid": "pid", "createdAt": "createdAt", "userName": "username", "postTitle": "title", "postBody": "body", "upvotes": "upvotes", "downvotes": "downvotes", "diaryEntry": false, "anonymous": false }
+    // PUT: api/comments/updateComment with body { "cid": "cid", "pid": "pid", "createdAt": "createdAt", "updatedAt": "updatedAt", "userName": "username", "commentBody": "body", "upvotes": "upvotes", "downvotes": "downvotes" }
     /// <summary>
-    /// Edits an already existing post.
+    /// Edits an already existing comment.
     /// </summary>
-    /// <param name="request">The new version of the post after editing.</param>
-    /// <returns>An ActionResult containing the edited Post object if successful, or an error message if it fails.</returns>
-    [HttpPut("updatePost")]
+    /// <param name="request">The new version of the comment after editing.</param>
+    /// <returns>An ActionResult containing the edited Comment object if successful, or an error message if it fails.</returns>
+    [HttpPut("updateComment")]
     [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Post>> UpdatePost([FromBody] Post request)
+    public async Task<ActionResult<Comment>> UpdateComment([FromBody] Comment request)
     {
-        if(request == null || string.IsNullOrEmpty(request.UserName) || string.IsNullOrEmpty(request.PostBody) || string.IsNullOrEmpty(request.PostTitle))
+        if(request == null || string.IsNullOrEmpty(request.UserName) || string.IsNullOrEmpty(request.CommentBody))
         {
-            return BadRequest("request body is required and must contain username, post title, post body");
+            return BadRequest("Request body is required and must contain username and comment body");
         }
 
-        var post = await _postActions.UpdatePost(request);
+        var comment = await _commentActions.UpdateComment(request);
 
-        return post;
+        return comment;
     }
 }

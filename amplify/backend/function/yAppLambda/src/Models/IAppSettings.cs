@@ -34,4 +34,9 @@ public interface IAppSettings
     /// Post table name
     /// </summary>
     string PostTableName { get; set; }
+
+    /// <summary>
+    /// Comment table name
+    /// </summary>
+    string CommentTableName { get; set; }
 }
