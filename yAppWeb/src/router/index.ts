@@ -11,6 +11,7 @@ import MyRequests from "../views/MyRequests.vue";
 import AddFriends from "../views/AddFriends.vue";
 import CreatePost from "../views/CreatePost.vue";
 import AccountSettings from "../views/AccountSettings.vue";
+import Calendar from "../views/Calendar.vue";
 
 const routes = [
 	{
@@ -68,6 +69,12 @@ const routes = [
 				path: "/settings",
 				name: "settings",
 				component: AccountSettings,
+				meta: { requiresAuth: true },
+			},
+			{
+				path: "/calendar",
+				name: "calendar",
+				component: Calendar,
 				meta: { requiresAuth: true },
 			},
 		],

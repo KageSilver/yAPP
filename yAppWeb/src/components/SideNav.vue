@@ -59,7 +59,7 @@ function logOut() {
                 </li>
                 <!-- Calendar Item -->
                 <li class="group hover:bg-light-purple transition-all duration-300  w-full">
-                    <a href="#" class="flex flex-col items-center justify-center p-2">
+                    <a href="/calendar" class="flex flex-col items-center justify-center p-2">
                         <img src="../assets/navigation/calendar.svg" alt="Calendar Icon"
                             :class="{ 'w-full h-full': true, 'bg-light-purple p-2 rounded-full': isActive('/calendar') }">
                         <span class="font-medium">Calendar</span>
