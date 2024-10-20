@@ -42,15 +42,17 @@ module.exports = {
 				"surface-900": "rgb(var(--surface-900))",
 				"surface-950": "rgb(var(--surface-950))",
 
-				dark: "#000000",
+				"dark": "#000000",
 				"light-purple": "#E8DEF8",
 				"light-pink": "#A55678",
 				"dark-pink": " #80455E",
 				"deep-blue": "#19234B",
 				"navy-blue": "#061830",
-				purple: "#EFB2CE",
+				"purple": "#EFB2CE",
 				"deep-dark": "#00000080",
 				"dark-purple": "#3E1F3C",
+				"pink-purple":"#63284E",
+
 			},
 			borderRadius: {
 				4: "4px",
