@@ -7,6 +7,7 @@
  - GET: api/comments/getPostByCid?cid={cid}
     - cid: The comment id to find the parent post
  - Response: returns the post object associated with the comment based on the specified id
+    - { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "userName": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true }
  - Status codes:
     - 200 OK
     - 400 Bad Request: Comment ID is required
@@ -17,6 +18,7 @@
  - GET: api/comments/getCommentById?cid={cid}
     - cid: The comment id to find the comment
  - Response: returns the comment with the specified id
+   - { "cid": "string", "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "userName": "string", "commentBody": "string", "upvotes": 0, "downvotes": 0 }
  - Status codes:
     - 200 OK
     - 400 Bad Request: Comment ID is required
@@ -27,7 +29,7 @@
  - GET: api/comments/getCommentsByUser?userName={userName}
     - username: the username used to find all comments by that user
  - Response: returns a list of comment objects made by the specified user
-    -
+    - [ { "cid": "string", "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "userName": "string", "commentBody": "string", "upvotes": 0, "downvotes": 0 } ]
  - Status codes:
     - 200 OK
     - 400 Bad Request: Username is required
@@ -37,7 +39,7 @@
  - GET: api/comments/getCommentsByPid?pid={pid}
     - pid: the parent post id used to find associated comments
  - Response: returns a list of comments made on the parent post
-    - 
+    - [ { "cid": "string", "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "userName": "string", "commentBody": "string", "upvotes": 0, "downvotes": 0 } ]
  - Status codes:
     - 200 OK
     - 400 Bad Request: Post ID is required
@@ -47,7 +49,7 @@
  - POST: api/comments/createComment
  - Request body: { "userName": "username", "commentBody": "body", "pid": "pid" }
  - Response: returns the comment objects created from the new comment
-    - 
+    - { "cid": "string", "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "userName": "string", "commentBody": "string", "upvotes": 0, "downvotes": 0 }
  - Status codes:
     - 200 OK
     - 400 Bad Request: 
@@ -60,7 +62,7 @@
  - PUT: api/comments/updateComment
  - Request body: { "cid": "cid", "pid": "pid", "createdAt": "createdAt", "updatedAt": "updatedAt", "userName": "username", "commentBody": "body", "upvotes": "upvotes", "downvotes": "downvotes" }
  - Response: returns the updated comment object
-    - 
+    - { "cid": "string", "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "userName": "string", "commentBody": "string", "upvotes": 0, "downvotes": 0 }
  - Status codes:
     - 200 OK
     - 400 Bad Request: Request body is required and must contain username and comment body
