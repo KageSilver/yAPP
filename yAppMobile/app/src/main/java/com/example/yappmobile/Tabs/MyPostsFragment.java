@@ -1,4 +1,4 @@
-package com.example.yappmobile.TabItemContent;
+package com.example.yappmobile.Tabs;
 
 import android.content.Intent;
 import android.os.Bundle;

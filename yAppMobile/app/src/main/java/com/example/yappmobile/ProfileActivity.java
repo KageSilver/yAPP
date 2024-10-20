@@ -2,13 +2,13 @@ package com.example.yappmobile;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.yappmobile.Tabs.ViewPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
 
 public class ProfileActivity extends AppCompatActivity

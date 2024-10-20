@@ -1,4 +1,4 @@
-package com.example.yappmobile.TabItemContent;
+package com.example.yappmobile.Tabs;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,7 +14,6 @@ public class MyAwardsFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        // TODO: modify this
-        return inflater.inflate(R.layout.fragment_my_posts, container, false);
+        return inflater.inflate(R.layout.fragment_my_awards, container, false);
     }
 }
