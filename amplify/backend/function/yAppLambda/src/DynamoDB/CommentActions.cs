@@ -112,7 +112,7 @@ public class CommentActions : ICommentActions
         {
             List<ScanCondition> scanCondition = new List<ScanCondition>
             {
-                new ScanCondition("pid", ScanOperator.Equal, pid)
+                new ScanCondition("PID", ScanOperator.Equal, pid)
             };
 
             // Query comments where their pid is 'pid'
