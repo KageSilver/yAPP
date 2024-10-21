@@ -15,7 +15,7 @@
                 <BackBtn v-if="backBtn"/>
                 <h1 class="text-white text-4xl font-bold ml-8 mb-0">{{ header }}</h1>
             </div>
-            <a class="text-white bg-deep-dark hover:bg-purple font-bold py-2 px-4 rounded text-2xl mr-20" v-if="btnText" :href="url">
+            <a class="text-white bg-deep-dark hover:bg-purple font-bold py-2 px-4 rounded text-2xl " v-if="btnText" :href="url">
                 {{btnText}}
             </a>
         </div>
