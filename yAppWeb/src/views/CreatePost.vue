@@ -27,8 +27,7 @@ onMounted(async () => {
 		"anonymous": true
 	};
 	
-	async function createPost(event) 
-	{
+	async function createPost(event) {
 		event.preventDefault();
 		var postElements = document.getElementById("post").elements;
 		var createButton = document.getElementById("create-button");
@@ -38,17 +37,14 @@ onMounted(async () => {
 		newPost.diaryEntry = diaryEntry;
 		newPost.anonymous = anonymous;
 
-		if ( diaryEntry )
-		{
+		if (diaryEntry) {
 			checkDiaryEntryLimit();
 		}
 
-		if ( newPost.postTitle !== '' && newPost.postBody !== '' ) 
-		{
+		if (newPost.postTitle !== '' && newPost.postBody !== '') {
 			newPost.userName = username.value;
 			// Make API call to create the post
-			try 
-			{
+			try {
 				const sendPostRequest = post({
 					apiName: "yapp",
 					path: "/api/posts/createPost",
@@ -75,61 +71,48 @@ onMounted(async () => {
 				router.push("/profile/myposts");
 				// TODO: Show confirmation
 				alert("Posted!");
-			} 
-			catch (e) 
-			{
+			} catch (e) {
 				alert("Post failed to create... Try agin!");
 				createButton.disabled = false;
 			}
 		}
 	}
 
-	function discardPost(event) 
-	{
+	function discardPost(event) {
 		event.preventDefault();
 		var postElements = document.getElementById("post").elements;
 		newPost.postTitle = postElements[0].value;
 		newPost.postBody = postElements[1].value;
-		if ( newPost.postTitle != '' || newPost.postBody != '' ) 
-		{
+		if ( newPost.postTitle != '' || newPost.postBody != '' ) {
 			console.log('Throwing away post...');
-			if (confirm("Are you sure you want to throw away your changes??")) 
-			{
+			if (confirm("Are you sure you want to throw away your changes??")) {
 				// Send to home page
 				router.push({ name: 'home' });
 			}
-		} 
-		else 
-		{
+		} else {
 			router.push({ name: 'home' });
 		}
 	}
 
 	// This function is used for whether we want to show the anonymous toggle
 	// Modify the diary entry and anonymous values here
-	function toggleDiaryEntry() 
-	{
+	function toggleDiaryEntry() {
 		diaryEntry = !diaryEntry;
 		var anonymousToggle = document.getElementById("anonymous");
-		if ( anonymousToggle.hidden == true ) 
-		{
+		if ( anonymousToggle.hidden == true ) {
 			anonymousToggle.hidden = false;
 			anonymous = false;
-		} 
-		else 
-		{
+		} else {
 			anonymousToggle.hidden = true;
 			anonymous = true;
 		}
 	}
 
-	function toggleAnonymous()
-	{
+	function toggleAnonymous(){
 		anonymous = !anonymous;
 	}
 
-	function checkDiaryEntryLimit()
-	{
+	function checkDiaryEntryLimit(){
 		// check if a diary entry has been made by this user that day already
 	}
 </script>
