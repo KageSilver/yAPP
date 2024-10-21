@@ -12,6 +12,7 @@
 	import {
 		useRouter
 	} from 'vue-router'; // Import useRoute
+import BackBtnHeader from "../components/BackBtnHeader.vue";
 
 
 	const username = ref('');
@@ -113,13 +114,8 @@
 
 <template>
 
-	<div class="pt-[10rem] md:px-16 md:pr-32 ">
-		<div class="flex justify-between items-center w-full pl-16">
-			<div class="flex flex-col items-start">
-				<h1 class="text-white text-4xl font-bold md:ml-8">Create a new post!</h1>
-				<p class="text-white text-sm font-bold ml-8 mt-2">Yapp your heart out.</p>
-			</div>
-		</div>
+	<div class="pt-[10rem] md:px-16 md:pr-32">
+		<BackBtnHeader header="Create a new post!" subheader="Yapp your heart out."  />
 
 
 		<div class="w-full md:px-16 md:mx-6 mt-3">

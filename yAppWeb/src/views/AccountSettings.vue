@@ -3,6 +3,7 @@
 		updatePassword
 	} from 'aws-amplify/auth';
 	import BackBtn from '../components/BackBtn.vue';
+	import BackBtnHeader from '../components/BackBtnHeader.vue';
 
 	// Reference to changing password via auth
 	// https://docs.amplify.aws/gen1/javascript/prev/build-a-backend/auth/manage-passwords/
@@ -38,15 +39,8 @@
 </script>
 
 <template>
-	<div class="pt-[10rem] md:px-16 md:pr-32 ">
-		<div class="flex flex-col w-full pl-16">
-			<div class="flex items-center mb-0">
-				<BackBtn class="mt-2 mb-0" />
-				<h1 class="text-white text-4xl font-bold ml-8 mb-0">Account Settings</h1>
-			</div>
-			<p class="text-white text-sm font-bold m-0 pl-20">Want to change your password?</p>
-		</div>
-
+	<div class="pt-[10rem] md:px-16 md:pr-32">
+		<BackBtnHeader header="Account Settings" subheader="Want to change your password?" :backBtn="true" />
 
 		<div class="w-full md:px-16 md:mx-6 mt-3">
 			<div class="post-heading bg-white p-8 rounded-lg">
