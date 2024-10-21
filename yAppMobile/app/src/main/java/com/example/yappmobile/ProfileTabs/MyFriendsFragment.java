@@ -1,4 +1,4 @@
-package com.example.yappmobile.Tabs;
+package com.example.yappmobile.ProfileTabs;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.CardList.CardListHelper;
-import com.example.yappmobile.IListCardItemInteractions;
+import com.example.yappmobile.CardList.IListCardItemInteractions;
 import com.example.yappmobile.R;
 
 public class MyFriendsFragment extends Fragment implements IListCardItemInteractions

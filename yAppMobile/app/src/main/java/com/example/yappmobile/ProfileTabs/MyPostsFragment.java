@@ -1,8 +1,7 @@
-package com.example.yappmobile.Tabs;
+package com.example.yappmobile.ProfileTabs;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +11,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.CardList.CardListHelper;
-import com.example.yappmobile.IListCardItemInteractions;
+import com.example.yappmobile.CardList.IListCardItemInteractions;
 import com.example.yappmobile.PostEntryActivity;
 import com.example.yappmobile.R;
 

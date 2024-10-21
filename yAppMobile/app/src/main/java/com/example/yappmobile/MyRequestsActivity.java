@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.CardList.CardListHelper;
+import com.example.yappmobile.CardList.IListCardItemInteractions;
 
 public class MyRequestsActivity extends AppCompatActivity implements IListCardItemInteractions
 {

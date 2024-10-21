@@ -1,13 +1,9 @@
-package com.example.yappmobile.Tabs;
+package com.example.yappmobile.ProfileTabs;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
-
-import com.example.yappmobile.Tabs.MyAwardsFragment;
-import com.example.yappmobile.Tabs.MyFriendsFragment;
-import com.example.yappmobile.Tabs.MyPostsFragment;
 
 public class ViewPagerAdapter extends FragmentStateAdapter
 {

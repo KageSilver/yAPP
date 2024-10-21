@@ -1,4 +1,4 @@
-package com.example.yappmobile;
+package com.example.yappmobile.NaviBarDestinations;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.core.Amplify;
+import com.example.yappmobile.R;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONObject;
@@ -31,10 +32,7 @@ public class CreatePostActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
 
-        // Hide both the navigation bar and the status bar.
-        // SYSTEM_UI_FLAG_FULLSCREEN is only available on Android 4.1 and higher, but as
-        // a general rule, you should design your app to hide the status bar whenever you
-        // hide the navigation bar.
+        // Set the activity to be full screen
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);

@@ -1,4 +1,4 @@
-package com.example.yappmobile;
+package com.example.yappmobile.NaviBarDestinations;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,12 +7,13 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.amplifyframework.core.Amplify;
-import com.example.yappmobile.Tabs.ViewPagerAdapter;
+import com.example.yappmobile.MyRequestsActivity;
+import com.example.yappmobile.NavBar;
+import com.example.yappmobile.R;
+import com.example.yappmobile.ProfileTabs.ViewPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
 
 public class ProfileActivity extends AppCompatActivity
@@ -21,12 +22,9 @@ public class ProfileActivity extends AppCompatActivity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
-        View decorView = getWindow().getDecorView();
-        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN;
-        decorView.setSystemUiVisibility(uiOptions);
-
         setContentView(R.layout.activity_profile);
+
+        NavBar.establishNavBar(this, "PROFILE");
 
         ImageButton viewRequests = findViewById(R.id.profile_view_requests_button);
         viewRequests.setOnClickListener(new View.OnClickListener()

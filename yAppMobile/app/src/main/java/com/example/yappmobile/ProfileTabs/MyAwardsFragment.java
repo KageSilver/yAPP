@@ -1,4 +1,4 @@
-package com.example.yappmobile.Tabs;
+package com.example.yappmobile.ProfileTabs;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

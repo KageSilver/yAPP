@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.amplifyframework.core.Amplify;
-import com.example.yappmobile.IListCardItemInteractions;
 import com.example.yappmobile.R;
 
 import org.json.JSONException;
@@ -37,8 +36,6 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.itemInteractions = itemInteractions;
     }
 
-    // TODO: Refactor this later, or not.
-    //  Just very smelly code but I am desperate and mentally challenged :D
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)

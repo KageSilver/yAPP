@@ -54,7 +54,8 @@
                 android:layout_marginRight="24dp"
                 android:layout_weight="0"
                 android:paddingTop="12dp"
-                android:text="Button" />
+                android:text="Log Out"
+                app:cornerRadius="15dp" />
 
         </LinearLayout>
 
@@ -106,12 +107,12 @@
                 android:id="@+id/bottom_navigation"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:padding="12dp"
-                app:elevation="16dp"
                 app:labelVisibilityMode="labeled"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0"
                 app:menu="@menu/bottom_nav_menu">
 
             </com.google.android.material.bottomnavigation.BottomNavigationView>

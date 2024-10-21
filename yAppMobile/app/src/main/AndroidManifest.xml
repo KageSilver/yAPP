@@ -43,16 +43,16 @@
         </activity>
 
         <activity
-            android:name=".CreatePostActivity"
+            android:name=".NaviBarDestinations.CreatePostActivity"
             android:exported="false" />
         <activity
             android:name=".PostEntryActivity"
             android:exported="false" />
          <activity
-            android:name=".PublicPostsActivity"
+            android:name=".NaviBarDestinations.PublicPostsActivity"
             android:exported="false" />
         <activity
-            android:name=".ProfileActivity"
+            android:name=".NaviBarDestinations.ProfileActivity"
             android:exported="false" />
         <activity
             android:name=".MyRequestsActivity"

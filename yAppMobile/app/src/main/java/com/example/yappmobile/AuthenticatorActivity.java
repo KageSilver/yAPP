@@ -7,6 +7,7 @@ import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.amplifyframework.core.Amplify;
+import com.example.yappmobile.NaviBarDestinations.PublicPostsActivity;
 
 public class AuthenticatorActivity extends AppCompatActivity
 {

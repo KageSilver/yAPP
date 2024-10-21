@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.core.Amplify;
-import com.example.yappmobile.IListCardItemInteractions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -59,7 +58,6 @@ public class CardListHelper extends AppCompatActivity
         future.thenAccept(jsonData ->
         {
             // Convert API response into a list of CardItems
-            Log.d("API", "Received data: " + jsonData);
             cardItemList = handleData(jsonData);
 
             // Once response is received and parsed successfully,

@@ -1,4 +1,4 @@
-package com.example.yappmobile;
+package com.example.yappmobile.CardList;
 
 public interface IListCardItemInteractions
 {
