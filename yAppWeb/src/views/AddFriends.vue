@@ -82,13 +82,13 @@ import BackBtnHeader from '../components/BackBtnHeader.vue';
 <template>
 
 
-    <div class="pt-[10rem] md:px-16 md:pr-32">
+    <div class="backBtnDiv">
         <BackBtnHeader header="Add a new Friend!" :subheader="subheader" :backBtn="true" />
         <div class="w-full md:px-16 md:mx-6 mt-3">
             <div class="bg-white p-5 rounded-xl">
                 <div class="flex flex-col mb-4">
                     <label for="to-username" class="mb-5 font-bold">Enter their UUID:</label>
-                    <input class="input border border-gray-300 rounded p-2" id="to-username" type="text">
+                    <input class="input" id="to-username" type="text">
                 </div>
                 <div class="flex justify-end">
                     <button

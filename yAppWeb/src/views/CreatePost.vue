@@ -114,7 +114,7 @@ import BackBtnHeader from "../components/BackBtnHeader.vue";
 
 <template>
 
-	<div class="pt-[10rem] md:px-16 md:pr-32">
+	<div class="backBtnDiv">
 		<BackBtnHeader header="Create a new post!" subheader="Yapp your heart out."  />
 
 
@@ -123,14 +123,14 @@ import BackBtnHeader from "../components/BackBtnHeader.vue";
 				<div class="form-group w-full mb-4">
 					<label for="title" class="block mb-2 text-gray-700">Title:</label>
 					<input type="text" id="title" required placeholder="Insert your title here."
-						class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+						class="input">
 				</div>
 
 				<div class="form-group w-full mb-4">
 					<label for="content" class="block mb-2 text-gray-700">Content:</label>
 					<textarea id="content" required
 						placeholder="Insert the most heinous, confounding, baffling tea you've ever heard."
-						class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+						class="input"></textarea>
 				</div>
 
 				<!-- This area is for when we add in the diary entry creation. Remove the hidden tag from the first div when ready. -->

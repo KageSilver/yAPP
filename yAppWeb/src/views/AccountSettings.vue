@@ -39,7 +39,7 @@
 </script>
 
 <template>
-	<div class="pt-[10rem] md:px-16 md:pr-32">
+	<div class="backBtnDiv">
 		<BackBtnHeader header="Account Settings" subheader="Want to change your password?" :backBtn="true" />
 
 		<div class="w-full md:px-16 md:mx-6 mt-3">
@@ -47,12 +47,12 @@
 			<div class="form-group w-full mb-4">
 				<label for="title" class="mb-5 font-bold">Old Password:</label>
 				<input required id="oldPassword" type="password"
-					class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+					class="input">
 			</div>
 			<div class="form-group w-full mb-4">
 				<label for="title" class="mb-5 font-bold">New Password:</label>
 				<input required id="newPassword" type="password"
-					class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+					class="input">
 			</div>
 
 			<br>

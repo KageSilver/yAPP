@@ -112,7 +112,7 @@ async function getRequests() {
 <template>
 
 
-    <div class="pt-[10rem]">
+    <div class="backBtnDiv">
       <BackBtnHeader header="My Requests" subheader="Here are your pending friend requests!" :backBtn="true"  url="/profile/addFriends" btnText="Add a new Friend!"/>
         <!-- Show this message if the friend list is empty -->
         <div v-if="jsonData.length == 0">
