@@ -1,7 +1,7 @@
 # yAPP // Sprint 1 Worksheet
 
 ## Unit/Integration/Acceptance Tests
-- Our **test plan** for our project can be found [here](../Test%20Plan.md).
+- NOTE: Here is our project's [test plan](../Test%20Plan.md).
   
 ### Backend
 

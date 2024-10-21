@@ -1,7 +1,7 @@
 # yAPP
 A place to yap your heart out.
 
-## Dev Team (*"The Searching Sisters"*)
+## Dev Team
 
 - Cynthia Calvo
 
