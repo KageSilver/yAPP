@@ -3,6 +3,7 @@ package com.example.yappmobile;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -31,6 +32,7 @@ public class ResetPasswordActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_reset_password);
 
+        // Initialize all dialog alerts
         initializeSuccessDialog();
         initializeFailureDialog();
         initializeConfirmDialog();
@@ -38,6 +40,7 @@ public class ResetPasswordActivity extends AppCompatActivity
         String oldPassword = findViewById(R.id.old_password).toString();
         String newPassword = findViewById(R.id.new_password).toString();
 
+        // Set up code for back button
         ImageButton backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(new View.OnClickListener()
         {
@@ -56,6 +59,7 @@ public class ResetPasswordActivity extends AppCompatActivity
             }
         });
 
+        // Set up code for reset button
         Button resetButton = findViewById(R.id.reset_button);
         resetButton.setOnClickListener(new View.OnClickListener()
         {
@@ -63,21 +67,24 @@ public class ResetPasswordActivity extends AppCompatActivity
             public void onClick(View v)
             {
                 invokeUpdatePass(oldPassword, newPassword);
+                // TODO figure out a way to show appropriate dialog
+                // theres something weird with the main thread.
+                // apparently you can't show the dialog alert in the amplify api call
+                // TODO also configure user access to let them update their own password
             }
         });
     }
 
     private void initializeSuccessDialog()
     {
-        // Create successful password reset
+        // Create failed password alert
         success = new AlertDialog.Builder(this).create();
-        success.setTitle("Password successfully updated!");
-        success.setButton(AlertDialog.BUTTON_POSITIVE, "Heck yeah", new DialogInterface.OnClickListener()
+        success.setTitle("Successfully reset password!");
+        success.setButton(AlertDialog.BUTTON_POSITIVE, "Heck yeah...", new DialogInterface.OnClickListener()
         {
             public void onClick(DialogInterface dialog, int id)
             {
-                Intent intent = new Intent(ResetPasswordActivity.this, ProfileActivity.class);
-                startActivity(intent);
+                success.dismiss();
             }
         });
     }
@@ -122,12 +129,25 @@ public class ResetPasswordActivity extends AppCompatActivity
 
     private void invokeUpdatePass(String oldPass, String newPass)
     {
-        Amplify.Auth.updatePassword(
-                oldPass,
-                newPass,
-                () -> success.show(),
-                error -> failure.show()
-        );
+        if(!isEmptyFields(oldPass, newPass))
+        {
+            Amplify.Auth.updatePassword(
+                    oldPass,
+                    newPass,
+                    () -> Log.i("Auth", "Successful password update!"),
+                    error -> Log.e("Auth", "Failed password update...", error)
+            );
+        }
+        else if(oldPass.isEmpty())
+        {
+            // TODO
+            Log.i("FormField", "Old password is required!!");
+        }
+        else
+        {
+            // TODO
+            Log.i("FormField", "New password is required!!");
+        }
     }
 
     private boolean isEmptyFields(String oldPass, String newPass)
