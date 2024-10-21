@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -49,7 +50,7 @@ public class PublicPostsActivity extends AppCompatActivity implements IListCardI
         });
         refreshPosts(since);
 
-        Button logOutButton = findViewById(R.id.log_out_button);
+        ImageButton logOutButton = findViewById(R.id.log_out_button);
         logOutButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
