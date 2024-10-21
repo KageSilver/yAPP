@@ -2,3 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.backBtnDiv {
+  @apply pt-[10rem] md:px-16 md:pr-32;
+}
+
+.input{
+    @apply w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500;
+}

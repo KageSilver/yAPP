@@ -17,32 +17,32 @@ We have not completed the mobile development of the features we planned for spri
 
 ## Running Details
  - Here is our [Getting Started](./Documentation/Sprint%201/Get%20Started%20Documentation.md) Documentation to run our project.
- - Here are our [Acceptance Test](./Documentation/Acceptance%20Tests/), which provide instructions for how to run manual acceptance tests on our website.
+ - Here are our [Acceptance Tests](./Documentation/Acceptance%20Tests/), which provide instructions for how to run manual acceptance tests on our website.
 
 ## Login Information
  - To create a yAPP account follow the instructions under the section "Account Creation" [here](./Documentation/Acceptance%20Tests/Profile%20Management.md).
  - To log into an existing a yAPP account follow the instructions under the section "Account Login" [here](./Documentation/Acceptance%20Tests/Profile%20Management.md).
 
 ## Proposal
-- Here is the [Project Proposal](./Documentation/Sprint%200/Project%20Proposal.md) for Iteration 0.
+- Here is the [Project Proposal](./Documentation/Sprint%200/Project%20Proposal.md) for sprint 0.
 
 ## Worksheet
 - Here is our [worksheet](./Documentation/Sprint%201/Sprint%201%20Worksheet.md) for sprint 1.
 
 ## Milestones
-- Click [here](https://github.com/KageSilver/yAPP/milestones) to see the milestones we have set up for our project!
+- Here are the [milestones](https://github.com/KageSilver/yAPP/milestones) we set up for our project.
 
 ## Features
-- Click [here](https://github.com/KageSilver/yAPP/labels/feature) to see the open features for our project!
+- Here are the open [features](https://github.com/KageSilver/yAPP/labels/feature) we have for our project.
 
 ## User Stories
-- Click [here](https://github.com/KageSilver/yAPP/labels/user%20story) to see the open User Stories for our project!
+- Here are the open [user stories](https://github.com/KageSilver/yAPP/labels/user%20story) for our project.
 
 ## API Documentation
  - Here is our [API documentation](./Documentation/API%20Documentation.md) for our project.
 
 ## Test plan
- - Here is our [test plan](./Documentation/Sprint%201/Test%20Plan.md) for our project.
+ - Here is our [test plan](./Documentation/Test%20Plan.md) for our project.
 
 ## Architecture
  - Here is our [architecture](./Documentation/Architecture.md) for our project.
@@ -54,7 +54,7 @@ We have not completed the mobile development of the features we planned for spri
 - Here are our [minutes](./Documentation/Meeting%20Minutes) from our meetings.
 
 ## Standards and Other Guides
-- Here are the [coding conventions](./Documentation/Standards/Coding%20Conventions.md) used for the project.
+- Here are our [coding conventions](./Documentation/Standards/Coding%20Conventions.md) used for the project.
 - Here is our [repository protocol](./Documentation/Standards/Repository%20Protocol.md).
 
 ## Retrospective

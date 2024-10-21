@@ -11,6 +11,7 @@ import MyRequests from "../views/MyRequests.vue";
 import AddFriends from "../views/AddFriends.vue";
 import CreatePost from "../views/CreatePost.vue";
 import AccountSettings from "../views/AccountSettings.vue";
+import MyAwards from "../views/MyAwards.vue";
 
 const routes = [
 	{
@@ -62,6 +63,12 @@ const routes = [
 				path: "/profile/addFriends",
 				name: "addFriends",
 				component: AddFriends,
+				meta: { requiresAuth: true },
+			},
+			{
+				path: "/profile/awards",
+				name: "awards",
+				component: MyAwards,
 				meta: { requiresAuth: true },
 			},
 			{

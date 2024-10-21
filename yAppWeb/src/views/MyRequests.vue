@@ -2,7 +2,7 @@
     import { get, put } from 'aws-amplify/api';
     import { ref, onMounted } from 'vue';
 import { getCurrentUser } from 'aws-amplify/auth';
-    import BackBtn from '../components/BackBtn.vue';
+    import BackBtnHeader from '../components/BackBtnHeader.vue';
 
 const username = ref('');
 const jsonData = ref([]);
@@ -112,17 +112,8 @@ async function getRequests() {
 <template>
 
 
-    <div class="pt-[10rem]">
-        <div class="flex justify-between items-center w-full px-16 pr-32">
-            <div class="flex items-center">
-                <BackBtn class="mt-2" />
-                <h1 class="text-white text-4xl font-bold ml-8">Friend Requests</h1>
-            </div>
-            <a class="text-white bg-deep-dark hover:bg-purple font-bold py-2 px-4 rounded text-2xl"  href="/profile/addFriends">
-                Add a Friend !
-            </a>
-        </div>
-
+    <div class="backBtnDiv">
+      <BackBtnHeader header="My Requests" subheader="Here are your pending friend requests!" :backBtn="true"  url="/profile/addFriends" btnText="Add a new Friend!"/>
         <!-- Show this message if the friend list is empty -->
         <div v-if="jsonData.length == 0">
             <h4 class="text-white text-center">Wow... you have no friends!</h4>

@@ -9,7 +9,7 @@ function goBack() {
 }
 </script>
 <template>
-    <div class="mt-5 mb-9">
+    <div class="mt-5 mb-0 mx-0">
         <button class="button icon-button" @click="router.back()">
             <i class="material-icons text-[3.2rem] text-white">arrow_back</i>
         </button>
