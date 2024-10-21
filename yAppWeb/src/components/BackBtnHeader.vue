@@ -19,7 +19,7 @@
                 {{btnText}}
             </a>
         </div>
-        <p :class="`text-white text-sm font-bold m-0 ml-8 mt-2 ${backBtn ? 'ml-20' : ''}`">{{ subheader }}</p>
+        <p :class="`text-white text-sm font-bold m-0  mt-2 ${backBtn ? 'ml-20' : 'ml-8'}`">{{ subheader }}</p>
     </div>
 
 </template>
