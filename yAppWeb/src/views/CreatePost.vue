@@ -46,10 +46,6 @@ import BackBtnHeader from "../components/BackBtnHeader.vue";
 		newPost.diaryEntry = diaryEntryIsChecked.value;
 		newPost.anonymous = anonIsChecked.value;
 
-		if (diaryEntry) {
-			checkDiaryEntryLimit();
-		}
-
 		if (newPost.postTitle !== '' && newPost.postBody !== '') {
 			newPost.userName = username.value;
 			// Make API call to create the post
@@ -143,7 +139,7 @@ import BackBtnHeader from "../components/BackBtnHeader.vue";
 
 			<form class="post-heading bg-white p-8 rounded-lg" id="post">
 
-                <form class="border-2 border-gray-300 p-8 rounded-lg mb-4">
+                <div class="border-2 border-gray-300 p-8 rounded-lg mb-4">
                     
                     <div class="mb-4 float-root">
                         <label class="float-left block text-gray-700 text-lg font-semibold">Diary Post?</label>
@@ -189,7 +185,7 @@ import BackBtnHeader from "../components/BackBtnHeader.vue";
                         <label class="block text-gray-700 mb-2 mt-10">Anonymous diary posts will not show your username to your friends</label>
                     </div>
 
-                </form>
+                </div>
 
 				<div class="form-group w-full mb-4">
 					<label for="title" class="block mb-2 text-gray-700">Title:</label>
