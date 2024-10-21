@@ -35,7 +35,7 @@ public class AppSettings: IAppSettings
     public string PostTableName { get; set; }
 
     /// <summary>
-    /// post table name
+    /// comment table name
     /// </summary>
     public string CommentTableName { get; set; }
 }

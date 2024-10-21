@@ -76,32 +76,6 @@ public class CommentController : ControllerBase
         return result;
     }
 
-    // GET: api/comments/getPostByCid?cid={cid}
-    /// <summary>
-    /// Gets the post given comment ID
-    /// </summary>
-    /// <param name="cid">The id to find a post given a comment id.</param>
-    /// <returns>The post associated to the comment.</returns>
-    [HttpGet("getPostByCid")]
-    [ProducesResponseType(typeof(Post), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Post>> GetPostByCid(string cid)
-    {
-        if(string.IsNullOrEmpty(cid))
-        {
-            return BadRequest("Comment ID is required");
-        }
-
-        var post = await _commentActions.GetPostByCid(cid);
-
-        if(post == null)
-        {
-            return NotFound("Post does not exist");
-        }
-
-        return post;
-    }
-
     // GET: api/comments/getCommentById?cid={cid}
     /// <summary>
     /// Gets the comment given comment ID

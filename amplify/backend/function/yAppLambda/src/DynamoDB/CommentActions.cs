@@ -1,6 +1,5 @@
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
-using Amazon.DynamoDBv2.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using yAppLambda.Models;
@@ -52,31 +51,6 @@ public class CommentActions : ICommentActions
         {
             Console.WriteLine("Failed to create comment: " + e.Message);
             return new StatusCodeResult(statusCode: StatusCodes.Status500InternalServerError);
-        }
-    }
-
-    /// <summary>
-    /// Gets the post given comment ID
-    /// </summary>
-    /// <param name="cid">The id to find a post given a comment id.</param>
-    /// <returns>The post associated to the comment.</returns>
-    public async Task<Post> GetPostByCid(string cid)
-    {
-        try
-        {
-            var post = await _dynamoDbContext.LoadAsync<Post>(cid, _config);
-
-            if(post.Anonymous)
-            {
-                post.UserName = "Anonymous";
-            }
-            
-            return post;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Failed to get post: " + e.Message);
-            return null;
         }
     }
     

@@ -17,7 +17,7 @@ public class Comment
     public DateTime CreatedAt { get; set; } // Sort key 2
 
     [JsonPropertyName("updatedAt")]
-    public DateTime UpdatedAt { get; set; } // Sort key 2
+    public DateTime UpdatedAt { get; set; } // The time that the comment got updated
 
     [JsonPropertyName("userName")]
     public string UserName { get; set; } // The username of the user who created the comment

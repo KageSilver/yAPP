@@ -13,13 +13,6 @@ public interface ICommentActions
     Task<ActionResult<Comment>> CreateComment(Comment comment);
 
     /// <summary>
-    /// Gets the post given comment ID
-    /// </summary>
-    /// <param name="cid">The id to find a post given a comment id.</param>
-    /// <returns>The post associated to the comment.</returns>
-    Task<Post> GetPostByCid(string cid);
-
-    /// <summary>
     /// Gets the comment given comment ID
     /// </summary>
     /// <param name="cid">The id to find a comment given a comment id.</param>
