@@ -44,7 +44,7 @@ public class ResetPasswordActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                if(canGoBack(oldPassword, newPassword))
+                if(!isEmptyFields(oldPassword, newPassword))
                 {
                     Intent intent = new Intent(ResetPasswordActivity.this, ProfileActivity.class);
                     startActivity(intent);
@@ -130,7 +130,7 @@ public class ResetPasswordActivity extends AppCompatActivity
         );
     }
 
-    private boolean canGoBack(String oldPass, String newPass)
+    private boolean isEmptyFields(String oldPass, String newPass)
     {
         // See if we can safely go back to previous page
         return oldPass.trim().isEmpty() && newPass.trim().isEmpty();
