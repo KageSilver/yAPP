@@ -14,6 +14,7 @@ import com.example.yappmobile.MyRequestsActivity;
 import com.example.yappmobile.NavBar;
 import com.example.yappmobile.R;
 import com.example.yappmobile.ProfileTabs.ViewPagerAdapter;
+import com.example.yappmobile.ResetPasswordActivity;
 import com.google.android.material.tabs.TabLayout;
 
 public class ProfileActivity extends AppCompatActivity
@@ -34,6 +35,17 @@ public class ProfileActivity extends AppCompatActivity
             {
                 Intent intent = new Intent(ProfileActivity.this,
                         MyRequestsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        ImageButton viewSettings = findViewById(R.id.profile_settings_button);
+        viewSettings.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Intent intent = new Intent(ProfileActivity.this, ResetPasswordActivity.class);
                 startActivity(intent);
             }
         });

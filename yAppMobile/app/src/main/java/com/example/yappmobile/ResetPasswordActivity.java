@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,7 +38,7 @@ public class ResetPasswordActivity extends AppCompatActivity
         String oldPassword = findViewById(R.id.old_password).toString();
         String newPassword = findViewById(R.id.new_password).toString();
 
-        Button backButton = findViewById(R.id.back_button);
+        ImageButton backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
