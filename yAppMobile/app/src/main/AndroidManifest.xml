@@ -57,5 +57,8 @@
         <activity
             android:name=".MyRequestsActivity"
             android:exported="false" />
+        <activity
+            android:name=".AddFriendActivity"
+            android:exported="false" />
     </application>
 </manifest>

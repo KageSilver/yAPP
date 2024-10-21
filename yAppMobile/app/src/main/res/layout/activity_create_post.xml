@@ -146,7 +146,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="12dp"
                 android:backgroundTint="@color/button"
-                android:onClick="createPost"
                 android:text="@string/create_button"
                 android:textColor="@color/white"
                 android:textSize="20sp"
