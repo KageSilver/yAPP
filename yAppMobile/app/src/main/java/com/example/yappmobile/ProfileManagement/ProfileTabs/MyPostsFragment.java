@@ -2,6 +2,7 @@ package com.example.yappmobile.ProfileManagement.ProfileTabs;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +12,14 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.amplifyframework.core.Amplify;
+import com.example.yappmobile.AuthenticatorActivity;
 import com.example.yappmobile.CardList.CardListHelper;
 import com.example.yappmobile.CardList.IListCardItemInteractions;
 import com.example.yappmobile.PostEntryActivity;
 import com.example.yappmobile.R;
+
+import java.util.concurrent.CompletableFuture;
 
 public class MyPostsFragment extends Fragment implements IListCardItemInteractions
 {
@@ -38,10 +43,28 @@ public class MyPostsFragment extends Fragment implements IListCardItemInteractio
         RecyclerView rvPosts = (RecyclerView) view.findViewById(R.id.my_posts_list);
         rvPosts.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
-        // TODO: fix this. there's some weird error im getting w the hierarchy/life cycle shit so ask the team
-        String userName ="tara";
-        String myPostsAPI = "/api/posts/getPostsByUser?userName="+userName+"&diaryEntry=false";
-        postListHelper.loadItems(myPostsAPI, rvPosts);
+        CompletableFuture<String> future = new CompletableFuture<>();
+        Amplify.Auth.getCurrentUser(
+                result ->
+                {
+                    future.complete(result.getUsername());
+                },
+                error ->
+                {
+                    Log.e("Auth", "Error occurred when getting current user. Redirecting to authenticator");
+                    Intent intent = new Intent(view.getContext(), AuthenticatorActivity.class);
+                    startActivity(intent);
+                }
+        );
+
+        future.thenAccept(username ->
+        {
+            getActivity().runOnUiThread(() ->
+            {
+                String myPostsAPI = "/api/posts/getPostsByUser?userName="+"shaye"+"&diaryEntry=false";
+                postListHelper.loadItems(myPostsAPI, rvPosts);
+            });
+        });
     }
 
     public void onItemClick(int position)
