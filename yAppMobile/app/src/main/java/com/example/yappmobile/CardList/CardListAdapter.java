@@ -114,7 +114,7 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 @Override
                 public void onClick(View v)
                 {
-                    Log.i("OnClick", "OMG! You wanted to be my friend!? :D");
+                    // handle the api call here girlie
                 }
             });
 
@@ -123,6 +123,7 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 @Override
                 public void onClick(View v)
                 {
+                    // handle the api call here girlie
                     Log.i("OnClick", "Wait...You don't want to be my friend!? D:");
                 }
             });
@@ -153,8 +154,8 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             friendName = itemView.findViewById(R.id.friend_username);
             unfriendButton = itemView.findViewById(R.id.unfollow_button);
 
-            // Set up an onClickListener for the post list card
-            itemView.setOnClickListener(new View.OnClickListener()
+            // Set up an onClickListener for the friend list card's unfollow button
+            unfriendButton.setOnClickListener(new View.OnClickListener()
             {
                 @Override
                 public void onClick(View v)
@@ -162,20 +163,11 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     if(friendCardInteractions != null)
                     {
                         int position = getAdapterPosition();
-                        if(position != RecyclerView.NO_POSITION)
+                        if (position != RecyclerView.NO_POSITION)
                         {
                             friendCardInteractions.onItemClick(position);
                         }
                     }
-                }
-            });
-
-            unfriendButton.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    Log.i("OnClick", "Woah! Why would you want to unfollow me??");
                 }
             });
         }
@@ -203,8 +195,6 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             Log.e("CardListAdapter", "Error populating Friend card", error);
                         }
                 );
-
-
             }
             catch (JSONException jsonException)
             {

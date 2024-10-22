@@ -46,6 +46,6 @@ public class MyRequestsActivity extends AppCompatActivity implements IListCardIt
     @Override
     public void onItemClick(int position)
     {
-        Log.d("Click", "You clicked: ");
+        // TODO
     }
 }

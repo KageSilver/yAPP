@@ -177,4 +177,39 @@ public class CardListHelper extends AppCompatActivity
         }
         return since;
     }
+
+    public JSONObject getFriendship(int position)
+    {
+        String sender = null;
+        String receiver = null;
+        try
+        {
+            if(cardType.equals("CURRENT_FRIEND"))
+            {
+                sender = cardItemList.get(position).get("FromUserName").toString();
+                receiver = cardItemList.get(position).get("ToUserName").toString();
+            }
+            else
+            {
+                Log.e("JSON", "Wrong card type! Tried to get PID on a non-PostCard item");
+            }
+        }
+        catch (JSONException jsonException)
+        {
+            Log.e("JSON", "Error parsing JSON", jsonException);
+        }
+
+        // Create resulting object
+        JSONObject result = new JSONObject();
+        try
+        {
+            result.put("sender", sender);
+            result.put("receiver", receiver);
+        }
+        catch(JSONException error)
+        {
+            Log.e("JSON", "Error creating a JSONObject", error);
+        }
+        return result;
+    }
 }
