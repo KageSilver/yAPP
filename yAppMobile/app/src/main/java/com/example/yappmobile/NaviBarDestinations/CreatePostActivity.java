@@ -99,7 +99,7 @@ public class CreatePostActivity extends AppCompatActivity
         });
     }
 
-    public void createPost(View view)
+    private void createPost(View view)
     {
         // Make API call when invoked
         if (!isEmptyPost(postTitle, postBody))
