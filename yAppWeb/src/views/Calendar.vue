@@ -44,9 +44,9 @@
         var daysInMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0).getDate();
         var blankDays = new Date(selectedDate.getFullYear(), selectedDate.getMonth()).getDay();
 
-        console.log("mm/yyyy: " + (month+1) + "/" + year);
-
         console.log("blanks " + blankDays);
+
+        resetMonthPicker();
 
         for(var i = 0; i < 6; i++){
             var string = "blank" + i;
@@ -71,6 +71,11 @@
             document.getElementById("30th").style.display = 'block';
             document.getElementById("31st").style.display = 'block';
         }
+    }
+
+    function resetMonthPicker() {
+        var monthPicker = document.getElementById("monthPicker");
+        monthPicker.innerHTML = selectedDate.toLocaleString('default', { month: 'long' }) + " " + selectedDate.getFullYear();
     }
 
     function prevMonth() {
@@ -108,7 +113,7 @@
 
         <!-- month picker -->
         <div class="flex items-center mt-4">
-            <h2 class="flex-auto text-white font-bold">August 2024</h2>
+            <label id="monthPicker" class="flex-auto text-white font-bold"></label>
             <div class="flex items-center gap-1">
                 <button type="button"
                     class="flex flex-none hover:border-blue-500 items-center rounded-full hover:bg-blue-600 hover:text-white border justify-center p-1.5 text-neutral-500"
