@@ -26,7 +26,6 @@ public class MyPostsFragment extends Fragment implements IListCardItemInteractio
         return inflater.inflate(R.layout.fragment_my_posts, container, false);
     }
 
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState)
     {

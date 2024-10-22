@@ -2,6 +2,7 @@ package com.example.yappmobile.NaviBarDestinations;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -10,11 +11,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.amplifyframework.core.Amplify;
-import com.example.yappmobile.ProfileManagement.MyRequestsActivity;
+import com.example.yappmobile.AuthenticatorActivity;
 import com.example.yappmobile.NavBar;
-import com.example.yappmobile.R;
+import com.example.yappmobile.ProfileManagement.MyRequestsActivity;
 import com.example.yappmobile.ProfileManagement.ProfileTabs.ViewPagerAdapter;
 import com.example.yappmobile.ProfileManagement.ResetPasswordActivity;
+import com.example.yappmobile.R;
 import com.google.android.material.tabs.TabLayout;
 
 public class ProfileActivity extends AppCompatActivity
@@ -24,9 +26,9 @@ public class ProfileActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
         NavBar.establishNavBar(this, "PROFILE");
 
+        // Set up view requests button code
         ImageButton viewRequests = findViewById(R.id.profile_view_requests_button);
         viewRequests.setOnClickListener(new View.OnClickListener()
         {
@@ -39,6 +41,7 @@ public class ProfileActivity extends AppCompatActivity
             }
         });
 
+        // Set up profile settings button code
         ImageButton viewSettings = findViewById(R.id.profile_settings_button);
         viewSettings.setOnClickListener(new View.OnClickListener()
         {
@@ -58,7 +61,9 @@ public class ProfileActivity extends AppCompatActivity
                 },
                 error ->
                 {
-                    usernameText.setText("????");
+                    Log.e("Auth", "Error occurred when getting current user. Redirecting to authenticator");
+                    Intent intent = new Intent(ProfileActivity.this, AuthenticatorActivity.class);
+                    startActivity(intent);
                 }
         );
 

@@ -14,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.core.Amplify;
+import com.example.yappmobile.AuthenticatorActivity;
+import com.example.yappmobile.ProfileManagement.AddFriendActivity;
 import com.example.yappmobile.R;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -22,7 +24,7 @@ import org.json.JSONObject;
 
 public class CreatePostActivity extends AppCompatActivity
 {
-    private JSONObject newPost;
+    private final int RED = Color.parseColor("#FF0000");
     private TextInputLayout titleText;
     private TextInputLayout contentText;
     private String postTitle;
@@ -30,7 +32,6 @@ public class CreatePostActivity extends AppCompatActivity
     private AlertDialog successDialog;
     private AlertDialog failureDialog;
     private AlertDialog discardDialog;
-    private final int RED = Color.parseColor("#FF0000");
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -46,7 +47,6 @@ public class CreatePostActivity extends AppCompatActivity
 
         titleText = findViewById(R.id.post_title);
         contentText = findViewById(R.id.post_content);
-
         postTitle = titleText.getEditText().getText().toString();
         postBody = contentText.getEditText().getText().toString();
 
@@ -80,13 +80,14 @@ public class CreatePostActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                createPost(v);
+                createPost();
             }
         });
     }
 
-    private void createPost(View view)
+    private void createPost()
     {
+        JSONObject newPost = new JSONObject();
         // Make API call when invoked
         if (!isEmptyPost(postTitle, postBody))
         {
@@ -110,7 +111,9 @@ public class CreatePostActivity extends AppCompatActivity
                     },
                     error ->
                     {
-                        Log.e("Auth", "Failed to get current user", error);
+                        Log.e("Auth", "Error occurred when getting current user. Redirecting to authenticator");
+                        Intent intent = new Intent(CreatePostActivity.this, AuthenticatorActivity.class);
+                        startActivity(intent);
                     }
             );
 
@@ -118,7 +121,7 @@ public class CreatePostActivity extends AppCompatActivity
             try
             {
                 String stringPost = newPost.toString();
-                sendPost("/api/posts/createPost", stringPost);
+                sendPost(stringPost);
                 successDialog.show();
             }
             catch (Exception e)
@@ -141,8 +144,9 @@ public class CreatePostActivity extends AppCompatActivity
         }
     }
 
-    private void sendPost(String apiUrl, String postData)
+    private void sendPost(String postData)
     {
+        String apiUrl = "/api/posts/createPost";
         RestOptions options = RestOptions.builder()
                 .addPath(apiUrl)
                 .addBody(postData.getBytes())
@@ -191,8 +195,8 @@ public class CreatePostActivity extends AppCompatActivity
     private void initializeDiscardDialog()
     {
         discardDialog = new AlertDialog.Builder(this).create();
-        discardDialog.setTitle("Discard Changes?");
-        discardDialog.setMessage("Are you really sure that you want to discard your changes??");
+        discardDialog.setTitle("Woah there!");
+        discardDialog.setMessage("Are you really sure that you want to discard your changes?");
         discardDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener()
         {
             public void onClick(DialogInterface dialog, int id)
