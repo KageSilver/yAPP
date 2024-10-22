@@ -2,7 +2,6 @@ package com.example.yappmobile.ProfileManagement;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +12,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.amplifyframework.api.rest.RestOptions;
+import com.amplifyframework.auth.AuthUser;
 import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.AuthenticatorActivity;
 import com.example.yappmobile.R;
@@ -21,13 +21,15 @@ import com.google.android.material.textfield.TextInputLayout;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.concurrent.CompletableFuture;
+
 public class AddFriendActivity extends AppCompatActivity
 {
     private AlertDialog success;
     private AlertDialog failure;
     private TextInputLayout requestField;
     private boolean isValidReceiver = true;
-    private final int RED = Color.parseColor("#FF0000");
+    private JSONObject newRequest;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -44,6 +46,7 @@ public class AddFriendActivity extends AppCompatActivity
         requestField = findViewById(R.id.request);
         initializeSuccessDialog();
         initializeFailureDialog();
+        initializeNewRequest();
 
         // Set up back button code
         ImageButton backButton = findViewById(R.id.back_button);
@@ -64,56 +67,75 @@ public class AddFriendActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                createRequest(requestField.getEditText().getText().toString());
+                createRequest();
             }
         });
     }
 
-    private void createRequest(String receiver)
+    private void createRequest()
     {
-        JSONObject newRequest = new JSONObject();
-        checkFields(receiver);
-        if(isValidReceiver)
+        String receiver = requestField.getEditText().getText().toString();
+        if(!receiver.equals(""))
         {
-            // Fill out newPost
+            CompletableFuture<AuthUser> future = new CompletableFuture<>();
             Amplify.Auth.getCurrentUser(
                     result ->
                     {
-                        String userName = result.getUsername();
-                        try
-                        {
-                            // TODO
-                            newRequest.put("", "");
-                            newRequest.put("", "");
-                            newRequest.put("", "");
-                        }
-                        catch (JSONException e)
-                        {
-                            Log.e("JSON", "Exception occurred when adding elements to JSONObject", e);
-                        }
+                        future.complete(result);
                     },
                     error ->
                     {
-                        Log.e("Auth", "Failed to get current user", error);
+                        Log.e("Auth", "Error occurred when getting current user. Redirecting to authenticator");
+                        Intent intent = new Intent(AddFriendActivity.this, AuthenticatorActivity.class);
+                        startActivity(intent);
                     }
             );
 
-            // Send out newRequest through API call
-            try
+            future.thenAccept(user ->
             {
-                String stringPost = newRequest.toString();
-                sendPostRequest("", stringPost);
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-                failure.show();
-            }
+               runOnUiThread(() ->
+               {
+                   if(user.getUsername().equals(receiver) || user.getUserId().equals(receiver))
+                   {
+                       Log.d("Faulty Form Field", "You can't add yourself as a friend, silly!");
+                   }
+                   else
+                   {
+                       // Fill out newRequest with valid information
+                       try
+                       {
+                           newRequest.put("fromUserName", user.getUsername());
+                           newRequest.put("toUserId", receiver);
+                       }
+                       catch (JSONException e)
+                       {
+                           Log.e("JSON", "Exception occurred when adding elements to JSONObject", e);
+                       }
+
+                       // Send out newRequest through API call
+                       try
+                       {
+                           String stringPost = newRequest.toString();
+                           sendPostRequest(stringPost);
+                       }
+                       catch (Exception e)
+                       {
+                           e.printStackTrace();
+                           failure.show();
+                       }
+                   }
+               });
+            });
+        }
+        else
+        {
+            Log.d("Faulty Form Field", "You have to enter in something, silly!");
         }
     }
 
-    private void sendPostRequest(String apiUrl, String requestData)
+    private void sendPostRequest(String requestData)
     {
+        String apiUrl = "/api/friends/friendRequest";
         RestOptions options = RestOptions.builder()
                 .addPath(apiUrl)
                 .addBody(requestData.getBytes())
@@ -123,36 +145,6 @@ public class AddFriendActivity extends AppCompatActivity
                 response -> Log.i("API", "POST response: " + response.getData().asString()),
                 error -> Log.e("API", "POST request failed", error)
         );
-    }
-
-    private void checkFields(String sentReceiver)
-    {
-        if(sentReceiver.equals(""))
-        {
-            isValidReceiver = false;
-            Log.d("Faulty Form Field", "You have to enter in something, silly!");
-            // TODO: envoke some kind of feedback
-        }
-        else
-        {
-            Amplify.Auth.getCurrentUser(
-                    result ->
-                    {
-                        if(result.getUserId().equals(sentReceiver) || result.getUsername().equals(sentReceiver))
-                        {
-                            isValidReceiver = false;
-                            Log.d("Faulty Form Field", "You can't add yourself as a friend, silly!");
-                            // TODO: envoke some kind of feedback
-                        }
-                    },
-                    error ->
-                    {
-                        Log.e("Auth", "Error occurred when getting current user. Redirecting to authenticator");
-                        Intent intent = new Intent(AddFriendActivity.this, AuthenticatorActivity.class);
-                        startActivity(intent);
-                    }
-            );
-        }
     }
 
     private void initializeSuccessDialog()
@@ -182,20 +174,18 @@ public class AddFriendActivity extends AppCompatActivity
         });
     }
 
-    private JSONObject initializeNewRequest()
+    private void initializeNewRequest()
     {
-        JSONObject newRequest = new JSONObject();
+        newRequest = new JSONObject();
         try
         {
-            // TODO find out the names needed lol
-            newRequest.put("", "");
-            newRequest.put("", "");
+            newRequest.put("fromUserName", "");
+            newRequest.put("toUserId", "");
             newRequest.put("status", 0);
         }
         catch(JSONException e)
         {
             Log.e("JSONException", "Something went wrong when initializing a JSONObject", e);
         }
-        return newRequest;
     }
 }
