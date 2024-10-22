@@ -21,7 +21,7 @@ public class AuthenticatorActivity extends AppCompatActivity
         Amplify.Auth.getCurrentUser(
                 result ->
                 {
-                    Log.i("Auth", "There is already a user signed in!");
+                    Log.i("Auth", "Continuing as " + result.getUsername() + "...");
                     rerouteToHome();
                 },
                 error ->

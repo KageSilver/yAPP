@@ -20,9 +20,9 @@ public class CardListHelper extends AppCompatActivity
 {
     private final Context context; // Where CardItems are Contained
     private final ProgressBar loadingSpinner;
-    private final String cardType;
+    private final String cardType; // Currently 3 types: POST, CURRENT_FRIEND, AND FRIEND_REQUEST
     private List<JSONObject> cardItemList; // List of CardItems
-    private final IListCardItemInteractions itemInteractions;
+    private final IListCardItemInteractions itemInteractions; // Handles clicks of the CardItem
 
     public CardListHelper(Context context)
     {
@@ -142,7 +142,7 @@ public class CardListHelper extends AppCompatActivity
             }
             else
             {
-                Log.e("JSON", "Wrong card type! Tried to get PID on a non-PostCard item");
+                Log.d("CardListHelper", "You're trying to invoke a method on the wrong card type");
             }
         }
         catch (JSONException jsonException)
@@ -168,7 +168,7 @@ public class CardListHelper extends AppCompatActivity
             }
             else
             {
-                Log.e("JSON", "Wrong card type! Tried to get the last post's time on a non-PostCard item");
+                Log.d("CardListHelper", "Wrong card type! Tried to get the last post's time on a non-PostCard item");
             }
         }
         catch (JSONException jsonException)
@@ -191,7 +191,7 @@ public class CardListHelper extends AppCompatActivity
             }
             else
             {
-                Log.e("JSON", "Wrong card type! Tried to get PID on a non-PostCard item");
+                Log.d("CardListHelper", "You're trying to invoke a method on the wrong card type");
             }
         }
         catch (JSONException jsonException)

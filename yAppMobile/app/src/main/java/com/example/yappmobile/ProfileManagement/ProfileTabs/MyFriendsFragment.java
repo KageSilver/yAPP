@@ -41,7 +41,8 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
         super.onCreate(savedInstanceState);
 
         ProgressBar loadingSpinner = (ProgressBar) view.findViewById(R.id.indeterminateBar);
-        friendListHelper = new CardListHelper(this.getContext(), loadingSpinner, "CURRENT_FRIEND", this);
+        friendListHelper = new CardListHelper(this.getContext(),
+                loadingSpinner, "CURRENT_FRIEND", this);
 
         // Setup recycler view to display post list cards
         rvFriends = (RecyclerView) view.findViewById(R.id.my_friends_list);
@@ -105,7 +106,6 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
 
     private void sendPutRequest(String apiUrl, String putBody)
     {
-        
         RestOptions options = RestOptions.builder()
                 .addPath(apiUrl)
                 .addHeader("Content-Type", "application/json")

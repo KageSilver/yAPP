@@ -36,11 +36,11 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.itemInteractions = itemInteractions;
     }
 
+    // Triggers when creating each CardItem to be displayed
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
     {
-        // Create each CardItem to be displayed
         LayoutInflater inflater = LayoutInflater.from(context);
 
         // Create custom ViewHolder depending on the card type
@@ -65,10 +65,10 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         throw new RuntimeException("Unknown view type");
     }
 
+    // Set up what is displayed on each CardItem based on position of the recycler view
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position)
     {
-        // Set up what is displayed on each CardItem based on position of the recycler view
         JSONObject item = itemList.get(position);
         if (holder instanceof FriendRequestViewHolder)
         {
@@ -114,7 +114,7 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 @Override
                 public void onClick(View v)
                 {
-                    // handle the api call here girlie
+                    // TODO: handle the api call here perhaps?
                 }
             });
 
@@ -123,8 +123,7 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 @Override
                 public void onClick(View v)
                 {
-                    // handle the api call here girlie
-                    Log.i("OnClick", "Wait...You don't want to be my friend!? D:");
+                    // TODO: handle the api call here perhaps?
                 }
             });
         }
@@ -133,6 +132,7 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         {
             try
             {
+                // TODO: refine this, ensure not to render anything weird...
                 sender.setText(card.get("FromUserName").toString());
             }
             catch (JSONException jsonException)
@@ -176,6 +176,7 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         {
             try
             {
+                // TODO: refine this. could probably do some logic in the card list helper
                 String personA = card.get("FromUserName").toString();
                 String personB = card.get("ToUserName").toString();
                 Amplify.Auth.getCurrentUser(
@@ -203,6 +204,7 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
+    // Populate data into a PostCard
     public static class PostViewHolder extends RecyclerView.ViewHolder
     {
         public TextView postTitle, postDate, postBody;

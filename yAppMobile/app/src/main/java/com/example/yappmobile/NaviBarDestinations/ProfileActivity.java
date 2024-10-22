@@ -61,14 +61,11 @@ public class ProfileActivity extends AppCompatActivity
                     usernameText.setText("????");
                 }
         );
-        String username = usernameText.getText().toString();
 
         ViewPager2 viewPager2 = findViewById(R.id.view_pager_2);
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(this);
         TabLayout tabLayout = findViewById(R.id.profile_tabs);
-
         viewPager2.setAdapter(viewPagerAdapter);
-
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener()
         {
             @Override

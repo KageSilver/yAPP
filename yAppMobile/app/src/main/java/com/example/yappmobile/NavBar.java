@@ -30,7 +30,7 @@ public class NavBar
         NavigationBarView bottomNav = container.findViewById(R.id.bottom_navigation);
 
         // Set the default chosen menu item of the navbar
-        // Reminder: CreatePost page does not have a navbar
+        // Reminder: CreatePost page does not initialize a navbar
         switch (menuItem)
         {
             case "HOME":

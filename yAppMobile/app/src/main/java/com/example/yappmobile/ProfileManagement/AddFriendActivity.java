@@ -194,7 +194,7 @@ public class AddFriendActivity extends AppCompatActivity
         }
         catch(JSONException e)
         {
-            Log.e("JSONException", "Something went wrong when initializing JSONObject", e);
+            Log.e("JSONException", "Something went wrong when initializing a JSONObject", e);
         }
         return newRequest;
     }

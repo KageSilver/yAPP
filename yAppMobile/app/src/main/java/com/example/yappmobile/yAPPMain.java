@@ -14,7 +14,6 @@ public class yAPPMain extends Application
     public void onCreate()
     {
         super.onCreate();
-
         try
         {
             // Initialize plugins
