@@ -10,10 +10,7 @@
     const loading = false;
 
     var selectedDate = new Date();
-    var month = selectedDate.getMonth();
-    var year = selectedDate.getFullYear();
-
-    var datepicker = new Date(year, month, selectedDate.getDate()).toDateString();
+    var datepicker = selectedDate.toDateString();
 
     // Retrieve the necessary data and function from the helper
     onMounted(async () => {
@@ -85,9 +82,6 @@
             selectedDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth()-1, 1);
         }
 
-        month = selectedDate.getMonth();
-        year = selectedDate.getFullYear();
-
         resetCalendar();
     }
 
@@ -99,9 +93,6 @@
             // go to next month
             selectedDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth()+1, 1);
         }
-
-        month = selectedDate.getMonth();
-        year = selectedDate.getFullYear();
 
         resetCalendar();
     }
