@@ -1,4 +1,4 @@
-package com.example.yappmobile.ProfileTabs;
+package com.example.yappmobile.ProfileManagement.ProfileTabs;
 
 import android.os.Bundle;
 import android.util.Log;

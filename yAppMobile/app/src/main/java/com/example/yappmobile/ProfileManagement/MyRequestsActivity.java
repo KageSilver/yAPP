@@ -1,4 +1,4 @@
-package com.example.yappmobile;
+package com.example.yappmobile.ProfileManagement;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +14,7 @@ import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.CardList.CardListHelper;
 import com.example.yappmobile.CardList.IListCardItemInteractions;
 import com.example.yappmobile.NaviBarDestinations.ProfileActivity;
+import com.example.yappmobile.R;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 

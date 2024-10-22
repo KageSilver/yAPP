@@ -55,13 +55,13 @@
             android:name=".NaviBarDestinations.ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".MyRequestsActivity"
+            android:name=".ProfileManagement.MyRequestsActivity"
             android:exported="false" />
         <activity
-            android:name=".AddFriendActivity"
+            android:name=".ProfileManagement.AddFriendActivity"
             android:exported="false" />
         <activity
-            android:name=".ResetPasswordActivity"
+            android:name=".ProfileManagement.ResetPasswordActivity"
             android:exported="false" />
     </application>
 </manifest>

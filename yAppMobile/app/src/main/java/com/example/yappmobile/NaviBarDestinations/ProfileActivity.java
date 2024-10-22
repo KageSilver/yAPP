@@ -10,11 +10,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.amplifyframework.core.Amplify;
-import com.example.yappmobile.MyRequestsActivity;
+import com.example.yappmobile.ProfileManagement.MyRequestsActivity;
 import com.example.yappmobile.NavBar;
 import com.example.yappmobile.R;
-import com.example.yappmobile.ProfileTabs.ViewPagerAdapter;
-import com.example.yappmobile.ResetPasswordActivity;
+import com.example.yappmobile.ProfileManagement.ProfileTabs.ViewPagerAdapter;
+import com.example.yappmobile.ProfileManagement.ResetPasswordActivity;
 import com.google.android.material.tabs.TabLayout;
 
 public class ProfileActivity extends AppCompatActivity

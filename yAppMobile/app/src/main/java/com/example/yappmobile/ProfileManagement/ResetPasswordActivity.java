@@ -1,4 +1,4 @@
-package com.example.yappmobile;
+package com.example.yappmobile.ProfileManagement;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.NaviBarDestinations.ProfileActivity;
+import com.example.yappmobile.R;
 
 public class ResetPasswordActivity extends AppCompatActivity
 {
