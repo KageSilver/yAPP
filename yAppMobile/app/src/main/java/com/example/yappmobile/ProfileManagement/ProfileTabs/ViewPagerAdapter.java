@@ -1,4 +1,4 @@
-package com.example.yappmobile.ProfileTabs;
+package com.example.yappmobile.ProfileManagement.ProfileTabs;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;

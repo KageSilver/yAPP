@@ -1,4 +1,4 @@
-package com.example.yappmobile.ProfileTabs;
+package com.example.yappmobile.ProfileManagement.ProfileTabs;
 
 import android.content.DialogInterface;
 import android.os.Bundle;

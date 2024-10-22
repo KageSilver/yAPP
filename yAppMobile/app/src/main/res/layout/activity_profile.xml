@@ -34,16 +34,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:backgroundTint="#00FFFFFF"
-                    app:layout_constraintEnd_toStartOf="@+id/profile_more_button"
+                    app:layout_constraintEnd_toStartOf="@+id/profile_settings_button"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/baseline_group_24" />
 
                 <ImageButton
-                    android:id="@+id/profile_more_button"
+                    android:id="@+id/profile_settings_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
                     android:backgroundTint="#00FFFFFF"
-                    android:src="@drawable/baseline_more_vert_24"
+                    android:src="@drawable/baseline_settings_24"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/profile_view_requests_button" />
 

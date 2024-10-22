@@ -1,7 +1,9 @@
-package com.example.yappmobile;
+package com.example.yappmobile.ProfileManagement;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.CardList.CardListHelper;
 import com.example.yappmobile.CardList.IListCardItemInteractions;
+import com.example.yappmobile.NaviBarDestinations.ProfileActivity;
+import com.example.yappmobile.R;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MyRequestsActivity extends AppCompatActivity implements IListCardItemInteractions
 {
@@ -41,6 +47,28 @@ public class MyRequestsActivity extends AppCompatActivity implements IListCardIt
                     Log.e("Auth", "Uh oh! THere's trouble getting the current user", error);
                 }
         );
+
+        FloatingActionButton backButton = findViewById(R.id.back_button);
+        backButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Intent intent = new Intent(MyRequestsActivity.this, ProfileActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        ExtendedFloatingActionButton addFriendButton = findViewById(R.id.add_friend_button);
+        addFriendButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Intent intent = new Intent(MyRequestsActivity.this, AddFriendActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
