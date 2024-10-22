@@ -17,7 +17,7 @@
 
     // Retrieve the necessary data and function from the helper
     onMounted(async () => {
-        resetCalendar(selectedDate);
+        resetCalendar();
         const user = await getCurrentUser();
         username.value = user.username;
         //await getMyDiaryEntries(username);**************************************************
@@ -43,9 +43,9 @@
         }
     }
 
-    function resetCalendar(selected) {
-        var daysInMonth = new Date(selected.getFullYear(), selected.getMonth() + 1, 0).getDate();
-        var blankDays = new Date(selected.getFullYear(), selected.getMonth()).getDay();
+    function resetCalendar() {
+        var daysInMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0).getDate();
+        var blankDays = new Date(selectedDate.getFullYear(), selectedDate.getMonth()).getDay();
 
         console.log("mm/yyyy: " + (month+1) + "/" + year);
 
@@ -88,7 +88,7 @@
         month = selectedDate.getMonth();
         year = selectedDate.getFullYear();
 
-        resetCalendar(selectedDate);
+        resetCalendar();
     }
 
     function nextMonth() {
@@ -103,7 +103,7 @@
         month = selectedDate.getMonth();
         year = selectedDate.getFullYear();
 
-        resetCalendar(selectedDate);
+        resetCalendar();
     }
 
 </script>
