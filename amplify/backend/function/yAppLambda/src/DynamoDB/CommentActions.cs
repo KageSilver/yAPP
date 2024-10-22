@@ -38,8 +38,9 @@ public class CommentActions : ICommentActions
     {
         try
         {
-            // Set the current time
+            // Set the current time (to see if the comment has been recently updated, check if createdAt != updatedAt)
             comment.CreatedAt = DateTime.Now;
+            comment.UpdatedAt = comment.CreatedAt;
             // Sets a unique ID for the comment
             comment.CID = Guid.NewGuid().ToString();
 
