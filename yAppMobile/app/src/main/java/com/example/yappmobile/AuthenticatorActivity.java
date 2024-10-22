@@ -18,48 +18,33 @@ public class AuthenticatorActivity extends AppCompatActivity
         setContentView(R.layout.activity_authenticator);
 
         // Check if we need to sign in or not
-        Amplify.Auth.getCurrentUser(
-                result ->
-                {
-                    Log.i("Auth", "Continuing as " + result.getUsername() + "...");
-                    rerouteToHome();
-                },
-                error ->
-                {
-                    Log.i("Auth", "There is no user signed in!!");
-                    invokeSignIn();
-                }
-        );
+        Amplify.Auth.getCurrentUser(result -> {
+            Log.i("Auth", "Continuing as " + result.getUsername() + "...");
+            rerouteToHome();
+        }, error -> {
+            Log.i("Auth", "There is no user signed in!!");
+            invokeSignIn();
+        });
     }
 
     // Trigger the Hosted UI sign-in process
     private void invokeSignIn()
     {
-        Amplify.Auth.signInWithWebUI(
-                this,
-                result ->
-                {
-                    Log.i("Auth", "Sign in success");
-                    rerouteToHome();
-                },
-                error ->
-                {
-                    Log.e("Auth", "Sign in failed. Trying again...", error);
-                    Amplify.Auth.signOut(
-                            result ->
-                            {
-                                Log.i("Auth", "Signing out previous user...");
-                                invokeSignIn();
-                            }
-                    );
-                }
-        );
+        Amplify.Auth.signInWithWebUI(this, result -> {
+            Log.i("Auth", "Sign in success");
+            rerouteToHome();
+        }, error -> {
+            Log.e("Auth", "Sign in failed. Trying again...", error);
+            Amplify.Auth.signOut(result -> {
+                Log.i("Auth", "Signing out previous user...");
+                invokeSignIn();
+            });
+        });
     }
 
     private void rerouteToHome()
     {
         Log.i("Routing", "Rerouting to Public Posts Activity...");
-        startActivity(new Intent(AuthenticatorActivity.this,
-                PublicPostsActivity.class));
+        startActivity(new Intent(AuthenticatorActivity.this, PublicPostsActivity.class));
     }
 }

@@ -28,25 +28,21 @@ public class MyRequestsActivity extends AppCompatActivity implements IListCardIt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_requests);
 
-        ProgressBar loadingSpinner = (ProgressBar) findViewById(R.id.progressBar);
-        requestListHelper = new CardListHelper(this, loadingSpinner, "FRIEND_REQUEST", this);
+        ProgressBar loadingSpinner = findViewById(R.id.progressBar);
+        requestListHelper = new CardListHelper(this, loadingSpinner,
+                                               "FRIEND_REQUEST", this);
 
         // Setup recycler view to display request cards
-        RecyclerView rvRequests = (RecyclerView) findViewById(R.id.request_list);
+        RecyclerView rvRequests = findViewById(R.id.request_list);
         rvRequests.setLayoutManager(new LinearLayoutManager(this));
 
-        Amplify.Auth.getCurrentUser(
-                result ->
-                {
-                    String userName = result.getUsername();
-                    String myRequestsAPI = "/api/friends/getFriendsByStatus?userName="+userName+"&status=0";
-                    requestListHelper.loadItems(myRequestsAPI, rvRequests);
-                },
-                error ->
-                {
-                    Log.e("Auth", "Uh oh! THere's trouble getting the current user", error);
-                }
-        );
+        Amplify.Auth.getCurrentUser(result -> {
+            String userName = result.getUsername();
+            String myRequestsAPI = "/api/friends/getFriendsByStatus?userName=" + userName + "&status=0";
+            requestListHelper.loadItems(myRequestsAPI, rvRequests);
+        }, error -> {
+            Log.e("Auth", "Uh oh! THere's trouble getting the current user", error);
+        });
 
         FloatingActionButton backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(new View.OnClickListener()

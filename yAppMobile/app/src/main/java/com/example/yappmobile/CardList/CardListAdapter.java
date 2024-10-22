@@ -37,8 +37,7 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     // Triggers when creating each CardItem to be displayed
-    @NonNull
-    @Override
+    @NonNull @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
     {
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -160,7 +159,7 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 @Override
                 public void onClick(View v)
                 {
-                    if(friendCardInteractions != null)
+                    if (friendCardInteractions != null)
                     {
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION)
@@ -179,23 +178,18 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 // TODO: refine this. could probably do some logic in the card list helper
                 String personA = card.get("FromUserName").toString();
                 String personB = card.get("ToUserName").toString();
-                Amplify.Auth.getCurrentUser(
-                        result ->
-                        {
-                            if(personA.equals(result.getUsername()))
-                            {
-                                friendName.setText(personB);
-                            }
-                            else
-                            {
-                                friendName.setText(personA);
-                            }
-                        },
-                        error ->
-                        {
-                            Log.e("CardListAdapter", "Error populating Friend card", error);
-                        }
-                );
+                Amplify.Auth.getCurrentUser(result -> {
+                    if (personA.equals(result.getUsername()))
+                    {
+                        friendName.setText(personB);
+                    }
+                    else
+                    {
+                        friendName.setText(personA);
+                    }
+                }, error -> {
+                    Log.e("CardListAdapter", "Error populating Friend card", error);
+                });
             }
             catch (JSONException jsonException)
             {
@@ -223,10 +217,10 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 @Override
                 public void onClick(View v)
                 {
-                    if(postCardInteractions != null)
+                    if (postCardInteractions != null)
                     {
                         int position = getAdapterPosition();
-                        if(position != RecyclerView.NO_POSITION)
+                        if (position != RecyclerView.NO_POSITION)
                         {
                             postCardInteractions.onItemClick(position);
                         }

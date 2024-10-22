@@ -77,7 +77,7 @@ public class CreatePostActivity extends AppCompatActivity
                 postTitle = titleText.getEditText().getText().toString();
                 postBody = contentText.getEditText().getText().toString();
 
-                if(isEmptyPost(postTitle, postBody))
+                if (isEmptyPost(postTitle, postBody))
                 {
                     Intent intent = new Intent(CreatePostActivity.this, PublicPostsActivity.class);
                     startActivity(intent);
@@ -110,22 +110,15 @@ public class CreatePostActivity extends AppCompatActivity
         if (!isEmptyPost(postTitle, postBody))
         {
             CompletableFuture<String> future = new CompletableFuture<>();
-            Amplify.Auth.getCurrentUser(
-                    result ->
-                    {
-                        future.complete(result.getUsername());
-                    },
-                    error ->
-                    {
-                        Log.e("Auth", "Error occurred when getting current user. Redirecting to authenticator");
-                        Intent intent = new Intent(CreatePostActivity.this, AuthenticatorActivity.class);
-                        startActivity(intent);
-                    }
-            );
-            future.thenAccept(username ->
-            {
-                runOnUiThread(() ->
-                {
+            Amplify.Auth.getCurrentUser(result -> {
+                future.complete(result.getUsername());
+            }, error -> {
+                Log.e("Auth", "Error occurred when getting current user. Redirecting to authenticator");
+                Intent intent = new Intent(CreatePostActivity.this, AuthenticatorActivity.class);
+                startActivity(intent);
+            });
+            future.thenAccept(username -> {
+                runOnUiThread(() -> {
                     try
                     {
                         newPost.put("postTitle", postTitle);
@@ -150,8 +143,7 @@ public class CreatePostActivity extends AppCompatActivity
                         failureDialog.show();
                     }
                 });
-            }).exceptionally(throwable ->
-            {
+            }).exceptionally(throwable -> {
                 Log.e("API", "Error fetching data", throwable);
                 return null;
             });
@@ -170,14 +162,13 @@ public class CreatePostActivity extends AppCompatActivity
     {
         String apiUrl = "/api/posts/createPost";
         RestOptions options = RestOptions.builder()
-                .addPath(apiUrl)
-                .addBody(postData.getBytes())
-                .addHeader("Content-Type", "application/json")
-                .build();
+                                         .addPath(apiUrl)
+                                         .addBody(postData.getBytes())
+                                         .addHeader("Content-Type", "application/json")
+                                         .build();
         Amplify.API.post(options,
-                response -> Log.i("API", "POST response: " + response.getData().asString()),
-                error -> Log.e("API", "POST request failed", error)
-                );
+                         response -> Log.i("API", "POST response: " + response.getData().asString()),
+                         error -> Log.e("API", "POST request failed", error));
     }
 
     private boolean isEmptyPost(String postTitle, String postBody)
@@ -190,7 +181,8 @@ public class CreatePostActivity extends AppCompatActivity
         // Create post alert dialog
         successDialog = new AlertDialog.Builder(this).create();
         successDialog.setTitle("Post successfully created!");
-        successDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Heck yeah", new DialogInterface.OnClickListener()
+        successDialog.setButton(AlertDialog.BUTTON_POSITIVE,
+                                "Heck yeah", new DialogInterface.OnClickListener()
         {
             public void onClick(DialogInterface dialog, int id)
             {
@@ -205,7 +197,8 @@ public class CreatePostActivity extends AppCompatActivity
         // Create post alert dialog
         failureDialog = new AlertDialog.Builder(this).create();
         failureDialog.setTitle("Post failed to create... Try again!");
-        failureDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Aw man...", new DialogInterface.OnClickListener()
+        failureDialog.setButton(AlertDialog.BUTTON_POSITIVE,
+                                "Aw man...", new DialogInterface.OnClickListener()
         {
             public void onClick(DialogInterface dialog, int id)
             {
@@ -219,7 +212,8 @@ public class CreatePostActivity extends AppCompatActivity
         discardDialog = new AlertDialog.Builder(this).create();
         discardDialog.setTitle("Woah there!");
         discardDialog.setMessage("Are you really sure that you want to discard your changes?");
-        discardDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener()
+        discardDialog.setButton(AlertDialog.BUTTON_POSITIVE,
+                                "Yes", new DialogInterface.OnClickListener()
         {
             public void onClick(DialogInterface dialog, int id)
             {
@@ -227,7 +221,8 @@ public class CreatePostActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
-        discardDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No, keep editing", new DialogInterface.OnClickListener()
+        discardDialog.setButton(AlertDialog.BUTTON_NEGATIVE,
+                                "No, keep editing", new DialogInterface.OnClickListener()
         {
             public void onClick(DialogInterface dialog, int id)
             {

@@ -27,21 +27,19 @@ public class AddFriendActivity extends AppCompatActivity
 {
     private AlertDialog success;
     private AlertDialog failure;
-    private TextInputLayout requestField;
-    private boolean isValidReceiver = true;
     private JSONObject newRequest;
+    private TextInputLayout requestField;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_add_friend);
 
         // Set the activity to be full screen
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
-
-        setContentView(R.layout.activity_add_friend);
 
         requestField = findViewById(R.id.request);
         initializeSuccessDialog();
@@ -75,56 +73,26 @@ public class AddFriendActivity extends AppCompatActivity
     private void createRequest()
     {
         String receiver = requestField.getEditText().getText().toString();
-        if(!receiver.equals(""))
+        if (!receiver.equals(""))
         {
             CompletableFuture<AuthUser> future = new CompletableFuture<>();
-            Amplify.Auth.getCurrentUser(
-                    result ->
+            Amplify.Auth.getCurrentUser(future::complete, error -> {
+                Log.e("Auth", "Error occurred when getting current user. Redirecting to authenticator");
+                startActivity(new Intent(AddFriendActivity.this, AuthenticatorActivity.class));
+            });
+
+            future.thenAccept(user -> {
+                runOnUiThread(() -> {
+                    if (user.getUsername().equals(receiver) || user.getUserId().equals(receiver))
                     {
-                        future.complete(result);
-                    },
-                    error ->
-                    {
-                        Log.e("Auth", "Error occurred when getting current user. Redirecting to authenticator");
-                        Intent intent = new Intent(AddFriendActivity.this, AuthenticatorActivity.class);
-                        startActivity(intent);
+                        Log.d("Faulty Form Field", "You can't add yourself as a friend, silly!");
                     }
-            );
-
-            future.thenAccept(user ->
-            {
-               runOnUiThread(() ->
-               {
-                   if(user.getUsername().equals(receiver) || user.getUserId().equals(receiver))
-                   {
-                       Log.d("Faulty Form Field", "You can't add yourself as a friend, silly!");
-                   }
-                   else
-                   {
-                       // Fill out newRequest with valid information
-                       try
-                       {
-                           newRequest.put("fromUserName", user.getUsername());
-                           newRequest.put("toUserId", receiver);
-                       }
-                       catch (JSONException e)
-                       {
-                           Log.e("JSON", "Exception occurred when adding elements to JSONObject", e);
-                       }
-
-                       // Send out newRequest through API call
-                       try
-                       {
-                           String stringPost = newRequest.toString();
-                           sendPostRequest(stringPost);
-                       }
-                       catch (Exception e)
-                       {
-                           e.printStackTrace();
-                           failure.show();
-                       }
-                   }
-               });
+                    else
+                    {
+                        sendPostRequest(user.getUsername(), receiver);
+                    }
+                    success.show();
+                });
             });
         }
         else
@@ -133,18 +101,38 @@ public class AddFriendActivity extends AppCompatActivity
         }
     }
 
-    private void sendPostRequest(String requestData)
+    private void sendPostRequest(String sender, String receiver)
     {
-        String apiUrl = "/api/friends/friendRequest";
-        RestOptions options = RestOptions.builder()
-                .addPath(apiUrl)
-                .addBody(requestData.getBytes())
-                .addHeader("Content-Type", "application/json")
-                .build();
-        Amplify.API.post(options,
-                response -> Log.i("API", "POST response: " + response.getData().asString()),
-                error -> Log.e("API", "POST request failed", error)
-        );
+        // Fill out newRequest with valid information
+        try
+        {
+            newRequest.put("fromUserName", sender);
+            newRequest.put("toUserId", receiver);
+        }
+        catch (JSONException e)
+        {
+            Log.e("JSON", "Exception occurred when adding elements to JSONObject", e);
+        }
+
+        // Send out newRequest through API call
+        try
+        {
+            String stringPost = newRequest.toString();
+            String apiUrl = "/api/friends/friendRequest";
+            RestOptions options = RestOptions.builder()
+                                             .addPath(apiUrl)
+                                             .addBody(stringPost.getBytes())
+                                             .addHeader("Content-Type", "application/json")
+                                             .build();
+            Amplify.API.post(options,
+                             response -> Log.i("API", "POST response: " + response.getData().asString()),
+                             error -> Log.e("API", "POST request failed", error));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            failure.show();
+        }
     }
 
     private void initializeSuccessDialog()
@@ -155,8 +143,7 @@ public class AddFriendActivity extends AppCompatActivity
         {
             public void onClick(DialogInterface dialog, int id)
             {
-                Intent intent = new Intent(AddFriendActivity.this, MyRequestsActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(AddFriendActivity.this, MyRequestsActivity.class));
             }
         });
     }
@@ -183,7 +170,7 @@ public class AddFriendActivity extends AppCompatActivity
             newRequest.put("toUserId", "");
             newRequest.put("status", 0);
         }
-        catch(JSONException e)
+        catch (JSONException e)
         {
             Log.e("JSONException", "Something went wrong when initializing a JSONObject", e);
         }

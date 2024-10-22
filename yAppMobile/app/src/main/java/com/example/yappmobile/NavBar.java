@@ -48,7 +48,7 @@ public class NavBar
             {
                 int itemId = item.getItemId();
                 Intent intent;
-                if(itemId == PROFILE)
+                if (itemId == PROFILE)
                 {
                     // Reroute to profile page
                     intent = new Intent(container, ProfileActivity.class);

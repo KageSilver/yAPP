@@ -47,7 +47,7 @@ public class PostEntryActivity extends AppCompatActivity
         postTitle = findViewById(R.id.post_title);
         postBody = findViewById(R.id.post_body);
 
-        String getPostAPI = "/api/posts/getPostById?pid="+pid;
+        String getPostAPI = "/api/posts/getPostById?pid=" + pid;
         loadPost(getPostAPI);
     }
 
@@ -55,8 +55,7 @@ public class PostEntryActivity extends AppCompatActivity
     {
         // Fetch post (only singular, should return the same thing based on the url passed
         CompletableFuture<String> future = postListHelper.getItemsFromAPI(apiUrl);
-        future.thenAccept(jsonData ->
-        {
+        future.thenAccept(jsonData -> {
             try
             {
                 // Handle API response
@@ -68,8 +67,7 @@ public class PostEntryActivity extends AppCompatActivity
                 String body = jsonObject.get("postBody").toString();
 
                 // Update fields:
-                runOnUiThread(() ->
-                {
+                runOnUiThread(() -> {
                     postTitle.setText(title);
                     postBody.setText(body);
                 });
@@ -78,8 +76,7 @@ public class PostEntryActivity extends AppCompatActivity
             {
                 Log.e("JSON", "Error parsing JSON", jsonException);
             }
-        }).exceptionally(throwable ->
-        {
+        }).exceptionally(throwable -> {
             Log.e("API", "Error fetching data", throwable);
             return null;
         });

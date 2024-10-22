@@ -36,32 +36,25 @@ public class MyPostsFragment extends Fragment implements IListCardItemInteractio
     {
         super.onCreate(savedInstanceState);
 
-        ProgressBar loadingSpinner = (ProgressBar) view.findViewById(R.id.indeterminateBar);
+        ProgressBar loadingSpinner = view.findViewById(R.id.indeterminateBar);
         postListHelper = new CardListHelper(this.getContext(), loadingSpinner, "POST", this);
 
         // Setup recycler view to display post list cards
-        RecyclerView rvPosts = (RecyclerView) view.findViewById(R.id.my_posts_list);
+        RecyclerView rvPosts = view.findViewById(R.id.my_posts_list);
         rvPosts.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
         CompletableFuture<String> future = new CompletableFuture<>();
-        Amplify.Auth.getCurrentUser(
-                result ->
-                {
-                    future.complete(result.getUsername());
-                },
-                error ->
-                {
-                    Log.e("Auth", "Error occurred when getting current user. Redirecting to authenticator");
-                    Intent intent = new Intent(view.getContext(), AuthenticatorActivity.class);
-                    startActivity(intent);
-                }
-        );
+        Amplify.Auth.getCurrentUser(result -> {
+            future.complete(result.getUsername());
+        }, error -> {
+            Log.e("Auth", "Error occurred when getting current user. Redirecting to authenticator");
+            Intent intent = new Intent(view.getContext(), AuthenticatorActivity.class);
+            startActivity(intent);
+        });
 
-        future.thenAccept(username ->
-        {
-            getActivity().runOnUiThread(() ->
-            {
-                String myPostsAPI = "/api/posts/getPostsByUser?userName="+"shaye"+"&diaryEntry=false";
+        future.thenAccept(username -> {
+            getActivity().runOnUiThread(() -> {
+                String myPostsAPI = "/api/posts/getPostsByUser?userName=" + username + "&diaryEntry=false";
                 postListHelper.loadItems(myPostsAPI, rvPosts);
             });
         });

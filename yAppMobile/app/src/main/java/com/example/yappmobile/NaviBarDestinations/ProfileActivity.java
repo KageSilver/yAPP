@@ -53,18 +53,13 @@ public class ProfileActivity extends AppCompatActivity
         });
 
         TextView usernameText = findViewById(R.id.profile_username_text);
-        Amplify.Auth.getCurrentUser(
-                result ->
-                {
-                    usernameText.setText(result.getUsername());
-                },
-                error ->
-                {
-                    Log.e("Auth", "Error occurred when getting current user. Redirecting to authenticator");
-                    Intent intent = new Intent(ProfileActivity.this, AuthenticatorActivity.class);
-                    startActivity(intent);
-                }
-        );
+        Amplify.Auth.getCurrentUser(result -> {
+            usernameText.setText(result.getUsername());
+        }, error -> {
+            Log.e("Auth", "Error occurred when getting current user. Redirecting to authenticator");
+            Intent intent = new Intent(ProfileActivity.this, AuthenticatorActivity.class);
+            startActivity(intent);
+        });
 
         ViewPager2 viewPager2 = findViewById(R.id.view_pager_2);
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(this);
@@ -81,13 +76,11 @@ public class ProfileActivity extends AppCompatActivity
             @Override
             public void onTabUnselected(TabLayout.Tab tab)
             {
-                // idk what to put here
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab)
             {
-                // idk what to put here
             }
         });
         viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback()

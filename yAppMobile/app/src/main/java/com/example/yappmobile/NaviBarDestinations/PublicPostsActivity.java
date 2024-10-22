@@ -56,14 +56,11 @@ public class PublicPostsActivity extends AppCompatActivity implements IListCardI
             @Override
             public void onClick(View v)
             {
-                Amplify.Auth.signOut(
-                        result ->
-                        {
-                            Log.i("Auth", "Signing out user...");
-                            Intent intent = new Intent(PublicPostsActivity.this, AuthenticatorActivity.class);
-                            startActivity(intent);
-                        }
-                );
+                Amplify.Auth.signOut(result -> {
+                    Log.i("Auth", "Signing out user...");
+                    Intent intent = new Intent(PublicPostsActivity.this, AuthenticatorActivity.class);
+                    startActivity(intent);
+                });
             }
         });
     }
@@ -72,7 +69,7 @@ public class PublicPostsActivity extends AppCompatActivity implements IListCardI
     {
         // Created formatted API path
         final int MAX_RESULTS = 10;
-        String apiPath = "/api/posts/getRecentPosts?since="+since+"&maxResults="+MAX_RESULTS;
+        String apiPath = "/api/posts/getRecentPosts?since=" + since + "&maxResults=" + MAX_RESULTS;
 
         // Setup recycler view to display post cards
         RecyclerView rvPosts = findViewById(R.id.public_posts_list);

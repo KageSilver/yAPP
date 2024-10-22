@@ -54,7 +54,6 @@ public class CardListHelper extends AppCompatActivity
 
         // Fetch card items from API
         CompletableFuture<String> future = getItemsFromAPI(apiUrl);
-
         future.thenAccept(jsonData ->
         {
             // Convert API response into a list of CardItems
@@ -81,15 +80,14 @@ public class CardListHelper extends AppCompatActivity
         final int MAX_RETRIES = 5;
         CompletableFuture<String> future = new CompletableFuture<>();
         RestOptions options = RestOptions.builder()
-                .addPath(apiUrl)
-                .addHeader("Content-Type", "application/json")
-                .build();
+                                         .addPath(apiUrl)
+                                         .addHeader("Content-Type", "application/json")
+                                         .build();
         retryAPICall(options, future, MAX_RETRIES);
         return future;
     }
 
-    private void retryAPICall(RestOptions options,
-                              CompletableFuture<String> future, int retriesLeft)
+    private void retryAPICall(RestOptions options, CompletableFuture<String> future, int retriesLeft)
     {
         Amplify.API.get(options,
                 response ->
@@ -99,7 +97,8 @@ public class CardListHelper extends AppCompatActivity
                 },
                 error ->
                 {
-                    if (retriesLeft > 0 && error.getCause() instanceof java.net.SocketTimeoutException)
+                    if (retriesLeft > 0
+                        && error.getCause() instanceof java.net.SocketTimeoutException)
                     {
                         Log.i("API", "Retrying... Attempts left: " + retriesLeft);
                         retryAPICall(options, future, retriesLeft - 1);
@@ -168,7 +167,8 @@ public class CardListHelper extends AppCompatActivity
             }
             else
             {
-                Log.d("CardListHelper", "Wrong card type! Tried to get the last post's time on a non-PostCard item");
+                Log.d("CardListHelper",
+                      "Wrong card type! Tried to get the last post's time on a non-PostCard item");
             }
         }
         catch (JSONException jsonException)

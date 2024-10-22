@@ -40,9 +40,9 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
     {
         super.onCreate(savedInstanceState);
 
-        ProgressBar loadingSpinner = (ProgressBar) view.findViewById(R.id.indeterminateBar);
-        friendListHelper = new CardListHelper(this.getContext(),
-                loadingSpinner, "CURRENT_FRIEND", this);
+        ProgressBar loadingSpinner = view.findViewById(R.id.indeterminateBar);
+        friendListHelper = new CardListHelper(this.getContext(), loadingSpinner,
+                                              "CURRENT_FRIEND", this);
 
         // Setup recycler view to display post list cards
         rvFriends = (RecyclerView) view.findViewById(R.id.my_friends_list);
@@ -53,14 +53,16 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
         confirmUnfollow = new AlertDialog.Builder(view.getContext()).create();
         confirmUnfollow.setTitle("Woah there!");
         confirmUnfollow.setMessage("Are you really sure that you want to unfollow them?");
-        confirmUnfollow.setButton(AlertDialog.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener()
+        confirmUnfollow.setButton(AlertDialog.BUTTON_POSITIVE,
+                                  "Yes", new DialogInterface.OnClickListener()
         {
             public void onClick(DialogInterface dialog, int id)
             {
                 confirmed = true;
             }
         });
-        confirmUnfollow.setButton(AlertDialog.BUTTON_NEGATIVE, "No, I was just playing", new DialogInterface.OnClickListener()
+        confirmUnfollow.setButton(AlertDialog.BUTTON_NEGATIVE,
+                                  "No, I was just playing", new DialogInterface.OnClickListener()
         {
             public void onClick(DialogInterface dialog, int id)
             {
@@ -76,7 +78,7 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
         // If confirmed, send an API request to update your friendship
         // And reload the displayed friendship list
         confirmUnfollow.show();
-        if(confirmed)
+        if (confirmed)
         {
             removeFriendship(position);
             reloadFriendList();
@@ -95,7 +97,7 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
             newFriendship.put("toUserName", result.get("receiver").toString());
             newFriendship.put("status", 2);
         }
-        catch(JSONException error)
+        catch (JSONException error)
         {
             Log.e("JSON", "Error creating a JSONObject", error);
         }
@@ -108,30 +110,24 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
     private void sendPutRequest(String apiUrl, String putBody)
     {
         RestOptions options = RestOptions.builder()
-                .addPath(apiUrl)
-                .addHeader("Content-Type", "application/json")
-                .addBody(putBody.getBytes())
-                .build();
+                                         .addPath(apiUrl)
+                                         .addHeader("Content-Type", "application/json")
+                                         .addBody(putBody.getBytes())
+                                         .build();
         Amplify.API.put(options,
-                response -> Log.i("API", "PUT RESPONSE:" + response.getData()),
-                error -> Log.e("API", "PUT request failed", error)
-        );
+                        response -> Log.i("API", "PUT RESPONSE:" + response.getData()),
+                        error -> Log.e("API", "PUT request failed", error));
     }
 
     // Reload RecyclerView of FriendCards
     private void reloadFriendList()
     {
-        Amplify.Auth.getCurrentUser(
-                result ->
-                {
-                    String userName = result.getUsername();
-                    String myRequestsAPI = "/api/friends/getFriendsByStatus?userName="+userName+"&status=1";
-                    friendListHelper.loadItems(myRequestsAPI, rvFriends);
-                },
-                error ->
-                {
-                    Log.e("Auth", "Uh oh! THere's trouble getting the current user", error);
-                }
-        );
+        Amplify.Auth.getCurrentUser(result -> {
+            String userName = result.getUsername();
+            String myRequestsAPI = "/api/friends/getFriendsByStatus?userName=" + userName + "&status=1";
+            friendListHelper.loadItems(myRequestsAPI, rvFriends);
+        }, error -> {
+            Log.e("Auth", "Uh oh! THere's trouble getting the current user", error);
+        });
     }
 }

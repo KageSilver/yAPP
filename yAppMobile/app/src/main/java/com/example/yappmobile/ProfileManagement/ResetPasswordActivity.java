@@ -48,7 +48,7 @@ public class ResetPasswordActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                if(!isEmptyFields(oldPassword, newPassword))
+                if (!isEmptyFields(oldPassword, newPassword))
                 {
                     Intent intent = new Intent(ResetPasswordActivity.this, ProfileActivity.class);
                     startActivity(intent);
@@ -95,8 +95,8 @@ public class ResetPasswordActivity extends AppCompatActivity
         // Create failed password alert
         failure = new AlertDialog.Builder(this).create();
         failure.setTitle("Failed to reset password...Try again!");
-        failure.setMessage("Please ensure you enter your old password correctly " +
-                "AND have a minimum of 8 characters in your new password");
+        failure.setMessage("Please ensure you enter your old password correctly "
+                           + "AND have a minimum of 8 characters in your new password");
         failure.setButton(AlertDialog.BUTTON_POSITIVE, "Aw man...", new DialogInterface.OnClickListener()
         {
             public void onClick(DialogInterface dialog, int id)
@@ -111,14 +111,12 @@ public class ResetPasswordActivity extends AppCompatActivity
         // Create failed password alert
         confirm = new AlertDialog.Builder(this).create();
         confirm.setTitle("Woah there!");
-        confirm.setMessage("You still have some unsaved changes. " +
-                "Are you sure you want to discard them?");
+        confirm.setMessage("You still have some unsaved changes. Are you sure you want to discard them?");
         confirm.setButton(AlertDialog.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener()
         {
             public void onClick(DialogInterface dialog, int id)
             {
-                Intent intent = new Intent(ResetPasswordActivity.this, ProfileActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(ResetPasswordActivity.this, ProfileActivity.class));
             }
         });
         confirm.setButton(AlertDialog.BUTTON_NEGATIVE, "No", new DialogInterface.OnClickListener()
@@ -132,16 +130,13 @@ public class ResetPasswordActivity extends AppCompatActivity
 
     private void invokeUpdatePass(String oldPass, String newPass)
     {
-        if(!isEmptyFields(oldPass, newPass))
+        if (!isEmptyFields(oldPass, newPass))
         {
-            Amplify.Auth.updatePassword(
-                    oldPass,
-                    newPass,
-                    () -> Log.i("Auth", "Successful password update!"),
-                    error -> Log.e("Auth", "Failed password update...", error)
-            );
+            Amplify.Auth.updatePassword(oldPass,
+                                        newPass, () -> Log.i("Auth", "Successful password update!"),
+                                        error -> Log.e("Auth", "Failed password update...", error));
         }
-        else if(oldPass.isEmpty())
+        else if (oldPass.isEmpty())
         {
             // TODO
             Log.i("FormField", "Old password is required!!");
