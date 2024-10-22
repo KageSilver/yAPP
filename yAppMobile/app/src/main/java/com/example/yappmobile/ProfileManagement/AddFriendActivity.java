@@ -3,9 +3,12 @@ package com.example.yappmobile.ProfileManagement;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 
 import androidx.appcompat.app.AlertDialog;
@@ -42,6 +45,25 @@ public class AddFriendActivity extends AppCompatActivity
         decorView.setSystemUiVisibility(uiOptions);
 
         requestField = findViewById(R.id.request);
+        EditText requestEditText = requestField.getEditText();
+        requestEditText.addTextChangedListener(new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s)
+            {
+                requestField.setError(null);
+            }
+        });
         initializeSuccessDialog();
         initializeFailureDialog();
         initializeNewRequest();
@@ -86,18 +108,20 @@ public class AddFriendActivity extends AppCompatActivity
                     if (user.getUsername().equals(receiver) || user.getUserId().equals(receiver))
                     {
                         Log.d("Faulty Form Field", "You can't add yourself as a friend, silly!");
+                        requestField.setError("You can't add yourself as a friend, silly!");
                     }
                     else
                     {
                         sendPostRequest(user.getUsername(), receiver);
+                        success.show();
                     }
-                    success.show();
                 });
             });
         }
         else
         {
             Log.d("Faulty Form Field", "You have to enter in something, silly!");
+            requestField.setError("You have to enter in something, silly!");
         }
     }
 

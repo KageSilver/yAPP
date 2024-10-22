@@ -96,7 +96,8 @@
                     app:boxCornerRadiusBottomEnd="15dp"
                     app:boxCornerRadiusBottomStart="15dp"
                     app:boxCornerRadiusTopEnd="15dp"
-                    app:boxCornerRadiusTopStart="15dp">
+                    app:boxCornerRadiusTopStart="15dp"
+                    app:errorEnabled="true">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/receiver_name_text"
