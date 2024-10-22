@@ -1,17 +1,17 @@
 <script setup lang="js">
 	import {
-		post
-	} from "aws-amplify/api";
-	import {
-		getCurrentUser
-	} from 'aws-amplify/auth';
-	import {
-		onMounted,
-		ref
-	} from 'vue';
-	import {
-		useRouter
-	} from 'vue-router'; // Import useRoute
+	post
+} from "aws-amplify/api";
+import {
+	getCurrentUser
+} from 'aws-amplify/auth';
+import {
+	onMounted,
+	ref
+} from 'vue';
+import {
+	useRouter
+} from 'vue-router'; // Import useRoute
 import BackBtnHeader from "../components/BackBtnHeader.vue";
 
 	const username = ref('');
@@ -38,14 +38,14 @@ import BackBtnHeader from "../components/BackBtnHeader.vue";
 	
 	async function createPost(event) {
 		event.preventDefault();
-		var postElements = document.getElementById("post").elements;
+	
 		var createButton = document.getElementById("create-button");
 		createButton.disabled = true;
-		newPost.postTitle = postElements[0].value;
-		newPost.postBody = postElements[1].value;
 		newPost.diaryEntry = diaryEntryIsChecked.value;
 		newPost.anonymous = anonIsChecked.value;
-
+		newPost.postTitle = document.getElementById("title").value;
+		newPost.postBody = document.getElementById("content").value;
+	
 		if (newPost.postTitle !== '' && newPost.postBody !== '') {
 			newPost.userName = username.value;
 			// Make API call to create the post
@@ -64,13 +64,11 @@ import BackBtnHeader from "../components/BackBtnHeader.vue";
 					body
 				} = await sendPostRequest.response;
 				const response = await body.json();
-
 				console.log("POST call succeeded", response);
-
 				// Reset form fields after submission
 				newPost.userName = '';
-				newPost.postTitle, postElements[0].value = '';
-				newPost.postBody, postElements[1].value = '';
+				newPost.postTitle,document.getElementById("title").value = '';
+				newPost.postBody, document.getElementById("content").value = '';
 				createButton.disabled = false;
 				// Send to home page
 				router.push("/profile/myposts");
@@ -85,9 +83,8 @@ import BackBtnHeader from "../components/BackBtnHeader.vue";
 
 	function discardPost(event) {
 		event.preventDefault();
-		var postElements = document.getElementById("post").elements;
-		newPost.postTitle = postElements[0].value;
-		newPost.postBody = postElements[1].value;
+		newPost.postTitle = document.getElementById("title").value;
+		newPost.postBody = document.getElementById("content").value;
 		if (newPost.postTitle != '' || newPost.postBody != '') {
 			console.log('Throwing away post...');
 			if (confirm("Are you sure you want to throw away your changes??")) {
@@ -192,14 +189,12 @@ import BackBtnHeader from "../components/BackBtnHeader.vue";
 					<input type="text" id="title" required placeholder="Insert your title here."
 						class="input">
 				</div>
-
 				<div class="form-group w-full mb-4">
 					<label for="content" class="block mb-2 text-gray-700">Content:</label>
 					<textarea id="content" required
 						placeholder="Insert the most heinous, confounding, baffling tea you've ever heard."
 						class="input"></textarea>
 				</div>
-
 				<div class="flex flex-col space-y-2 w-full">
 					<button title="Create Post" id="create-button"
 						class="bg-pink-purple text-white px-5 py-3 rounded-xl w-full" type="submit" @click="createPost">
@@ -210,12 +205,8 @@ import BackBtnHeader from "../components/BackBtnHeader.vue";
 						@click="discardPost">
 						Discard
 					</button>
-
 				</div>
-
-
 			</form>
-
 		</div>
 	</div>
 </template>
