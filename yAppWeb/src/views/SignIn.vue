@@ -1,16 +1,13 @@
 <script setup lang>
 	import { Authenticator, translations } from "@aws-amplify/ui-vue";
 	import { I18n } from "aws-amplify/utils";
-	import { useRouter } from "vue-router";
-
+	import { useRouter } from 'vue-router'; // Import useRouter		
+	import { getCurrentUser } from 'aws-amplify/auth';
+	import { watchEffect ,watch ,onMounted,ref} from 'vue';
 	import "@aws-amplify/ui-vue/styles.css";
+	import { Hub } from "aws-amplify/utils";
 
 	const router = useRouter();
-
-	const goToDashboard= async () => 
-	{
-		router.push('/dashboard');
-	}
 
 	// Tweak labels of sign up component by using Internationalization
 	// https://ui.docs.amplify.aws/vue/connected-components/authenticator/customization
@@ -24,52 +21,49 @@
 			'Enter your Email': 'Please confirm your Email'
 		}
 	});
+
+const currentUser = ref(null);
+
+Hub.listen("auth", async data => {
+	const { payload } = data;
+	if (payload.event === "signedIn") {
+		currentUser.value = await getCurrentUser();
+		router.push('/home');
+	}
+	if (payload.event === "signedOut") {
+		currentUser.value = null;
+	}
+});
+	// Services to be federated
+
+const services = ['SignIn', 'SignUp', 'ForgotPassword'];
+	
+
 </script>
 
 <template>
-	<authenticator :services="services">
-    <!-- HEADER -->
-    <template v-slot:header>
-      <div style="padding: var(--amplify-space-large); text-align: center">
-        <img
-          class="amplify-image"
-          alt="yAPP logo"
-          src="../assets/yAPP-icon-light.svg"
-          style="width:1000px; height:200px; justify-self: center; opacity:90%"
-        />
-      </div>
-      <h1 style="text-align: center">yAPP</h1>
-    </template>
+	<div class="bg-signin-gradient h-screen">
+		<authenticator :services="services" :handleAuthStateChange="handleAuthStateChange">
+			<!-- HEADER -->
+			<template v-slot:header>
+				<div style="padding: var(--amplify-space-large); text-align: center bg-signin-gradient">
+					<img class="amplify-image" alt="yAPP logo" src="../assets/yAPP-icon-light.svg"
+						style="width:1000px; height:200px; justify-self: center; opacity:90%" />
+				</div>
+				<h1 class="text-center text-white text-[3rem]">yAPP</h1>
+			</template>
 
-    <!-- FOOTER -->
-    <template v-slot:footer>
-      <div style="padding: var(--amplify-space-large); text-align: center">
-        <p class="amplify-text" style="color: var(--amplify-colors-neutral-40)">
-          yAPP © All Rights Reserved
-        </p>
-      </div>
-    </template>
+			<!-- FOOTER -->
+			<template v-slot:footer>
+				<div style="padding: var(--amplify-space-large); text-align: center">
+					<p class="amplify-text" style="color: var(--amplify-colors-neutral-40)">
+						yAPP © All Rights Reserved
+					</p>
+				</div>
+			</template>
 
-    <!-- LANDING PAGE -->
-    <template v-slot="{ user, signOut }" >
-		<div class="button-bar" style="display:flex; justify-content:right; margin-bottom:35px;">
-			<button class="primary-button" @click="goToDashboard" style="margin-right:35px;">
-				Go to Dashboard
-			</button>
-			<button class="primary-button" @click="signOut">
-				Sign Out
-			</button>
-		</div>
-		<br>
-		<h1>
-			Hello {{ user.username }}!
-		</h1>
-		<text class="UUID">
-			UUID: {{ user.userId }}
-		</text>		
-    </template>
-
-  </authenticator>
+		</authenticator>
+	</div>
 </template>
 
 <style>
