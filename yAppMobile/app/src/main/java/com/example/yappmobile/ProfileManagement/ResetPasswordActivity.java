@@ -55,13 +55,11 @@ public class ResetPasswordActivity extends AppCompatActivity
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after)
             {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count)
             {
-
             }
 
             @Override
@@ -80,7 +78,6 @@ public class ResetPasswordActivity extends AppCompatActivity
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count)
             {
-
             }
 
             @Override
@@ -193,8 +190,7 @@ public class ResetPasswordActivity extends AppCompatActivity
             CompletableFuture<Boolean> future = new CompletableFuture<>();
             Amplify.Auth.updatePassword(oldPassword, newPassword,
                                         () -> future.complete(true),
-                                        error -> future.complete(false)
-                                       );
+                                        error -> future.complete(false));
             future.thenAccept(successful -> {
                 runOnUiThread(() -> {
                     if(successful)

@@ -44,6 +44,9 @@ public class AddFriendActivity extends AppCompatActivity
         int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
 
+        initializeSuccessDialog();
+        initializeFailureDialog();
+        initializeNewRequest();
         requestField = findViewById(R.id.request);
         EditText requestEditText = requestField.getEditText();
         requestEditText.addTextChangedListener(new TextWatcher()
@@ -66,9 +69,6 @@ public class AddFriendActivity extends AppCompatActivity
                 requestField.setError(null);
             }
         });
-        initializeSuccessDialog();
-        initializeFailureDialog();
-        initializeNewRequest();
 
         // Set up back button code
         ImageButton backButton = findViewById(R.id.back_button);

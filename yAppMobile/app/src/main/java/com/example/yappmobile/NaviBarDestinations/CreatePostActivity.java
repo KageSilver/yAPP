@@ -2,11 +2,13 @@ package com.example.yappmobile.NaviBarDestinations;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +26,6 @@ import java.util.concurrent.CompletableFuture;
 
 public class CreatePostActivity extends AppCompatActivity
 {
-    private final int RED = Color.parseColor("#FF0000");
     private TextInputLayout titleText;
     private TextInputLayout contentText;
     private String postTitle;
@@ -46,26 +47,52 @@ public class CreatePostActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_create_post);
 
-        titleText = findViewById(R.id.post_title);
-        contentText = findViewById(R.id.post_content);
-
-        newPost = new JSONObject();
-        try
-        {
-            newPost.put("postTitle", "");
-            newPost.put("postBody", "");
-            newPost.put("userName", "");
-            newPost.put("diaryEntry", false);
-            newPost.put("anonymous", true);
-        }
-        catch (JSONException e)
-        {
-            Log.e("JSON", "Exception occurred when creating a JSONObject", e);
-        }
-
         initializeSuccessDialog();
         initializeFailureDialog();
         initializeDiscardDialog();
+        initializeNewPost();
+
+        titleText = findViewById(R.id.post_title);
+        contentText = findViewById(R.id.post_content);
+        EditText titleEditText = titleText.getEditText();
+        EditText contentEditText = contentText.getEditText();
+        titleEditText.addTextChangedListener(new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s)
+            {
+                titleText.setError(null);
+            }
+        });
+        contentEditText.addTextChangedListener(new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s)
+            {
+                contentText.setError(null);
+            }
+        });
 
         // Set up discard button code
         Button discardPostButton = findViewById(R.id.discard_button);
@@ -77,7 +104,7 @@ public class CreatePostActivity extends AppCompatActivity
                 postTitle = titleText.getEditText().getText().toString();
                 postBody = contentText.getEditText().getText().toString();
 
-                if (isEmptyPost(postTitle, postBody))
+                if (hasFilledForms(postTitle, postBody))
                 {
                     Intent intent = new Intent(CreatePostActivity.this, PublicPostsActivity.class);
                     startActivity(intent);
@@ -107,7 +134,7 @@ public class CreatePostActivity extends AppCompatActivity
         postBody = contentText.getEditText().getText().toString();
 
         // Make API call when invoked
-        if (!isEmptyPost(postTitle, postBody))
+        if (hasFilledForms(postTitle, postBody))
         {
             CompletableFuture<String> future = new CompletableFuture<>();
             Amplify.Auth.getCurrentUser(result -> {
@@ -135,7 +162,7 @@ public class CreatePostActivity extends AppCompatActivity
                     {
                         String stringPost = newPost.toString();
                         sendPost(stringPost);
-                        successDialog.show();
+                        //successDialog.show();
                     }
                     catch (Exception e)
                     {
@@ -151,10 +178,12 @@ public class CreatePostActivity extends AppCompatActivity
         else if (postTitle.equals(""))
         {
             Log.d("Faulty Form Field", "You have to put in a title, silly!");
+            titleText.setError("You have to put in a title, silly!");
         }
         else
         {
             Log.d("Faulty Form Field", "You have to add content, silly!");
+            contentText.setError("You have to add content, silly!");
         }
     }
 
@@ -171,9 +200,9 @@ public class CreatePostActivity extends AppCompatActivity
                          error -> Log.e("API", "POST request failed", error));
     }
 
-    private boolean isEmptyPost(String postTitle, String postBody)
+    private boolean hasFilledForms(String postTitle, String postBody)
     {
-        return postTitle.equals("") && postBody.equals("");
+        return !postTitle.equals("") && !postBody.equals("");
     }
 
     private void initializeSuccessDialog()
@@ -229,5 +258,22 @@ public class CreatePostActivity extends AppCompatActivity
                 System.out.println("Keep editing");
             }
         });
+    }
+
+    private void initializeNewPost()
+    {
+        newPost = new JSONObject();
+        try
+        {
+            newPost.put("postTitle", "");
+            newPost.put("postBody", "");
+            newPost.put("userName", "");
+            newPost.put("diaryEntry", false);
+            newPost.put("anonymous", true);
+        }
+        catch (JSONException e)
+        {
+            Log.e("JSON", "Exception occurred when creating a JSONObject", e);
+        }
     }
 }
