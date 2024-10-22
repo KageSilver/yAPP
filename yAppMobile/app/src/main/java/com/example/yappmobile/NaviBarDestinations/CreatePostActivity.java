@@ -44,20 +44,6 @@ public class CreatePostActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_create_post);
 
-        newPost = new JSONObject();
-        try
-        {
-            newPost.put("userName", "");
-            newPost.put("postTitle", "");
-            newPost.put("postBody", "");
-            newPost.put("diaryEntry", false);
-            newPost.put("anonymous", true);
-        }
-        catch (Exception e)
-        {
-            System.out.println("Exception occurred when adding elements to json object: " + e);
-        }
-
         titleText = findViewById(R.id.post_title);
         contentText = findViewById(R.id.post_content);
 
@@ -114,6 +100,8 @@ public class CreatePostActivity extends AppCompatActivity
                             newPost.put("postTitle", postTitle);
                             newPost.put("postBody", postBody);
                             newPost.put("userName", userName);
+                            newPost.put("diaryEntry", false);
+                            newPost.put("anonymous", true);
                         }
                         catch (JSONException e)
                         {
