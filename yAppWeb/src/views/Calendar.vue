@@ -9,18 +9,15 @@
     const jsonData = ref([]);
     const loading = false;
 
-    var today = new Date();
-    var month = today.getMonth();
-    var year = today.getFullYear();
+    var selectedDate = new Date();
+    var month = selectedDate.getMonth();
+    var year = selectedDate.getFullYear();
 
-    var blankDays = [];
-    var daysInMonth = [];
-
-    var datepicker = new Date(year, month, today.getDate()).toDateString();
+    var datepicker = new Date(year, month, selectedDate.getDate()).toDateString();
 
     // Retrieve the necessary data and function from the helper
     onMounted(async () => {
-        resetCalendar(today);
+        resetCalendar(selectedDate);
         const user = await getCurrentUser();
         username.value = user.username;
         //await getMyDiaryEntries(username);**************************************************
@@ -47,8 +44,10 @@
     }
 
     function resetCalendar(selected) {
-        daysInMonth = new Date(selected.getFullYear(), selected.getMonth() + 1, 0).getDate();
-        blankDays = new Date(selected.getFullYear(), selected.getMonth()).getDay();
+        var daysInMonth = new Date(selected.getFullYear(), selected.getMonth() + 1, 0).getDate();
+        var blankDays = new Date(selected.getFullYear(), selected.getMonth()).getDay();
+
+        console.log("mm/yyyy: " + (month+1) + "/" + year);
 
         console.log("blanks " + blankDays);
 
@@ -66,15 +65,45 @@
         }
 
         if(daysInMonth == 29){
-            document.getElementById("30th").hidden = true;
+            document.getElementById("30th").style.display = 'none';
         }
 
         if(daysInMonth <= 30){
-            document.getElementById("31st").hidden = true;
+            document.getElementById("31st").style.display = 'none';
         }else{
-            document.getElementById("30th").hidden = false;
-            document.getElementById("31st").hidden = false;
+            document.getElementById("30th").style.display = 'block';
+            document.getElementById("31st").style.display = 'block';
         }
+    }
+
+    function prevMonth() {
+        if(selectedDate.getMonth() == 1){
+            // go to dec prev year
+            selectedDate = new Date(selectedDate.getFullYear()-1, 12, 1);
+        }else{
+            // go to prev month
+            selectedDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth()-1, 1);
+        }
+
+        month = selectedDate.getMonth();
+        year = selectedDate.getFullYear();
+
+        resetCalendar(selectedDate);
+    }
+
+    function nextMonth() {
+        if(selectedDate.getMonth() == 11){
+            // go to jan next year
+            selectedDate = new Date(selectedDate.getFullYear()+1, 1, 1);
+        }else{
+            // go to next month
+            selectedDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth()+1, 1);
+        }
+
+        month = selectedDate.getMonth();
+        year = selectedDate.getFullYear();
+
+        resetCalendar(selectedDate);
     }
 
 </script>
@@ -82,6 +111,25 @@
 <template> 
 
     <div class="backBtnDiv"> 
+        <!-- header + datepicker go here -->
+        <div>
+        </div>
+
+        <!-- month picker -->
+        <div class="flex items-center mt-4">
+            <h2 class="flex-auto text-white font-bold">August 2024</h2>
+            <div class="flex items-center gap-1">
+                <button type="button"
+                    class="flex flex-none hover:border-blue-500 items-center rounded-full hover:bg-blue-600 hover:text-white border justify-center p-1.5 text-neutral-500"
+                    @click="prevMonth">
+                </button>
+                <button type="button"
+                    class="flex flex-none hover:border-blue-500 items-center rounded-full hover:bg-blue-600 hover:text-white border justify-center p-1.5 text-neutral-500"
+                    @click="nextMonth">
+                </button>
+            </div>
+        </div>
+
         <!-- calendar -->
         <div class="w-full md:px-16 md:mx-6 mt-3">
             <div class="grid grid-cols-7 text-center">
@@ -187,10 +235,10 @@
                 <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white">
                     <time datetime="#_">29</time>
                 </button>
-                <button hidden id="30th" type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white">
+                <button id="30th" type="button" style="display:none" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white">
                     <time datetime="#_">30</time>
                 </button>
-                <button hidden id="31st" type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white">
+                <button id="31st" type="button" style="display:none" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white">
                     <time datetime="#_">31</time>
                 </button>
             </div>
