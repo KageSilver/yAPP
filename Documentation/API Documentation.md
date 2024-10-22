@@ -4,7 +4,7 @@
 
 ### GetFriendsByStatus
  - Retrieves all friends of a user filtered by a specified status.
- - GET: api/friends/getFriendsByStatus?userName={username}?status={status}
+ - GET: api/friends/getFriendsByStatus?userName={username}&status={status}
     - userName: The username of the user whose friends are to be retrieved.
     - status: The status of the friendships to filter by (-1:All requests, 0: Pending, 1: Accepted, 2: Declined).
  - Status codes

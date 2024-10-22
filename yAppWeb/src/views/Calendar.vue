@@ -9,7 +9,8 @@
     const jsonData = ref([]);
     const loading = false;
 
-    var selectedDate = new Date();
+    var today = new Date();
+    var selectedDate = today;
     var datepicker = selectedDate.toDateString();
 
     // Retrieve the necessary data and function from the helper
