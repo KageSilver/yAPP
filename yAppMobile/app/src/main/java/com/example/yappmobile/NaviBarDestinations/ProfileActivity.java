@@ -35,8 +35,7 @@ public class ProfileActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                Intent intent = new Intent(ProfileActivity.this,
-                        MyRequestsActivity.class);
+                Intent intent = new Intent(ProfileActivity.this, MyRequestsActivity.class);
                 startActivity(intent);
             }
         });

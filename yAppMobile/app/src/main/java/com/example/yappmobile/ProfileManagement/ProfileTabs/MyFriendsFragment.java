@@ -90,7 +90,7 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
         JSONObject newFriendship = new JSONObject();
         try
         {
-            // TODO: refine this. i bet itll be buggy asf
+            // TODO: refine this. i bet its be buggy asf
             newFriendship.put("fromUserName", result.get("sender").toString());
             newFriendship.put("toUserName", result.get("receiver").toString());
             newFriendship.put("status", 2);

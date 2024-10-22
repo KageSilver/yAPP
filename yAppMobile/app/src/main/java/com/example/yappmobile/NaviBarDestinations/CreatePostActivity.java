@@ -2,7 +2,6 @@ package com.example.yappmobile.NaviBarDestinations;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,12 +14,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.AuthenticatorActivity;
-import com.example.yappmobile.ProfileManagement.AddFriendActivity;
 import com.example.yappmobile.R;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.concurrent.CompletableFuture;
 
 public class CreatePostActivity extends AppCompatActivity
 {
@@ -29,6 +29,7 @@ public class CreatePostActivity extends AppCompatActivity
     private TextInputLayout contentText;
     private String postTitle;
     private String postBody;
+    private JSONObject newPost;
     private AlertDialog successDialog;
     private AlertDialog failureDialog;
     private AlertDialog discardDialog;
@@ -47,8 +48,20 @@ public class CreatePostActivity extends AppCompatActivity
 
         titleText = findViewById(R.id.post_title);
         contentText = findViewById(R.id.post_content);
-        postTitle = titleText.getEditText().getText().toString();
-        postBody = contentText.getEditText().getText().toString();
+
+        newPost = new JSONObject();
+        try
+        {
+            newPost.put("postTitle", "");
+            newPost.put("postBody", "");
+            newPost.put("userName", "");
+            newPost.put("diaryEntry", false);
+            newPost.put("anonymous", true);
+        }
+        catch (JSONException e)
+        {
+            Log.e("JSON", "Exception occurred when creating a JSONObject", e);
+        }
 
         initializeSuccessDialog();
         initializeFailureDialog();
@@ -61,6 +74,9 @@ public class CreatePostActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
+                postTitle = titleText.getEditText().getText().toString();
+                postBody = contentText.getEditText().getText().toString();
+
                 if(isEmptyPost(postTitle, postBody))
                 {
                     Intent intent = new Intent(CreatePostActivity.this, PublicPostsActivity.class);
@@ -73,7 +89,7 @@ public class CreatePostActivity extends AppCompatActivity
             }
         });
 
-        // Set up discard button code
+        // Set up create button code
         Button createPostButton = findViewById(R.id.create_button);
         createPostButton.setOnClickListener(new View.OnClickListener()
         {
@@ -87,27 +103,17 @@ public class CreatePostActivity extends AppCompatActivity
 
     private void createPost()
     {
-        JSONObject newPost = new JSONObject();
+        postTitle = titleText.getEditText().getText().toString();
+        postBody = contentText.getEditText().getText().toString();
+
         // Make API call when invoked
         if (!isEmptyPost(postTitle, postBody))
         {
-            // Fill out newPost
+            CompletableFuture<String> future = new CompletableFuture<>();
             Amplify.Auth.getCurrentUser(
                     result ->
                     {
-                        String userName = result.getUsername();
-                        try
-                        {
-                            newPost.put("postTitle", postTitle);
-                            newPost.put("postBody", postBody);
-                            newPost.put("userName", userName);
-                            newPost.put("diaryEntry", false);
-                            newPost.put("anonymous", true);
-                        }
-                        catch (JSONException e)
-                        {
-                            Log.e("JSON", "Exception occurred when adding elements to JSONObject", e);
-                        }
+                        future.complete(result.getUsername());
                     },
                     error ->
                     {
@@ -116,31 +122,47 @@ public class CreatePostActivity extends AppCompatActivity
                         startActivity(intent);
                     }
             );
+            future.thenAccept(username ->
+            {
+                runOnUiThread(() ->
+                {
+                    try
+                    {
+                        newPost.put("postTitle", postTitle);
+                        newPost.put("postBody", postBody);
+                        newPost.put("userName", username);
+                    }
+                    catch (JSONException e)
+                    {
+                        Log.e("JSON", "Exception occurred when adding elements to JSONObject", e);
+                    }
 
-            // send out newPost through API call
-            try
+                    // send out newPost through API call
+                    try
+                    {
+                        String stringPost = newPost.toString();
+                        sendPost(stringPost);
+                        successDialog.show();
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                        failureDialog.show();
+                    }
+                });
+            }).exceptionally(throwable ->
             {
-                String stringPost = newPost.toString();
-                sendPost(stringPost);
-                successDialog.show();
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-                failureDialog.show();
-            }
+                Log.e("API", "Error fetching data", throwable);
+                return null;
+            });
         }
         else if (postTitle.equals(""))
         {
-            titleText.setBoxStrokeColor(RED);
-            titleText.setHint("Title required!!");
-            titleText.setHintTextColor(ColorStateList.valueOf(RED));
+            Log.d("Faulty Form Field", "You have to put in a title, silly!");
         }
         else
         {
-            contentText.setBoxStrokeColor(RED);
-            contentText.setHint("Post content required!!");
-            contentText.setHintTextColor(ColorStateList.valueOf(RED));
+            Log.d("Faulty Form Field", "You have to add content, silly!");
         }
     }
 
@@ -160,7 +182,7 @@ public class CreatePostActivity extends AppCompatActivity
 
     private boolean isEmptyPost(String postTitle, String postBody)
     {
-        return postTitle.trim().isEmpty() && postBody.trim().isEmpty();
+        return postTitle.equals("") && postBody.equals("");
     }
 
     private void initializeSuccessDialog()

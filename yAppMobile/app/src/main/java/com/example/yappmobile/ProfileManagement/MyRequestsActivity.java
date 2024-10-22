@@ -74,6 +74,6 @@ public class MyRequestsActivity extends AppCompatActivity implements IListCardIt
     @Override
     public void onItemClick(int position)
     {
-        // TODO
+        // TODO:
     }
 }

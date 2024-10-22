@@ -37,7 +37,9 @@
                     android:id="@+id/post_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="Insert title here."
                     android:maxLength="150"
+                    android:textColorHint="#FFFFFF"
                     app:boxStrokeWidth="0dp"
                     app:boxStrokeWidthFocused="1dp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -45,13 +47,13 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
                         android:maxLength="150"
                         android:selectAllOnFocus="true"
                         android:singleLine="false"
-                        android:text="Insert interesting title here."
                         android:textColor="@color/white"
-                        android:textSize="38sp"
+                        android:textSize="34sp"
                         android:textStyle="bold" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -93,19 +95,19 @@
                     android:id="@+id/post_content"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:hint="Insert very interesting content here."
+                    android:textColorHint="#F4EFEF"
                     app:boxStrokeWidth="0dp"
                     app:boxStrokeWidthFocused="1dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/content">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/post_content_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="80dp"
                         android:gravity="top"
                         android:minHeight="500dp"
-                        android:text="Insert very interesting content here."
                         android:textColor="@color/white"
                         android:textSize="18sp" />
 

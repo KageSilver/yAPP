@@ -81,7 +81,7 @@ public class ResetPasswordActivity extends AppCompatActivity
         // Create failed password alert
         success = new AlertDialog.Builder(this).create();
         success.setTitle("Successfully reset password!");
-        success.setButton(AlertDialog.BUTTON_POSITIVE, "Heck yeah...", new DialogInterface.OnClickListener()
+        success.setButton(AlertDialog.BUTTON_POSITIVE, "Heck yeah", new DialogInterface.OnClickListener()
         {
             public void onClick(DialogInterface dialog, int id)
             {
@@ -94,8 +94,9 @@ public class ResetPasswordActivity extends AppCompatActivity
     {
         // Create failed password alert
         failure = new AlertDialog.Builder(this).create();
-        failure.setTitle("Failed to reset password... Try again!");
-        failure.setMessage("Please ensure you enter your old password correctly AND have a minimum of 8 characters in your new password");
+        failure.setTitle("Failed to reset password...Try again!");
+        failure.setMessage("Please ensure you enter your old password correctly " +
+                "AND have a minimum of 8 characters in your new password");
         failure.setButton(AlertDialog.BUTTON_POSITIVE, "Aw man...", new DialogInterface.OnClickListener()
         {
             public void onClick(DialogInterface dialog, int id)
@@ -110,7 +111,8 @@ public class ResetPasswordActivity extends AppCompatActivity
         // Create failed password alert
         confirm = new AlertDialog.Builder(this).create();
         confirm.setTitle("Woah there!");
-        confirm.setMessage("You still have some unsaved changes. Are you sure you want to discard them?");
+        confirm.setMessage("You still have some unsaved changes. " +
+                "Are you sure you want to discard them?");
         confirm.setButton(AlertDialog.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener()
         {
             public void onClick(DialogInterface dialog, int id)

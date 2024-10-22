@@ -31,7 +31,6 @@ public class PublicPostsActivity extends AppCompatActivity implements IListCardI
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_public_posts);
-
         NavBar.establishNavBar(this, "HOME");
 
         ProgressBar loadingSpinner = findViewById(R.id.indeterminateBar);
@@ -50,6 +49,7 @@ public class PublicPostsActivity extends AppCompatActivity implements IListCardI
         });
         refreshPosts(since);
 
+        // Set up logout button code
         ImageButton logOutButton = findViewById(R.id.log_out_button);
         logOutButton.setOnClickListener(new View.OnClickListener()
         {
@@ -72,20 +72,19 @@ public class PublicPostsActivity extends AppCompatActivity implements IListCardI
     {
         // Created formatted API path
         final int MAX_RESULTS = 10;
-        String apiPath = "/api/posts/getRecentPosts?since=%s&maxResults=%d";
-        String formattedPath = String.format(apiPath, since, MAX_RESULTS);
+        String apiPath = "/api/posts/getRecentPosts?since="+since+"&maxResults="+MAX_RESULTS;
 
         // Setup recycler view to display post cards
         RecyclerView rvPosts = findViewById(R.id.public_posts_list);
         rvPosts.setLayoutManager(new LinearLayoutManager(this));
 
-        postListHelper.loadItems(formattedPath, rvPosts);
+        postListHelper.loadItems(apiPath, rvPosts);
     }
 
     @Override
     public void onItemClick(int position)
     {
-        // Setup activity switch when a post list card is pressed
+        // Switch activity to view an individual post entry when a card is clicked
         Intent intent = new Intent(PublicPostsActivity.this, PostEntryActivity.class);
         String pid = postListHelper.getPID(position);
         intent.putExtra("pid", pid);
