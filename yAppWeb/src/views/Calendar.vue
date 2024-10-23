@@ -60,13 +60,18 @@
     }
 
     function adjustDaysInMonth(daysInMonth) {
-        if(daysInMonth == 29){
+        if(daysInMonth == 28) {
+            document.getElementById("29").style.display = 'none';
+        }
+
+        if(daysInMonth <= 29) {
             document.getElementById("30").style.display = 'none';
         }
 
-        if(daysInMonth <= 30){
+        if(daysInMonth <= 30) {
             document.getElementById("31").style.display = 'none';
-        }else{
+        } else {
+            document.getElementById("29").style.display = 'block';
             document.getElementById("30").style.display = 'block';
             document.getElementById("31").style.display = 'block';
         }
@@ -241,7 +246,7 @@
                 <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(28)">
                     <time datetime="#_">28</time>
                 </button>
-                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(29)">
+                <button id="29" type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(29)">
                     <time datetime="#_">29</time>
                 </button>
                 <button id="30" type="button" style="display:none" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(30)">
