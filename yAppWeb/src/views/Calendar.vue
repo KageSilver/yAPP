@@ -156,97 +156,97 @@
                 <div id="blank3" class="mx-auto flex size-10 w-full items-center justify-center" style="display:none"></div>
                 <div id="blank4" class="mx-auto flex size-10 w-full items-center justify-center" style="display:none"></div>
                 <div id="blank5" class="mx-auto flex size-10 w-full items-center justify-center" style="display:none"></div>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(1)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(1)">
                     <time datetime="#_">1</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(2)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(2)">
                     <time datetime="#_">2</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(3)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(3)">
                     <time datetime="#_">3</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(4)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(4)">
                     <time datetime="#_">4</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(5)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(5)">
                     <time datetime="#_">5</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(6)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(6)">
                     <time datetime="#_">6</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(7)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(7)">
                     <time datetime="#_">7</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(8)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(8)">
                     <time datetime="#_">8</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(9)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(9)">
                     <time datetime="#_">9</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(10)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(10)">
                     <time datetime="#_">10</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(11)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(11)">
                     <time datetime="#_">11</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(12)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(12)">
                     <time datetime="#_">12</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(13)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(13)">
                     <time datetime="#_">13</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(14)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(14)">
                     <time datetime="#_">14</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(15)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(15)">
                     <time datetime="#_">15</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(16)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(16)">
                     <time datetime="#_">16</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(17)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(17)">
                     <time datetime="#_">17</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(18)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(18)">
                     <time datetime="#_">18</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(19)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(19)">
                     <time datetime="#_">19</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(20)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(20)">
                     <time datetime="#_">20</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(21)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(21)">
                     <time datetime="#_">21</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(22)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(22)">
                     <time datetime="#_">22</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(23)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(23)">
                     <time datetime="#_">23</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(24)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(24)">
                     <time datetime="#_">24</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(25)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(25)">
                     <time datetime="#_">25</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(26)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(26)">
                     <time datetime="#_">26</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(27)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(27)">
                     <time datetime="#_">27</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(28)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(28)">
                     <time datetime="#_">28</time>
                 </button>
-                <button type="button" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(29)">
+                <button type="button" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(29)">
                     <time datetime="#_">29</time>
                 </button>
-                <button id="30" type="button" style="display:none" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(30)">
+                <button id="30" type="button" style="display:none" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(30)">
                     <time datetime="#_">30</time>
                 </button>
-                <button id="31" type="button" style="display:none" class="hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(31)">
+                <button id="31" type="button" style="display:none" class="focus:rounded-full focus:bg-[#EFB2CE] focus:text-black hover:rounded-full hover:border-2 mx-auto flex size-10 w-full items-center justify-center text-white" @click="changeSelectedDate(31)">
                     <time datetime="#_">31</time>
                 </button>
             </div>
