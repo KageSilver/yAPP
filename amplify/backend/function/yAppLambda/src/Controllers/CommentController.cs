@@ -28,7 +28,7 @@ public class CommentController : ControllerBase
         _commentActions = commentActions;
     }
 
-    // POST: api/comments/createComment with body { "userName": "username", "commentBody": "body", "pid": "pid" }
+    // POST: api/comments/createComment with body { "uid": "uid", "commentBody": "body", "pid": "pid" }
     /// <summary>
     /// Creates a comment
     /// </summary>
@@ -41,15 +41,15 @@ public class CommentController : ControllerBase
     {
         ActionResult<Comment> result;
 
-        if(request == null || string.IsNullOrEmpty(request.CommentBody) || string.IsNullOrEmpty(request.UserName) || string.IsNullOrEmpty(request.PID))
+        if(request == null || string.IsNullOrEmpty(request.CommentBody) || string.IsNullOrEmpty(request.UID) || string.IsNullOrEmpty(request.PID))
         {
-            result = BadRequest("Request body is required and must contain commenter's username, comment body, and the original post's id.");
+            result = BadRequest("Request body is required and must contain commenter's uid, comment body, and the original post's id.");
         }
         else
         {
-            Console.WriteLine("Post request from: " + request.UserName + " with pid: " + request.PID);
+            Console.WriteLine("Post request from: " + request.UID + " with pid: " + request.PID);
 
-            var commenter = await _cognitoActions.GetUser(request.UserName);
+            var commenter = await _cognitoActions.GetUserById(request.UID);
 
             if(commenter == null)
             {
@@ -59,9 +59,9 @@ public class CommentController : ControllerBase
             {
                 var comment = new Comment
                 {
-                    UserName = request.UserName,
-                    CommentBody = request.CommentBody,
                     PID = request.PID,
+                    UID = request.UID,
+                    CommentBody = request.CommentBody,
                     Upvotes = 0,
                     Downvotes = 0
                 };
@@ -102,22 +102,22 @@ public class CommentController : ControllerBase
         return comment;
     }
 
-    // GET: api/comments/getCommentsByUser?userName={userName}
-    /// Gets all comments with given username
+    // GET: api/comments/getCommentsByUid?uid={uid}
+    /// Gets all comments with given uid
     /// </summary>
-    /// <param name="userName">The username to find all comments a user has made.</param>
+    /// <param name="uid">The uid to find all comments a user has made.</param>
     /// <returns>A list of comments made by a user.</returns>
-    [HttpGet("getCommentsByUser")]
+    [HttpGet("getCommentsByUid")]
     [ProducesResponseType(typeof(List<Comment>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<List<Comment>>> GetCommentsByUser(string userName)
+    public async Task<ActionResult<List<Comment>>> GetCommentsByUid(string uid)
     {
-        if(string.IsNullOrEmpty(userName))
+        if(string.IsNullOrEmpty(uid))
         {
-            return BadRequest("Username is required");
+            return BadRequest("Uid is required");
         }
 
-        var comments = await _commentActions.GetCommentsByUser(userName);
+        var comments = await _commentActions.GetCommentsByUid(uid);
 
         return comments;
     }

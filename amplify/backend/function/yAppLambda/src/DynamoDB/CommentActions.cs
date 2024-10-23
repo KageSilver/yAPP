@@ -65,7 +65,6 @@ public class CommentActions : ICommentActions
         try
         {
             var comment = await _dynamoDbContext.LoadAsync<Comment>(cid, _config);
-            comment.UserName = "Anonymous"; // Setting user name to anonymous
             
             return comment;
         }
@@ -77,21 +76,42 @@ public class CommentActions : ICommentActions
     }
 
     /// <summary>
-    /// Gets all comments with given username
+    /// Gets all comments with given UID
     /// </summary>
-    /// <param name="userName">The username to find all comments a user has made.</param>
+    /// <param name="uid">The UID to find all comments a user has made.</param>
     /// <returns>A list of comments made by a user.</returns>
-    public async Task<List<Comment>> GetCommentsByUser(string userName)
+    public async Task<List<Comment>> GetCommentsByUid(string uid)
     {
         try
         {
-            List<ScanCondition> scanConditions = new List<ScanCondition>
+            var expressionAttributeValues = new Dictionary<string, DynamoDBEntry>();
+            expressionAttributeValues.Add(":uid", uid);
+            // Query comments where their uid is 'uid' and sorted by date created
+            var query = new QueryOperationConfig()
             {
-                new ScanCondition("UserName", ScanOperator.Equal, userName)
+                IndexName = "CreatedAtIndex",
+                KeyExpression = new Expression
+                {
+                    ExpressionStatement = "UID = :uid",
+                    ExpressionAttributeValues = expressionAttributeValues
+                },
+                AttributesToGet = new List<string>
+                {
+                    "CID"
+                },
+                Select = SelectValues.SpecificAttributes,
+                BackwardSearch = true
             };
 
-            // Query comments where the commenter's username is 'userName' and is equal to the input
-            var comments = await _dynamoDbContext.ScanAsync<Comment>(scanConditions, _config).GetRemainingAsync();
+            var result = await _dynamoDbContext.FromQueryAsync<Comment>(query, _config).GetNextSetAsync();
+            
+            var comments = new List<Comment>();
+            
+            foreach(Comment comment in result)
+            {
+                var thisComment = GetCommentById(comment.CID).Result;
+                comments.Add(thisComment);
+            }
 
             return comments;
         }
@@ -111,13 +131,34 @@ public class CommentActions : ICommentActions
     {
         try
         {
-            List<ScanCondition> scanCondition = new List<ScanCondition>
+            var expressionAttributeValues = new Dictionary<string, DynamoDBEntry>();
+            expressionAttributeValues.Add(":pid", pid);
+            // Query comments where their pid is 'pid' and sorted by date created
+            var query = new QueryOperationConfig()
             {
-                new ScanCondition("PID", ScanOperator.Equal, pid)
+                IndexName = "CreatedAtIndex",
+                KeyExpression = new Expression
+                {
+                    ExpressionStatement = "PID = :pid",
+                    ExpressionAttributeValues = expressionAttributeValues
+                },
+                AttributesToGet = new List<string>
+                {
+                    "CID"
+                },
+                Select = SelectValues.SpecificAttributes,
+                BackwardSearch = true
             };
 
-            // Query comments where their pid is 'pid'
-            var comments = await _dynamoDbContext.ScanAsync<Comment>(scanCondition, _config).GetRemainingAsync();
+            var result = await _dynamoDbContext.FromQueryAsync<Comment>(query, _config).GetNextSetAsync();
+            
+            var comments = new List<Comment>();
+            
+            foreach(Comment comment in result)
+            {
+                var thisComment = GetCommentById(comment.CID).Result;
+                comments.Add(thisComment);
+            }
 
             return comments;
         }

@@ -47,7 +47,7 @@ public class CommentActionsTests
             PID = "1",
             CreatedAt = now,
             UpdatedAt = now,
-            UserName = "user1@example.com",
+            UID = "c1cb",
             CommentBody = "body",
             Upvotes = 0,
             Downvotes = 0
@@ -71,7 +71,7 @@ public class CommentActionsTests
         Assert.Equal(comment.PID, returnedComment.PID);
         Assert.Equal(comment.CreatedAt, returnedComment.CreatedAt);
         Assert.Equal(comment.UpdatedAt, returnedComment.UpdatedAt);
-        Assert.Equal(comment.UserName, returnedComment.UserName);
+        Assert.Equal(comment.UID, returnedComment.UID);
         Assert.Equal(comment.CommentBody, returnedComment.CommentBody);
         Assert.Equal(comment.Upvotes, returnedComment.Upvotes);
         Assert.Equal(comment.Downvotes, returnedComment.Downvotes);
@@ -92,7 +92,7 @@ public class CommentActionsTests
             PID = "1",
             CreatedAt = now,
             UpdatedAt = now,
-            UserName = "user1@example.com",
+            UID = "c1cb",
             CommentBody = "body",
             Upvotes = 0,
             Downvotes = 0
@@ -130,7 +130,7 @@ public class CommentActionsTests
             PID = "11111",
             CreatedAt = now,
             UpdatedAt = now,
-            UserName = "Anonymous",
+            UID = "c1cb",
             CommentBody = "body",
             Upvotes = 0,
             Downvotes = 0
@@ -149,7 +149,7 @@ public class CommentActionsTests
         Assert.Equal(request.PID, returnedComment.PID);
         Assert.Equal(request.CreatedAt, returnedComment.CreatedAt);
         Assert.Equal(request.UpdatedAt, returnedComment.UpdatedAt);
-        Assert.Equal("Anonymous", returnedComment.UserName);
+        Assert.Equal(request.UID, returnedComment.UID);
         Assert.Equal(request.CommentBody, returnedComment.CommentBody);
         Assert.Equal(request.Upvotes, returnedComment.Upvotes);
         Assert.Equal(request.Downvotes, returnedComment.Downvotes);
@@ -173,10 +173,10 @@ public class CommentActionsTests
 
     #endregion
 
-    #region GetCommentsByUser Tests
+    #region GetCommentsByUid Tests
     
     [Fact]
-    public async Task GetCommentsByUser_ShouldReturnComments_WhenSuccessful()
+    public async Task GetCommentsByUid_ShouldReturnComments_WhenSuccessful()
     {
         // Arrange
         var now = DateTime.Now;
@@ -184,7 +184,7 @@ public class CommentActionsTests
         {
             CID = "1",
             PID = "1",
-            UserName = "username",
+            UID = "c1cb",
             CreatedAt = now,
             UpdatedAt = now,
             CommentBody = "body",
@@ -204,7 +204,7 @@ public class CommentActionsTests
             .Returns(scanToSearchMock.Object);
 
         // Act
-        var result = await _commentActionsMock.GetCommentsByUser(comment.UserName);
+        var result = await _commentActionsMock.GetCommentsByUid(comment.UID);
 
         // Assert
         Assert.Equal(1, result.Count);
@@ -212,7 +212,7 @@ public class CommentActionsTests
         Assert.Equal(comment.PID, result.First().PID);
         Assert.Equal(comment.CreatedAt, result.First().CreatedAt);
         Assert.Equal(comment.UpdatedAt, result.First().UpdatedAt);
-        Assert.Equal(comment.UserName, result.First().UserName);
+        Assert.Equal(comment.UID, result.First().UID);
         Assert.Equal(comment.CommentBody, result.First().CommentBody);
         Assert.Equal(comment.Upvotes, result.First().Upvotes);
         Assert.Equal(comment.Downvotes, result.First().Downvotes);
@@ -220,7 +220,7 @@ public class CommentActionsTests
     }
     
     [Fact]
-    public async Task GetCommentsByUser_ShouldReturnEmptyList_WhenExceptionIsThrown()
+    public async Task GetCommentsByUid_ShouldReturnEmptyList_WhenExceptionIsThrown()
     {
         // Arrange
         var scanToSearchMock = new Mock<AsyncSearch<Comment>>();
@@ -228,7 +228,7 @@ public class CommentActionsTests
             .ThrowsAsync(new Exception("error querying comments"));
 
         // Act
-        var result = await _commentActionsMock.GetCommentsByUser("username");
+        var result = await _commentActionsMock.GetCommentsByUid("c1cb");
 
         // Assert
         Assert.Empty(result);
@@ -247,7 +247,7 @@ public class CommentActionsTests
         {
             CID = "1",
             PID = "1",
-            UserName = "username",
+            UID = "uid",
             CreatedAt = now,
             UpdatedAt = now,
             CommentBody = "body",
@@ -275,7 +275,7 @@ public class CommentActionsTests
         Assert.Equal(comment.PID, result.First().PID);
         Assert.Equal(comment.CreatedAt, result.First().CreatedAt);
         Assert.Equal(comment.UpdatedAt, result.First().UpdatedAt);
-        Assert.Equal(comment.UserName, result.First().UserName);
+        Assert.Equal(comment.UID, result.First().UID);
         Assert.Equal(comment.CommentBody, result.First().CommentBody);
         Assert.Equal(comment.Upvotes, result.First().Upvotes);
         Assert.Equal(comment.Downvotes, result.First().Downvotes);

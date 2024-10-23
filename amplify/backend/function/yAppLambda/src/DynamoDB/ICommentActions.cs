@@ -27,10 +27,10 @@ public interface ICommentActions
     Task<List<Comment>> GetCommentsByPid(string pid);
 
     /// <summary>
-    /// Gets all comments from a user
+    /// Gets all comments with given UID
     /// </summary>
-    /// <param name="userName">The username used to find all comments created by a user.</param>
+    /// <param name="uid">The UID used to find all comments created by a user.</param>
     /// <returns>A list of comments created by a user.</returns>
-    Task<List<Comment>> GetCommentsByUser(string userName);
+    Task<List<Comment>> GetCommentsByUid(string uid);
     
 }

@@ -45,15 +45,15 @@ public class CommentControllerTests
 
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-        Assert.Equal("Request body is required and must contain commenter's username, comment body, and the original post's id.", badRequestResult.Value);
+        Assert.Equal("Request body is required and must contain commenter's uid, comment body, and the original post's id.", badRequestResult.Value);
     }
 
     [Fact]
-    public async Task CreateComment_ShouldReturnNotFound_WhenUsernameIsNotFound()
+    public async Task CreateComment_ShouldReturnNotFound_WhenUidIsNotFound()
     {
         // Arrange
-        var request = new NewComment { PID = "20", UserName = "userDoesNotExist", CommentBody = "body" };
-        _mockCognitoActions.Setup(u => u.GetUser(request.UserName)).ReturnsAsync((User)null);
+        var request = new NewComment { PID = "20", UID = "userDoesNotExist", CommentBody = "body" };
+        _mockCognitoActions.Setup(u => u.GetUserById(request.UID)).ReturnsAsync((User)null);
 
         // Act
         var result = await _commentController.CreateComment(request);
@@ -67,20 +67,20 @@ public class CommentControllerTests
     public async Task CreateComment_ShouldReturnOK_WhenCommentIsCreatedSuccessfully()
     {
         // Arrange 
-        var request = new NewComment { PID = "1", UserName = "user1@example.com", CommentBody = "body" };
-        var commenter = new User {UserName = "user1@example.com" };
+        var request = new NewComment { PID = "1", UID = "uid", CommentBody = "body" };
+        var commenter = new User {Id = "uid" };
         // Omitting 
         var comment = new Comment 
         { 
             PID = "1",
-            UserName = request.UserName, 
+            UID = request.UID, 
             CommentBody = request.CommentBody, 
             Upvotes = 0, 
             Downvotes = 0
         };
 
-        // Mock GetUser to return the commenter
-        _mockCognitoActions.Setup(u => u.GetUser(request.UserName)).ReturnsAsync(commenter);
+        // Mock GetUserById to return the commenter
+        _mockCognitoActions.Setup(u => u.GetUserById(request.UID)).ReturnsAsync(commenter);
 
         // Mock CreateComment to return a new Comment object
         _mockCommentActions.Setup(c => c.CreateComment(It.IsAny<Comment>())).ReturnsAsync(new OkObjectResult(comment));
@@ -92,7 +92,7 @@ public class CommentControllerTests
         var returnedComment = result.Value;
         // cannot assert CID being equal since CID is randomly generated
         Assert.Equal(comment.PID, returnedComment.PID);
-        Assert.Equal(comment.UserName, returnedComment.UserName);
+        Assert.Equal(comment.UID, returnedComment.UID);
         Assert.Equal(comment.CommentBody, returnedComment.CommentBody);
         Assert.Equal(comment.Upvotes, returnedComment.Upvotes);
         Assert.Equal(comment.Downvotes, returnedComment.Downvotes);
@@ -111,7 +111,7 @@ public class CommentControllerTests
         {
             CID = "1",
             PID = "1",
-            UserName = "username",
+            UID = "uid",
             CreatedAt = now,
             UpdatedAt = now,
             CommentBody = "body",
@@ -130,7 +130,7 @@ public class CommentControllerTests
         Assert.Equal(comment.PID, returnedComment.PID);
         Assert.Equal(comment.CreatedAt, returnedComment.CreatedAt);
         Assert.Equal(comment.UpdatedAt, returnedComment.UpdatedAt);
-        Assert.Equal(comment.UserName, returnedComment.UserName);
+        Assert.Equal(comment.UID, returnedComment.UID);
         Assert.Equal(comment.CommentBody, returnedComment.CommentBody);
         Assert.Equal(comment.Upvotes, returnedComment.Upvotes);
         Assert.Equal(comment.Downvotes, returnedComment.Downvotes);
@@ -151,7 +151,7 @@ public class CommentControllerTests
     }
 
     [Fact]
-    public async Task GetCommentById_ShouldReturnBadRequest_WithInvalidCommentId()
+    public async Task GetCommentById_ShouldReturnBadRequest_WithNullCommentId()
     {
         // Act
         var result = await _commentController.GetCommentById(null);
@@ -159,21 +159,25 @@ public class CommentControllerTests
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
         Assert.Equal("Comment ID is required", badRequestResult.Value);
+    }
 
+    [Fact]
+    public async Task GetCommentById_ShouldReturnBadRequest_WithEmptyCommentId()
+    {
         // Act
-        result = await _commentController.GetCommentById("");
+        var result = await _commentController.GetCommentById("");
 
         // Assert
-        badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
         Assert.Equal("Comment ID is required", badRequestResult.Value);
     }
 
     #endregion
 
-    #region GetCommentsByUser Tests
+    #region GetCommentsByUid Tests
 
     [Fact]
-    public async Task GetCommentsByUser_ShouldReturnComments_WhenSuccessful()
+    public async Task GetCommentsByUid_ShouldReturnComments_WhenSuccessful()
     {
         // Arrange
         var now = DateTime.Now;
@@ -181,7 +185,7 @@ public class CommentControllerTests
         {
             CID = "1",
             PID = "1",
-            UserName = "username",
+            UID = "uid",
             CreatedAt = now,
             UpdatedAt = now,
             CommentBody = "body",
@@ -192,10 +196,10 @@ public class CommentControllerTests
         var list = new List<Comment>();
         list.Add(comment);
 
-        _mockCommentActions.Setup(c => c.GetCommentsByUser(It.IsAny<string>())).ReturnsAsync(list);
+        _mockCommentActions.Setup(c => c.GetCommentsByUid(It.IsAny<string>())).ReturnsAsync(list);
 
         // Act
-        var result = await _commentController.GetCommentsByUser(comment.UserName);
+        var result = await _commentController.GetCommentsByUid(comment.UID);
 
         // Assert
         var returnedList = Assert.IsType<List<Comment>>(result.Value);
@@ -204,21 +208,21 @@ public class CommentControllerTests
         Assert.Equal(comment.PID, returnedList.First().PID);
         Assert.Equal(comment.CreatedAt, returnedList.First().CreatedAt);
         Assert.Equal(comment.UpdatedAt, returnedList.First().UpdatedAt);
-        Assert.Equal(comment.UserName, returnedList.First().UserName);
+        Assert.Equal(comment.UID, returnedList.First().UID);
         Assert.Equal(comment.CommentBody, returnedList.First().CommentBody);
         Assert.Equal(comment.Upvotes, returnedList.First().Upvotes);
         Assert.Equal(comment.Downvotes, returnedList.First().Downvotes);
     }
 
     [Fact]
-    public async Task GetCommentsByUser_ShouldReturnBadRequest_WithInvalidUsername()
+    public async Task GetCommentsByUid_ShouldReturnBadRequest_WithInvalidUid()
     {
         // Act
-        var result = await _commentController.GetCommentsByUser(null);
+        var result = await _commentController.GetCommentsByUid(null);
 
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-        Assert.Equal("Username is required", badRequestResult.Value);
+        Assert.Equal("Uid is required", badRequestResult.Value);
     }
 
     #endregion
@@ -234,7 +238,7 @@ public class CommentControllerTests
         {
             CID = "1",
             PID = "1",
-            UserName = "username",
+            UID = "uid",
             CreatedAt = now,
             UpdatedAt = now,
             CommentBody = "body",
@@ -257,14 +261,14 @@ public class CommentControllerTests
         Assert.Equal(comment.PID, returnedList.First().PID);
         Assert.Equal(comment.CreatedAt, returnedList.First().CreatedAt);
         Assert.Equal(comment.UpdatedAt, returnedList.First().UpdatedAt);
-        Assert.Equal(comment.UserName, returnedList.First().UserName);
+        Assert.Equal(comment.UID, returnedList.First().UID);
         Assert.Equal(comment.CommentBody, returnedList.First().CommentBody);
         Assert.Equal(comment.Upvotes, returnedList.First().Upvotes);
         Assert.Equal(comment.Downvotes, returnedList.First().Downvotes);
     }
 
     [Fact]
-    public async Task GetCommentsByPid_ShouldReturnBadRequest_WithInvalidPid()
+    public async Task GetCommentsByPid_ShouldReturnBadRequest_WithNullPid()
     {
         // Act
         var result = await _commentController.GetCommentsByPid(null);
@@ -272,12 +276,16 @@ public class CommentControllerTests
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
         Assert.Equal("Post ID is required", badRequestResult.Value);
+    }
 
+    [Fact]
+    public async Task GetCommentsByPid_ShouldReturnBadRequest_WithEmptyPid()
+    {
         // Act
-        result = await _commentController.GetCommentsByPid("");
+        var result = await _commentController.GetCommentsByPid("");
 
         // Assert
-        badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
         Assert.Equal("Post ID is required", badRequestResult.Value);
     }
 

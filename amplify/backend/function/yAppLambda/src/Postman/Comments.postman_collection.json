@@ -28,7 +28,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n\t\"userName\": \"\",\n\t\"commentBody\": \"\",\n\t\"pid\": \"\"\n}",
+          "raw": "{\n\t\"uid\": \"\",\n\t\"commentBody\": \"\",\n\t\"pid\": \"\"\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -78,7 +78,7 @@
       "response": []
     },
     {
-      "name": "GetCommentsByUser",
+      "name": "GetCommentsByUid",
       "event": [
         {
           "listen": "test",
@@ -96,12 +96,12 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{base_url}}/api/comments/getCommentsByUser?userName=${userName}",
+          "raw": "{{base_url}}/api/comments/getCommentsByUid?uid=${uid}",
           "host": ["{{base_url}}"],
-          "path": ["api", "comments", "getCommentsByUser"],
+          "path": ["api", "comments", "getCommentsByUid"],
           "query": [
             {
-              "key": "userName",
+              "key": "uid",
               "value": ""
             }
           ]

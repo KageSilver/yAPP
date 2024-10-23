@@ -19,8 +19,8 @@ public class Comment
     [JsonPropertyName("updatedAt")]
     public DateTime UpdatedAt { get; set; } // The time that the comment got updated
 
-    [JsonPropertyName("userName")]
-    public string UserName { get; set; } // The username of the user who created the comment
+    [JsonPropertyName("uid")]
+    public string UID { get; set; } // The UID of the user who created the comment
 
     [JsonPropertyName("commentBody")]
     public string CommentBody {get; set; } // The contents of the comment

@@ -7,8 +7,8 @@ namespace yAppLambda.Models;
 /// </summary>
 public class NewComment
 {
-    [JsonPropertyName("userName")]
-    public string UserName { get; set ; }
+    [JsonPropertyName("uid")]
+    public string UID { get; set ; }
 
     [JsonPropertyName("commentBody")]
     public string CommentBody { get; set; }
