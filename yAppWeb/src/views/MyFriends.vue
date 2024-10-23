@@ -1,8 +1,17 @@
 <script setup>
-    import { get, put } from 'aws-amplify/api';
-    import { onMounted, ref } from 'vue';
-    import { getCurrentUser } from 'aws-amplify/auth';
+    import {
+        get,
+        put
+    } from 'aws-amplify/api';
+    import {
+        onMounted,
+        ref
+    } from 'vue';
+    import {
+        getCurrentUser
+    } from 'aws-amplify/auth';
     import ProfileHeader from '../components/ProfileHeader.vue';
+    import ConfirmationModal from '../components/ConfirmationModal.vue';
 
     const username = ref('');
     const jsonData = ref([]);
@@ -10,80 +19,85 @@
 
 
     // Get list of friends as JSON 
-    onMounted(async () => 
-    {
+    onMounted(async () => {
         const user = await getCurrentUser();
         username.value = user.username;
         getFriends();
     });
 
     // Get authenticated user's friend requests
-    async function getFriends() 
-    {
-        try 
-        {
+    async function getFriends() {
+        try {
             const restOperation = get({
                 apiName: 'yapp',
                 path: `/api/friends/getFriendsByStatus?userName=${username.value}&status=1`
             });
-            const { body } = await restOperation.response;
+            const {
+                body
+            } = await restOperation.response;
             const response = await ((await body.blob()).arrayBuffer());
             const decoder = new TextDecoder('utf-8'); // Use TextDecoder to decode the ArrayBuffer to a string
             const decodedText = decoder.decode(response);
             jsonData.value = JSON.parse(decodedText); // Update with parsed JSON
-        } 
-        catch(error)
-        {
+        } catch (error) {
             console.log('GET call failed', error);
         }
     }
 
-function onSubmit(friendship) {
-    if (friendship.ToUserName !== username) {
-        if (confirm(`Are you sure you want to unfollow ${friendship.ToUserName}?`)) {
-            unfollowFriend(friendship, "receiver");
+    const showModal = ref(false);
+    const currentFriend = ref(null);
+    const message = ref('');
+    const currentFriendship = ref(null);
+
+    const openModal = (friendship) => {
+        showModal.value = true;
+        currentFriendship.value = friendship;
+        if (friendship.FromUserName === username.value) {
+            currentFriend.value = friendship.ToUserName;
+        } else {
+            currentFriend.value = friendship.FromUserName;
+        }
+        message.value = `Are you sure you want to unfollow ${currentFriend.value}?`;
+
+    };
+    const closeModal = () => {
+        showModal.value = false;
+    };
+    const confirmUnfollow = () => {
+        unfollowFriend(currentFriendship.value);
+        closeModal();
+    };
+
+
+
+
+    // Unfollow sent friend
+    async function unfollowFriend(friendship) {
+        try {
+
+
+            const newRequest = {
+                "fromUserName": friendship.FromUserName,
+                "toUserName": friendship.ToUserName,
+                "status": 2
+            };
+
+            const sendPutRequest = put({
+                apiName: "yapp",
+                path: "/api/friends/updateFriendRequest",
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                options: {
+                    body: newRequest
+                }
+            });
+            console.log(await sendPutRequest.response);
+            getFriends(); // Update the list of friends
+        } catch (err) {
+            console.error(err);
         }
     }
-    else {
-        if (confirm(`Are you sure you want to unfollow ${friendship.FromUserName}?`)) {
-            unfollowFriend(friendship, "sender");
-        }
-    }
-}
-
-// Unfollow sent friend
-async function unfollowFriend(friendship, role) {
-    try {
-
-        
-        const newRequest =
-        {
-            "fromUserName": friendship.FromUserName,
-            "toUserName": friendship.ToUserName,
-            "status": 2
-        };
-
-        const sendPutRequest = put({
-            apiName: "yapp",
-            path: "/api/friends/updateFriendRequest",
-            headers:
-            {
-                'Content-type': 'application/json'
-            },
-            options:
-            {
-                body: newRequest
-            }
-        });
-        console.log(await sendPutRequest.response);
-        getFriends(); // Update the list of friends
-    }
-    catch (err) {
-        alert('Failed to decline friend request. Please try again!');
-        console.error(err);
-    }
-}
-
 </script>
 
 <template>
@@ -101,11 +115,13 @@ async function unfollowFriend(friendship, role) {
                 <h4 v-if="friendship.ToUserName !== username">{{ friendship.ToUserName }}</h4>
                 <h4 v-else>{{ friendship.FromUserName }}</h4>
                 <div class="request-actions">
-                    <button class="bg-light-pink text-white p-4 font-bold rounded-lg" @click="onSubmit(friendship)">
+                    <button class="bg-light-pink text-white p-4 font-bold rounded-lg" @click="openModal(friendship)">
                         Unfollow
                     </button>
                 </div>
             </div>
+            <ConfirmationModal :showModal="showModal" :close="closeModal" :confirm="confirmUnfollow"
+                header="Woah there!" :message="message" />
         </div>
     </div>
 </template>
