@@ -175,9 +175,9 @@ public class CommentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Comment>> UpdateComment([FromBody] Comment request)
     {
-        if(request == null || string.IsNullOrEmpty(request.UID) || string.IsNullOrEmpty(request.CommentBody))
+        if(request == null || string.IsNullOrEmpty(request.UID) || string.IsNullOrEmpty(request.CommentBody) || string.IsNullOrEmpty(request.PID))
         {
-            return BadRequest("Request body is required and must contain uid and comment body");
+            return BadRequest("Request body is required and must contain pid, uid and comment body");
         }
 
         var comment = await _commentActions.UpdateComment(request);
