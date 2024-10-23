@@ -78,7 +78,7 @@ public class CommentControllerIntegrationTests
         // Arrange
         var newComment = new NewComment
         {
-            PID = "1",
+            PID = "createCommentValidRequest",
             UID = testUid,
             CommentBody = "CreateComment_ValidRequest_ReturnsComment()"
         };
@@ -112,7 +112,7 @@ public class CommentControllerIntegrationTests
         // Arrange
         var newComment = new NewComment
         {
-            PID = "1",
+            PID = "createCommentCommenterNotFound",
             UID = "userDoesNotExist",
             CommentBody = "body"
         };
@@ -252,7 +252,7 @@ public class CommentControllerIntegrationTests
         var newComment = JsonConvert.DeserializeObject<Comment>(responseString1);
 
         // Act
-        var response2 = await _client.GetAsync($"/api/comments/getCommentsByUid?uid={testUid}");
+        var response2 = await _client.GetAsync($"/api/comments/getCommentsByUid?uid={request.UID}");
         var responseString2 = await response2.Content.ReadAsStringAsync();
         var commentList = JsonConvert.DeserializeObject<List<Comment>>(responseString2);
 

@@ -1,5 +1,7 @@
+using System.Numerics;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
+using Amazon.DynamoDBv2.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using yAppLambda.Models;
@@ -84,34 +86,13 @@ public class CommentActions : ICommentActions
     {
         try
         {
-            var expressionAttributeValues = new Dictionary<string, DynamoDBEntry>();
-            expressionAttributeValues.Add(":uid", uid);
-            // Query comments where their uid is 'uid' and sorted by date created
-            var query = new QueryOperationConfig()
+            List<ScanCondition> scanConditions = new List<ScanCondition>
             {
-                IndexName = "CreatedAtIndex",
-                KeyExpression = new Expression
-                {
-                    ExpressionStatement = "UID = :uid",
-                    ExpressionAttributeValues = expressionAttributeValues
-                },
-                AttributesToGet = new List<string>
-                {
-                    "CID"
-                },
-                Select = SelectValues.SpecificAttributes,
-                BackwardSearch = true
+                new ScanCondition("UID", ScanOperator.Equal, uid)
             };
 
-            var result = await _dynamoDbContext.FromQueryAsync<Comment>(query, _config).GetNextSetAsync();
-            
-            var comments = new List<Comment>();
-            
-            foreach(Comment comment in result)
-            {
-                var thisComment = GetCommentById(comment.CID).Result;
-                comments.Add(thisComment);
-            }
+            // Query comments where the commenter's uid is 'uid' and is equal to the input
+            var comments = await _dynamoDbContext.ScanAsync<Comment>(scanConditions, _config).GetRemainingAsync();
 
             return comments;
         }

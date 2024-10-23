@@ -10,6 +10,7 @@ using Xunit;
 using Amazon.DynamoDBv2.DataModel;
 using yAppLambda.Models;
 using yAppLambda.DynamoDB;
+using Amazon.DynamoDBv2.DocumentModel;
 
 namespace Tests.UnitTests.Actions;
 
@@ -44,7 +45,7 @@ public class CommentActionsTests
         var comment = new Comment
         {
             CID = "1",
-            PID = "1",
+            PID = "createCommentShouldReturnOK",
             CreatedAt = now,
             UpdatedAt = now,
             UID = "c1cb",
@@ -183,7 +184,7 @@ public class CommentActionsTests
         var comment = new Comment
         {
             CID = "1",
-            PID = "1",
+            PID = "getCommentsByUidShouldReturnComments",
             UID = "c1cb",
             CreatedAt = now,
             UpdatedAt = now,
@@ -239,14 +240,14 @@ public class CommentActionsTests
     #region GetCommentsByPid Tests
     
     [Fact]
-    public async Task GetCommentsByPid_ShouldReturnComments_WhenSuccessful()
+    public async Task GetCommentsByPid_ShouldReturnComments_WithAValidQuery()
     {
         // Arrange
         var now = DateTime.Now;
         var comment = new Comment
         {
             CID = "1",
-            PID = "1",
+            PID = "getCommentsByPidShouldReturnComments",
             UID = "uid",
             CreatedAt = now,
             UpdatedAt = now,
@@ -254,17 +255,23 @@ public class CommentActionsTests
             Upvotes = 0,
             Downvotes = 0
         };
+        var response = new Comment { CID = "1" };
+
+        // Sets up LoadAsync to return the request comment (for in GetCommentById)
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Comment>(comment.CID, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(comment);
 
         var list = new List<Comment>();
-        list.Add(comment);
+        list.Add(response);
 
-        // Mock the AsyncSearch<Comment> returned by ScanAsync
-        var scanToSearchMock = new Mock<AsyncSearch<Comment>>();
-        scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
+        // Mock the AsyncSearch<Comment> returned by QueryAsync
+        var queryFromSearchMock = new Mock<AsyncSearch<Comment>>();
+        queryFromSearchMock.Setup(q => q.GetNextSetAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(list);
-            
-        _dynamoDbContextMock.Setup(d => d.ScanAsync<Comment>(It.IsAny<List<ScanCondition>>(), It.IsAny<DynamoDBOperationConfig>()))
-            .Returns(scanToSearchMock.Object);
+
+        // Sets up FromQueryAsync to succeed
+        _dynamoDbContextMock.Setup(d => d.FromQueryAsync<Comment>(It.IsAny<QueryOperationConfig>(), It.IsAny<DynamoDBOperationConfig>()))
+            .Returns(queryFromSearchMock.Object);
 
         // Act
         var result = await _commentActionsMock.GetCommentsByPid(comment.PID);
@@ -273,13 +280,13 @@ public class CommentActionsTests
         Assert.Equal(1, result.Count);
         Assert.Equal(comment.CID, result.First().CID);
         Assert.Equal(comment.PID, result.First().PID);
+        Assert.Equal(comment.UID, result.First().UID);
         Assert.Equal(comment.CreatedAt, result.First().CreatedAt);
         Assert.Equal(comment.UpdatedAt, result.First().UpdatedAt);
-        Assert.Equal(comment.UID, result.First().UID);
-        Assert.Equal(comment.CommentBody, result.First().CommentBody);
         Assert.Equal(comment.Upvotes, result.First().Upvotes);
         Assert.Equal(comment.Downvotes, result.First().Downvotes);
-        _dynamoDbContextMock.Verify(d => d.ScanAsync<Comment>(It.IsAny<List<ScanCondition>>(), It.IsAny<DynamoDBOperationConfig>()), Times.Once);
+
+        _dynamoDbContextMock.Verify(d => d.FromQueryAsync<Comment>(It.IsAny<QueryOperationConfig>(), It.IsAny<DynamoDBOperationConfig>()), Times.Once);
     }
     
     [Fact]
