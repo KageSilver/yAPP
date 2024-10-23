@@ -116,13 +116,14 @@
     }
 
     function collapseCalendar() {
-        var calendar = document.getElementById("calendar");
-        var buttonIcon = document.getElementById("collapse");
-
         if(calendar.style.display == 'none') {
-            calendar.style.display = 'block';
+            document.getElementById("calendar").style.display = 'block';
+            document.getElementById("openCalendar").style.display = 'none';
+            document.getElementById("closeCalendar").style.display = 'block';
         } else {
-            calendar.style.display = 'none';
+            document.getElementById("calendar").style.display = 'none';
+            document.getElementById("openCalendar").style.display = 'block';
+            document.getElementById("closeCalendar").style.display = 'none';
         }
     }
 </script>
@@ -134,7 +135,8 @@
         <div class="flex items-center">
             <label id="date" class="flex text-white font-bold text-lg"></label>
             <button type="button" class="flex" @click="collapseCalendar">
-                <img id="collapse" src="../assets/calendar/closeCalendar.svg"></img>
+                <img id="closeCalendar" src="../assets/calendar/closeCalendar.svg" style="display:block"></img>
+                <img id="openCalendar" class="rotate-180" src="../assets/calendar/closeCalendar.svg" style="display:none"></img>
             </button>
         </div>
 
