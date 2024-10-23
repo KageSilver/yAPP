@@ -4,6 +4,7 @@ import { ref, onMounted } from 'vue';
 import { getCurrentUser } from 'aws-amplify/auth';
 import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
+import { watch } from 'vue';
 
 const router = useRouter(); // Use router hook
 
@@ -17,6 +18,13 @@ const route = useRoute();  // This composable provides access to the current rou
 const isActive = (path) => {
     return route.path.includes(path);
 };
+const navigateTo = (event) => {
+    const selectedRoute = event.target.value;
+    router.push(selectedRoute);  // Navigate to the selected route
+};
+
+const selectedTab = ref('/profile/myPosts');
+
 
 // Get list of friends as JSON 
 onMounted(async () => {
@@ -24,7 +32,11 @@ onMounted(async () => {
     const user = await getCurrentUser();
     username.value = user.username;
     userId.value = user.userId;
+    //update selected tab
+    selectedTab.value = route.path;
 });
+
+
 
 // Get authenticated user's friend requests
 async function getRequests() {
@@ -74,10 +86,12 @@ async function getRequests() {
     <div class="sm:hidden">
         <label for="tabs" class="sr-only">Select tab</label>
         <select id="tabs"
+            v-model="selectedTab"
+            @change="navigateTo($event)"
             class="bg-white text-gray-900 text-sm  block w-full p-2.5 border-none focus:ring-2 focus:ring-indigo-500">
-            <option>My Posts</option>
-            <option>My Friends</option>
-            <option>My Achievement</option>
+            <option value="/profile/myPosts">My Posts</option>
+            <option value="/profile/friends">My Friends</option>
+            <option value="/profile/awards">My Awards</option>
         </select>
     </div>
     <ul class="hidden text-sm font-medium text-center text-gray-900 sm:flex" id="fullWidthTab"
@@ -95,9 +109,9 @@ async function getRequests() {
             </button>
         </li>
         <li class="w-full">
-            <button
-                :class="['inline-block w-full p-4 focus:outline-none bg-white hover:bg-dark-purple hover:text-white', isActive('/achievements') ? 'text-light-pink' : '']">
-                My Achievements
+            <button @click="router.push('/profile/awards')"
+                :class="['inline-block w-full p-4 focus:outline-none bg-white hover:bg-dark-purple hover:text-white', isActive('/awards') ? 'text-light-pink' : '']">
+                My Awards
             </button>
         </li>
     </ul>

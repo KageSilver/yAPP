@@ -39,16 +39,16 @@
         <div v-if="post"
             class="flex-1 max-w-4xl bg-gray-100 border border-gray-300 rounded-lg shadow transition-shadow hover:shadow-md p-5 m-2">
             <div class="mb-4">
-                <h3 class="text-lg font-semibold">{{ post.postTitle }}</h3>
+                <h3 class="text-lg font-semibold break-words">{{ post.postTitle }}</h3>
                 <p class="text-sm text-gray-600">
                     <strong>Created At:</strong> {{ new Date(post.createdAt).toLocaleString() }}
                 </p>
             </div>
 
-            <div class="text-gray-700 mb-4 whitespace-pre-wrap">{{ post.postBody }}</div>
+            <div class="text-gray-700 mb-4 whitespace-pre-wrap break-words">{{ post.postBody }}</div>
 
             <!-- Icons for upvote, downvote, and reply with counts -->
-            <div class="flex justify-start space-x-4 mt-4">
+            <!-- <div class="flex justify-start space-x-4 mt-4">
                 <button @click.stop="upvote(post.pid)" class="flex items-center space-x-2">
                     <img src="../assets/post/upvote.svg" alt="Upvote" class="w-6 h-6">
                     <span>10</span>
@@ -57,11 +57,7 @@
                     <img src="../assets/post/downvote.svg" alt="Downvote" class="w-6 h-6">
                     <span>20</span>
                 </button>
-                <button @click.stop="reply(post.pid)" class="flex items-center space-x-2">
-                    <img src="../assets/post/reply.svg" alt="Reply" class="w-6 h-6">
-                    <span>Reply</span>
-                </button>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>

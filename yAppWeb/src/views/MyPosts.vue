@@ -1,11 +1,9 @@
 <script setup>
+import { get } from 'aws-amplify/api';
 import { getCurrentUser } from 'aws-amplify/auth';
 import { onMounted, ref } from 'vue';
-import { get } from 'aws-amplify/api';
 import { useRouter } from 'vue-router';
-import { usePostHelper } from '../composables/usePostHelper'; 
-import ProfileHeader from '../components/ProfileHeader.vue'; 
-import BackBtn from '../components/BackBtn.vue';
+import ProfileHeader from '../components/ProfileHeader.vue';
 
 const router = useRouter(); // Use router hook
 const username = ref('');
@@ -63,7 +61,7 @@ function clickPost(pid) {
                 </p>
             </div>
             <!-- Icons for upvote, downvote, and reply -->
-            <div class="flex space-x-4 mt-8">
+            <!-- <div class="flex space-x-4 mt-8">
                 <button @click.stop="upvote(post.pid)">
                     <img src="../assets/post/upvote.svg" alt="Upvote" class="w-6 h-6">
                     10
@@ -72,11 +70,7 @@ function clickPost(pid) {
                     <img src="../assets/post/downvote.svg" alt="Downvote" class="w-6 h-6">
                     20
                 </button>
-                <button @click.stop="reply(post.pid)">
-                    <img src="../assets/post/reply.svg" alt="Reply" class="w-6 h-6">
-                    Reply
-                </button>
-            </div>
+            </div> -->
 
         </div>
     </div>

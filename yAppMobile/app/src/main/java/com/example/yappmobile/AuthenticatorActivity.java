@@ -7,49 +7,44 @@ import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.amplifyframework.core.Amplify;
+import com.example.yappmobile.NaviBarDestinations.PublicPostsActivity;
 
 public class AuthenticatorActivity extends AppCompatActivity
 {
-    // NOTE: You no longer need to override onActivityResult.
-
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_authenticator);
 
         // Check if we need to sign in or not
-        Amplify.Auth.getCurrentUser(
-                result ->
-                {
-                    Log.d("Auth", "There is already a user signed in!");
-                },
-                error ->
-                {
-                    Log.e("Auth", "There is no user that is signed in!");
-                    invokeSignIn();
-                }
-        );
-        Log.i("Re-route", "Rerouting to Home Activity...");
-        startActivity(new Intent(AuthenticatorActivity.this,
-                PublicPostsActivity.class));
+        Amplify.Auth.getCurrentUser(result -> {
+            Log.i("Auth", "Continuing as " + result.getUsername() + "...");
+            rerouteToHome();
+        }, error -> {
+            Log.i("Auth", "There is no user signed in!!");
+            invokeSignIn();
+        });
     }
 
+    // Trigger the Hosted UI sign-in process
     private void invokeSignIn()
     {
-        // Trigger the Hosted UI sign-in process
-        Amplify.Auth.signInWithWebUI(
-                this,
-                result ->
-                {
-                    // Handle success
-                    Log.d("Auth", "Sign in success");
-                },
-                error ->
-                {
-                    // Handle failure
-                    Log.e("AuthQuickStart", "Sign in failed", error);
-                }
-        );
+        Amplify.Auth.signInWithWebUI(this, result -> {
+            Log.i("Auth", "Sign in success");
+            rerouteToHome();
+        }, error -> {
+            Log.e("Auth", "Sign in failed. Trying again...", error);
+            Amplify.Auth.signOut(result -> {
+                Log.i("Auth", "Signing out previous user...");
+                invokeSignIn();
+            });
+        });
+    }
+
+    private void rerouteToHome()
+    {
+        Log.i("Routing", "Rerouting to Public Posts Activity...");
+        startActivity(new Intent(AuthenticatorActivity.this, PublicPostsActivity.class));
     }
 }

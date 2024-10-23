@@ -13,6 +13,9 @@ module.exports = {
 				desktop: "1280px",
 				// => @media (min-width: 1280px) { ... }
 			},
+			boxShadow: {
+				top: "0px 5px 10px 0px rgba(0, 0, 0, 0.25)", // #00000040 is rgba(0, 0, 0, 0.25)
+			},
 			colors: {
 				//primevue
 				"primary-50": "rgb(var(--primary-50))",
@@ -45,9 +48,11 @@ module.exports = {
 				"dark-pink": " #80455E",
 				"deep-blue": "#19234B",
 				"navy-blue": "#061830",
-        "purple": "#EFB2CE",
-        "deep-dark":"#00000080",
+				"purple": "#EFB2CE",
+				"deep-dark": "#00000080",
 				"dark-purple": "#3E1F3C",
+				"pink-purple":"#63284E",
+
 			},
 			borderRadius: {
 				4: "4px",
@@ -91,7 +96,7 @@ module.exports = {
 				"gradient-to-b":
 					"linear-gradient(to bottom, #593359 38%, #19234B 79%, #061830 100%)",
 				"gradient-to-t":
-					"linear-gradient(to top, #253162 38%, #141D3F 79%, #0D1225 100%)",
+					"linear-gradient(180deg, #253162 0%, #141D3F 37.5%, #0D1225 100%)",
 				"hero-gradient":
 					"linear-gradient(180deg, #72355A 0%, #432D54 19.67%, #2F2850 45.17%, #19234B 74.17%, #061830 95%)",
 				"signin-gradient":
