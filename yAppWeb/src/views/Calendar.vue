@@ -17,7 +17,7 @@
         resetCalendar();
         const user = await getCurrentUser();
         uid.value = user.userId;
-        //await getMyDiaryEntries(uid);**************************************************
+        await getMyDiaryEntries(uid);
     });
 
     async function getMyDiaryEntries(uid) {
@@ -40,11 +40,13 @@
         var daysInMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0).getDate();
         var blankDays = new Date(selectedDate.getFullYear(), selectedDate.getMonth()).getDay();
 
-        console.log("blanks " + blankDays);
-
         resetMonthPicker();
         changeDateHeader();
+        moveFirstDay(blankDays);
+        adjustDaysInMonth(daysInMonth);
+    }
 
+    function moveFirstDay(blankDays) {
         for(var i = 0; i < 6; i++){
             var string = "blank" + i;
             var blank = document.getElementById(string);
@@ -54,10 +56,10 @@
             }else{
                 blank.style.display = 'none';
             }
-                
-            console.log(string + " = " + blank.style.display);
         }
+    }
 
+    function adjustDaysInMonth(daysInMonth) {
         if(daysInMonth == 29){
             document.getElementById("30").style.display = 'none';
         }
@@ -107,7 +109,6 @@
     function changeDateHeader() {
         document.getElementById("date").innerHTML = selectedDate.toDateString();
     }
-
 </script>
 
 <template> 
