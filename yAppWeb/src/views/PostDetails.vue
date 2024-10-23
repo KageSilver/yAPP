@@ -28,6 +28,8 @@
     const isAddingComment = ref(false); // State to control the visibility of the adding comment form
     const isDeletingComment = ref(false); // State to control the visibility of the confirmation modal
     const commentIds = ref([]);
+    const commentMsg = ref('');
+
 
     const isEditingComment = (comment) => {
         return ref(commentIds.value.includes(comment.cid)).value;
@@ -86,7 +88,8 @@
     };
     const openDeleteCommentModal = (comment) => {
         isDeletingComment.value = true;
-
+        //set the comment message
+        commentMsg.value = comment.commentBody;
         // Make API call to delete the comment
         //get the updated values
     };
@@ -326,7 +329,7 @@
         <ConfirmationModal :showModal=isDiscardingUpdate :close="closeDiscardModal" :confirm="confirmDiscard"
             header="Woah there!" message="Are you sure you want to discard your update?" />
         <ConfirmationModal :showModal=isDeletingComment :close="closeDeleteCommentModal" :confirm="deleteComment"
-            header="Woah there!" message="Are you sure you want to delete this comment?" />
+            header="Woah there!" :message="`Are you sure you want to delete this '${commentMsg}'?`" />
 
 
     </div>
