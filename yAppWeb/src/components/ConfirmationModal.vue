@@ -30,7 +30,7 @@ const props = defineProps({
 <template>
   <!-- Show the modal only if showDeleteModal is true -->
   <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75">
-    <div class="bg-white rounded-lg p-6 max-w-md mx-auto">
+    <div class="bg-white rounded-lg p-6 max-w-lg mx-auto">
       <h3 class="text-lg font-bold mb-4">{{ header }}</h3>
       <p>{{ message }}</p>
       <div class="mt-4 flex justify-end">
