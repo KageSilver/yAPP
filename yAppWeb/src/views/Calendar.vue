@@ -116,7 +116,7 @@
     <div class="backBtnDiv"> 
         <!-- header -->
         <div class="flex items-center">
-            <label id="date" class="flex text-white font-bold"></label>
+            <label id="date" class="flex text-white font-bold text-lg"></label>
             <button type="button" id="collapseCalendar" class="flex">
                 <img src="../assets/calendar/closeCalendar.svg"></img>
             </button>
