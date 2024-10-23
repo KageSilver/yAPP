@@ -44,7 +44,7 @@ public class PostActionsTests
         var post = new Post
         {
             PID = "1",
-            UserName = "user1@example.com",
+            UID = "user1@example.com",
             PostTitle = "title",
             PostBody = "body",
             Upvotes = 0,
@@ -68,7 +68,7 @@ public class PostActionsTests
 
         var returnedPost = Assert.IsType<Post>(okResult.Value);
         Assert.Equal(post.PID, returnedPost.PID);
-        Assert.Equal(post.UserName, returnedPost.UserName);
+        Assert.Equal(post.UID, returnedPost.UID);
         Assert.Equal(post.PostTitle, returnedPost.PostTitle);
         Assert.Equal(post.PostBody, returnedPost.PostBody);
         Assert.Equal(post.Upvotes, returnedPost.Upvotes);
@@ -88,7 +88,7 @@ public class PostActionsTests
         var post = new Post
         {
             PID = "1",
-            UserName = "user1@example.com",
+            UID = "user1@example.com",
             PostTitle = "title",
             PostBody = "body",
             Upvotes = 0,
@@ -126,7 +126,7 @@ public class PostActionsTests
         {
             PID = "11111",
             CreatedAt = DateTime.Now,
-            UserName = "username",
+            UID = "uid",
             PostTitle = "title",
             PostBody = "body",
             Upvotes = 0,
@@ -158,7 +158,7 @@ public class PostActionsTests
         {
             PID = "11111",
             CreatedAt = DateTime.Now,
-            UserName = "username",
+            UID = "uid",
             PostTitle = "title",
             PostBody = "body",
             Upvotes = 0,
@@ -186,7 +186,7 @@ public class PostActionsTests
         {
             PID = "11111",
             CreatedAt = DateTime.Now,
-            UserName = "username",
+            UID = "uid",
             PostTitle = "title",
             PostBody = "body",
             Upvotes = 0,
@@ -223,7 +223,7 @@ public class PostActionsTests
         {
             PID = "1",
             CreatedAt = DateTime.Now,
-            UserName = "username",
+            UID = "uid",
             PostTitle = "title",
             PostBody = "body",
             Upvotes = 0,
@@ -244,7 +244,7 @@ public class PostActionsTests
         var returnedPost = Assert.IsType<Post>(okResult.Value);
 
         Assert.Equal(request.PID, returnedPost.PID);
-        Assert.Equal(request.UserName, returnedPost.UserName);
+        Assert.Equal(request.UID, returnedPost.UID);
         Assert.Equal(request.PostTitle, returnedPost.PostTitle);
         Assert.Equal(request.PostBody, returnedPost.PostBody);
         Assert.Equal(request.Upvotes, returnedPost.Upvotes);
@@ -263,7 +263,7 @@ public class PostActionsTests
         {
             PID = "1",
             CreatedAt = DateTime.Now,
-            UserName = "username",
+            UID = "uid",
             PostTitle = "title",
             PostBody = "body",
             Upvotes = 0,
@@ -297,7 +297,7 @@ public class PostActionsTests
         {
             PID = "11111",
             CreatedAt = DateTime.Now,
-            UserName = "Anonymous",
+            UID = "uid",
             PostTitle = "title",
             PostBody = "body",
             Upvotes = 0,
@@ -317,7 +317,7 @@ public class PostActionsTests
         var returnedPost = Assert.IsType<Post>(result);
         Assert.Equal(request.PID, returnedPost.PID);
         Assert.Equal(request.CreatedAt, returnedPost.CreatedAt);
-        Assert.Equal("Anonymous", returnedPost.UserName);
+        Assert.Equal(request.UID, returnedPost.UID);
         Assert.Equal(request.PostTitle, returnedPost.PostTitle);
         Assert.Equal(request.PostBody, returnedPost.PostBody);
         Assert.Equal(request.Upvotes, returnedPost.Upvotes);
@@ -353,7 +353,7 @@ public class PostActionsTests
         var post = new Post
         {
             PID = "1",
-            UserName = "username",
+            UID = "uid",
             CreatedAt = DateTime.Now,
             PostTitle = "title",
             PostBody = "body",
@@ -375,13 +375,13 @@ public class PostActionsTests
             .Returns(scanToSearchMock.Object);
 
         // Act
-        var result = await _postActionsMock.GetPostsByUser(post.UserName, false);
+        var result = await _postActionsMock.GetPostsByUser(post.UID, false);
 
         // Assert
         Assert.Equal(1, result.Count);
         Assert.Equal(post.PID, result.First().PID);
         Assert.Equal(post.CreatedAt, result.First().CreatedAt);
-        Assert.Equal(post.UserName, result.First().UserName);
+        Assert.Equal(post.UID, result.First().UID);
         Assert.Equal(post.PostTitle, result.First().PostTitle);
         Assert.Equal(post.PostBody, result.First().PostBody);
         Assert.Equal(post.Upvotes, result.First().Upvotes);
@@ -400,7 +400,7 @@ public class PostActionsTests
             .ThrowsAsync(new Exception("error querying posts"));
 
         // Act
-        var result = await _postActionsMock.GetPostsByUser("username", false);
+        var result = await _postActionsMock.GetPostsByUser("uid", false);
 
         // Assert
         Assert.Empty(result);
@@ -418,7 +418,7 @@ public class PostActionsTests
         {
             PID = "1",
             CreatedAt = DateTime.Now,
-            UserName = "username",
+            UID = "uid",
             PostTitle = "title",
             PostBody = "body",
             Upvotes = 0,
@@ -451,7 +451,7 @@ public class PostActionsTests
         // Assert
         Assert.Equal(1, result.Count);
         Assert.Equal(post.PID, result.First().PID);
-        Assert.Equal(post.UserName, result.First().UserName);
+        Assert.Equal(post.UID, result.First().UID);
         Assert.Equal(post.PostTitle, result.First().PostTitle);
         Assert.Equal(post.PostBody, result.First().PostBody);
         Assert.Equal(post.Upvotes, result.First().Upvotes);
