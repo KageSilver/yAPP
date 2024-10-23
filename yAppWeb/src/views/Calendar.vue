@@ -5,29 +5,28 @@
     import { useRouter } from 'vue-router';
 
     const router = useRouter(); // Use router hook
-    const username = ref('');
+    const uid = ref('');
     const jsonData = ref([]);
     const loading = false;
 
     var today = new Date();
     var selectedDate = today;
-    var datepicker = selectedDate.toDateString();
 
     // Retrieve the necessary data and function from the helper
     onMounted(async () => {
         resetCalendar();
         const user = await getCurrentUser();
-        username.value = user.username;
-        //await getMyDiaryEntries(username);**************************************************
+        uid.value = user.userId;
+        //await getMyDiaryEntries(uid);**************************************************
     });
 
-    async function getMyDiaryEntries(username)
+    async function getMyDiaryEntries(uid)
     {
         try
         {
             const restOperation = get({
                 apiName: 'yapp',
-                path: `/api/posts/getPostsByUser?userName=${username.value}&diaryEntry=${true}`
+                path: `/api/posts/getPostsByUser?uid=${uid.value}&diaryEntry=${true}`
             });
             const { body } = await restOperation.response;
             const response = await ((await body.blob()).arrayBuffer());
