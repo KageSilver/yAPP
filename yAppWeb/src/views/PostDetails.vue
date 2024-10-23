@@ -229,7 +229,7 @@
                 
                 <!-- Post Body -->
                 <div class="text-gray-700 mb-4 whitespace-pre-wrap break-words">{{ post.postBody }}</div>
-                    <!-- Icons for upvote, downvote, and reply with counts -->
+                    <!-- Icons for upvote, downvote, and reply -->
                 <div class="flex justify-end space-x-4 mx-4">
                     <!-- <button @click.stop="upvote(post.pid)" class="flex items-center space-x-2">
                         <img src="../assets/post/upvote.svg" alt="Upvote" class="w-6 h-6">
