@@ -49,7 +49,7 @@ public class PostController : ControllerBase
         {
             Console.WriteLine("Post request from: " + request.UID + " and title: " + request.PostTitle);
 
-            var poster = await _cognitoActions.GetUser(request.UID);
+            var poster = await _cognitoActions.GetUserById(request.UID);
 
             if(poster == null)
             {
