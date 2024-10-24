@@ -66,7 +66,7 @@ public class PostControllerTests
             DiaryEntry = false, 
             Anonymous = true 
         };
-        _mockCognitoActions.Setup(c => c.GetUser(request.UID)).ReturnsAsync((User)null);
+        _mockCognitoActions.Setup(c => c.GetUserById(request.UID)).ReturnsAsync((User)null);
 
         // Act
         var result = await _postController.CreatePost(request);
@@ -101,7 +101,7 @@ public class PostControllerTests
         };
 
         // Mock GetUser to return the poster
-        _mockCognitoActions.Setup(c => c.GetUser(request.UID)).ReturnsAsync(poster);
+        _mockCognitoActions.Setup(c => c.GetUserById(request.UID)).ReturnsAsync(poster);
 
         // Mock CreatePost to return a new Post object
         _mockPostActions.Setup(p => p.CreatePost(It.IsAny<Post>())).ReturnsAsync(new OkObjectResult(post));
