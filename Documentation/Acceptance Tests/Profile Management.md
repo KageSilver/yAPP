@@ -90,7 +90,12 @@
 4. Select the "Sign In" button at the bottom of the panel
 5. Select the "Profile" button on the panel on the right of the screen
 6. Select the "My Friends" tab on the top of the panel
-7. 
+7. Select the "Unfollow" button next to the name of the friend you would like to unfriend
+8. A pop-up will appear confirming if you want to unfriend this person
+    - Select "Yes" to unfollow
+    - Select "Cancel" to keep that person as a friend
+9. The friend you unfollowed should disappear from the "My Friends" view
+10. Done!
 
 ## Mobile Acceptance Tests
 
