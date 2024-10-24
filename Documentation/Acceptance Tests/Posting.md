@@ -1,13 +1,9 @@
 # Posting Acceptance Tests
+ - Acceptance tests for our website and mobile app are written instructions and run manually by a person using the website or mobile app.
 
-## Mobile
- - Acceptance tests for our Android app are written in JUnit and run through Android Studio.
- - These acceptance tests can be found under yAppMobile > app > src > androidTest > tests > PostingAT.java
+ ## Website Acceptance Tests
 
-## Website
- - Acceptance tests for our website are written instructions and run manually by a person using the website.
-
- ### Creating New Post
+ ### Creating New Post - Website
 1. Navigate to the yAPP website
 2. If not already selected, select the "Sign In" tab at the top of the panel
 3. Enter account details
@@ -22,7 +18,7 @@
 10. A pop-up should appear confirming you have created a new post
 11. Done!
 
- ### Viewing User's Own Posts
+ ### Viewing User's Own Posts - Website
 1. Navigate to the yAPP website
 2. If not already selected, select the "Sign In" tab at the top of the panel
 3. Enter account details
@@ -33,7 +29,7 @@
 6. Any public posts you make will appear here
 7. Done!
 
- ### Viewing Public Posts
+ ### Viewing Public Posts - Website
 1. Navigate to the yAPP website
 2. If not already selected, select the "Sign In" tab at the top of the panel
 3. Enter account details
@@ -41,5 +37,46 @@
     - Password
 4. Select the "Sign In" button at the bottom of the panel
 5. Select the "Home" button on the panel on the right of the screen if not already selected
+6. Public posts made by any user will appear here, sorted by posts made most recent
+7. Done!
+
+ ## Mobile Acceptance Tests
+
+ ### Creating New Post - Mobile
+1. Navigate to the yAPP mobile app
+2. To sign in, you will be redirected to a browser webpage
+3. Enter account details
+    - Email
+    - Password
+4. Select the "Sign in" button at the bottom of the panel
+5. Select the "Create Post" button on the bottom navigation bar
+6. Enter a post title in the textfield where the text "Insert title here" appears
+7. Enter the post contents in the textfield under "Insert very interesting content here" appears
+8. To discard the post, select the "Discard" button at the bottom of the panel
+    - A pop-up will appear to confirm if you'd like to discard the post, select "Yes"
+9. To create the post, select the "Create Post" button at the bottom of the panel
+    - A pop-up should appear confirming you have created a new post
+10. Done!
+
+ ### Viewing User's Own Posts - Mobile
+1. Navigate to the yAPP mobile app
+2. To sign in, you will be redirected to a browser webpage
+3. Enter account details
+    - Email
+    - Password
+4. Select the "Sign in" button at the bottom of the panel
+5. Select the "Profile" button on the bottom navigation bar
+6. Select the "My Posts" tab if not already selected
+7. All public posts you have made will appear here
+8. Done!
+ 
+ ### Viewing Public Posts - Mobile
+1. Navigate to the yAPP mobile app
+2. To sign in, you will be redirected to a browser webpage
+3. Enter account details
+    - Email
+    - Password
+4. Select the "Sign in" button at the bottom of the panel
+5. Select the "Home" button on the bottom navigation bar if not already selected
 6. Public posts made by any user will appear here, sorted by posts made most recent
 7. Done!
