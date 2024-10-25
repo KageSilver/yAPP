@@ -134,7 +134,7 @@
           "method": "DELETE",
           "header": [],
           "url": {
-            "raw": "{{base_url}}/deletePost?pid=${pid}",
+            "raw": "{{base_url}}/api/posts/deletePost?pid=${pid}",
             "host": ["{{base_url}}"],
             "path": ["api", "posts", "deletePost"],
             "query": [
