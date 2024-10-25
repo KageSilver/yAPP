@@ -89,7 +89,8 @@
                     android:text="Anonymous?"
                     android:textColor="@color/white"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="gone"/>
 
                 <View
                     android:id="@+id/divider2"

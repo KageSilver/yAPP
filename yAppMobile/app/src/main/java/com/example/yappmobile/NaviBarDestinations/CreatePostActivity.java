@@ -131,6 +131,24 @@ public class CreatePostActivity extends AppCompatActivity
                 createPost();
             }
         });
+
+        diaryEntry.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){ toggleDiaryEntry(); }
+        });
+    }
+
+    private void toggleDiaryEntry()
+    {
+        if(diaryEntry.isChecked())
+        {
+            anonymous.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            anonymous.setVisibility(View.GONE);
+            anonymous.setChecked(true);
+        }
     }
 
     private void createPost()
@@ -157,12 +175,7 @@ public class CreatePostActivity extends AppCompatActivity
                         newPost.put("postBody", postBody);
                         newPost.put("uid", uid);
                         newPost.put("diaryEntry", diaryEntry.isChecked());
-
-                        if(diaryEntry.isChecked()){
-                            newPost.put("anonymous", anonymous.isChecked());
-                        }else{
-                            newPost.put("anonymous", true);
-                        }
+                        newPost.put("anonymous", anonymous.isChecked());
                     }
                     catch (JSONException e)
                     {
