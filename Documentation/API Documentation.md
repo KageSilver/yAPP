@@ -51,13 +51,13 @@
 
 ### GetPostsByUser
  - Retrieves all posts from a user, either all public posts or all diary entries.
- - GET: api/posts/getPostsByUser?userName={userName}&diaryEntry={diaryEntry}
-    - userName: The username used to find all posts created by a user
+ - GET: api/posts/getPostsByUser?uid={uid}&diaryEntry={diaryEntry}
+    - uid: The uid used to find all posts created by a user
     - diaryEntry: If the query is for public posts or diary entries
  - Status codes
     - 200 OK
     - 400 Bad Request
-        - username is required
+        - uid is required
 
 ### GetRecentPosts
  - Gets recent posts from before a specified time.
@@ -72,11 +72,11 @@
 ### CreatePost
  - Creates a new post.
  - POST: api/posts/createPost
- - Request body: { "userName": "username", "postTitle": "title", "postBody": "body", "diaryEntry": false, "anonymous": false }
+ - Request body: { "uid": "uid", "postTitle": "title", "postBody": "body", "diaryEntry": false, "anonymous": false }
  - Status codes
     - 200 OK
     - 400 Bad Request
-        - request body is required and must contain poster's username, post title and post body
+        - request body is required and must contain poster's uid, post title and post body
         - Failed to create post
     - 404 Not Found
         - Post creator not found
@@ -84,11 +84,11 @@
 ### UpdatePost
  - Edits an already existing post.
  - PUT: api/posts/updatePost
- - Request body: { "pid": "pid", "createdAt": "createdAt", "userName": "username", "postTitle": "title", "postBody": "body", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": false }
+ - Request body: { "pid": "pid", "createdAt": "createdAt", "uid": "uid", "postTitle": "title", "postBody": "body", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": false }
  - Status codes
     - 200 OK
     - 400 Bad Request
-        - request body is required and must contain username, post title, post body
+        - request body is required and must contain uid, post title, post body
 
 ### DeletePost
  - Deletes a post from the database by a post id.

@@ -52,15 +52,21 @@ public class PostControllerTests
 
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-        Assert.Equal("request body is required and must contain poster's username, post title and post body", badRequestResult.Value);
+        Assert.Equal("request body is required and must contain poster's uid, post title and post body", badRequestResult.Value);
     }
 
     [Fact]
-    public async Task CreatePost_ShouldReturnNotFound_WhenUsernameIsNotFound()
+    public async Task CreatePost_ShouldReturnNotFound_WhenUIDIsNotFound()
     {
         // Arrange
-        var request = new NewPost { UserName = "userDoesNotExist", PostTitle = "title", PostBody = "body", DiaryEntry = false, Anonymous = true };
-        _mockCognitoActions.Setup(c => c.GetUser(request.UserName)).ReturnsAsync((User)null);
+        var request = new NewPost { 
+            UID = "userDoesNotExist", 
+            PostTitle = "title", 
+            PostBody = "body", 
+            DiaryEntry = false, 
+            Anonymous = true 
+        };
+        _mockCognitoActions.Setup(c => c.GetUserById(request.UID)).ReturnsAsync((User)null);
 
         // Act
         var result = await _postController.CreatePost(request);
@@ -74,11 +80,18 @@ public class PostControllerTests
     public async Task CreatePost_ShouldReturnOK_WhenPostIsCreatedSuccessfully()
     {
         // Arrange 
-        var request = new NewPost { UserName = "user1@example.com", PostTitle = "title", PostBody = "body", DiaryEntry = false, Anonymous = true };
+        var request = new NewPost 
+        { 
+            UID = "user1@example.com", 
+            PostTitle = "title", 
+            PostBody = "body", 
+            DiaryEntry = false, 
+            Anonymous = true 
+        };
         var poster = new User {UserName = "user1@example.com" };
         var post = new Post 
         { 
-            UserName = request.UserName, 
+            UID = request.UID, 
             PostTitle = request.PostTitle, 
             PostBody = request.PostBody, 
             Upvotes = 0, 
@@ -88,7 +101,7 @@ public class PostControllerTests
         };
 
         // Mock GetUser to return the poster
-        _mockCognitoActions.Setup(c => c.GetUser(request.UserName)).ReturnsAsync(poster);
+        _mockCognitoActions.Setup(c => c.GetUserById(request.UID)).ReturnsAsync(poster);
 
         // Mock CreatePost to return a new Post object
         _mockPostActions.Setup(p => p.CreatePost(It.IsAny<Post>())).ReturnsAsync(new OkObjectResult(post));
@@ -99,7 +112,7 @@ public class PostControllerTests
         // Assert
         var returnedPost = result.Value;
         // cannot assert PID being equal since PID is randomly generated
-        Assert.Equal(post.UserName, returnedPost.UserName);
+        Assert.Equal(post.UID, returnedPost.UID);
         Assert.Equal(post.PostTitle, returnedPost.PostTitle);
         Assert.Equal(post.PostBody, returnedPost.PostBody);
         Assert.Equal(post.Upvotes, returnedPost.Upvotes);
@@ -162,7 +175,7 @@ public class PostControllerTests
         {
             PID = "1",
             CreatedAt = DateTime.Now,
-            UserName = "username",
+            UID = "username",
             PostTitle = "title",
             PostBody = "body",
             Upvotes = 0,
@@ -182,7 +195,7 @@ public class PostControllerTests
         var returnedPost = Assert.IsType<Post>(okResult.Value);
 
         Assert.Equal(request.PID, returnedPost.PID);
-        Assert.Equal(request.UserName, returnedPost.UserName);
+        Assert.Equal(request.UID, returnedPost.UID);
         Assert.Equal(request.PostTitle, returnedPost.PostTitle);
         Assert.Equal(request.PostBody, returnedPost.PostBody);
         Assert.Equal(request.Upvotes, returnedPost.Upvotes);
@@ -199,19 +212,19 @@ public class PostControllerTests
 
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(response.Result);
-        Assert.Equal("request body is required and must contain username, post title, post body",
+        Assert.Equal("request body is required and must contain uid, post title, post body",
             badRequestResult.Value);
     }
     
     [Fact]
-    public async Task UpdatePost_ShouldReturnBadRequest_WhenUsernameIsMissing()
+    public async Task UpdatePost_ShouldReturnBadRequest_WhenUIDIsMissing()
     {
         // Arrange
         var request = new Post
         {
             PID = "1",
             CreatedAt = DateTime.Now,
-            UserName = "",
+            UID = "",
             PostTitle = "title",
             PostBody = "body",
             Upvotes = 0,
@@ -225,7 +238,7 @@ public class PostControllerTests
 
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(response.Result);
-        Assert.Equal("request body is required and must contain username, post title, post body",
+        Assert.Equal("request body is required and must contain uid, post title, post body",
             badRequestResult.Value);
 
     }
@@ -238,7 +251,7 @@ public class PostControllerTests
         {
             PID = "1",
             CreatedAt = DateTime.Now,
-            UserName = "username",
+            UID = "uid",
             PostTitle = "title",
             PostBody = "",
             Upvotes = 0,
@@ -252,7 +265,7 @@ public class PostControllerTests
 
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(response.Result);
-        Assert.Equal("request body is required and must contain username, post title, post body",
+        Assert.Equal("request body is required and must contain uid, post title, post body",
             badRequestResult.Value);
     }
 
@@ -264,7 +277,7 @@ public class PostControllerTests
         {
             PID = "1",
             CreatedAt = DateTime.Now,
-            UserName = "username",
+            UID = "uid",
             PostTitle = "",
             PostBody = "body",
             Upvotes = 0,
@@ -278,7 +291,7 @@ public class PostControllerTests
 
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(response.Result);
-        Assert.Equal("request body is required and must contain username, post title, post body",
+        Assert.Equal("request body is required and must contain uid, post title, post body",
             badRequestResult.Value);
     }
 
@@ -294,7 +307,7 @@ public class PostControllerTests
         {
             PID = "1",
             CreatedAt = DateTime.Now,
-            UserName = "username",
+            UID = "uid",
             PostTitle = "title",
             PostBody = "body",
             Upvotes = 0,
@@ -316,7 +329,7 @@ public class PostControllerTests
         Assert.IsType<List<Post>>(resultPosts);
         Assert.Equal(1, resultPosts.Count);
         Assert.Equal(post.PID, resultPosts.First().PID);
-        Assert.Equal(post.UserName, resultPosts.First().UserName);
+        Assert.Equal(post.UID, resultPosts.First().UID);
         Assert.Equal(post.PostTitle, resultPosts.First().PostTitle);
         Assert.Equal(post.PostBody, resultPosts.First().PostBody);
         Assert.Equal(post.Upvotes, resultPosts.First().Upvotes);
@@ -347,7 +360,7 @@ public class PostControllerTests
         var post = new Post
         {
             PID = "1",
-            UserName = "username",
+            UID = "uid",
             CreatedAt = DateTime.Now,
             PostTitle = "title",
             PostBody = "body",
@@ -366,7 +379,7 @@ public class PostControllerTests
         var returnedPost = Assert.IsType<Post>(result.Value);
         Assert.Equal(post.PID, returnedPost.PID);
         Assert.Equal(post.CreatedAt, returnedPost.CreatedAt);
-        Assert.Equal(post.UserName, returnedPost.UserName);
+        Assert.Equal(post.UID, returnedPost.UID);
         Assert.Equal(post.PostTitle, returnedPost.PostTitle);
         Assert.Equal(post.PostBody, returnedPost.PostBody);
         Assert.Equal(post.Upvotes, returnedPost.Upvotes);
@@ -411,7 +424,7 @@ public class PostControllerTests
         var post = new Post
         {
             PID = "1",
-            UserName = "username",
+            UID = "uid",
             CreatedAt = DateTime.Now,
             PostTitle = "title",
             PostBody = "body",
@@ -427,14 +440,14 @@ public class PostControllerTests
         _mockPostActions.Setup(p => p.GetPostsByUser(It.IsAny<string>(), It.IsAny<bool>())).ReturnsAsync(list);
 
         // Act
-        var result = await _postController.GetPostsByUser(post.UserName, false);
+        var result = await _postController.GetPostsByUser(post.UID, false);
 
         // Assert
         var returnedList = Assert.IsType<List<Post>>(result.Value);
         Assert.Equal(1, returnedList.Count);
         Assert.Equal(post.PID, returnedList.First().PID);
         Assert.Equal(post.CreatedAt, returnedList.First().CreatedAt);
-        Assert.Equal(post.UserName, returnedList.First().UserName);
+        Assert.Equal(post.UID, returnedList.First().UID);
         Assert.Equal(post.PostTitle, returnedList.First().PostTitle);
         Assert.Equal(post.PostBody, returnedList.First().PostBody);
         Assert.Equal(post.Upvotes, returnedList.First().Upvotes);
@@ -445,14 +458,14 @@ public class PostControllerTests
     }
 
     [Fact]
-    public async Task GetPostsByUser_ShouldReturnBadRequest_WithInvalidUsername()
+    public async Task GetPostsByUser_ShouldReturnBadRequest_WithInvalidUID()
     {
         // Act
         var result = await _postController.GetPostsByUser(null, false);
 
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-        Assert.Equal("username is required", badRequestResult.Value);
+        Assert.Equal("uid is required", badRequestResult.Value);
     }
 
     #endregion
