@@ -143,7 +143,8 @@ public class CardListHelper extends AppCompatActivity
             }
             else
             {
-                Log.d("CardListHelper", "You're trying to invoke a method on the wrong card type");
+                Log.d("CardListHelper", 
+                      "You're trying to invoke a method on the wrong card type");
             }
         }
         catch (JSONException jsonException)

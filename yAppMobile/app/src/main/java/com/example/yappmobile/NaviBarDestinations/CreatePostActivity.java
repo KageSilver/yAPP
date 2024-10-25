@@ -59,13 +59,13 @@ public class CreatePostActivity extends AppCompatActivity
         titleEditText.addTextChangedListener(new TextWatcher()
         {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) 
+            {
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+            public void onTextChanged(CharSequence s, int start, int before, int count) 
+            {
             }
 
             @Override
@@ -84,7 +84,6 @@ public class CreatePostActivity extends AppCompatActivity
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count)
             {
-
             }
 
             @Override
@@ -138,19 +137,19 @@ public class CreatePostActivity extends AppCompatActivity
         {
             CompletableFuture<String> future = new CompletableFuture<>();
             Amplify.Auth.getCurrentUser(result -> {
-                future.complete(result.getUsername());
+                future.complete(result.getUserId());
             }, error -> {
                 Log.e("Auth", "Error occurred when getting current user. Redirecting to authenticator");
                 Intent intent = new Intent(CreatePostActivity.this, AuthenticatorActivity.class);
                 startActivity(intent);
             });
-            future.thenAccept(username -> {
+            future.thenAccept(uid -> {
                 runOnUiThread(() -> {
                     try
                     {
                         newPost.put("postTitle", postTitle);
                         newPost.put("postBody", postBody);
-                        newPost.put("userName", username);
+                        newPost.put("uid", uid);
                     }
                     catch (JSONException e)
                     {
@@ -267,7 +266,7 @@ public class CreatePostActivity extends AppCompatActivity
         {
             newPost.put("postTitle", "");
             newPost.put("postBody", "");
-            newPost.put("userName", "");
+            newPost.put("uid", "");
             newPost.put("diaryEntry", false);
             newPost.put("anonymous", true);
         }
