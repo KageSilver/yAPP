@@ -101,7 +101,7 @@ public class CommentControllerIntegrationTests
 
         // Clean up (need to be uncommented when deletion is implemented)
         await _commentActions.DeleteComment(comment.CID);
-        // Test user is deleted in GetCommentsByPid_ShouldReturnComments_WhenSuccessful()
+        // Test user is deleted in DeleteComment_ShouldReturnFalse_WhenDeleteFails()
     }
 
     [Fact, Order(2)]
@@ -188,7 +188,7 @@ public class CommentControllerIntegrationTests
 
         // Clean up
         await _commentActions.DeleteComment(comment.CID);
-        // Test user is deleted in GetCommentsByPid_ShouldReturnComments_WhenSuccessful()
+        // Test user is deleted in DeleteComment_ShouldReturnFalse_WhenDeleteFails()
     }
 
     [Fact, Order(5)]
@@ -255,15 +255,16 @@ public class CommentControllerIntegrationTests
 
         // Assert
         Assert.Equal(1, commentList.Count);
-        Assert.Equal(newComment.CID, commentList.Last().CID);
-        Assert.Equal(newComment.PID, commentList.Last().PID);
-        Assert.Equal(newComment.UID, commentList.Last().UID);
-        Assert.Equal(newComment.CommentBody, commentList.Last().CommentBody);
-        Assert.Equal(newComment.Upvotes, commentList.Last().Upvotes);
-        Assert.Equal(newComment.Downvotes, commentList.Last().Downvotes);
+        Assert.Equal(newComment.CID, commentList.First().CID);
+        Assert.Equal(newComment.PID, commentList.First().PID);
+        Assert.Equal(newComment.UID, commentList.First().UID);
+        Assert.Equal(newComment.CommentBody, commentList.First().CommentBody);
+        Assert.Equal(newComment.Upvotes, commentList.First().Upvotes);
+        Assert.Equal(newComment.Downvotes, commentList.First().Downvotes);
 
         // Clean up
         await _commentActions.DeleteComment(newComment.CID);
+        // Test user is deleted in DeleteComment_ShouldReturnFalse_WhenDeleteFails()
     }
 
     [Fact, Order(9)]
@@ -328,6 +329,7 @@ public class CommentControllerIntegrationTests
 
         // Clean up
         await _commentActions.DeleteComment(newComment.CID);
+        // Test user is deleted in DeleteComment_ShouldReturnFalse_WhenDeleteFails()
     }
 
     [Fact, Order(12)]
@@ -398,7 +400,7 @@ public class CommentControllerIntegrationTests
 
         // Clean up
         await _commentActions.DeleteComment(responseComment.CID);
-        // Test user is deleted in GetCommentsByUser_ShouldReturnComments_WhenSuccessful()
+        // Test user is deleted in DeleteComment_ShouldReturnFalse_WhenDeleteFails()
     }
     
     [Fact, Order(15)]
@@ -448,7 +450,7 @@ public class CommentControllerIntegrationTests
 
         // Assert
         Assert.True(result);
-        // Test user is deleted in GetCommentsByUser_ShouldReturnComments_WhenSuccessful()
+        // Test user is deleted in DeleteComment_ShouldReturnFalse_WhenDeleteFails()
     }
     
     [Fact, Order(17)]
