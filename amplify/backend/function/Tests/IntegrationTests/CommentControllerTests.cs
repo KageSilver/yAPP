@@ -364,20 +364,19 @@ public class CommentControllerIntegrationTests
         // Arrange
         var newComment = new NewComment
         {
+            PID = "UpdateCommentShouldReturnOk",
             UID = testUid,
             CommentBody = "UpdateComment_ShouldReturnOk_WhenCommentIsUpdatedSuccessfully()",
-            PID = "UpdateCommentShouldReturnOk"
         };
         
         var content = new StringContent(JsonConvert.SerializeObject(newComment), System.Text.Encoding.UTF8,
             "application/json");
 
-        // Create a new comment for testing
+        // Creates a new comment to test
         var response1 = await _client.PostAsync("/api/comments/createComment", content);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
-
-        var responseString = await response1.Content.ReadAsStringAsync();
-        var responseComment = JsonConvert.DeserializeObject<Comment>(responseString);
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
+        var responseString1 = await response1.Content.ReadAsStringAsync();
+        var responseComment = JsonConvert.DeserializeObject<Comment>(responseString1);
         
         // Make updates to the comment
         responseComment.CommentBody = "this comment has been edited";

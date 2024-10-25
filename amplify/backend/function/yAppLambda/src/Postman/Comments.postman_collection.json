@@ -198,7 +198,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n\t\"cid\": \"\",\n\t\"pid\": \"\",\n\t\"createdAt\": \"\",\n\t\"updatedAt\": \"\",\n\t\"userName\": \"\",\n\t\"commentBody\": \"\",\n\t\"upvotes\": 0,\n\t\"downvotes\": 0}",
+          "raw": "{\n\t\"cid\": \"\",\n\t\"pid\": \"\",\n\t\"createdAt\": \"\",\n\t\"updatedAt\": \"\",\n\t\"uid\": \"\",\n\t\"commentBody\": \"\",\n\t\"upvotes\": 0,\n\t\"downvotes\": 0}",
           "options": {
             "raw": {
               "language": "json"
