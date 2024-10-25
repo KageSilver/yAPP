@@ -38,11 +38,10 @@ import BackBtnHeader from "../components/BackBtnHeader.vue";
 	
 	async function createPost(event) {
 		event.preventDefault();
-		var postElements = document.getElementById("post").elements;
 		var createButton = document.getElementById("create-button");
 		createButton.disabled = true;
-		newPost.postTitle = postElements[2].value;
-		newPost.postBody = postElements[3].value;
+		newPost.postTitle = document.getElementById("title").value;
+		newPost.postBody = document.getElementById("content").value;
 		newPost.diaryEntry = diaryEntryIsChecked.value;
 		newPost.anonymous = anonIsChecked.value;
 
@@ -71,8 +70,8 @@ import BackBtnHeader from "../components/BackBtnHeader.vue";
 
 				// Reset form fields after submission
 				newPost.userName = '';
-				newPost.postTitle, postElements[0].value = '';
-				newPost.postBody, postElements[1].value = '';
+				newPost.postTitle = document.getElementById("title").value;
+				newPost.postBody = document.getElementById("content").value;
 				createButton.disabled = false;
 				// Send to home page
 				router.push("/profile/myposts");
@@ -87,9 +86,8 @@ import BackBtnHeader from "../components/BackBtnHeader.vue";
 
 	function discardPost(event) {
 		event.preventDefault();
-		var postElements = document.getElementById("post").elements;
-		newPost.postTitle = postElements[0].value;
-		newPost.postBody = postElements[1].value;
+		newPost.postTitle = document.getElementById("title").value;
+		newPost.postBody = document.getElementById("content").value;
 		if (newPost.postTitle != '' || newPost.postBody != '') {
 			console.log('Throwing away post...');
 			if (confirm("Are you sure you want to throw away your changes??")) {
@@ -212,12 +210,8 @@ import BackBtnHeader from "../components/BackBtnHeader.vue";
 						@click="discardPost">
 						Discard
 					</button>
-
 				</div>
-
-
 			</form>
-
 		</div>
 	</div>
 </template>
