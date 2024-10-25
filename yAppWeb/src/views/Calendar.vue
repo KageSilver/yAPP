@@ -19,7 +19,6 @@
         const user = await getCurrentUser();
         uid.value = user.userId;
         await getMyDiaryEntries(uid);
-
         getSelectDateDiaries();
     });
 
@@ -57,9 +56,9 @@
 
         resetMonthPicker();
         changeDateHeader();
-        getSelectDateDiaries();
         moveFirstDay(blankDays);
         adjustDaysInMonth(daysInMonth);
+        getSelectDateDiaries();
     }
 
     function moveFirstDay(blankDays) {
@@ -142,6 +141,10 @@
             document.getElementById("openCalendar").style.display = 'block';
             document.getElementById("closeCalendar").style.display = 'none';
         }
+    }
+
+    function clickPost(pid) {
+        router.push({ name: 'details', params: { pid } });
     }
 </script>
 
