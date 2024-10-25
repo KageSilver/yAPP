@@ -20,7 +20,10 @@ import com.example.yappmobile.NavBar;
 import com.example.yappmobile.PostEntryActivity;
 import com.example.yappmobile.R;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class PublicPostsActivity extends AppCompatActivity implements IListCardItemInteractions
 {
@@ -36,8 +39,14 @@ public class PublicPostsActivity extends AppCompatActivity implements IListCardI
         ProgressBar loadingSpinner = findViewById(R.id.indeterminateBar);
         postListHelper = new CardListHelper(this, loadingSpinner, "POST", this);
 
-        // "Load more posts" button code
-        String since = LocalDateTime.now().toString();
+        // Load more posts button code
+        // Formats current time in GMT
+        // This needs to be formatted in GMT or else the newest posts won't load on the home page
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        format.setTimeZone(TimeZone.getTimeZone("GMT"));
+        Date date = new Date();
+        String since = format.format(date);
+
         Button loadMore = findViewById(R.id.load_more_button);
         loadMore.setOnClickListener(new View.OnClickListener()
         {
