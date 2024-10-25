@@ -1,12 +1,13 @@
 <script setup>
-    import { getCurrentUser } from 'aws-amplify/auth';
-    import { DeprecationTypes, onMounted, ref } from 'vue';
     import { get } from 'aws-amplify/api';
+    import { getCurrentUser } from 'aws-amplify/auth';
+    import { onMounted, ref } from 'vue';
     import { useRouter } from 'vue-router';
 
     const router = useRouter(); // Use router hook
     const uid = ref('');
-    const jsonData = ref([]);
+    const userDiaries = ref([]);
+    const userDiariesDate = ref([]);
     const loading = false;
 
     var today = new Date();
@@ -18,10 +19,13 @@
         const user = await getCurrentUser();
         uid.value = user.userId;
         await getMyDiaryEntries(uid);
+
+        getSelectDateDiaries();
     });
 
     async function getMyDiaryEntries(uid) {
         try {
+            console.log(uid);
             const restOperation = get({
                 apiName: 'yapp',
                 path: `/api/posts/getPostsByUser?uid=${uid.value}&diaryEntry=${true}`
@@ -30,10 +34,21 @@
             const response = await ((await body.blob()).arrayBuffer());
             const decoder = new TextDecoder('utf-8'); // Use TextDecoder to decode the ArrayBuffer to a string
             const decodedText = decoder.decode(response);
-            jsonData.value = JSON.parse(decodedText); // Update with parsed JSON
+            userDiaries.value = JSON.parse(decodedText); // Update with parsed JSON
         } catch (e) {
-            console.log('GET call failed', error);
+            console.log('GET call failed', e);
         }
+    }
+
+    function getSelectDateDiaries() {
+        console.log("selectedDate.toLocaleDateString(): " + selectedDate.toLocaleDateString());
+        console.log(JSON.stringify(userDiaries.value, null, 2));
+
+        userDiariesDate.value = userDiaries.value.filter(
+            function(post){ 
+                return new Date(post.createdAt).toLocaleDateString() == selectedDate.toLocaleDateString() 
+            } 
+        );
     }
 
     function resetCalendar() {
@@ -42,6 +57,7 @@
 
         resetMonthPicker();
         changeDateHeader();
+        getSelectDateDiaries();
         moveFirstDay(blankDays);
         adjustDaysInMonth(daysInMonth);
     }
@@ -109,6 +125,7 @@
     function changeSelectedDate(date) {
         selectedDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), date);
         changeDateHeader();
+        getSelectDateDiaries();
     }
 
     function changeDateHeader() {
@@ -274,5 +291,22 @@
         </div>
         
         <hr class="w-full h-0.1 mx-auto mt-4 bg-white">
+
+        <div class="flex flex-col items-center w-full mx-auto">
+            <div class="card bg-gray-300 border border-gray-500 rounded-lg p-5 shadow transition-shadow hover:shadow-md cursor-pointer w-full max-w-4xl m-2"
+                v-for="post in userDiariesDate" :key="post.pid" @click="clickPost(post.pid)">
+                <div class="card-header mb-2">
+                    <h3 class="text-lg font-semibold truncate">{{ post.postTitle }}</h3>
+                    <p class="text-sm text-gray-600 overflow-hidden overflow-ellipsis whitespace-nowrap">
+                        <strong>Created At:</strong> {{ new Date(post.createdAt).toLocaleString() }}
+                    </p>
+                </div>
+                <div class="card-body">
+                    <p class="text-gray-700 overflow-hidden text-ellipsis whitespace-nowrap">
+                        {{ post.postBody }}
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
