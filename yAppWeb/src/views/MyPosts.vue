@@ -7,7 +7,7 @@ import ProfileHeader from '../components/ProfileHeader.vue';
 import PostCard from '../components/PostCard.vue';
 
 const router = useRouter(); // Use router hook
-const username = ref('');
+const uid = ref('');
 const jsonData = ref([]);
 const loading = false;
 
@@ -15,17 +15,17 @@ const diaryEntry = false; // Replace with logic for setting whether it's diary e
 // Retrieve the necessary data and function from the helper
 onMounted(async () => {
     const user = await getCurrentUser();
-    username.value = user.username;
-    await getPosts(username, diaryEntry);
+    uid.value = user.userId;
+    await getPosts(uid, diaryEntry);
 
 });
 
-async function getPosts(username, diaryEntry) {
+async function getPosts(uid, diaryEntry) {
     try {
-        console.log(username.value);
+        console.log(uid.value);
         const restOperation = get({
             apiName: 'yapp',
-            path: `/api/posts/getPostsByUser?userName=${username.value}`
+            path: `/api/posts/getPostsByUser?uid=${uid.value}`
         });
         const { body } = await restOperation.response;
         const response = await ((await body.blob()).arrayBuffer());

@@ -111,6 +111,7 @@ public class Startup
             services.AddScoped<IDynamoDBContext, DynamoDBContext>();
             services.AddScoped<IFriendshipActions, FriendshipActions>();
             services.AddScoped<IPostActions, PostActions>();
+            services.AddScoped<ICommentActions, CommentActions>();
 
         }
         catch (Exception e)

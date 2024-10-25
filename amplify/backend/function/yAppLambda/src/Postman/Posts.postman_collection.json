@@ -28,7 +28,7 @@
           "header": [],
           "body": {
             "mode": "raw",
-            "raw": "{\n\t\"userName\": \"\",\n\t\"postTitle\": \"\",\n\t\"postBody\": \"\",\n\t\"diaryEntry\": false,\n\t\"anonymous\": true\n}",
+            "raw": "{\n\t\"uid\": \"\",\n\t\"postTitle\": \"\",\n\t\"postBody\": \"\",\n\t\"diaryEntry\": false,\n\t\"anonymous\": true\n}",
             "options": {
               "raw": {
                 "language": "json"
@@ -96,12 +96,12 @@
           "method": "GET",
           "header": [],
           "url": {
-            "raw": "{{base_url}}/api/posts/getPostsByUser?userName=${userName}&diaryEntry=${diaryEntry}",
+            "raw": "{{base_url}}/api/posts/getPostsByUser?uid=${uid}&diaryEntry=${diaryEntry}",
             "host": ["{{base_url}}"],
             "path": ["api", "posts", "getPostsByUser"],
             "query": [
               {
-                "key": "userName",
+                "key": "uid",
                 "value": ""
               },
               {
@@ -134,7 +134,7 @@
           "method": "DELETE",
           "header": [],
           "url": {
-            "raw": "{{base_url}}/deletePost?pid=${pid}",
+            "raw": "{{base_url}}/api/posts/deletePost?pid=${pid}",
             "host": ["{{base_url}}"],
             "path": ["api", "posts", "deletePost"],
             "query": [
@@ -169,7 +169,7 @@
           "header": [],
           "body": {
             "mode": "raw",
-            "raw": "{\n\t\"pid\": \"\",\n\t\"createdAt\": \"\",\n\t\"userName\": \"\",\n\t\"postTitle\": \"\",\n\t\"postBody\": \"\",\n\t\"upvotes\": 0,\n\t\"downvotes\": 0,\n\t\"diaryEntry\": false,\n\t\"anonymous\": true\n}",
+            "raw": "{\n\t\"pid\": \"\",\n\t\"createdAt\": \"\",\n\t\"uid\": \"\",\n\t\"postTitle\": \"\",\n\t\"postBody\": \"\",\n\t\"upvotes\": 0,\n\t\"downvotes\": 0,\n\t\"diaryEntry\": false,\n\t\"anonymous\": true\n}",
             "options": {
               "raw": {
                 "language": "json"
