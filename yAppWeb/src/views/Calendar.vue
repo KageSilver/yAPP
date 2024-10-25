@@ -293,13 +293,16 @@
             </div>
         </div>
         
-        <hr class="w-full h-0.1 mx-auto mt-4 bg-white">
+        <hr class="w-full h-0.1 mx-auto mt-4 mb-8 bg-white">
 
         <div class="flex flex-col items-center w-full mx-auto">
             <div class="card bg-gray-300 border border-gray-500 rounded-lg p-5 shadow transition-shadow hover:shadow-md cursor-pointer w-full max-w-4xl m-2"
                 v-for="post in userDiariesDate" :key="post.pid" @click="clickPost(post.pid)">
                 <div class="card-header mb-2">
                     <h3 class="text-lg font-semibold truncate">{{ post.postTitle }}</h3>
+                    <p class="text-sm text-gray-600 overflow-hidden overflow-ellipsis whitespace-nowrap">
+                        <strong>Posted By:</strong> You 
+                    </p>
                     <p class="text-sm text-gray-600 overflow-hidden overflow-ellipsis whitespace-nowrap">
                         <strong>Created At:</strong> {{ new Date(post.createdAt).toLocaleString() }}
                     </p>
