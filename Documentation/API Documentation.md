@@ -7,7 +7,7 @@
  - GET: api/comments/getPostByCid?cid={cid}
     - cid: The comment id to find the parent post
  - Response: returns the post object associated with the comment based on the specified id
-    - { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "userName": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true }
+    - { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true }
  - Status codes:
     - 200 OK
     - 400 Bad Request: Comment ID is required
@@ -18,28 +18,28 @@
  - GET: api/comments/getCommentById?cid={cid}
     - cid: The comment id to find the comment
  - Response: returns the comment with the specified id
-   - { "cid": "string", "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "userName": "string", "commentBody": "string", "upvotes": 0, "downvotes": 0 }
+   - { "cid": "string", "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "commentBody": "string", "upvotes": 0, "downvotes": 0 }
  - Status codes:
     - 200 OK
     - 400 Bad Request: Comment ID is required
     - 404 Not Found: Comment does not exist  
 
 ### GetCommentsByUser
- - Gets all comments with given username.
- - GET: api/comments/getCommentsByUser?userName={userName}
-    - username: the username used to find all comments by that user
+ - Gets all comments with given uid.
+ - GET: api/comments/getCommentsByUser?uid={uid}
+    - uid: the uid used to find all comments by that user
  - Response: returns a list of comment objects made by the specified user
-    - [ { "cid": "string", "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "userName": "string", "commentBody": "string", "upvotes": 0, "downvotes": 0 } ]
+    - [ { "cid": "string", "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "commentBody": "string", "upvotes": 0, "downvotes": 0 } ]
  - Status codes:
     - 200 OK
-    - 400 Bad Request: Username is required
+    - 400 Bad Request: uid is required
 
 ### GetCommentsByPid
  - Gets all comments with a given parent post id.
  - GET: api/comments/getCommentsByPid?pid={pid}
     - pid: the parent post id used to find associated comments
  - Response: returns a list of comments made on the parent post
-    - [ { "cid": "string", "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "userName": "string", "commentBody": "string", "upvotes": 0, "downvotes": 0 } ]
+    - [ { "cid": "string", "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "commentBody": "string", "upvotes": 0, "downvotes": 0 } ]
  - Status codes:
     - 200 OK
     - 400 Bad Request: Post ID is required
@@ -47,25 +47,25 @@
 ### CreateComment
  - Creates a comment.
  - POST: api/comments/createComment
- - Request body: { "userName": "username", "commentBody": "body", "pid": "pid" }
+ - Request body: { "uid": "uid", "commentBody": "body", "pid": "pid" }
  - Response: returns the comment objects created from the new comment
-    - { "cid": "string", "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "userName": "string", "commentBody": "string", "upvotes": 0, "downvotes": 0 }
+    - { "cid": "string", "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "commentBody": "string", "upvotes": 0, "downvotes": 0 }
  - Status codes:
     - 200 OK
     - 400 Bad Request: 
-        - request body is required and must contain commenter's username, comment body, and the original post's id.
+        - request body is required and must contain commenter's uid, comment body, and the original post's id.
         - Failed to create comment
     - 404 Not Found: Comment creator not found
 
 ### UpdateComment
  - Updates a comment.
  - PUT: api/comments/updateComment
- - Request body: { "cid": "cid", "pid": "pid", "createdAt": "createdAt", "updatedAt": "updatedAt", "userName": "username", "commentBody": "body", "upvotes": "upvotes", "downvotes": "downvotes" }
+ - Request body: { "cid": "cid", "pid": "pid", "createdAt": "createdAt", "updatedAt": "updatedAt", "uid": "uid", "commentBody": "body", "upvotes": "upvotes", "downvotes": "downvotes" }
  - Response: returns the updated comment object
-    - { "cid": "string", "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "userName": "string", "commentBody": "string", "upvotes": 0, "downvotes": 0 }
+    - { "cid": "string", "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "commentBody": "string", "upvotes": 0, "downvotes": 0 }
  - Status codes:
     - 200 OK
-    - 400 Bad Request: Request body is required and must contain username and comment body
+    - 400 Bad Request: Request body is required and must contain uid and comment body
 
 ### DeleteComment
  - Deletes a comment.
@@ -123,7 +123,7 @@
  - GET: api/posts/getPostById?pid={pid}
     - pid: The unique identifier for a post
  - Response: returns the post with the specified id
-    - { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "userName": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true }
+    - { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true }
  - Status codes:
     - 200 OK
     - 400 Bad Request: Post ID is required
@@ -135,10 +135,10 @@
     - uid: The uid used to find all posts created by a user
     - diaryEntry: If the query is for public posts or diary entries
  - Response: returns a list of posts by the specified user
-    - [ { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "userName": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true } ]
+    - [ { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true } ]
  - Status codes:
     - 200 OK
-    - 400 Bad Request: username is required
+    - 400 Bad Request: uid is required
 
 ### GetRecentPosts
  - Gets recent posts from before a specified time.
@@ -146,7 +146,7 @@
     - since: Returns posts made after this time
     - maxResults: The maximum number of results to retrieve.
  - Response: returns a list of posts created before a specified time with a specified maximum length
-    - [ { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "userName": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true } ]
+    - [ { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true } ]
  - Status codes:
     - 200 OK
     - 400 Bad Request: requires valid max result number and valid time
@@ -154,25 +154,25 @@
 ### CreatePost
  - Creates a new post.
  - POST: api/posts/createPost
- - Request body: { "userName": "username", "postTitle": "title", "postBody": "body", "diaryEntry": false, "anonymous": false }
+ - Request body: { "uid": "uid", "postTitle": "title", "postBody": "body", "diaryEntry": false, "anonymous": false }
  - Response: returns the post object created from the new post
-    - { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "userName": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true }
+    - { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true }
  - Status codes:
     - 200 OK
     - 400 Bad Request:
-        - request body is required and must contain poster's username, post title and post body
+        - request body is required and must contain poster's uid, post title and post body
         - Failed to create post
     - 404 Not Found: Post creator not found
 
 ### UpdatePost
  - Edits an already existing post.
  - PUT: api/posts/updatePost
- - Request body: { "pid": "pid", "createdAt": "createdAt", "userName": "username", "postTitle": "title", "postBody": "body", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": false }
+ - Request body: { "pid": "pid", "createdAt": "createdAt", "uid": "uid", "postTitle": "title", "postBody": "body", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": false }
  - Response: returns the updated post object
-    - { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "userName": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true }
+    - { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true }
  - Status codes:
     - 200 OK
-    - 400 Bad Request: request body is required and must contain username, post title, post body
+    - 400 Bad Request: request body is required and must contain uid, post title, post body
 
 ### DeletePost
  - Deletes a post from the database by a post id.
