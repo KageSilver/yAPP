@@ -7,8 +7,8 @@ namespace yAppLambda.Models;
 /// </summary>
 public class NewPost
 {
-    [JsonPropertyName("userName")]
-    public string UserName { get; set ; }
+    [JsonPropertyName("uid")]
+    public string UID { get; set ; }
 
     [JsonPropertyName("postTitle")]
     public string PostTitle { get; set; }
