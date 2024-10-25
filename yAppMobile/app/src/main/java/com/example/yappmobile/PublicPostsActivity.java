@@ -10,7 +10,9 @@ import android.widget.ProgressBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.*;
 
-import java.time.LocalDateTime;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class PublicPostsActivity extends AppCompatActivity implements ItemListCardInterface
 {
@@ -54,7 +56,12 @@ public class PublicPostsActivity extends AppCompatActivity implements ItemListCa
         });
 
         // Load more posts button code
-        String since = LocalDateTime.now().toString();
+        // Formats current time in GMT
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        format.setTimeZone(TimeZone.getTimeZone("GMT"));
+        Date date = new Date();
+        String since = format.format(date);
+
         Button loadMore = findViewById(R.id.load_more_button);
         loadMore.setOnClickListener(new View.OnClickListener()
         {
