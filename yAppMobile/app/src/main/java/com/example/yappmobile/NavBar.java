@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.yappmobile.NaviBarDestinations.CreatePostActivity;
 import com.example.yappmobile.NaviBarDestinations.ProfileActivity;
 import com.example.yappmobile.NaviBarDestinations.PublicPostsActivity;
+import com.example.yappmobile.NaviBarDestinations.CalendarActivity;
 import com.google.android.material.navigation.NavigationBarView;
 
 public class NavBar
@@ -19,7 +20,7 @@ public class NavBar
     private static final int PROFILE = R.id.profile;
     private static final int HOME = R.id.public_posts;
     private static final int CREATE_POST = R.id.create_post;
-    public static final int CALENDAR = R.id.calendar;
+    private static final int CALENDAR = R.id.calendar;
 
     public static void establishNavBar(AppCompatActivity container, String menuItem)
     {
@@ -39,6 +40,9 @@ public class NavBar
                 break;
             case "PROFILE":
                 bottomNav.setSelectedItemId(PROFILE);
+                break;
+            case "CALENDAR":
+                bottomNav.setSelectedItemId(CALENDAR);
                 break;
         }
 
