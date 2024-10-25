@@ -19,6 +19,7 @@ public class NavBar
     private static final int PROFILE = R.id.profile;
     private static final int HOME = R.id.public_posts;
     private static final int CREATE_POST = R.id.create_post;
+    public static final int CALENDAR = R.id.calendar;
 
     public static void establishNavBar(AppCompatActivity container, String menuItem)
     {
@@ -64,6 +65,12 @@ public class NavBar
                 {
                     // Reroute to create post page
                     intent = new Intent(container, CreatePostActivity.class);
+                    container.startActivity(intent);
+                }
+                else if (itemId == CALENDAR)
+                {
+                    // Reroute to calendar page
+                    intent = new Intent(container, CalendarActivity.class);
                     container.startActivity(intent);
                 }
                 else
