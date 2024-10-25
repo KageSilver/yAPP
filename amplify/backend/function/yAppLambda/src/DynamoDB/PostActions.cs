@@ -66,11 +66,6 @@ public class PostActions : IPostActions
         try
         {
             var post = await _dynamoDbContext.LoadAsync<Post>(pid, _config);
-
-            if(post.Anonymous)
-            {
-                post.UserName = "Anonymous";
-            }
             
             return post;
         }
@@ -84,20 +79,20 @@ public class PostActions : IPostActions
     /// <summary>
     /// Gets all public posts from a user
     /// </summary>
-    /// <param name="userName">The username used to find all posts created by a user.</param>
+    /// <param name="uid">The uid used to find all posts created by a user.</param>
     /// <param name="diaryEntry">If the query is for public posts or diary entries.</param>
     /// <returns>A list of posts created by a user, either public posts or diary entries.</returns>
-    public async Task<List<Post>> GetPostsByUser(string userName, bool diaryEntry)
+    public async Task<List<Post>> GetPostsByUser(string uid, bool diaryEntry)
     {
         try
         {
             List<ScanCondition> scanConditions = new List<ScanCondition>
             {
-                new ScanCondition("UserName", ScanOperator.Equal, userName),
+                new ScanCondition("UID", ScanOperator.Equal, uid),
                 new ScanCondition("DiaryEntry", ScanOperator.Equal, diaryEntry)
             };
 
-            // query posts where the poster's username is 'userName' and 'diaryEntry' is equal to the input
+            // query posts where the poster's uid is 'uid' and 'diaryEntry' is equal to the input
             var posts = await _dynamoDbContext.ScanAsync<Post>(scanConditions, _config).GetRemainingAsync();
 
             return posts;
@@ -199,7 +194,6 @@ public class PostActions : IPostActions
             foreach(Post post in result)
             {
                 var thisPost = GetPostById(post.PID).Result;
-                thisPost.UserName = "Anonymous";
                 posts.Add(thisPost);
             }
 

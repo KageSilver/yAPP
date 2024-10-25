@@ -31,6 +31,7 @@ public class PostControllerIntegrationTests
 
     //we must use simulator email to test the user without using email quota
     private const string TestUserEmail = "bounce4@simulator.amazonses.com";
+    private static string _testUserId = ""; // this will be updated in the first test when the test user is created
 
     private ICognitoActions _cognitoActions;
     private IPostActions _postActions;
@@ -73,11 +74,12 @@ public class PostControllerIntegrationTests
         Assert.Equal(HttpStatusCode.OK, responseId.StatusCode);
         var responseIdString = await responseId.Content.ReadAsStringAsync();
         var user = JsonConvert.DeserializeObject<User>(responseIdString);
+        _testUserId = user.Id;
 
         // Arrange
         var newPost = new NewPost
         {
-            UserName = TestUserEmail,
+            UID = _testUserId,
             PostTitle = "CreatePost_ValidRequest_ReturnsPost()",
             PostBody = "body",
             DiaryEntry = false,
@@ -97,7 +99,7 @@ public class PostControllerIntegrationTests
         var post = JsonConvert.DeserializeObject<Post>(responseString);
 
         Assert.NotNull(post);
-        Assert.Equal(TestUserEmail, post.UserName);
+        Assert.Equal(_testUserId, post.UID);
         Assert.Equal(newPost.PostTitle, post.PostTitle);
         Assert.Equal(newPost.PostBody, post.PostBody);
         Assert.Equal(newPost.DiaryEntry, post.DiaryEntry);
@@ -114,7 +116,7 @@ public class PostControllerIntegrationTests
         // Arrange
         var newPost = new NewPost
         {
-            UserName = "userDoesNotExist",
+            UID = "userDoesNotExist",
             PostTitle = "title",
             PostBody = "body",
             DiaryEntry = false,
@@ -137,7 +139,7 @@ public class PostControllerIntegrationTests
         // Arrange
         var newPost = new NewPost
         {
-            UserName = "",
+            UID = "",
             PostTitle = "",
             PostBody = "",
             DiaryEntry = false,
@@ -161,7 +163,7 @@ public class PostControllerIntegrationTests
         // Arrange
         var newPost = new NewPost
         {
-            UserName = TestUserEmail,
+            UID = _testUserId,
             PostTitle = "GetRecentPosts_ShouldReturnPosts_WhenRequestIsSuccessful()",
             PostBody = "body",
             DiaryEntry = false,
@@ -173,7 +175,7 @@ public class PostControllerIntegrationTests
 
         // Create a new post for testing
         var response1 = await _client.PostAsync("/api/posts/createPost", content);
-        await Task.Delay(TimeSpan.FromSeconds(10)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
 
         var responseString = await response1.Content.ReadAsStringAsync();
         var responsePost = JsonConvert.DeserializeObject<Post>(responseString);
@@ -195,7 +197,7 @@ public class PostControllerIntegrationTests
         
         // Assert
         Assert.Equal(1, responseList.Count);
-        Assert.Equal("Anonymous", responseList.First().UserName);
+        Assert.Equal(newPost.UID, responseList.First().UID);
         Assert.Equal(newPost.PostTitle, responseList.First().PostTitle);
         Assert.Equal(newPost.PostBody, responseList.First().PostBody);
         Assert.Equal(newPost.DiaryEntry, responseList.First().DiaryEntry);
@@ -223,7 +225,7 @@ public class PostControllerIntegrationTests
         // Arrange
         var newPost = new NewPost
         {
-            UserName = TestUserEmail,
+            UID = _testUserId,
             PostTitle = "DeletePost_ShouldReturnTrue_WhenPostIsDeletedSuccessfully()",
             PostBody = "body",
             DiaryEntry = false,
@@ -285,7 +287,7 @@ public class PostControllerIntegrationTests
         // Arrange
         var newPost = new NewPost
         {
-            UserName = TestUserEmail,
+            UID = _testUserId,
             PostTitle = "title",
             PostBody = "body",
             DiaryEntry = false,
@@ -316,7 +318,7 @@ public class PostControllerIntegrationTests
         // Assert
         Assert.NotNull(updatedPost);
         Assert.Equal(responsePost.PID, updatedPost.PID);
-        Assert.Equal(responsePost.UserName, updatedPost.UserName);
+        Assert.Equal(responsePost.UID, updatedPost.UID);
         Assert.Equal(responsePost.PostTitle, updatedPost.PostTitle);
         Assert.Equal(responsePost.PostBody, updatedPost.PostBody);
         Assert.Equal(responsePost.Upvotes, updatedPost.Upvotes);
@@ -355,7 +357,7 @@ public class PostControllerIntegrationTests
         // Arrange
         var request = new NewPost
         {
-            UserName = TestUserEmail,
+            UID = _testUserId,
             PostTitle = "title",
             PostBody = "body",
             DiaryEntry = false,
@@ -379,7 +381,7 @@ public class PostControllerIntegrationTests
         // Assert
         Assert.NotNull(post);
         Assert.Equal(newPost.PID, post.PID);
-        Assert.Equal("Anonymous", post.UserName);
+        Assert.Equal(newPost.UID, post.UID);
         Assert.Equal(newPost.PostTitle, post.PostTitle);
         Assert.Equal(newPost.PostBody, post.PostBody);
         Assert.Equal(newPost.Upvotes, post.Upvotes);
@@ -425,7 +427,7 @@ public class PostControllerIntegrationTests
         // Arrange
         var request = new NewPost
         {
-            UserName = TestUserEmail,
+            UID = _testUserId,
             PostTitle = "GetPostsByUser_ShouldReturnPosts_WhenSuccessful()",
             PostBody = "body",
             DiaryEntry = false,
@@ -437,19 +439,19 @@ public class PostControllerIntegrationTests
 
         // Creates a new post to query
         var response1 = await _client.PostAsync("/api/posts/createPost", content);
-        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
         var responseString1 = await response1.Content.ReadAsStringAsync();
         var newPost = JsonConvert.DeserializeObject<Post>(responseString1);
 
         // Act
-        var response2 = await _client.GetAsync($"/api/posts/getPostsByUser?userName={TestUserEmail}&diaryEntry={false}");
+        var response2 = await _client.GetAsync($"/api/posts/getPostsByUser?uid={_testUserId}&diaryEntry={false}");
         var responseString2 = await response2.Content.ReadAsStringAsync();
         var postList = JsonConvert.DeserializeObject<List<Post>>(responseString2);
 
         // Assert
         Assert.Equal(1, postList.Count);
         Assert.Equal(newPost.PID, postList.First().PID);
-        Assert.Equal(newPost.UserName, postList.First().UserName);
+        Assert.Equal(newPost.UID, postList.First().UID);
         Assert.Equal(newPost.PostTitle, postList.First().PostTitle);
         Assert.Equal(newPost.PostBody, postList.First().PostBody);
         Assert.Equal(newPost.Upvotes, postList.First().Upvotes);
@@ -463,10 +465,10 @@ public class PostControllerIntegrationTests
     }
 
     [Fact, Order(15)]
-    public async Task GetPostsByUser_ShouldReturnBadRequest_WithInvalidUsername()
+    public async Task GetPostsByUser_ShouldReturnBadRequest_WithInvalidUID()
     {
         // Act
-        var response = await _client.GetAsync($"/api/posts/getpostsByUser?userName={null}&diaryEntry={false}");
+        var response = await _client.GetAsync($"/api/posts/getpostsByUser?uid={null}&diaryEntry={false}");
         
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);

@@ -81,7 +81,7 @@
 
 ### GetFriendsByStatus
  - Retrieves all friends of a user filtered by a specified status.
- - GET: api/friends/getFriendsByStatus?userName={username}?status={status}
+ - GET: api/friends/getFriendsByStatus?userName={username}&status={status}
     - userName: The username of the user whose friends are to be retrieved.
     - status: The status of the friendships to filter by (-1:All requests, 0: Pending, 1: Accepted, 2: Declined).
  - Response: returns the updated friend object
@@ -131,8 +131,8 @@
 
 ### GetPostsByUser
  - Retrieves all posts from a user, either all public posts or all diary entries.
- - GET: api/posts/getPostsByUser?userName={userName}&diaryEntry={diaryEntry}
-    - userName: The username used to find all posts created by a user
+ - GET: api/posts/getPostsByUser?uid={uid}&diaryEntry={diaryEntry}
+    - uid: The uid used to find all posts created by a user
     - diaryEntry: If the query is for public posts or diary entries
  - Response: returns a list of posts by the specified user
     - [ { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "userName": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true } ]
