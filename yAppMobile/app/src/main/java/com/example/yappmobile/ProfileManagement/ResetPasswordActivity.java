@@ -102,8 +102,8 @@ public class ResetPasswordActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                if (isFilled(oldPassEditText.getText().toString(),
-                             newPassEditText.getText().toString()))
+                if (isFilled(oldPassEditText.getText().toString().trim(),
+                             newPassEditText.getText().toString().trim()))
                 {
                     Intent intent = new Intent(ResetPasswordActivity.this, ProfileActivity.class);
                     startActivity(intent);
@@ -122,8 +122,8 @@ public class ResetPasswordActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                invokeUpdatePass(oldPassEditText.getText().toString(),
-                                 newPassEditText.getText().toString());
+                invokeUpdatePass(oldPassEditText.getText().toString().trim(),
+                                 newPassEditText.getText().toString().trim());
                 // TODO: Configure user access to let them update their own password
             }
         });
@@ -161,7 +161,7 @@ public class ResetPasswordActivity extends AppCompatActivity
 
     private void initializeConfirmDialog()
     {
-        // Create failed password alert
+        // Create confirm discard alert
         confirm = new AlertDialog.Builder(this).create();
         confirm.setTitle("Woah there!");
         confirm.setMessage("You still have some unsaved changes. Are you sure you want to discard them?");

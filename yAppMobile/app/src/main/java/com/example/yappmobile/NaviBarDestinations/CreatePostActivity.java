@@ -103,7 +103,7 @@ public class CreatePostActivity extends AppCompatActivity
                 postTitle = titleText.getEditText().getText().toString();
                 postBody = contentText.getEditText().getText().toString();
 
-                if (hasFilledForms(postTitle, postBody))
+                if (!hasFilledForms(postTitle, postBody))
                 {
                     Intent intent = new Intent(CreatePostActivity.this, PublicPostsActivity.class);
                     startActivity(intent);
@@ -161,7 +161,7 @@ public class CreatePostActivity extends AppCompatActivity
                     {
                         String stringPost = newPost.toString();
                         sendPost(stringPost);
-                        //successDialog.show();
+                        successDialog.show();
                     }
                     catch (Exception e)
                     {
