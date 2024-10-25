@@ -64,7 +64,8 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         throw new RuntimeException("Unknown view type");
     }
 
-    // Set up what is displayed on each CardItem based on position of the recycler view
+    // Set up what is displayed on each CardItem based on CardType and
+    // the position of the recycler view
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position)
     {

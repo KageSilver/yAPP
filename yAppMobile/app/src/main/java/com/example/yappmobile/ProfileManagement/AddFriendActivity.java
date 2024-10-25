@@ -97,7 +97,7 @@ public class AddFriendActivity extends AppCompatActivity
     private void createRequest()
     {
         String receiver = requestField.getEditText().getText().toString();
-        if (!receiver.equals(""))
+        if(!receiver.equals(""))
         {
             CompletableFuture<AuthUser> future = new CompletableFuture<>();
             Amplify.Auth.getCurrentUser(future::complete, error -> {
