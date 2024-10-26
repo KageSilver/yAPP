@@ -57,7 +57,7 @@
     - GET: api/cognito/getUserByName?userName={username}
     - POST: api/users/updateUser
 #### Acceptance tests
- - For each of the following user stories that belong to this feature, write one manual acceptance test for the website and one automated acceptance test for the android app:
+ - For each of the following user stories that belong to this feature, write two manual acceptance tests, one for the website and one for the mobile app:
     - As a new user, I want to create a Yapp account.
     - As a Yapper, I want to log in to my account.
     - As a Yapper, I want to change my account details to my liking.
@@ -88,7 +88,7 @@
     - GET: api/posts/getPostsByUser?userName={userName}&diaryEntry={diaryEntry}
     - GET: api/posts/getRecentPosts?since={since}&maxResults={maxResults}
 #### Acceptance tests
- - For each of the following user stories that belong to this feature, write one manual acceptance test for the website and one automated acceptance test for the android app:
+ - For each of the following user stories that belong to this feature, write two manual acceptance tests, one for the website and one for the mobile app:
     - As a Yapper, I want to anonymously ask questions to the general public so I can get multiple opinions.
     - As a Yapper, I want to be able to view other public posts.
     - As a Yapper, I want to be able to see all the anonymous posts I’ve made to the Yapper community.
