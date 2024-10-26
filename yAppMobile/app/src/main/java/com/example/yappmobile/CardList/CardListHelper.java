@@ -61,6 +61,7 @@ public class CardListHelper extends AppCompatActivity
 
             // Once response is received and parsed successfully,
             // Hide loading spinner and update UI display
+            // NOTE: The adapter is what populates each card!
             runOnUiThread(() ->
             {
                 loadingSpinner.setVisibility(View.GONE);
@@ -87,6 +88,7 @@ public class CardListHelper extends AppCompatActivity
         return future;
     }
 
+    // Retries `retriesLeft` times and captures the response of the API call
     private void retryAPICall(RestOptions options, CompletableFuture<String> future, int retriesLeft)
     {
         Amplify.API.get(options,
@@ -141,7 +143,8 @@ public class CardListHelper extends AppCompatActivity
             }
             else
             {
-                Log.d("CardListHelper", "You're trying to invoke a method on the wrong card type");
+                Log.d("CardListHelper", 
+                      "You're trying to invoke a method on the wrong card type");
             }
         }
         catch (JSONException jsonException)

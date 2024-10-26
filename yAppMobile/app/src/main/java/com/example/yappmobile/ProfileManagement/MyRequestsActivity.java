@@ -37,7 +37,7 @@ public class MyRequestsActivity extends AppCompatActivity implements IListCardIt
         rvRequests.setLayoutManager(new LinearLayoutManager(this));
 
         Amplify.Auth.getCurrentUser(result -> {
-            String userName = result.getUsername();
+            String userName = result.getUserId();
             String myRequestsAPI = "/api/friends/getFriendsByStatus?userName=" + userName + "&status=0";
             requestListHelper.loadItems(myRequestsAPI, rvRequests);
         }, error -> {

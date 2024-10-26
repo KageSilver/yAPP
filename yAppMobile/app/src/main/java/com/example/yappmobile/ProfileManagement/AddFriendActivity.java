@@ -54,13 +54,11 @@ public class AddFriendActivity extends AppCompatActivity
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after)
             {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count)
             {
-
             }
 
             @Override
@@ -96,8 +94,8 @@ public class AddFriendActivity extends AppCompatActivity
 
     private void createRequest()
     {
-        String receiver = requestField.getEditText().getText().toString();
-        if (!receiver.equals(""))
+        String receiver = requestField.getEditText().getText().toString().trim();
+        if(!receiver.equals(""))
         {
             CompletableFuture<AuthUser> future = new CompletableFuture<>();
             Amplify.Auth.getCurrentUser(future::complete, error -> {

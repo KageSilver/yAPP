@@ -89,12 +89,31 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
     {
         // Based on the position, recreate the friendship as a JSONObject
         JSONObject result = friendListHelper.getFriendship(position);
+        try
+        {
+            // Although we restricted the DB to not accept duplicate friendships AB and BA,
+            // Race conditions can and will occur at some point, affecting the "sanity" of the DB
+            // Thus, duplicates are also removed in CardListHelper for rendering
+            // And we'll send out PUT requests for both AB and BA to ensure full removal
+
+            String personA = result.get("sender").toString();
+            String personB = result.get("receiver").toString();
+            removeFriendship(personA, personB);
+            removeFriendship(personB, personA);
+        }
+        catch (JSONException error)
+        {
+            Log.e("JSON", "Getting from a JSONObject", error);
+        }
+    }
+
+    private void removeFriendship(String personA, String personB)
+    {
         JSONObject newFriendship = new JSONObject();
         try
         {
-            // TODO: refine this. i bet its be buggy asf
-            newFriendship.put("fromUserName", result.get("sender").toString());
-            newFriendship.put("toUserName", result.get("receiver").toString());
+            newFriendship.put("fromUserName", personA);
+            newFriendship.put("toUserName", personB);
             newFriendship.put("status", 2);
         }
         catch (JSONException error)

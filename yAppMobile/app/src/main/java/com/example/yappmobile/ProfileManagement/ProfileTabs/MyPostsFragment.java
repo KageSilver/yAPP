@@ -45,16 +45,16 @@ public class MyPostsFragment extends Fragment implements IListCardItemInteractio
 
         CompletableFuture<String> future = new CompletableFuture<>();
         Amplify.Auth.getCurrentUser(result -> {
-            future.complete(result.getUsername());
+            future.complete(result.getUserId());
         }, error -> {
             Log.e("Auth", "Error occurred when getting current user. Redirecting to authenticator");
             Intent intent = new Intent(view.getContext(), AuthenticatorActivity.class);
             startActivity(intent);
         });
 
-        future.thenAccept(username -> {
+        future.thenAccept(uid -> {
             getActivity().runOnUiThread(() -> {
-                String myPostsAPI = "/api/posts/getPostsByUser?userName=" + username + "&diaryEntry=false";
+                String myPostsAPI = "/api/posts/getPostsByUser?uid=" + uid + "&diaryEntry=false";
                 postListHelper.loadItems(myPostsAPI, rvPosts);
             });
         });
