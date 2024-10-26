@@ -74,10 +74,6 @@
         isDiscardingUpdate.value = false;
     };
 
-    // Confirms the post deletion (can integrate API call here)
-    const confirmDelete = () => {
-        // API call to delete the post and refresh data
-    };
 
     // Confirms discarding post changes
     const confirmDiscard = () => {
@@ -166,6 +162,28 @@
 
         } catch (error) {
             console.log('Failed to load post', error);
+        }
+        //disable loading screen
+        loading.value = false;
+    };
+
+    const deletePost = async () => {
+        //set loading screen
+        loading.value = true;
+        try {
+            const deleteRequest = await post({
+                apiName: 'yapp',
+                path: `api/posts/deletePost?pid=${currentPost.value.pid}`,
+            });
+            const {
+                body
+            } = await deleteRequest.response;
+            const response = await body.json();
+            //set alert
+            setAlert("Yipee!", "Post deleted successfully");
+        } catch (error) {
+            console.log('Failed to load post', error);
+            setAlert("Oops!", "Failed to delete post");
         }
         //disable loading screen
         loading.value = false;
@@ -267,7 +285,6 @@
         const updatedComment = ref(null);
         updatedComment.value = comment.value;
         updatedComment.commentBody = message;
-
         try {
 
             const request = await put({
@@ -291,7 +308,6 @@
         }
         loading.value = false;
     };
-
 
 
     const createComment = async () => {
@@ -345,11 +361,13 @@
 </script>
 
 <template>
-    <div class="flex flex-row items-start justify-center min-h-screen gap-4 mb-5 px-4 pt-[10rem]" id="postDetails">
+    <LoadingScreen v-if="loading" />
 
-        <LoadingScreen v-if="loading" />
+    <div v-else class="flex flex-row items-start justify-center min-h-screen gap-4 mb-5 px-4 pt-[10rem]"
+        id="postDetails">
 
-        <div v-if="currentPost&&!isEditing&&!loading" class="w-full justify-center flex">
+
+        <div v-if="currentPost&&!isEditing" class="w-full justify-center flex">
             <BackBtn class="self-start mt-2" />
             <div
                 class="flex-1 max-w-4xl bg-gray-100 border border-gray-300 rounded-lg shadow transition-shadow hover:shadow-md p-5 m-2">
@@ -403,11 +421,11 @@
                     
                             <p class="text-sm text-gray-600 break-words" :id="`commentBody-${comment.cid}`" v-if="!isEditingComment(comment)|| comment.uid != userId" >
                                 {{ comment.commentBody }}</p>
-                            <p class="text-xs text-gray-600" :id="`createAt-${comment.cid}`" v-if="comment.updatedAt == '' && !isEditingComment(comment)">
+                            <p class="text-xs text-gray-600" :id="`createAt-${comment.cid}`" v-if="comment.updatedAt == comment.createdAt && !isEditingComment(comment)">
                                 <strong>Created At:</strong> {{ new Date(comment.createdAt).toLocaleString() }}
                             </p>
 
-                            <p class="text-xs text-gray-600" :id="`createAt-${comment.cid}`" v-if="comment.updatedAt != '' && !isEditingComment(comment) ">
+                            <p class="text-xs text-gray-600" :id="`createAt-${comment.cid}`" v-if="comment.updatedAt != comment.createdAt && !isEditingComment(comment) ">
                                 <strong>Updated At:</strong> {{ new Date(comment.updatedAt).toLocaleString() }}
                             </p>
 
@@ -433,7 +451,7 @@
 
     </div>
 
-    <div v-if="currentPost&&isEditing&&!loading"
+    <div v-if="currentPost&&isEditing"
         class="flex-1 max-w-4xl bg-gray-100 border border-gray-300 rounded-lg shadow transition-shadow hover:shadow-md p-5 m-2">
         <div class="form-group w-full mb-4">
             <label for="title" class="block mb-2 text-gray-700">Title:</label>
@@ -458,7 +476,7 @@
 
 
 
-    <ConfirmationModal :showModal=isDeleting :close="closeDeleteModal" :confirm="confirmDelete" header="Woah there!"
+    <ConfirmationModal :showModal=isDeleting :close="closeDeleteModal" :confirm="deletePost" header="Woah there!"
         message="Are you sure you want to delete this post?" />
     <ConfirmationModal :showModal=isDiscardingUpdate :close="closeDiscardModal" :confirm="confirmDiscard"
         header="Woah there!" message="Are you sure you want to discard your update?" />
