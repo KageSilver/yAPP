@@ -16,14 +16,6 @@
         android:textColor="@color/black"
         android:paddingBottom="8dp" />
 
-    <!-- RecyclerView for comments -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/comments_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical" />
-
     <!-- Add new comment section -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -52,6 +44,15 @@
             android:textColor="@android:color/white"
             android:backgroundTint="@color/pink" />
     </LinearLayout>
+
+    <!-- RecyclerView for comments -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/comments_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1"
+        android:orientation="vertical" />
 
 </LinearLayout>
 
