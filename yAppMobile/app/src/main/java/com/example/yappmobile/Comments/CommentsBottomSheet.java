@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import java.util.HashMap;
 import java.util.Map;
+import android.widget.ProgressBar;
 
 public class CommentsBottomSheet extends BottomSheetDialogFragment {
 
@@ -30,6 +31,8 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
     private String _uid;
     private List<Comment> commentList = new ArrayList<>();
     private CommentAdapter adapter;
+    private ProgressBar progressBar;
+
 
     public static CommentsBottomSheet newInstance(String pid,String uid) {
         CommentsBottomSheet fragment = new CommentsBottomSheet();
@@ -54,6 +57,9 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.bottom_sheet_comments, container, false);
 
+        // Initialize ProgressBar
+        progressBar = view.findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);  // Show the loading spinner
         RecyclerView recyclerView = view.findViewById(R.id.comments_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new CommentAdapter(commentList);
@@ -79,6 +85,7 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
     }
 
     // Method to load existing comments
+// Method to load existing comments
     private void loadComments() {
         RestOptions options = RestOptions.builder()
                 .addPath("/api/comments/getCommentsByPid?pid=" + _pid)
@@ -100,49 +107,69 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
                             Comment comment = new Comment(uid, commentBody, pid, cid, createdAt, updatedAt);
                             commentList.add(comment);
                         }
-                        getActivity().runOnUiThread(() -> adapter.notifyDataSetChanged());
+
+                        getActivity().runOnUiThread(() -> {
+                            adapter.notifyDataSetChanged();
+                            progressBar.setVisibility(View.GONE);  // Hide the loading spinner when done
+                        });
+
                     } catch (Exception e) {
-                        Log.e("MyAmplifyApp", "Error parsing comments", e);
+                        Log.e("Comments", "Error parsing comments", e);
                     }
                 },
-                apiFailure -> Log.e("MyAmplifyApp", "GET failed.", apiFailure)
+                apiFailure -> {
+                    Log.e("Comments", "GET failed.", apiFailure);
+                    getActivity().runOnUiThread(() -> progressBar.setVisibility(View.GONE));  // Hide the loading spinner if failed
+                }
         );
     }
+
 
     // Method to post a new comment
     private void postComment(String commentBody) {
         try {
             // Create a map to hold the comment data
             Map<String, String> data = new HashMap<>();
-            data.put("pid", _pid);  // Post ID
-            data.put("uid", _uid);  // Replace with the actual user ID (get from user session)
+            data.put("pid", _pid);
+            data.put("uid", _uid);
             data.put("commentBody", commentBody);
+
 
             // Convert the map to a JSON string
             JSONObject postData = new JSONObject(data);
+            Log.d("Comments",postData.toString());
+
 
             // Set up the API request options for posting the comment
+            String apiUrl = "/api/comments/createComment";
             RestOptions options = RestOptions.builder()
-                    .addPath("/api/comments/postComment")
+                    .addPath(apiUrl)
                     .addBody(postData.toString().getBytes())
+                    .addHeader("Content-Type", "application/json")
                     .build();
-
-            // Make the POST request
             Amplify.API.post(options,
                     response -> {
-                        Log.i("Post comment", "POST succeeded: " + response.getData().asString());
+                        Log.i("Comments", "POST response: " + response.getData().asString());
 
-                        // Add the new comment to the list and update the RecyclerView
-//                        getActivity().runOnUiThread(() -> {
-//                            Comment newComment = new Comment("USER_ID", commentBody, _pid, "NEW_CID", "Now", "Now");
-//                            commentList.add(newComment);
-//                            adapter.notifyItemInserted(commentList.size() - 1);
-//                        });
+                        // Hide the progress bar once the response is received
+                        getActivity().runOnUiThread(() -> {
+                            progressBar.setVisibility(View.GONE);
+                            commentList.clear();
+                            loadComments();
+                        });
                     },
-                    apiFailure -> Log.e("Post comment", "POST failed.", apiFailure)
+                    error -> {
+                        Log.e("Comments", "POST request failed", error);
+
+                        // Hide the progress bar if the request fails
+                        getActivity().runOnUiThread(() -> {
+                            progressBar.setVisibility(View.GONE);
+                        });
+                    }
             );
+
         } catch (Exception e) {
-            Log.e("MyAmplifyApp", "Error posting comment", e);
+            Log.e("Comments", "Error posting comment", e);
         }
     }
 }
