@@ -40,7 +40,6 @@
     }
 
     function getSelectDateDiaries() {
-        console.log("selectedDate.toLocaleDateString(): " + selectedDate.toLocaleDateString());
         console.log(JSON.stringify(userDiaries.value, null, 2));
 
         userDiariesDate.value = userDiaries.value.filter(
