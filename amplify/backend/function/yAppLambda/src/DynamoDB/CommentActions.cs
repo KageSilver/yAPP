@@ -181,6 +181,40 @@ public class CommentActions : ICommentActions
         }
         return result;
     }
+
+    /// <summary>
+    /// Deletes all coments under one post from the database by a post id
+    /// </summary>
+    /// <param name="pid">The id of the parent post to be deleted.</param>
+    /// <returns>A boolean indicating whether the deletion was successful.</returns>
+    public async Task<bool> DeleteComments(string pid)
+    {
+        var result = true;
+        try
+        {
+            // Load the comments to check if the pid exists
+            var comments = await GetCommentsByPid(pid);
+
+            if (comments.Count == 0)
+            {
+                Console.WriteLine("Failed to retrieve comments");
+                result = false;
+            }
+            else
+            {
+                // Delete all comments under the post from the database
+                foreach ( var comment in comments )
+                    if ( ! await DeleteComment(comment.CID) )
+                        result = false;
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to delete comments: " + e.Message);
+            result = false;
+        }
+        return result;
+    }
     
     /// <summary>
     /// Edits an already existing comment

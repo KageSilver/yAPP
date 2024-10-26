@@ -404,6 +404,116 @@ public class CommentActionsTests
     
     #endregion
 
+    #region DeleteComments Tests
+
+    [Fact]
+    public async Task DeleteComments_ShouldCallDeleteComment()
+    {
+        // Arrange
+        var now = DateTime.Now;
+        var comment = new Comment
+        {
+            CID = "1",
+            PID = "DeleteComments_ShouldCallDeleteComment()",
+            UID = "uid",
+            CreatedAt = now,
+            UpdatedAt = now,
+            CommentBody = "body",
+            Upvotes = 0,
+            Downvotes = 0
+        };
+        var response = new Comment { CID = "1" };
+
+        // Sets up LoadAsync to return the request comment (for in GetCommentById)
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Comment>(comment.CID, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(comment);
+
+        var list = new List<Comment>();
+        list.Add(response);
+
+        // Mock the AsyncSearch<Comment> returned by QueryAsync
+        var queryFromSearchMock = new Mock<AsyncSearch<Comment>>();
+        queryFromSearchMock.Setup(q => q.GetNextSetAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(list);
+
+        // Sets up FromQueryAsync to succeed
+        _dynamoDbContextMock.Setup(d => d.FromQueryAsync<Comment>(It.IsAny<QueryOperationConfig>(), It.IsAny<DynamoDBOperationConfig>()))
+            .Returns(queryFromSearchMock.Object);
+
+        // Sets up LoadAsync to return the request comment (for in GetCommentById)
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Comment>(comment.CID, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(comment);
+
+        // Sets up DeleteAsync to succeed            
+        _dynamoDbContextMock.Setup(d => d.DeleteAsync(It.IsAny<Comment>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()));
+
+        // Act
+        var result = await _commentActionsMock.DeleteComments(comment.PID);
+
+        // Assert
+        Assert.True(result);
+        _dynamoDbContextMock.Verify(d => d.DeleteAsync(comment, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()));
+    }
+
+    [Fact]
+    public async Task DeleteComments_ShouldHandleException_WhenPostDoesNotExist()
+    {
+        // Arrange
+        var now = DateTime.Now;
+        var request = new Comment
+        {
+            CID = "11111",
+            PID = "!",
+            UID = "11111",
+            CreatedAt = now,
+            UpdatedAt = now,
+            CommentBody = "DeleteComments_ShouldHandleException_WhenPostDoesNotExist()",
+            Upvotes = 0,
+            Downvotes = 0
+        };
+
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Comment>(request.CID, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new Exception("Failed to retrieve comments"));
+
+        // Act
+        var result = await _commentActionsMock.DeleteComments(request.PID);
+
+        // Assert
+        Assert.False(result);
+        _dynamoDbContextMock.Verify(d => d.FromQueryAsync<Comment>(It.IsAny<QueryOperationConfig>(), It.IsAny<DynamoDBOperationConfig>()), Times.Once);
+    }
+    
+    [Fact]
+    public async Task DeleteComments_ShouldHandleException_WhenDeleteCommentsFails()
+    {
+        // Arrange
+        var now = DateTime.Now;
+        var request = new Comment
+        {
+            CID = "11111",
+            PID = "11111",
+            UID = "11111",
+            CreatedAt = now,
+            UpdatedAt = now,
+            CommentBody = "DeleteComment_ShouldHandleException_WhenDeleteCommentFails()",
+            Upvotes = 0,
+            Downvotes = 0
+        };
+
+        // Sets up LoadAsync to return the request comment (for in GetCommentById)
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Comment>(request.CID, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(request);
+
+        // Act
+        var result = await _commentActionsMock.DeleteComments(request.PID);
+
+        // Assert
+        Assert.False(result);
+        _dynamoDbContextMock.Verify(d => d.FromQueryAsync<Comment>(It.IsAny<QueryOperationConfig>(), It.IsAny<DynamoDBOperationConfig>()), Times.Once);
+    }
+    
+    #endregion
+
     #region UpdateComment Tests
 
     [Fact]
