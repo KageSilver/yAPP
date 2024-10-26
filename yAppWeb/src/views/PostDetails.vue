@@ -1,26 +1,29 @@
 <script setup>
     import {
-        get,
-        post,
-        put
-    } from 'aws-amplify/api';
-    import {
-        getCurrentUser
-    } from 'aws-amplify/auth';
-    import {
-        onMounted,
-        ref
-    } from 'vue';
-    import {
-        useRoute
-    } from 'vue-router';
-    import Alert from '../components/Alert.vue';
-    import BackBtn from '../components/BackBtn.vue';
-    import ConfirmationModal from '../components/ConfirmationModal.vue';
-    import DotMenu from '../components/DotMenu.vue';
-    import LoadingScreen from '../components/LoadingScreen.vue';
+    del,
+    get,
+    post,
+    put
+} from 'aws-amplify/api';
+import {
+    getCurrentUser
+} from 'aws-amplify/auth';
+import {
+    onMounted,
+    ref
+} from 'vue';
+import {
+    useRoute,
+    useRouter
+} from 'vue-router';
+import Alert from '../components/Alert.vue';
+import BackBtn from '../components/BackBtn.vue';
+import ConfirmationModal from '../components/ConfirmationModal.vue';
+import DotMenu from '../components/DotMenu.vue';
+import LoadingScreen from '../components/LoadingScreen.vue';
     // Importing necessary modules
     const route = useRoute();
+    const router = useRouter();
 
     // State
     const currentPost = ref(null); // Stores the current post details
@@ -167,26 +170,32 @@
         loading.value = false;
     };
 
-    const deletePost = async () => {
+const deletePost = async () => {
+        //close the delete modal
+        isDeleting.value = false;
         //set loading screen
         loading.value = true;
+        console.log(currentPost.value.pid);
         try {
-            const deleteRequest = await post({
+            const deleteRequest = del({
                 apiName: 'yapp',
-                path: `api/posts/deletePost?pid=${currentPost.value.pid}`,
+                path: `/api/posts/deletePost?pid=${currentPost.value.pid}`,
             });
-            const {
-                body
-            } = await deleteRequest.response;
-            const response = await body.json();
+            await deleteRequest.response;
+           
             //set alert
             setAlert("Yipee!", "Post deleted successfully");
-        } catch (error) {
-            console.log('Failed to load post', error);
-            setAlert("Oops!", "Failed to delete post");
+            //send it back to the previous page
+            loading.value = false;
+            
+            router.go(-2);
+        } catch (e) {
+           console.log('DELETE call failed: ', e);
+           setAlert("Oops!", "Failed to delete post");
         }
         //disable loading screen
         loading.value = false;
+    
     };
 
     const putPost = async (title, content) => {
