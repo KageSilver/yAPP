@@ -33,7 +33,6 @@ public class CommentControllerIntegrationTests
 
     private ICognitoActions _cognitoActions;
     private ICommentActions _commentActions;
-    private static int numComments = 0;
 
     public CommentControllerIntegrationTests()
     {
@@ -101,9 +100,8 @@ public class CommentControllerIntegrationTests
         Assert.Equal(newComment.PID, comment.PID);
 
         // Clean up (need to be uncommented when deletion is implemented)
-        // await _commentActions.DeleteComment(comment.CID);
-        // Test user is deleted in GetCommentsByPid_ShouldReturnComments_WhenSuccessful()
-        numComments+=1;
+        await _commentActions.DeleteComment(comment.CID);
+        // Test user is deleted in DeleteComment_ShouldReturnFalse_WhenDeleteFails()
     }
 
     [Fact, Order(2)]
@@ -189,9 +187,8 @@ public class CommentControllerIntegrationTests
         Assert.Equal(newComment.Downvotes, comment.Downvotes);
 
         // Clean up
-        // await _commentActions.DeleteComment(comment.CID);
-        // Test user is deleted in GetCommentsByPid_ShouldReturnComments_WhenSuccessful()
-        numComments+=1;
+        await _commentActions.DeleteComment(comment.CID);
+        // Test user is deleted in DeleteComment_ShouldReturnFalse_WhenDeleteFails()
     }
 
     [Fact, Order(5)]
@@ -256,18 +253,18 @@ public class CommentControllerIntegrationTests
         var responseString2 = await response2.Content.ReadAsStringAsync();
         var commentList = JsonConvert.DeserializeObject<List<Comment>>(responseString2);
 
-        numComments+=1;
         // Assert
-        Assert.Equal(numComments, commentList.Count);
-        Assert.Equal(newComment.CID, commentList.Last().CID);
-        Assert.Equal(newComment.PID, commentList.Last().PID);
-        Assert.Equal(newComment.UID, commentList.Last().UID);
-        Assert.Equal(newComment.CommentBody, commentList.Last().CommentBody);
-        Assert.Equal(newComment.Upvotes, commentList.Last().Upvotes);
-        Assert.Equal(newComment.Downvotes, commentList.Last().Downvotes);
+        Assert.Equal(1, commentList.Count);
+        Assert.Equal(newComment.CID, commentList.First().CID);
+        Assert.Equal(newComment.PID, commentList.First().PID);
+        Assert.Equal(newComment.UID, commentList.First().UID);
+        Assert.Equal(newComment.CommentBody, commentList.First().CommentBody);
+        Assert.Equal(newComment.Upvotes, commentList.First().Upvotes);
+        Assert.Equal(newComment.Downvotes, commentList.First().Downvotes);
 
         // Clean up
-        //await _commentActions.DeleteComment(newComment.CID);
+        await _commentActions.DeleteComment(newComment.CID);
+        // Test user is deleted in DeleteComment_ShouldReturnFalse_WhenDeleteFails()
     }
 
     [Fact, Order(9)]
@@ -331,8 +328,8 @@ public class CommentControllerIntegrationTests
         Assert.Equal(newComment.Downvotes, commentList.Last().Downvotes);
 
         // Clean up
-        await _cognitoActions.DeleteUser(TestUserEmail);
-        //await _commentActions.DeleteComment(newComment.CID);
+        await _commentActions.DeleteComment(newComment.CID);
+        // Test user is deleted in DeleteComment_ShouldReturnFalse_WhenDeleteFails()
     }
 
     [Fact, Order(12)]
@@ -356,4 +353,131 @@ public class CommentControllerIntegrationTests
     }
 
     #endregion
+
+    #region UpdateComment Tests
+
+    [Fact, Order(14)]
+    public async Task UpdateComment_ShouldReturnOk_WhenCommentIsUpdatedSuccessfully()
+    {
+        // Uses the test user set up in CreateComment_ValidRequest_ReturnsComment()
+
+        // Arrange
+        var newComment = new NewComment
+        {
+            PID = "UpdateCommentShouldReturnOk",
+            UID = testUid,
+            CommentBody = "UpdateComment_ShouldReturnOk_WhenCommentIsUpdatedSuccessfully()",
+        };
+        
+        var content = new StringContent(JsonConvert.SerializeObject(newComment), System.Text.Encoding.UTF8,
+            "application/json");
+
+        // Creates a new comment to test
+        var response1 = await _client.PostAsync("/api/comments/createComment", content);
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
+        var responseString1 = await response1.Content.ReadAsStringAsync();
+        var responseComment = JsonConvert.DeserializeObject<Comment>(responseString1);
+        
+        // Make updates to the comment
+        responseComment.CommentBody = "this comment has been edited";
+        var content2 = new StringContent(JsonConvert.SerializeObject(responseComment), System.Text.Encoding.UTF8,
+            "application/json");
+
+        // Act
+        var response2 = await _client.PutAsync($"/api/comments/updateComment", content2);
+        var responseString2 = response2.Content.ReadAsStringAsync().Result;
+        var updatedComment = JsonConvert.DeserializeObject<Comment>(responseString2);
+
+        // Assert
+        Assert.NotNull(updatedComment);
+        Assert.Equal(responseComment.CID, updatedComment.CID);
+        Assert.Equal(responseComment.PID, updatedComment.PID);
+        Assert.Equal(responseComment.UID, updatedComment.UID);
+        Assert.Equal(responseComment.CommentBody, updatedComment.CommentBody);
+        Assert.Equal(responseComment.Upvotes, updatedComment.Upvotes);
+        Assert.Equal(responseComment.Downvotes, updatedComment.Downvotes);
+
+        // Clean up
+        await _commentActions.DeleteComment(responseComment.CID);
+        // Test user is deleted in DeleteComment_ShouldReturnFalse_WhenDeleteFails()
+    }
+    
+    [Fact, Order(15)]
+    public async Task UpdateComment_ShouldReturnBadRequest_WhenRequestIsNull()
+    {
+        // Arrange
+        var content = new StringContent(JsonConvert.SerializeObject(null), System.Text.Encoding.UTF8,
+            "application/json");
+        
+        // Act
+        var response = await _client.PutAsync($"/api/comments/updateComment", content);
+
+        // Assert
+        Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    #endregion
+    
+    #region DeleteComment Tests
+    
+    [Fact, Order(16)]
+    public async Task DeleteComment_ShouldReturnTrue_WhenCommentIsDeletedSuccessfully()
+    {
+        // Uses the test user set up in CreateComment_ValidRequest_ReturnsComment()
+        // Arrange
+        var newComment = new NewComment
+        {
+            UID = testUid,
+            CommentBody = "DeleteComment_ShouldReturnTrue_WhenCommentIsDeletedSuccessfully()",
+            PID = "DeleteCommentShouldReturnTrue"
+        };
+        
+        var content = new StringContent(JsonConvert.SerializeObject(newComment), System.Text.Encoding.UTF8,
+            "application/json");
+
+        // Create a new comment for testing
+        var response1 = await _client.PostAsync("/api/comments/createComment", content);
+        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+
+        var responseString = await response1.Content.ReadAsStringAsync();
+        var responseComment = JsonConvert.DeserializeObject<Comment>(responseString);
+
+        // Act
+        var response2 = await _client.DeleteAsync($"/api/comments/deleteComment?cid={responseComment.CID}");
+        var responseString2 = response2.Content.ReadAsStringAsync().Result;
+        var result = JsonConvert.DeserializeObject<bool>(responseString2);
+
+        // Assert
+        Assert.True(result);
+        // Test user is deleted in DeleteComment_ShouldReturnFalse_WhenDeleteFails()
+    }
+    
+    [Fact, Order(17)]
+    public async Task DeleteComment_ShouldReturnBadRequest_WhenCommentIdIsNull()
+    {
+        // Act
+        var response = await _client.DeleteAsync($"/api/comments/deleteComment?cid={null}");
+
+        // Assert
+        Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+    }
+    
+    [Fact, Order(18)]
+    public async Task DeleteComment_ShouldReturnFalse_WhenDeleteFails()
+    {
+        // Act
+        // This comment id will need to be changed
+        var response2 = await _client.DeleteAsync($"/api/comments/deleteComment?cid={"DeleteCommentShouldReturnTrue"}");
+        var responseString2 = response2.Content.ReadAsStringAsync().Result;
+        var result = JsonConvert.DeserializeObject<bool>(responseString2);
+
+        // Assert
+        Assert.False(result);
+        
+        // Clean up
+        await _cognitoActions.DeleteUser(TestUserEmail);
+    }
+
+    #endregion
+
 }
