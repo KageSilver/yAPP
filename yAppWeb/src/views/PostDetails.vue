@@ -214,10 +214,10 @@ import DotMenu from '../components/DotMenu.vue';
             // Update the current post with the new values
             currentPost.value = updatedPost.value;
             isEditing.value = false; // Set the editing state to false
-            
+
             
         } catch (error) {
-            alertMsg.value.header = "Yipee!";
+            alertMsg.value.header = "Error!";
             alertMsg.value.message = "Failed to update post! Please try again";
             console.log('PUT call failed: ', JSON.parse(error.response.body));
         }
