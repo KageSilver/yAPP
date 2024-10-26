@@ -11,6 +11,7 @@ using Amazon.DynamoDBv2.DataModel;
 using yAppLambda.Models;
 using yAppLambda.DynamoDB;
 using Amazon.DynamoDBv2.DocumentModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Tests.UnitTests.Actions;
 
@@ -302,6 +303,177 @@ public class CommentActionsTests
 
         // Assert
         Assert.Empty(result);
+    }
+    
+    #endregion
+
+    #region DeleteComment Tests
+
+    [Fact]
+    public async Task DeleteComment_ShouldCallDeleteAsync()
+    {
+        // Arrange
+        var now = DateTime.Now;
+        var request = new Comment
+        {
+            CID = "11111",
+            PID = "11111",
+            UID = "11111",
+            CreatedAt = now,
+            UpdatedAt = now,
+            CommentBody = "DeleteComment_ShouldCallDeleteAsync()",
+            Upvotes = 0,
+            Downvotes = 0
+        };
+
+        // Sets up LoadAsync to return the request comment (for in GetCommentById)
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Comment>(request.CID, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(request);
+
+        // Sets up DeleteAsync to succeed            
+        _dynamoDbContextMock.Setup(d => d.DeleteAsync(It.IsAny<Comment>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()));
+
+        // Act
+        var result = await _commentActionsMock.DeleteComment(request.CID);
+
+        // Assert
+        Assert.True(result);
+        _dynamoDbContextMock.Verify(d => d.DeleteAsync(request, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()));
+    }
+
+    [Fact]
+    public async Task DeleteComment_ShouldHandleException_WhenCommentDoesNotExist()
+    {
+        // Arrange
+        var now = DateTime.Now;
+        var request = new Comment
+        {
+            CID = "11111",
+            PID = "11111",
+            UID = "11111",
+            CreatedAt = now,
+            UpdatedAt = now,
+            CommentBody = "DeleteComment_ShouldHandleException_WhenCommentDoesNotExist()",
+            Upvotes = 0,
+            Downvotes = 0
+        };
+
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Comment>(request.CID, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new Exception("Comment does not exist"));
+
+        // Act
+        var result = await _commentActionsMock.DeleteComment(request.CID);
+
+        // Assert
+        Assert.False(result);
+        _dynamoDbContextMock.Verify(d => d.LoadAsync<Comment>(request.CID, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+    
+    [Fact]
+    public async Task DeleteComment_ShouldHandleException_WhenDeleteCommentFails()
+    {
+        // Arrange
+        var now = DateTime.Now;
+        var request = new Comment
+        {
+            CID = "11111",
+            PID = "11111",
+            UID = "11111",
+            CreatedAt = now,
+            UpdatedAt = now,
+            CommentBody = "DeleteComment_ShouldHandleException_WhenDeleteCommentFails()",
+            Upvotes = 0,
+            Downvotes = 0
+        };
+
+        // Sets up LoadAsync to return the request comment (for in GetCommentById)
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Comment>(request.CID, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(request);
+
+        // Sets up DeleteAsync to throw an exception           
+        _dynamoDbContextMock.Setup(d => d.DeleteAsync(It.IsAny<Comment>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new Exception("Could not delete comment"));
+
+        // Act
+        var result = await _commentActionsMock.DeleteComment(request.CID);
+
+        // Assert
+        Assert.False(result);
+        _dynamoDbContextMock.Verify(d => d.DeleteAsync(It.IsAny<Comment>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+    
+    #endregion
+
+    #region UpdateComment Tests
+
+    [Fact]
+    public async Task UpdateComment_ShouldReturnOk_WhenCommentIsUpdatedSuccessfully()
+    {
+        // Arrange
+        var now = DateTime.Now;
+        var request = new Comment
+        {
+            CID = "1",
+            PID = "1",
+            UID = "uid",
+            CreatedAt = now,
+            UpdatedAt = now,
+            CommentBody = "UpdateComment_ShouldReturnOk_WhenCommentIsUpdatedSuccessfully()",
+            Upvotes = 0,
+            Downvotes = 0
+        };
+
+        _dynamoDbContextMock.Setup(d => d.SaveAsync(request, It.IsAny<DynamoDBOperationConfig>(), CancellationToken.None))
+            .Returns(Task.CompletedTask);
+
+        // Act
+        var result = await _commentActionsMock.UpdateComment(request);
+
+        // Assert
+        var actionResult = Assert.IsType<ActionResult<Comment>>(result);
+        var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
+        var returnedComment = Assert.IsType<Comment>(okResult.Value);
+
+        Assert.Equal(request.CID, returnedComment.CID);
+        Assert.Equal(request.PID, returnedComment.PID);
+        Assert.Equal(request.PID, returnedComment.PID);
+        Assert.Equal(request.CreatedAt, returnedComment.CreatedAt);
+        Assert.Equal(request.UpdatedAt, returnedComment.UpdatedAt);
+        Assert.Equal(request.CommentBody, returnedComment.CommentBody);
+        Assert.Equal(request.Upvotes, returnedComment.Upvotes);
+        Assert.Equal(request.Downvotes, returnedComment.Downvotes);
+
+        _dynamoDbContextMock.Verify(d => d.SaveAsync(request, It.IsAny<DynamoDBOperationConfig>(), CancellationToken.None), Times.Once);
+    }
+
+    [Fact]
+    public async Task UpdateComment_ShouldReturnStatus500_WhenExceptionIsThrown()
+    {
+        // Arrange
+        var now = DateTime.Now;
+        var request = new Comment
+        {
+            CID = "1",
+            PID = "1",
+            UID = "uid",
+            CreatedAt = now,
+            UpdatedAt = now,
+            CommentBody = "UpdateComment_ShouldReturnStatus500_WhenExceptionIsThrown()",
+            Upvotes = 0,
+            Downvotes = 0
+        };
+
+        _dynamoDbContextMock.Setup(d => d.SaveAsync(request, It.IsAny<DynamoDBOperationConfig>(), CancellationToken.None))
+            .ThrowsAsync(new Exception("Error updatiing comment in database"));
+
+        // Act
+        var result = await _commentActionsMock.UpdateComment(request);
+        
+        // Assert
+        var actionResult = Assert.IsType<ActionResult<Comment>>(result);
+        var statusCodeResult = Assert.IsType<StatusCodeResult>(actionResult.Result);
+
+        Assert.Equal(StatusCodes.Status500InternalServerError, statusCodeResult.StatusCode);
     }
     
     #endregion
