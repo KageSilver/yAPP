@@ -20,7 +20,7 @@ public class CardListHelper extends AppCompatActivity
 {
     private final Context context; // Where CardItems are Contained
     private final ProgressBar loadingSpinner;
-    private final String cardType; // Currently 3 types: POST, CURRENT_FRIEND, AND FRIEND_REQUEST
+    private final String cardType; // Currently 4 types: POST, DIARY, CURRENT_FRIEND, AND FRIEND_REQUEST
     private List<JSONObject> cardItemList; // List of CardItems
     private final IListCardItemInteractions itemInteractions; // Handles clicks of the CardItem
 
@@ -72,6 +72,29 @@ public class CardListHelper extends AppCompatActivity
         {
             Log.e("API", "Error fetching data", throwable);
             return null;
+        });
+    }
+
+    public void loadDiaries(String jsonData, RecyclerView recyclerView)
+    {
+        // Make loading spinner visible while we populate our CardItemAdapter
+        loadingSpinner.setVisibility(View.VISIBLE);
+
+        // Setup the adapter with an empty list that will be updated later
+        CardListAdapter adapter = new CardListAdapter(context, cardItemList, cardType, itemInteractions);
+        recyclerView.setAdapter(adapter);
+
+        // Convert API response into a list of CardItems
+        cardItemList = handleData(jsonData);
+
+        // Once response is received and parsed successfully,
+        // Hide loading spinner and update UI display
+        // NOTE: The adapter is what populates each card!
+        runOnUiThread(() ->
+        {
+            loadingSpinner.setVisibility(View.GONE);
+            adapter.updateList(cardItemList);
+            adapter.notifyDataSetChanged();
         });
     }
 
@@ -137,7 +160,7 @@ public class CardListHelper extends AppCompatActivity
         String pid = null;
         try
         {
-            if(cardType.equals("POST"))
+            if(cardType.equals("POST") || cardType.equals("DIARY"))
             {
                 pid = cardItemList.get(position).get("pid").toString();
             }
