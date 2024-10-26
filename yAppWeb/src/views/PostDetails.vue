@@ -1,22 +1,22 @@
 <script setup>
     import {
-    get,
-    put
-} from 'aws-amplify/api';
-import {
-    getCurrentUser
-} from 'aws-amplify/auth';
-import {
-    onMounted,
-    ref
-} from 'vue';
-import {
-    useRoute
-} from 'vue-router';
-import Alert from '../components/Alert.vue';
-import BackBtn from '../components/BackBtn.vue';
-import ConfirmationModal from '../components/ConfirmationModal.vue';
-import DotMenu from '../components/DotMenu.vue';
+        get,
+        put
+    } from 'aws-amplify/api';
+    import {
+        getCurrentUser
+    } from 'aws-amplify/auth';
+    import {
+        onMounted,
+        ref
+    } from 'vue';
+    import {
+        useRoute
+    } from 'vue-router';
+    import Alert from '../components/Alert.vue';
+    import BackBtn from '../components/BackBtn.vue';
+    import ConfirmationModal from '../components/ConfirmationModal.vue';
+    import DotMenu from '../components/DotMenu.vue';
 
     const route = useRoute();
     const currentPost = ref(null);
@@ -28,7 +28,7 @@ import DotMenu from '../components/DotMenu.vue';
     const alertMsg = ref({
         header: '',
         message: ''
-        });
+    });
 
 
 
@@ -207,24 +207,24 @@ import DotMenu from '../components/DotMenu.vue';
             } = await putRequest.response;
             const response = await body.json();
             console.log('PUT call succeeded: ', response);
-       
+
             setAlert("Yipee!", "Update post successfully");
             // Update the current post with the new values
             currentPost.value = updatedPost.value;
             isEditing.value = false; // Set the editing state to false
 
-            
+
         } catch (error) {
             setAlert("Oops!", "Failed to update post");
             console.log('PUT call failed: ', JSON.parse(error.response.body));
         }
     }
 
-const setAlert = (header, message) => {
-    alertMsg.value.header = header;
-    alertMsg.value.message = message;
-    showAlert.value = true;
-};
+    const setAlert = (header, message) => {
+        alertMsg.value.header = header;
+        alertMsg.value.message = message;
+        showAlert.value = true;
+    };
 </script>
 
 <template>
@@ -346,7 +346,7 @@ const setAlert = (header, message) => {
         header="Woah there!" message="Are you sure you want to discard your update?" />
     <ConfirmationModal :showModal=isDeletingComment :close="closeDeleteCommentModal" :confirm="deleteComment"
         header="Woah there!" :message="`Are you sure you want to delete this '${commentMsg}'?`" />
-    <Alert :showModal="showAlert" :header="alertMsg.header" :message="alertMsg.message" :close="closeAlert"  />
+    <Alert :showModal="showAlert" :header="alertMsg.header" :message="alertMsg.message" :close="closeAlert" />
 
     </div>
 </template>
