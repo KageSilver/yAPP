@@ -149,6 +149,7 @@ public class PostActions : IPostActions
     {
         try
         {
+            updatedPost.UpdatedAt = DateTime.Now;
             await _dynamoDbContext.SaveAsync(updatedPost, _config);
             return new OkObjectResult(updatedPost);
         }
