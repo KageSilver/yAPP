@@ -75,8 +75,8 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
                             String cid = commentObj.getString("cid");
                             String pid = commentObj.getString("pid");
                             String commentBody = commentObj.getString("commentBody");
-                            String createAt = commentObj.getString("createAt");
-                            String updateAt = commentObj.getString("updateAt");
+                            String createAt = commentObj.getString("createdAt");
+                            String updateAt = commentObj.getString("updatedAt");
 
                             Comment comment = new Comment(uid, commentBody, pid, cid, createAt, updateAt);
                             commentList.add(comment);

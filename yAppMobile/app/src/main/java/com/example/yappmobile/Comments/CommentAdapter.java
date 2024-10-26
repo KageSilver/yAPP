@@ -17,16 +17,16 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     // Constructor to initialize the comment list
     public CommentAdapter(List<Comment> commentList) {
-        this.commentList = new ArrayList<>();  // Initialize the ArrayList
-        this.commentList.add(new Comment(
-                "tes",    // uid
-                "dddd",   // commentBody
-                "dd",     // pid
-                "dd",     // cid
-                "ddd",    // createAt
-                "dd"      // updateAt
-        ));
-//        this.commentList = commentList;
+//        this.commentList = new ArrayList<>();  // Initialize the ArrayList
+//        this.commentList.add(new Comment(
+//                "tes",    // uid
+//                "dddd",   // commentBody
+//                "dd",     // pid
+//                "dd",     // cid
+//                "ddd",    // createAt
+//                "dd"      // updateAt
+//        ));
+        this.commentList = (ArrayList) commentList;
     }
 
     @NonNull
