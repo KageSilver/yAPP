@@ -40,7 +40,9 @@ public class PostActions : IPostActions
         try
         {
             // update the current time
-            post.CreatedAt = DateTime.Now;
+            var now = DateTime.Now;
+            post.CreatedAt = now;
+            post.UpdatedAt = now;
             // gets a unique ID for the post
             post.PID = Guid.NewGuid().ToString();
 

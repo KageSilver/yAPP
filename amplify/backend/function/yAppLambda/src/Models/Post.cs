@@ -13,6 +13,9 @@ public class Post
     [JsonPropertyName("createdAt")]
     public DateTime CreatedAt { get; set; } // Sort key
 
+    [JsonPropertyName("updatedAt")]
+    public DateTime UpdatedAt { get; set; } // The time the post was updated
+
     [JsonPropertyName("uid")]
     public string UID { get; set; } // The uid of the user who created the post
 

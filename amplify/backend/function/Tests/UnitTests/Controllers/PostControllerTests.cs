@@ -171,10 +171,12 @@ public class PostControllerTests
     public async Task UpdatePost_ShouldReturnOk_WhenPostIsUpdatedSuccessfully()
     {
         // Arrange
+        var now = DateTime.Now;
         var request = new Post
         {
             PID = "1",
-            CreatedAt = DateTime.Now,
+            CreatedAt = now,
+            UpdatedAt = now,
             UID = "username",
             PostTitle = "title",
             PostBody = "body",
@@ -196,6 +198,7 @@ public class PostControllerTests
 
         Assert.Equal(request.PID, returnedPost.PID);
         Assert.Equal(request.UID, returnedPost.UID);
+        Assert.NotEqual(request.UpdatedAt, returnedPost.UpdatedAt);
         Assert.Equal(request.PostTitle, returnedPost.PostTitle);
         Assert.Equal(request.PostBody, returnedPost.PostBody);
         Assert.Equal(request.Upvotes, returnedPost.Upvotes);
@@ -220,10 +223,12 @@ public class PostControllerTests
     public async Task UpdatePost_ShouldReturnBadRequest_WhenUIDIsMissing()
     {
         // Arrange
+        var now = DateTime.Now;
         var request = new Post
         {
             PID = "1",
-            CreatedAt = DateTime.Now,
+            CreatedAt = now,
+            UpdatedAt = now,
             UID = "",
             PostTitle = "title",
             PostBody = "body",
@@ -240,17 +245,18 @@ public class PostControllerTests
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(response.Result);
         Assert.Equal("request body is required and must contain uid, post title, post body",
             badRequestResult.Value);
-
     }
     
     [Fact]
     public async Task UpdatePost_ShouldReturnBadRequest_WhenPostBodyIsMissing()
     {
         // Arrange
+        var now = DateTime.Now;
         var request = new Post
         {
             PID = "1",
-            CreatedAt = DateTime.Now,
+            CreatedAt = now,
+            UpdatedAt = now,
             UID = "uid",
             PostTitle = "title",
             PostBody = "",
@@ -273,10 +279,12 @@ public class PostControllerTests
     public async Task UpdatePost_ShouldReturnBadRequest_WhenPostTitleIsMissing()
     {
         // Arrange
+        var now = DateTime.Now;
         var request = new Post
         {
             PID = "1",
-            CreatedAt = DateTime.Now,
+            CreatedAt = now,
+            UpdatedAt = now,
             UID = "uid",
             PostTitle = "",
             PostBody = "body",
@@ -303,10 +311,12 @@ public class PostControllerTests
     public async Task GetRecentPosts_ShouldReturnPosts_WhenRequestIsSuccessful()
     {
         // Arrange
+        var now = DateTime.Now;
         var post = new Post
         {
             PID = "1",
-            CreatedAt = DateTime.Now,
+            CreatedAt = now,
+            UpdatedAt = now,
             UID = "uid",
             PostTitle = "title",
             PostBody = "body",
@@ -357,11 +367,13 @@ public class PostControllerTests
     public async Task GetPostById_ShouldReturnPost_WhenSuccessful()
     {
         // Arrange
+        var now = DateTime.Now;
         var post = new Post
         {
             PID = "1",
             UID = "uid",
-            CreatedAt = DateTime.Now,
+            CreatedAt = now,
+            UpdatedAt = now,
             PostTitle = "title",
             PostBody = "body",
             Upvotes = 0,
@@ -379,6 +391,7 @@ public class PostControllerTests
         var returnedPost = Assert.IsType<Post>(result.Value);
         Assert.Equal(post.PID, returnedPost.PID);
         Assert.Equal(post.CreatedAt, returnedPost.CreatedAt);
+        Assert.Equal(post.UpdatedAt, returnedPost.UpdatedAt);
         Assert.Equal(post.UID, returnedPost.UID);
         Assert.Equal(post.PostTitle, returnedPost.PostTitle);
         Assert.Equal(post.PostBody, returnedPost.PostBody);
@@ -421,11 +434,13 @@ public class PostControllerTests
     public async Task GetPostsByUser_ShouldReturnPosts_WhenSuccessful()
     {
         // Arrange
+        var now = DateTime.Now;
         var post = new Post
         {
             PID = "1",
             UID = "uid",
-            CreatedAt = DateTime.Now,
+            CreatedAt = now,
+            UpdatedAt = now,
             PostTitle = "title",
             PostBody = "body",
             Upvotes = 0,
@@ -447,6 +462,7 @@ public class PostControllerTests
         Assert.Equal(1, returnedList.Count);
         Assert.Equal(post.PID, returnedList.First().PID);
         Assert.Equal(post.CreatedAt, returnedList.First().CreatedAt);
+        Assert.Equal(post.UpdatedAt, returnedList.First().UpdatedAt);
         Assert.Equal(post.UID, returnedList.First().UID);
         Assert.Equal(post.PostTitle, returnedList.First().PostTitle);
         Assert.Equal(post.PostBody, returnedList.First().PostBody);

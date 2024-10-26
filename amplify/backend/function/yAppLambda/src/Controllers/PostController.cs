@@ -169,7 +169,7 @@ public class PostController : ControllerBase
         return deleted;
     }
 
-    // PUT: api/posts/updatePost with body { "pid": "pid", "createdAt": "createdAt", "uid": "uid", "postTitle": "title", "postBody": "body", "upvotes": "upvotes", "downvotes": "downvotes", "diaryEntry": false, "anonymous": false }
+    // PUT: api/posts/updatePost with body { "pid": "pid", "createdAt": "createdAt", "updatedAt": "updatedAt", "uid": "uid", "postTitle": "title", "postBody": "body", "upvotes": "upvotes", "downvotes": "downvotes", "diaryEntry": false, "anonymous": false }
     /// <summary>
     /// Edits an already existing post.
     /// </summary>
