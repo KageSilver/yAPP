@@ -4,9 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 
 import com.example.yappmobile.CardList.CardListHelper;
 import com.example.yappmobile.NaviBarDestinations.PublicPostsActivity;
@@ -29,7 +32,7 @@ public class PostEntryActivity extends AppCompatActivity
         setContentView(R.layout.activity_post_entry);
 
         // Back button code
-        FloatingActionButton backButton = findViewById(R.id.back_button);
+       ImageButton backButton = findViewById(R.id.backButton);
         backButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -49,6 +52,33 @@ public class PostEntryActivity extends AppCompatActivity
 
         String getPostAPI = "/api/posts/getPostById?pid=" + pid;
         loadPost(getPostAPI);
+
+        //set up edit and delete
+        ImageView moreOptions = findViewById(R.id.menuButton);
+        moreOptions.setOnClickListener(view -> {
+            // Create a PopupMenu
+            PopupMenu popup = new PopupMenu(PostEntryActivity.this, view);
+
+            // Inflate the menu
+            popup.getMenuInflater().inflate(R.menu.menu_popup, popup.getMenu());
+
+            // Handle menu item clicks
+            popup.setOnMenuItemClickListener(item -> {
+                switch (item.getItemId()) {
+//                    case R.id.action_edit:
+//                        // Handle Edit action
+//                        return true;
+//                    case R.id.action_delete:
+//                        // Handle Delete action
+//                        return true;
+                    default:
+                        return false;
+                }
+            });
+
+            // Show the popup menu
+            popup.show();
+        });
     }
 
     private void loadPost(String apiUrl)
