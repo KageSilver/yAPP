@@ -29,8 +29,23 @@
                 android:textSize="22sp"
                 android:textStyle="bold"
                 android:padding="12dp"
-                android:textColor="@color/black">
+                android:layout_marginRight="82dp"
+                android:text=""
+                android:textColor="@color/black"
+                android:layout_alignParentLeft="true">
             </TextView>
+
+            <ImageButton
+                android:id="@+id/collapse_calendar"
+                android:layout_width="wrap_content"
+                android:layout_height="37dp"
+                android:layout_margin="12dp"
+                android:layout_weight="0"
+                android:backgroundTint="#00FFFFFF"
+                android:paddingTop="12dp"
+                android:src="@drawable/baseline_keyboard_arrow_up_24"
+                android:layout_gravity="right"/>
+
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
@@ -52,26 +67,25 @@
                 app:layout_constraintTop_toTopOf="parent"
                 android:dateTextAppearance="@style/CalenderViewCustom"
                 android:weekDayTextAppearance="@style/CalenderViewCustom"
-                android:theme="@style/CalenderViewCustom">
+                android:theme="@style/CalenderViewCustom"
+                android:visibility="visible">
             </CalendarView>
         </androidx.cardview.widget.CardView>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/contraintLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
             android:layout_gravity="center">
 
             <TextView
                 android:id="@+id/line"
-                android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:background="#FFFFFF"
-                app:layout_constraintTop_toTopOf="parent"
-                android:textSize="1sp"
+                android:layout_height="wrap_content"
                 android:layout_margin="12dp"
-                android:gravity="center_horizontal"/>
+                android:background="#FFFFFF"
+                android:gravity="center_horizontal"
+                android:textSize="1sp"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ProgressBar
                 android:id="@+id/indeterminateBar"
@@ -79,9 +93,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:indeterminate="true"
                 android:layout_margin="12dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:indeterminate="true"
+                app:layout_constraintBottom_toBottomOf="@+id/user_diary_list"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/line" />
@@ -89,14 +103,14 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/user_diary_list"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="16dp"
                 android:paddingLeft="12dp"
                 android:paddingRight="12dp"
-                android:layout_margin="16dp"
                 app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
-                app:layout_constraintTop_toBottomOf="@id/line"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0" />
 
             <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -109,7 +123,6 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="1.0"
                 app:menu="@menu/bottom_nav_menu">
 
