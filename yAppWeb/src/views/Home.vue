@@ -1,6 +1,6 @@
 <script setup>
 	import { useRouter } from 'vue-router'; // Import useRouter
-import { usePostHelper } from '../composables/usePostHelper'; // Import the helper
+    import { usePostHelper } from '../composables/usePostHelper'; // Import the helper
    
     const router = useRouter(); // Use router hook
     const maxResults = 10; // Default is 10
@@ -10,18 +10,38 @@ import { usePostHelper } from '../composables/usePostHelper'; // Import the help
     const { jsonData, loading, truncateText, getPosts, updatePath } = usePostHelper(`/api/posts/getRecentPosts?since=${since}&maxResults=${maxResults}`);
     console.log(jsonData);
 
+    var dates = new Array();
+    var currentDatePosition = 0;
+    dates.push(since);
+
     function clickPost(pid) 
     {
         router.push({ name: 'details', params: { pid } });
     }
 
-    function loadMore()
+    function pageForwards()
     {
-        var since = new Date(getLastPostTime());
-        since = since.toJSON();
-        loading.value = true;
-        updatePath(`/api/posts/getRecentPosts?since=${since}&maxResults=${maxResults}`);
-        getPosts();
+        var lastPostTime = getLastPostTime();
+        if (lastPostTime != null && jsonData.value.length == 10) {
+            var since = new Date(lastPostTime);
+            since = since.toJSON();
+            dates.push(since);
+            currentDatePosition++;
+            loading.value = true;
+            updatePath(`/api/posts/getRecentPosts?since=${since}&maxResults=${maxResults}`);
+            getPosts();
+        }
+    }
+
+    function pageBackwards()
+    {
+        if ( currentDatePosition != 0 ) {
+            loading.value = true;
+            console.log(currentDatePosition);
+            currentDatePosition--;
+            updatePath(`/api/posts/getRecentPosts?since=${dates.at(currentDatePosition)}&maxResults=${maxResults}`);
+            getPosts();
+        }
     }
 
     function getLastPostTime()
@@ -67,15 +87,16 @@ import { usePostHelper } from '../composables/usePostHelper'; // Import the help
                         20
                     </button>
                 </div> -->
-
-        
             </div>
+                <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded self-center add-margin" type="button"
+                    @click="pageBackwards()">
+                    Go back
+                </button>
                 <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded self-center " type="button"
-        @click="loadMore()">
-        Load more!
-    </button>
-    </div>
-
+                    @click="pageForwards()">
+                    Load more!
+                </button>
+            </div>
     </div>
 </template>
 
@@ -89,5 +110,9 @@ import { usePostHelper } from '../composables/usePostHelper'; // Import the help
     to {
         transform: rotate(360deg);
     }
+}
+
+.add-margin {
+    margin-bottom: 5px;
 }
 </style>
