@@ -1,29 +1,29 @@
 <script setup>
     import {
-        del,
-        get,
-        post,
-        put
-    } from 'aws-amplify/api';
-    import {
-        getCurrentUser
-    } from 'aws-amplify/auth';
-    import {
-        onMounted,
-        ref
-    } from 'vue';
-    import {
-        useRoute,
-        useRouter
-    } from 'vue-router';
-    import Alert from '../components/Alert.vue';
-    import BackBtn from '../components/BackBtn.vue';
-    import ConfirmationModal from '../components/ConfirmationModal.vue';
-    import DotMenu from '../components/DotMenu.vue';
-    import LoadingScreen from '../components/LoadingScreen.vue';
-    import {
-        getCurrentTime
-    } from '../composables/helper';
+    del,
+    get,
+    post,
+    put
+} from 'aws-amplify/api';
+import {
+    getCurrentUser
+} from 'aws-amplify/auth';
+import {
+    onMounted,
+    ref
+} from 'vue';
+import {
+    useRoute,
+    useRouter
+} from 'vue-router';
+import Alert from '../components/Alert.vue';
+import BackBtn from '../components/BackBtn.vue';
+import ConfirmationModal from '../components/ConfirmationModal.vue';
+import DotMenu from '../components/DotMenu.vue';
+import LoadingScreen from '../components/LoadingScreen.vue';
+import {
+    getCurrentTime
+} from '../composables/helper';
     // Importing necessary modules
     const route = useRoute();
     const router = useRouter();
@@ -214,7 +214,9 @@
             //send it back to the previous page
             loading.value = false;
 
-            router.go(-2);
+            router.push({
+                name: 'profile'
+            });
         } catch (e) {
             console.log('DELETE call failed: ', e);
             setAlert("Oops!", "Failed to delete post");
