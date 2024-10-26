@@ -33,6 +33,8 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
     private CommentAdapter adapter;
     private ProgressBar progressBar;
 
+    private static final  String LOG_NAME = "COMMENTS";
+
 
     public static CommentsBottomSheet newInstance(String pid,String uid) {
         CommentsBottomSheet fragment = new CommentsBottomSheet();
@@ -114,11 +116,11 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
                         });
 
                     } catch (Exception e) {
-                        Log.e("Comments", "Error parsing comments", e);
+                        Log.e(LOG_NAME, "Error parsing comments", e);
                     }
                 },
                 apiFailure -> {
-                    Log.e("Comments", "GET failed.", apiFailure);
+                    Log.e(LOG_NAME, "GET failed.", apiFailure);
                     getActivity().runOnUiThread(() -> progressBar.setVisibility(View.GONE));  // Hide the loading spinner if failed
                 }
         );
@@ -137,7 +139,7 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
 
             // Convert the map to a JSON string
             JSONObject postData = new JSONObject(data);
-            Log.d("Comments",postData.toString());
+            Log.d(LOG_NAME,postData.toString());
 
 
             // Set up the API request options for posting the comment
@@ -149,7 +151,7 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
                     .build();
             Amplify.API.post(options,
                     response -> {
-                        Log.i("Comments", "POST response: " + response.getData().asString());
+                        Log.i(LOG_NAME, "POST response: " + response.getData().asString());
 
                         // Hide the progress bar once the response is received
                         getActivity().runOnUiThread(() -> {
@@ -159,7 +161,7 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
                         });
                     },
                     error -> {
-                        Log.e("Comments", "POST request failed", error);
+                        Log.e(LOG_NAME, "POST request failed", error);
 
                         // Hide the progress bar if the request fails
                         getActivity().runOnUiThread(() -> {
@@ -169,7 +171,7 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
             );
 
         } catch (Exception e) {
-            Log.e("Comments", "Error posting comment", e);
+            Log.e(LOG_NAME, "Error posting comment", e);
         }
     }
 }
