@@ -15,6 +15,7 @@ public class PostActions : IPostActions
     private readonly IDynamoDBContext _dynamoDbContext;
     private readonly string _postTable;
     private readonly DynamoDBOperationConfig _config;
+    private readonly ICommentActions _commentActions;
 
     public PostActions(IAppSettings appSettings, IDynamoDBContext dynamoDbContext)
     {
@@ -28,6 +29,8 @@ public class PostActions : IPostActions
         {
             OverrideTableName = _postTable
         };
+
+        _commentActions = new CommentActions(appSettings, dynamoDbContext);
     }
     
     /// <summary>
@@ -125,6 +128,7 @@ public class PostActions : IPostActions
             }
 
             // Delete the post from the database
+            await _commentActions.DeleteComments(pid);
             await _dynamoDbContext.DeleteAsync(post.Result, _config);
 
             return true;

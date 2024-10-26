@@ -290,4 +290,179 @@ public class CommentControllerTests
     }
 
     #endregion
+
+    #region UpdateComment Tests
+
+    [Fact]
+    public async Task UpdateComment_ShouldReturnOk_WhenCommentIsUpdatedSuccessfully()
+    {
+        // Arrange
+        var now = DateTime.Now;
+        var request = new Comment
+        {
+            CID = "1",
+            PID = "1",
+            UID = "1",
+            CreatedAt = now,
+            UpdatedAt = now,
+            CommentBody = "UpdateComment_ShouldReturnOk_WhenCommentIsUpdatedSuccessfully()",
+            Upvotes = 0,
+            Downvotes = 0
+        };
+
+        _mockCommentActions.Setup(c => c.UpdateComment(It.IsAny<Comment>())).ReturnsAsync(new OkObjectResult(request));
+
+        // Act
+        var response = await _commentController.UpdateComment(request);
+
+        // Assert
+        var actionResult = Assert.IsType<ActionResult<Comment>>(response);
+        var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
+        var returnedComment = Assert.IsType<Comment>(okResult.Value);
+
+        Assert.Equal(request.CID, returnedComment.CID);
+        Assert.Equal(request.PID, returnedComment.PID);
+        Assert.Equal(request.UID, returnedComment.UID);
+        Assert.Equal(request.CreatedAt, returnedComment.CreatedAt);
+        Assert.Equal(request.UpdatedAt, returnedComment.UpdatedAt);
+        Assert.Equal(request.CommentBody, returnedComment.CommentBody);
+        Assert.Equal(request.Upvotes, returnedComment.Upvotes);
+        Assert.Equal(request.Downvotes, returnedComment.Downvotes);
+    }
+
+    [Fact]
+    public async Task UpdateComment_ShouldReturnBadRequest_WhenRequestIsNull()
+    {
+        // Act
+        var response = await _commentController.UpdateComment(null);
+
+        // Assert
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(response.Result);
+        Assert.Equal("Request body is required and must contain pid, uid and comment body",
+            badRequestResult.Value);
+    }
+    
+    [Fact]
+    public async Task UpdateComment_ShouldReturnBadRequest_WhenUsernameIsMissing()
+    {
+        // Arrange
+        var now = DateTime.Now;
+        var request = new Comment
+        {
+            CID = "1",
+            PID = "1",
+            UID = "",
+            CreatedAt = now,
+            UpdatedAt = now,
+            CommentBody = "UpdateComment_ShouldReturnBadRequest_WhenUsernameIsMissing()",
+            Upvotes = 0,
+            Downvotes = 0
+        };
+
+        // Act
+        var response = await _commentController.UpdateComment(request);
+
+        // Assert
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(response.Result);
+        Assert.Equal("Request body is required and must contain pid, uid and comment body",
+            badRequestResult.Value);
+
+    }
+    
+    [Fact]
+    public async Task UpdateComment_ShouldReturnBadRequest_WhenCommentBodyIsMissing()
+    {
+        // Arrange
+        var now = DateTime.Now;
+        var request = new Comment
+        {
+            CID = "1",
+            PID = "1",
+            UID = "1",
+            CreatedAt = now,
+            UpdatedAt = now,
+            CommentBody = "",
+            Upvotes = 0,
+            Downvotes = 0
+        };
+
+        // Act
+        var response = await _commentController.UpdateComment(request);
+
+        // Assert
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(response.Result);
+        Assert.Equal("Request body is required and must contain pid, uid and comment body",
+            badRequestResult.Value);
+    }
+
+    [Fact]
+    public async Task UpdateComment_ShouldReturnBadRequest_WhenPidIsMissing()
+    {
+        // Arrange
+        var now = DateTime.Now;
+        var request = new Comment
+        {
+            CID = "1",
+            PID = "",
+            UID = "1",
+            CreatedAt = now,
+            UpdatedAt = now,
+            CommentBody = "UpdateComment_ShouldReturnBadRequest_WhenPidIsMissing()",
+            Upvotes = 0,
+            Downvotes = 0
+        };
+
+        // Act
+        var response = await _commentController.UpdateComment(request);
+
+        // Assert
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(response.Result);
+        Assert.Equal("Request body is required and must contain pid, uid and comment body",
+            badRequestResult.Value);
+    }
+
+    #endregion
+    
+    #region DeleteComment Tests
+
+    [Fact]
+    public async Task DeleteComment_ShouldReturnTrue_WhenCommentIsDeletedSuccessfully()
+    {
+        // Arrange
+        _mockCommentActions.Setup(c => c.DeleteComment(It.IsAny<string>())).ReturnsAsync(true);
+
+        // Act
+        var response = await _commentController.DeleteComment("1");
+
+        // Assert
+        Assert.True(response.Value);
+    }
+
+    [Fact]
+    public async Task DeleteComment_ShouldReturnBadRequest_WhenCommentIdIsNull()
+    {
+        // Act
+        var result = await _commentController.DeleteComment(null);
+
+        // Assert
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+        Assert.Equal("Comment ID is required",
+            badRequestResult.Value);
+    }
+    
+    [Fact]
+    public async Task DeleteComment_ShouldReturnFalse_WhenDeleteFails()
+    {
+        // Arrange
+        _mockCommentActions.Setup(c => c.DeleteComment(It.IsAny<string>())).ReturnsAsync(false);
+
+        // Act
+        var response = await _commentController.DeleteComment("1");
+        
+        // Assert
+        Assert.False(response.Value);
+    }
+
+    #endregion
+
 }
