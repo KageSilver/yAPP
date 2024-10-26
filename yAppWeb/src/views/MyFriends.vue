@@ -4,17 +4,19 @@
         put
     } from 'aws-amplify/api';
     import {
+        getCurrentUser
+    } from 'aws-amplify/auth';
+    import {
         onMounted,
         ref
     } from 'vue';
-    import {
-        getCurrentUser
-    } from 'aws-amplify/auth';
-    import ProfileHeader from '../components/ProfileHeader.vue';
     import ConfirmationModal from '../components/ConfirmationModal.vue';
+    import ProfileHeader from '../components/ProfileHeader.vue';
+    import LoadingScreen from '../components/LoadingScreen.vue';
 
     const username = ref('');
     const jsonData = ref([]);
+    const loading = ref(false);
 
 
 
@@ -26,7 +28,8 @@
     });
 
     // Get authenticated user's friend requests
-    async function getFriends() {
+    const getFriends = async () => {
+        loading.value = true;
         try {
             const restOperation = get({
                 apiName: 'yapp',
@@ -35,13 +38,12 @@
             const {
                 body
             } = await restOperation.response;
-            const response = await ((await body.blob()).arrayBuffer());
-            const decoder = new TextDecoder('utf-8'); // Use TextDecoder to decode the ArrayBuffer to a string
-            const decodedText = decoder.decode(response);
-            jsonData.value = JSON.parse(decodedText); // Update with parsed JSON
+            jsonData.value = await body.json();
+
         } catch (error) {
             console.log('GET call failed', error);
         }
+        loading.value = false;
     }
 
     const showModal = ref(false);
@@ -66,16 +68,14 @@
     const confirmUnfollow = () => {
         unfollowFriend(currentFriendship.value);
         closeModal();
+        getFriends(); // Update the list of friends
     };
 
 
-
-
     // Unfollow sent friend
-    async function unfollowFriend(friendship) {
+    const unfollowFriend = async (friendship) => {
+        loading.value = true;
         try {
-
-
             const newRequest = {
                 "fromUserName": friendship.FromUserName,
                 "toUserName": friendship.ToUserName,
@@ -92,36 +92,41 @@
                     body: newRequest
                 }
             });
-            console.log(await sendPutRequest.response);
-            getFriends(); // Update the list of friends
+            await sendPutRequest.response;
+
         } catch (err) {
             console.error(err);
         }
-    }
+        loading.value = false;
+    };
 </script>
 
 <template>
     <ProfileHeader />
-    <!-- Show this message if the friend list is empty -->
-    <div v-if="jsonData.length === 0">
-        <h4 class="text-white text-center">Wow... you have no friends!</h4>
-    </div>
-
-    <!-- Display friend list if available -->
+    <LoadingScreen v-if="loading" />
     <div v-else>
-        <div class="flex-box px-16 pr-32 mt-5" v-for="friendship in jsonData"
-            :key="friendship.ToUserName || friendship.FromUserName">
-            <div class="request p-5 bg-deep-dark text-white">
-                <h4 v-if="friendship.ToUserName !== username">{{ friendship.ToUserName }}</h4>
-                <h4 v-else>{{ friendship.FromUserName }}</h4>
-                <div class="request-actions">
-                    <button class="bg-light-pink text-white p-4 font-bold rounded-lg" @click="openModal(friendship)">
-                        Unfollow
-                    </button>
+        <!-- Show this message if the friend list is empty -->
+        <div v-if="jsonData.length === 0">
+            <h4 class="text-white text-center">Wow... you have no friends!</h4>
+        </div>
+
+        <!-- Display friend list if available -->
+        <div v-else>
+            <div class="flex-box px-16 pr-32 mt-5" v-for="friendship in jsonData"
+                :key="friendship.ToUserName || friendship.FromUserName">
+                <div class="request p-5 bg-deep-dark text-white">
+                    <h4 v-if="friendship.ToUserName !== username">{{ friendship.ToUserName }}</h4>
+                    <h4 v-else>{{ friendship.FromUserName }}</h4>
+                    <div class="request-actions">
+                        <button class="bg-light-pink text-white p-4 font-bold rounded-lg"
+                            @click="openModal(friendship)">
+                            Unfollow
+                        </button>
+                    </div>
                 </div>
+                <ConfirmationModal :showModal="showModal" :close="closeModal" :confirm="confirmUnfollow"
+                    header="Woah there!" :message="message" />
             </div>
-            <ConfirmationModal :showModal="showModal" :close="closeModal" :confirm="confirmUnfollow"
-                header="Woah there!" :message="message" />
         </div>
     </div>
 </template>
