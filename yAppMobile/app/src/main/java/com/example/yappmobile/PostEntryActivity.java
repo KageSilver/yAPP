@@ -12,8 +12,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 
 import com.example.yappmobile.CardList.CardListHelper;
+import com.example.yappmobile.Comments.CommentsBottomSheet;
 import com.example.yappmobile.NaviBarDestinations.PublicPostsActivity;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,6 +22,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class PostEntryActivity extends AppCompatActivity
 {
+    private String _pid;
     private TextView postTitle, postBody;
     private CardListHelper postListHelper;
 
@@ -46,11 +47,11 @@ public class PostEntryActivity extends AppCompatActivity
         postListHelper = new CardListHelper(this);
 
         // Setup content view to display post content
-        String pid = getIntent().getStringExtra("pid");
+        _pid = getIntent().getStringExtra("pid");
         postTitle = findViewById(R.id.post_title);
         postBody = findViewById(R.id.post_body);
 
-        String getPostAPI = "/api/posts/getPostById?pid=" + pid;
+        String getPostAPI = "/api/posts/getPostById?pid=" + _pid;
         loadPost(getPostAPI);
 
         //set up edit and delete
@@ -78,6 +79,17 @@ public class PostEntryActivity extends AppCompatActivity
 
             // Show the popup menu
             popup.show();
+        });
+
+        // Find the reply button
+        // Find the reply button in the layout
+        ImageButton replyButton = findViewById(R.id.replyButton);
+
+        // Set a click listener on the reply button to open the BottomSheetDialogFragment
+        replyButton.setOnClickListener(v -> {
+            // Create and show the BottomSheetDialogFragment
+            CommentsBottomSheet bottomSheet = CommentsBottomSheet.newInstance(_pid);
+            bottomSheet.show(getSupportFragmentManager(), bottomSheet.getTag());
         });
     }
 
@@ -111,4 +123,5 @@ public class PostEntryActivity extends AppCompatActivity
             return null;
         });
     }
+
 }

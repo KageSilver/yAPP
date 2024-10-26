@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@drawable/gradient_background_2"
     android:layout_height="match_parent">
 
     <!-- Scrollable area for the post and comments -->
@@ -45,8 +46,6 @@
                         android:src="@drawable/baseline_arrow_back_24"
                         app:tint="@android:color/white" />
 
-
-
                     <!-- Three-dot menu aligned to the right (end) -->
                     <ImageButton
                         android:id="@+id/menuButton"
@@ -65,84 +64,44 @@
                 </RelativeLayout>
             </androidx.appcompat.widget.Toolbar>
 
-            <!-- Post Title -->
-            <TextView
-                android:layout_below="@id/toolbar"
-                android:id="@+id/post_title"
+            <!-- Post CardView -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/post_card"
+                android:layout_below="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"
-                android:fontFamily="monospace"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-                android:textColor="@color/black"
-                android:text="Post Title Content"
-                />
+                android:layout_margin="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp">
 
-            <!-- Post Body -->
-            <TextView
-                android:id="@+id/post_body"
-                android:layout_below="@id/post_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"
-                android:fontFamily="monospace"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:text="Post body content goes here." />
-
-            <!-- Comment Section Header -->
-            <TextView
-                android:id="@+id/comment_header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/post_body"
-                android:layout_marginTop="8dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:text="Comments"
-                android:textSize="18sp"
-                android:textColor="@color/black"
-                android:textStyle="bold" />
-
-            <!-- Comment List -->
-            <LinearLayout
-                android:id="@+id/comments_section"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/comment_header"
-                android:layout_marginTop="8dp"
-                android:orientation="vertical">
-
-                <!-- Example comment -->
-                <TextView
-                    android:id="@+id/comment1"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="User1: Great post!"
-                    android:textColor="@color/black"
-                    android:textSize="14sp" />
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                <TextView
-                    android:id="@+id/comment2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="User2: Nice content!"
-                    android:textColor="@color/black"
-                    android:textSize="14sp" />
-            </LinearLayout>
+                    <!-- Post Title -->
+                    <TextView
+                        android:id="@+id/post_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                        android:textColor="@color/black"
+                        android:text="Post Title Content" />
 
+                    <!-- Post Body -->
+                    <TextView
+                        android:id="@+id/post_body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="monospace"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:text="Post body content goes here." />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
         </RelativeLayout>
     </ScrollView>
 
@@ -154,7 +113,6 @@
         android:layout_alignParentBottom="true"
         android:background="@color/pink">
 
-        <!-- If the current user likes the page, the logo color will change to red -->
         <ImageButton
             android:id="@+id/upvoteButton"
             android:layout_width="48dp"
@@ -219,6 +177,6 @@
             app:tint="@color/white" />
     </RelativeLayout>
 
-
 </RelativeLayout>
+
 
