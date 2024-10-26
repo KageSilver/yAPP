@@ -1,6 +1,7 @@
 <script setup>
     import {
         get,
+        post,
         put
     } from 'aws-amplify/api';
     import {
@@ -17,124 +18,139 @@
     import BackBtn from '../components/BackBtn.vue';
     import ConfirmationModal from '../components/ConfirmationModal.vue';
     import DotMenu from '../components/DotMenu.vue';
-
+    import LoadingScreen from '../components/LoadingScreen.vue';
+    // Importing necessary modules
     const route = useRoute();
-    const currentPost = ref(null);
-    //post editing and deleting
-    const isEditing = ref(false); // State to control the visibility of the edit form
-    const isDeleting = ref(false); // State to control the visibility of the confirmation modal
-    const isDiscardingUpdate = ref(false); // State to control the visibility of the confirmation modal
-    const showAlert = ref(false);
+
+    // State
+    const currentPost = ref(null); // Stores the current post details
+
+    // Loading and alert management
+    const loading = ref(false); // Controls the loading state
+    const showAlert = ref(false); // Controls the visibility of the alert
     const alertMsg = ref({
         header: '',
         message: ''
-    });
+    }); // Stores alert messages
 
+    // Post editing and deleting states
+    const isEditing = ref(false); // Controls the visibility of the edit form
+    const isDeleting = ref(false); // Controls the visibility of the delete confirmation modal
+    const isDiscardingUpdate = ref(false); // Controls the visibility of the discard confirmation modal
 
+    // Comment management states
+    const isAddingComment = ref(false); // Controls the visibility of the add comment form
+    const isDeletingComment = ref(false); // Controls the visibility of the delete comment modal
+    const commentIds = ref([]); // Tracks the IDs of comments being edited
+    const commentMsg = ref(''); // Stores the content of the comment being deleted
+    const comments = ref([]); // List of comments
+    const userId = ref(''); // Stores the user ID
 
-    const isAddingComment = ref(false); // State to control the visibility of the adding comment form
-    const isDeletingComment = ref(false); // State to control the visibility of the confirmation modal
-    const commentIds = ref([]);
-    const commentMsg = ref('');
+    // Post functions
 
+    // Handles the start of post editing
+    const editPost = () => {
+        isEditing.value = true;
+        isDiscardingUpdate.value = false;
+    };
 
+    // Opens the delete post modal
+    const openDeleteModal = () => {
+        isDeleting.value = true;
+    };
+
+    // Closes the delete post modal
+    const closeDeleteModal = () => {
+        isDeleting.value = false;
+    };
+
+    // Opens the discard post changes modal
+    const openDiscardModal = () => {
+        isDiscardingUpdate.value = true;
+    };
+
+    // Closes the discard post changes modal
+    const closeDiscardModal = () => {
+        isDiscardingUpdate.value = false;
+    };
+
+    // Confirms the post deletion (can integrate API call here)
+    const confirmDelete = () => {
+        // API call to delete the post and refresh data
+    };
+
+    // Confirms discarding post changes
+    const confirmDiscard = () => {
+        isEditing.value = false;
+        isDiscardingUpdate.value = false;
+    };
+
+    // Closes the alert component
+    const closeAlert = () => {
+        showAlert.value = false;
+    };
+
+    // Comment functions
+
+    // Edits a comment by adding it to the list of editable comments
+    const editComment = (comment) => {
+        commentIds.value.push(comment.cid);
+    };
+
+    // Deletes a comment (can integrate API call here)
+    const deleteComment = (comment) => {
+        // API call to delete the comment and refresh data
+    };
+
+    // Opens the delete comment confirmation modal
+    const openDeleteCommentModal = (comment) => {
+        isDeletingComment.value = true;
+        commentMsg.value = comment.commentBody;
+    };
+
+    // Closes the delete comment confirmation modal
+    const closeDeleteCommentModal = () => {
+        isDeletingComment.value = false;
+    };
+
+    // Cancels comment editing by removing its ID from the edit list
+    const cancelEditComment = (comment) => {
+        commentIds.value = commentIds.value.filter(id => id !== comment.cid);
+    };
+
+    // Adds a reply to a comment
+    const reply = () => {
+        isAddingComment.value = true;
+    };
+
+    // Cancels the reply action
+    const cancelReply = () => {
+        isAddingComment.value = false;
+    };
+
+    // Checks if a comment is currently being edited
     const isEditingComment = (comment) => {
         return ref(commentIds.value.includes(comment.cid)).value;
     };
 
 
-
-    // Function to handle editing the post
-    const editPost = () => {
-        isEditing.value = true; // Set the editing state to true
-        isDiscardingUpdate.value = false; // Set the discarding update state to false
-    };
-
-    // Function to open the  modal
-    const openDeleteModal = () => {
-        isDeleting.value = true; // Set the deleting state to true
-    };
-
-    const closeDeleteModal = () => {
-        isDeleting.value = false;
-    };
-
-    const closeAlert = () => {
-        showAlert.value = false;
-    };
-
-    const confirmDelete = () => {
-        // Make API call to delete the post
-        //get the updated values
-    };
-
-
-    const openDiscardModal = () => {
-        isDiscardingUpdate.value = true; // Set the discarding update state to true
-    };
-
-    const closeDiscardModal = () => {
-        isDiscardingUpdate.value = false;
-    };
-
-    const confirmDiscard = () => {
-        isEditing.value = false; // Set the editing state to false
-        isDiscardingUpdate.value = false; // Set the discarding update state to false
-    };
-
-
-    const deleteComment = (comment) => {
-        // Make API call to delete the comment
-        //get the updated values
-    };
-
-    const editComment = (comment) => {
-        // Make API call to edit the comment
-        //get the updated values
-        commentIds.value.push(comment.cid);
-        console.log(comment.commentBody);
-        //document.getElementById("commentText").value = comment.commentBody;
-    };
-    const openDeleteCommentModal = (comment) => {
-        isDeletingComment.value = true;
-        //set the comment message
-        commentMsg.value = comment.commentBody;
-        // Make API call to delete the comment
-        //get the updated values
-    };
-
-    const closeDeleteCommentModal = () => {
-        // Make API call to delete the comment
-        //get the updated values
-        isDeletingComment.value = false;
-
-    };
-
-    const cancelEditComment = (comment) => {
-        // Remove the comment ID from the list of editing comments
-        commentIds.value = commentIds.value.filter(id => id !== comment.cid);
-    };
-
-    const reply = () => {
-        isAddingComment.value = true;
-    };
-
-    const canceReply = () => {
-        isAddingComment.value = false;
-    };
-
-
-    const comments = ref([]);
-    const userId = ref('');
-
-
     onMounted(async () => {
-
         const pid = route.params.pid;
         const user = await getCurrentUser();
         userId.value = user.userId;
+        //set loading screen
+        loading.value = true;
+        //fetch the post
+        await fetchPost(pid);
+        //fetch the comments
+        await fetchComments(pid);
+    });
 
+    const fetchPost = async (pid) => {
+        loading.value = true;
         try {
+            //set loading screen
+
             const restOperation = await get({
                 apiName: 'yapp',
                 path: `/api/posts/getPostById?pid=${pid}`,
@@ -142,56 +158,28 @@
             const {
                 body
             } = await restOperation.response;
-            const response = await ((await body.blob()).arrayBuffer());
-            const decoder = new TextDecoder('utf-8');
-            const decodedText = decoder.decode(response);
-            currentPost.value = JSON.parse(decodedText);
+            const response = await body.json();
+            currentPost.value = response;
 
-
-
-            const restOperationComments = await get({
-                apiName: 'yapp',
-                path: `/api/comments/getCommentsByPid?pid=${pid}`,
-            });
-            const {
-                body: bodyComments
-            } = await restOperationComments.response;
-            const responseComments = await ((await bodyComments.blob()).arrayBuffer());
-            const decoderComments = new TextDecoder('utf-8');
-            const decodedTextComments = decoderComments.decode(responseComments);
-            comments.value = JSON.parse(decodedTextComments);
-
+            //disable loading screen
+            loading.value = false;
 
         } catch (error) {
             console.log('Failed to load post', error);
         }
-    });
+        //disable loading screen
+        loading.value = false;
+    };
 
-
-
-
-
-    const updatePost = async () => {
-        // Make API call to update the post
-        //get the updated values
-        var title = document.getElementById("title").value;
-        var content = document.getElementById("content").value;
-        // verify if the title and content are not empty
-        if (title === '' || content === '') {
-            alert('Title and Content cannot be empty');
-            return;
-        }
-        //get current post 
+    const putPost = async (title, content) => {
+        //set loading screen
+        loading.value = true;
+        //set the updated values
         const updatedPost = ref(null);
         updatedPost.value = currentPost.value;
-
-
-        updatedPost.value.postTitle = document.getElementById("title").value;
-        updatedPost.value.postBody = document.getElementById("content").value;
-
-        // Make API call to update the post
+        updatedPost.value.postTitle = title;
+        updatedPost.value.postBody = content;
         try {
-
             const putRequest = await put({
                 apiName: 'yapp',
                 path: '/api/posts/updatePost',
@@ -206,18 +194,147 @@
                 body
             } = await putRequest.response;
             const response = await body.json();
-            console.log('PUT call succeeded: ', response);
-
-            setAlert("Yipee!", "Update post successfully");
-            // Update the current post with the new values
+            //update the current post with the new values
             currentPost.value = updatedPost.value;
-            isEditing.value = false; // Set the editing state to false
+            //set alert
+            setAlert("Yipee!", "Update post successfully");
+
+        } catch (error) {
+            console.log('Failed to load post', error);
+            setAlert("Oops!", "Failed to update post");
+        }
+        //disable loading screen
+        loading.value = false;
+    };
+
+    const fetchComments = async (pid) => {
+        //set loading screen
+        loading.value = true;
+        try {
+            const restOperationComments = await get({
+                apiName: 'yapp',
+                path: `/api/comments/getCommentsByPid?pid=${pid}`,
+            });
+            const {
+                body: bodyComments
+            } = await restOperationComments.response;
+            comments.value = await bodyComments.json();
+            //disable loading screen
 
 
         } catch (error) {
-            setAlert("Oops!", "Failed to update post");
-            console.log('PUT call failed: ', JSON.parse(error.response.body));
+            console.log('Failed to load post', error);
         }
+        loading.value = false;
+    };
+
+    const postComment = async (message) => {
+        loading.value = true;
+        const newComment = {
+            "uid": userId.value,
+            "pid": currentPost.value.pid,
+            "commentBody": message
+        };
+        //clear the comment field
+        try {
+
+            const request = await post({
+                apiName: 'yapp',
+                path: '/api/comments/createComment',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                options: {
+                    body: newComment
+                }
+
+            });
+            const {
+                body
+            } = await request.response;
+            const response = await body.json();
+            setAlert("Yipee!", "Comment created successfully");
+        } catch (error) {
+            console.log('Failed to create comment', error);
+            setAlert("Oops!", "Failed to create comment");
+
+        }
+        loading.value = false;
+    };
+
+    const putComment = async (comment, message) => {
+        loading.value = true;
+        const updatedComment = ref(null);
+        updatedComment.value = comment.value;
+        updatedComment.commentBody = message;
+
+        try {
+
+            const request = await put({
+                apiName: 'yapp',
+                path: '/api/comments/updateComment',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                options: {
+                    body: updatedComment
+                }
+            });
+            const {
+                body
+            } = await request.response;
+            const response = await body.json();
+            setAlert("Yipee!", "Comment updated successfully");
+        } catch (error) {
+            console.log('Failed to update comment', error);
+            setAlert("Oops!", "Failed to update comment");
+        }
+        loading.value = false;
+    };
+
+
+
+    const createComment = async () => {
+        //verify if the comment is not empty
+        var comment = document.getElementById("comment").value;
+        if (comment === '') {
+            alert('Comment cannot be empty');
+            return;
+        }
+        // post the comment
+        await postComment(comment);
+        //close the comment form
+        isAddingComment.value = false;
+        //fetch the comments again
+        await fetchComments(currentPost.value.pid);
+    };
+
+    const updateComment = async (comment) => {
+        //verify if the comment is not empty
+        var commentText = document.getElementById(`commentText-${comment.cid}`).value;
+        if (commentText === '') {
+            alert('Comment cannot be empty');
+            return;
+        }
+        //update the comment
+        await putComment(comment, commentText);
+        //remove the comment from the list of comments being edited
+        commentIds.value = commentIds.value.filter(id => id !== comment.cid);
+        //fetch the comments again
+        await fetchComments(currentPost.value.pid);
+    };
+
+    const updatePost = async () => {
+        var title = document.getElementById("title").value;
+        var content = document.getElementById("content").value;
+        // verify if the title and content are not empty
+        if (title === '' || content === '') {
+            alert('Title and Content cannot be empty');
+            return;
+        }
+        await putPost(document.getElementById("title").value, document.getElementById("content").value);
+        //close the edit form
+        isEditing.value = false;
     }
 
     const setAlert = (header, message) => {
@@ -230,8 +347,9 @@
 <template>
     <div class="flex flex-row items-start justify-center min-h-screen gap-4 mb-5 px-4 pt-[10rem]" id="postDetails">
 
+        <LoadingScreen v-if="loading" />
 
-        <div v-if="currentPost&&!isEditing" class="w-full justify-center flex">
+        <div v-if="currentPost&&!isEditing&&!loading" class="w-full justify-center flex">
             <BackBtn class="self-start mt-2" />
             <div
                 class="flex-1 max-w-4xl bg-gray-100 border border-gray-300 rounded-lg shadow transition-shadow hover:shadow-md p-5 m-2">
@@ -266,13 +384,13 @@
                 <hr>
                 <div class="mb-4 relative  mt-5" v-if="isAddingComment">
                     <div class="px-2">
-                        <textarea type="text" class="input" placeholder="Add a comment" />
+                        <textarea type="text" class="input" placeholder="Add a comment" id="comment" />
                         </div>
                     <div class="flex justify-end p-2">
                             <button class="bg-light-pink p-2 rounded-lg text-white  mr-2"
-                                :id="`cancelAddComment`" @click="canceReply()">Cancel</button>
+                                id="cancelAddComment" @click="cancelReply()">Cancel</button>
                             <button class="bg-dark-pink p-2 rounded-lg text-white "
-                                :id="`createAddComment`">Update Comment</button>
+                                id="createAddComment" @click="createComment"> Send</button>
                     </div>
 
                 </div>
@@ -304,7 +422,7 @@
                     <div class="flex justify-end" v-if="isEditingComment(comment)&& comment.uid == userId">
                         <button class="bg-light-pink p-2 rounded-lg text-white  mr-2"
                             :id="`cancelComment-${comment.cid}`" @click="cancelEditComment(comment)">Cancel</button>
-                        <button class="bg-dark-pink p-2 rounded-lg text-white "
+                        <button class="bg-dark-pink p-2 rounded-lg text-white " @click="updateComment(comment)"
                             :id="`updateComment-${comment.cid}`">Update Comment</button>
                     </div>
                 </div>
@@ -315,7 +433,7 @@
 
     </div>
 
-    <div v-if="currentPost&&isEditing"
+    <div v-if="currentPost&&isEditing&&!loading"
         class="flex-1 max-w-4xl bg-gray-100 border border-gray-300 rounded-lg shadow transition-shadow hover:shadow-md p-5 m-2">
         <div class="form-group w-full mb-4">
             <label for="title" class="block mb-2 text-gray-700">Title:</label>
@@ -326,8 +444,8 @@
             <textarea id="content" required :value="currentPost.postBody" class="input"></textarea>
         </div>
         <div class="flex flex-col space-y-2 w-full">
-            <button title="Update Post" id="create-button" class="bg-pink-purple text-white px-5 py-3 rounded-xl w-full"
-                type="submit" @click="updatePost">
+            <button title="Update Post" id="updatePostButton"
+                class="bg-pink-purple text-white px-5 py-3 rounded-xl w-full" type="submit" @click="updatePost">
                 Update Post
             </button>
             <button title="Discard Post" class="bg-white text-dark px-5 py-3 rounded-xl w-full border border-gray-300"
