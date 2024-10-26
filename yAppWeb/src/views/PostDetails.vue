@@ -21,6 +21,7 @@ import BackBtn from '../components/BackBtn.vue';
 import ConfirmationModal from '../components/ConfirmationModal.vue';
 import DotMenu from '../components/DotMenu.vue';
 import LoadingScreen from '../components/LoadingScreen.vue';
+import { getCurrentTime } from '../composables/helper';
     // Importing necessary modules
     const route = useRoute();
     const router = useRouter();
@@ -45,7 +46,8 @@ import LoadingScreen from '../components/LoadingScreen.vue';
     const isAddingComment = ref(false); // Controls the visibility of the add comment form
     const isDeletingComment = ref(false); // Controls the visibility of the delete comment modal
     const commentIds = ref([]); // Tracks the IDs of comments being edited
-    const commentMsg = ref(''); // Stores the content of the comment being deleted
+    const commentToDelete = ref(null); // Stores the comment being deleted
+    const commentMsg = ref(''); // Stores the comment message
     const comments = ref([]); // List of comments
     const userId = ref(''); // Stores the user ID
 
@@ -96,14 +98,36 @@ import LoadingScreen from '../components/LoadingScreen.vue';
         commentIds.value.push(comment.cid);
     };
 
+    const confirmDeleteComment = async () => {
+        isDeletingComment.value = false;
+        await deleteComment(commentToDelete.value);
+        await fetchComments(currentPost.value.pid);
+        //reset the commentToDelete
+        commentToDelete.value = null;
+    };
+
     // Deletes a comment (can integrate API call here)
-    const deleteComment = (comment) => {
-        // API call to delete the comment and refresh data
+    const deleteComment = async (comment) => {
+       
+        loading.value = true;
+        try {
+            const deleteRequest = del({
+                apiName: 'yapp',
+                path: `/api/comments/deleteComment?cid=${comment.cid}`,
+            });
+            await deleteRequest.response;
+            setAlert("Yipee!", "Comment deleted successfully");
+        } catch (e) {
+            console.log('DELETE call failed: ', e);
+            setAlert("Oops!", "Failed to delete comment");
+        }
+        loading.value = false;
     };
 
     // Opens the delete comment confirmation modal
     const openDeleteCommentModal = (comment) => {
         isDeletingComment.value = true;
+        commentToDelete.value = comment;
         commentMsg.value = comment.commentBody;
     };
 
@@ -207,7 +231,7 @@ const deletePost = async () => {
         updatedPost.value.postTitle = title;
         updatedPost.value.postBody = content;
         try {
-            const putRequest = await put({
+            const putRequest = put({
                 apiName: 'yapp',
                 path: '/api/posts/updatePost',
                 headers: {
@@ -238,7 +262,7 @@ const deletePost = async () => {
         //set loading screen
         loading.value = true;
         try {
-            const restOperationComments = await get({
+            const restOperationComments = get({
                 apiName: 'yapp',
                 path: `/api/comments/getCommentsByPid?pid=${pid}`,
             });
@@ -265,7 +289,7 @@ const deletePost = async () => {
         //clear the comment field
         try {
 
-            const request = await post({
+            const request = post({
                 apiName: 'yapp',
                 path: '/api/comments/createComment',
                 headers: {
@@ -274,7 +298,6 @@ const deletePost = async () => {
                 options: {
                     body: newComment
                 }
-
             });
             const {
                 body
@@ -291,19 +314,37 @@ const deletePost = async () => {
 
     const putComment = async (comment, message) => {
         loading.value = true;
-        const updatedComment = ref(null);
-        updatedComment.value = comment.value;
-        updatedComment.commentBody = message;
+        const updatedComment = ref(
+        {
+        "cid": "",
+        "pid": "",
+        "createdAt": "",
+        "updatedAt": "",
+        "uid": "",
+        "commentBody": "",
+        "upvotes": 0,
+        "downvotes": 0 
+        });
+        console.log(comment);
+        updatedComment.value.cid = comment.cid;
+        updatedComment.value.uid = comment.uid;
+        updatedComment.value.pid = comment.pid;
+        updatedComment.value.createdAt = comment.createdAt;
+        updatedComment.value.updatedAt = getCurrentTime();
+        updatedComment.value.upvotes = comment.upvotes;
+        updatedComment.value.downvotes = comment.downvotes;
+        updatedComment.value.commentBody = message;
+        console.log(updatedComment);
         try {
 
-            const request = await put({
+            const request = put({
                 apiName: 'yapp',
                 path: '/api/comments/updateComment',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 options: {
-                    body: updatedComment
+                    body: updatedComment.value
                 }
             });
             const {
@@ -341,6 +382,7 @@ const deletePost = async () => {
             alert('Comment cannot be empty');
             return;
         }
+        console.log(comment);
         //update the comment
         await putComment(comment, commentText);
         //remove the comment from the list of comments being edited
@@ -489,7 +531,7 @@ const deletePost = async () => {
         message="Are you sure you want to delete this post?" />
     <ConfirmationModal :showModal=isDiscardingUpdate :close="closeDiscardModal" :confirm="confirmDiscard"
         header="Woah there!" message="Are you sure you want to discard your update?" />
-    <ConfirmationModal :showModal=isDeletingComment :close="closeDeleteCommentModal" :confirm="deleteComment"
+    <ConfirmationModal :showModal=isDeletingComment :close="closeDeleteCommentModal" :confirm="confirmDeleteComment"
         header="Woah there!" :message="`Are you sure you want to delete this '${commentMsg}'?`" />
     <Alert :showModal="showAlert" :header="alertMsg.header" :message="alertMsg.message" :close="closeAlert" />
 
