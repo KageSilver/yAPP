@@ -23,6 +23,7 @@ public class CardListHelper extends AppCompatActivity
     private final String cardType; // Currently 4 types: POST, DIARY, CURRENT_FRIEND, AND FRIEND_REQUEST
     private List<JSONObject> cardItemList; // List of CardItems
     private final IListCardItemInteractions itemInteractions; // Handles clicks of the CardItem
+    private CardListAdapter adapter;
 
     public CardListHelper(Context context)
     {
@@ -48,9 +49,7 @@ public class CardListHelper extends AppCompatActivity
         // Make loading spinner visible while we populate our CardItemAdapter
         loadingSpinner.setVisibility(View.VISIBLE);
 
-        // Setup the adapter with an empty list that will be updated later
-        CardListAdapter adapter = new CardListAdapter(context, cardItemList, cardType, itemInteractions);
-        recyclerView.setAdapter(adapter);
+        createAdapter(recyclerView);
 
         // Fetch card items from API
         CompletableFuture<String> future = getItemsFromAPI(apiUrl);
@@ -58,17 +57,8 @@ public class CardListHelper extends AppCompatActivity
         {
             // Convert API response into a list of CardItems
             cardItemList = handleData(jsonData);
-            System.out.println("loading posts from json: " + jsonData);
 
-            // Once response is received and parsed successfully,
-            // Hide loading spinner and update UI display
-            // NOTE: The adapter is what populates each card!
-            runOnUiThread(() ->
-            {
-                loadingSpinner.setVisibility(View.GONE);
-                adapter.updateList(cardItemList);
-                adapter.notifyDataSetChanged();
-            });
+            populateCard();
         }).exceptionally(throwable ->
         {
             Log.e("API", "Error fetching data", throwable);
@@ -80,26 +70,10 @@ public class CardListHelper extends AppCompatActivity
     {
         // Make loading spinner visible while we populate our CardItemAdapter
         loadingSpinner.setVisibility(View.VISIBLE);
-
-        // Setup the adapter with an empty list that will be updated later
-        CardListAdapter adapter = new CardListAdapter(context, cardItemList, cardType, itemInteractions);
-        recyclerView.setAdapter(adapter);
-
-        System.out.println("loading diaries from json: " + jsonData.toString());
+        createAdapter(recyclerView);
         // Convert API response into a list of CardItems
         cardItemList = jsonData;
-
-        System.out.println("number of elements: " + cardItemList.size());
-
-        // Once response is received and parsed successfully,
-        // Hide loading spinner and update UI display
-        // NOTE: The adapter is what populates each card!
-        runOnUiThread(() ->
-        {
-            loadingSpinner.setVisibility(View.GONE);
-            adapter.updateList(cardItemList);
-            adapter.notifyDataSetChanged();
-        });
+        populateCard();
     }
 
     public CompletableFuture<String> getItemsFromAPI(String apiUrl)
@@ -113,6 +87,26 @@ public class CardListHelper extends AppCompatActivity
                                          .build();
         retryAPICall(options, future, MAX_RETRIES);
         return future;
+    }
+
+    private void createAdapter(RecyclerView recyclerView)
+    {
+        // Setup the adapter with an empty list that will be updated later
+        adapter = new CardListAdapter(context, cardItemList, cardType, itemInteractions);
+        recyclerView.setAdapter(adapter);
+    }
+
+    private void populateCard()
+    {
+        // Once response is received and parsed successfully,
+        // Hide loading spinner and update UI display
+        // NOTE: The adapter is what populates each card!
+        runOnUiThread(() ->
+        {
+            loadingSpinner.setVisibility(View.GONE);
+            adapter.updateList(cardItemList);
+            adapter.notifyDataSetChanged();
+        });
     }
 
     // Retries `retriesLeft` times and captures the response of the API call

@@ -63,7 +63,7 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             case "DIARY":
             {
                 View view = inflater.inflate(R.layout.card_diary, parent, false);
-                return new PostViewHolder(view, itemInteractions);
+                return new DiaryViewHolder(view, itemInteractions);
             }
         }
         throw new RuntimeException("Unknown view type");
@@ -260,14 +260,14 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     {
         public TextView postTitle, postDate, postBody, postAuthor;
 
-        public DiaryViewHolder(View itemView, IListCardItemInteractions postCardInteractions)
+        public DiaryViewHolder(View itemView, IListCardItemInteractions diaryCardInteractions)
         {
             super(itemView);
 
-            postTitle = itemView.findViewById(R.id.post_title);
-            postDate = itemView.findViewById(R.id.post_date);
-            postBody = itemView.findViewById(R.id.post_body);
-            postAuthor = itemView.findViewById(R.id.post_author);
+            postTitle = itemView.findViewById(R.id.diary_title);
+            postDate = itemView.findViewById(R.id.diary_date);
+            postBody = itemView.findViewById(R.id.diary_body);
+            postAuthor = itemView.findViewById(R.id.diary_author);
 
             // Set up an onClickListener for the post list card
             itemView.setOnClickListener(new View.OnClickListener()
@@ -275,12 +275,12 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 @Override
                 public void onClick(View v)
                 {
-                    if (postCardInteractions != null)
+                    if (diaryCardInteractions != null)
                     {
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION)
                         {
-                            postCardInteractions.onItemClick(position);
+                            diaryCardInteractions.onItemClick(position);
                         }
                     }
                 }

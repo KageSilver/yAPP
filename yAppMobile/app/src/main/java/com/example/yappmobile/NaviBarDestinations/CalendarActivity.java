@@ -45,8 +45,8 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
         diaryEntryHelper = new CardListHelper(this, loadingSpinner, "DIARY", this);
 
         // fetch all diary entries for current user
-        getUserDiaries();
         userDiariesJson = new ArrayList<>();
+        getUserDiaries();
 
         calendar = findViewById(R.id.calendarView);
         selectedDate = findViewById(R.id.selectedDate);
@@ -56,9 +56,6 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
         calendar.setDate(cal.getTimeInMillis());
         selectedDate.setText(formatDate(cal));
 
-        // Setup recycler view to display post cards
-        RecyclerView userDiaries = findViewById(R.id.user_diary_list);
-        userDiaries.setLayoutManager(new LinearLayoutManager(this));
 
         calendar.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
@@ -69,16 +66,23 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
                 calendar.setDate(cal.getTimeInMillis());
                 selectedDate.setText(formatDate(cal));
 
-                diaryEntryHelper.loadDiaries(getUserDiariesFromDate(cal), userDiaries);
+                loadDiaryView(cal);
             }
         });
-
-        diaryEntryHelper.loadDiaries(getUserDiariesFromDate(cal), userDiaries);
+        loadDiaryView(cal);
     }
 
     private List<JSONObject> getUserDiariesFromDate(Calendar cal)
     {
         return userDiariesJson;
+    }
+
+    private void loadDiaryView(Calendar cal)
+    {
+        // Setup recycler view to display post cards
+        RecyclerView userDiaries = findViewById(R.id.user_diary_list);
+        userDiaries.setLayoutManager(new LinearLayoutManager(this));
+        diaryEntryHelper.loadDiaries(getUserDiariesFromDate(cal), userDiaries);
     }
 
     private void getUserDiaries()
