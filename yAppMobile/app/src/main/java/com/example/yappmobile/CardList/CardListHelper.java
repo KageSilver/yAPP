@@ -58,6 +58,7 @@ public class CardListHelper extends AppCompatActivity
         {
             // Convert API response into a list of CardItems
             cardItemList = handleData(jsonData);
+            System.out.println("loading posts from json: " + jsonData);
 
             // Once response is received and parsed successfully,
             // Hide loading spinner and update UI display
@@ -75,7 +76,7 @@ public class CardListHelper extends AppCompatActivity
         });
     }
 
-    public void loadDiaries(String jsonData, RecyclerView recyclerView)
+    public void loadDiaries(List<JSONObject> jsonData, RecyclerView recyclerView)
     {
         // Make loading spinner visible while we populate our CardItemAdapter
         loadingSpinner.setVisibility(View.VISIBLE);
@@ -84,8 +85,11 @@ public class CardListHelper extends AppCompatActivity
         CardListAdapter adapter = new CardListAdapter(context, cardItemList, cardType, itemInteractions);
         recyclerView.setAdapter(adapter);
 
+        System.out.println("loading diaries from json: " + jsonData.toString());
         // Convert API response into a list of CardItems
-        cardItemList = handleData(jsonData);
+        cardItemList = jsonData;
+
+        System.out.println("number of elements: " + cardItemList.size());
 
         // Once response is received and parsed successfully,
         // Hide loading spinner and update UI display
@@ -137,7 +141,7 @@ public class CardListHelper extends AppCompatActivity
     }
 
     // Convert the API response into a list of JSON objects
-    private List<JSONObject> handleData(String jsonData)
+    public List<JSONObject> handleData(String jsonData)
     {
         List<JSONObject> parsedItems = new ArrayList<>();
         try

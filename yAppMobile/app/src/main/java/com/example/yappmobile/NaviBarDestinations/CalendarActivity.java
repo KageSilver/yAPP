@@ -8,6 +8,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.amplifyframework.core.Amplify;
@@ -15,10 +16,15 @@ import com.example.yappmobile.AuthenticatorActivity;
 import com.example.yappmobile.CardList.CardListHelper;
 import com.example.yappmobile.CardList.IListCardItemInteractions;
 import com.example.yappmobile.NavBar;
+import com.example.yappmobile.PostEntryActivity;
 import com.example.yappmobile.R;
 
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class CalendarActivity extends AppCompatActivity implements IListCardItemInteractions
@@ -26,7 +32,7 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
     private CalendarView calendar;
     private TextView selectedDate;
     private CardListHelper diaryEntryHelper;
-    private RecyclerView userDiaries;
+    private List<JSONObject> userDiariesJson;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -40,15 +46,19 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
 
         // fetch all diary entries for current user
         getUserDiaries();
+        userDiariesJson = new ArrayList<>();
 
         calendar = findViewById(R.id.calendarView);
         selectedDate = findViewById(R.id.selectedDate);
-        userDiaries = findViewById(R.id.user_diary_list);
 
         Calendar cal = Calendar.getInstance();
         // sets the calendar to the current date
         calendar.setDate(cal.getTimeInMillis());
         selectedDate.setText(formatDate(cal));
+
+        // Setup recycler view to display post cards
+        RecyclerView userDiaries = findViewById(R.id.user_diary_list);
+        userDiaries.setLayoutManager(new LinearLayoutManager(this));
 
         calendar.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
@@ -66,9 +76,9 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
         diaryEntryHelper.loadDiaries(getUserDiariesFromDate(cal), userDiaries);
     }
 
-    private String getUserDiariesFromDate(Calendar cal)
+    private List<JSONObject> getUserDiariesFromDate(Calendar cal)
     {
-        return "";
+        return userDiariesJson;
     }
 
     private void getUserDiaries()
@@ -85,7 +95,11 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
 
         future.thenAccept(uid -> {
             String apiUrl = "/api/posts/getPostsByUser?uid=" + uid + "&diaryEntry=true";
-            diaryEntryHelper.getItemsFromAPI(apiUrl);
+            CompletableFuture<String> future2 = diaryEntryHelper.getItemsFromAPI(apiUrl);
+
+            future2.thenAccept(jsonData -> {
+                userDiariesJson = diaryEntryHelper.handleData(jsonData);
+            });
         });
     }
 
@@ -106,7 +120,12 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
     }
 
     @Override
-    public void onItemClick(int position) {
-
+    public void onItemClick(int position)
+    {
+        // Switch activity to view an individual diary entry when a card is clicked
+        Intent intent = new Intent(CalendarActivity.this, PostEntryActivity.class);
+        String pid = diaryEntryHelper.getPID(position);
+        intent.putExtra("pid", pid);
+        startActivity(intent);
     }
 }
