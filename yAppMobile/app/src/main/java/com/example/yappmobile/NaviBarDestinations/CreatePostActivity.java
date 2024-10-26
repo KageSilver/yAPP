@@ -17,6 +17,7 @@ import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.AuthenticatorActivity;
 import com.example.yappmobile.R;
+import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONException;
@@ -28,6 +29,8 @@ public class CreatePostActivity extends AppCompatActivity
 {
     private TextInputLayout titleText;
     private TextInputLayout contentText;
+    private MaterialSwitch diaryEntry;
+    private MaterialSwitch anonymous;
     private String postTitle;
     private String postBody;
     private JSONObject newPost;
@@ -54,6 +57,9 @@ public class CreatePostActivity extends AppCompatActivity
 
         titleText = findViewById(R.id.post_title);
         contentText = findViewById(R.id.post_content);
+        diaryEntry = findViewById(R.id.diaryEntry);
+        anonymous = findViewById(R.id.anonymous);
+
         EditText titleEditText = titleText.getEditText();
         EditText contentEditText = contentText.getEditText();
         titleEditText.addTextChangedListener(new TextWatcher()
@@ -125,6 +131,24 @@ public class CreatePostActivity extends AppCompatActivity
                 createPost();
             }
         });
+
+        diaryEntry.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){ toggleDiaryEntry(); }
+        });
+    }
+
+    private void toggleDiaryEntry()
+    {
+        if(diaryEntry.isChecked())
+        {
+            anonymous.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            anonymous.setVisibility(View.GONE);
+            anonymous.setChecked(true);
+        }
     }
 
     private void createPost()
@@ -150,6 +174,8 @@ public class CreatePostActivity extends AppCompatActivity
                         newPost.put("postTitle", postTitle);
                         newPost.put("postBody", postBody);
                         newPost.put("uid", uid);
+                        newPost.put("diaryEntry", diaryEntry.isChecked());
+                        newPost.put("anonymous", anonymous.isChecked());
                     }
                     catch (JSONException e)
                     {
