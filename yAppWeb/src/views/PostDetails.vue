@@ -208,21 +208,23 @@ import DotMenu from '../components/DotMenu.vue';
             const response = await body.json();
             console.log('PUT call succeeded: ', response);
        
-            alertMsg.value.header = "Yipee!";
-            alertMsg.value.message = "Update post successfully";
-            showAlert.value = true;
+            setAlert("Yipee!", "Update post successfully");
             // Update the current post with the new values
             currentPost.value = updatedPost.value;
             isEditing.value = false; // Set the editing state to false
 
             
         } catch (error) {
-            alertMsg.value.header = "Error!";
-            alertMsg.value.message = "Failed to update post! Please try again";
+            setAlert("Oops!", "Failed to update post");
             console.log('PUT call failed: ', JSON.parse(error.response.body));
         }
-
     }
+
+const setAlert = (header, message) => {
+    alertMsg.value.header = header;
+    alertMsg.value.message = message;
+    showAlert.value = true;
+};
 </script>
 
 <template>
