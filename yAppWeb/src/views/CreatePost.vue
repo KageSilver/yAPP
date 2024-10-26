@@ -1,30 +1,31 @@
 <script setup lang="js">
 	import {
-	post
-} from "aws-amplify/api";
-import {
-	getCurrentUser
-} from 'aws-amplify/auth';
-import {
-	onMounted,
-	ref
-} from 'vue';
-import {
-	useRouter
-} from 'vue-router'; // Import useRoute
-import BackBtnHeader from "../components/BackBtnHeader.vue";
+		post
+	} from "aws-amplify/api";
+	import {
+		getCurrentUser
+	} from 'aws-amplify/auth';
+	import {
+		onMounted,
+		ref
+	} from 'vue';
+	import {
+		useRouter
+	} from 'vue-router'; // Import useRoute
+	import BackBtnHeader from "../components/BackBtnHeader.vue";
+	import LoadingScreen from "../components/LoadingScreen.vue";
 
 	const uid = ref('');
 	const jsonData = ref([]);
-	const loading = false;
+	const loading = ref(false);
 
-    const diaryEntryIsChecked = ref(false);
-    const anonIsChecked = ref(true);
+	const diaryEntryIsChecked = ref(false);
+	const anonIsChecked = ref(true);
 
-    // Retrieve the necessary data and function from the helper
-    onMounted(async () => {
-        const user = await getCurrentUser();
-        uid.value = user.userId;
+	// Retrieve the necessary data and function from the helper
+	onMounted(async () => {
+		const user = await getCurrentUser();
+		uid.value = user.userId;
 	});
 
 	const router = useRouter(); // Use router hook
@@ -35,50 +36,55 @@ import BackBtnHeader from "../components/BackBtnHeader.vue";
 		"diaryEntry": false,
 		"anonymous": true
 	};
-	
-	async function createPost(event) {
-		event.preventDefault();
-	
+	const postPost = async () => {
+		loading.value = true;
+		try {
+			const sendPostRequest = post({
+				apiName: "yapp",
+				path: "/api/posts/createPost",
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				options: {
+					body: newPost
+				}
+			});
+			const {
+				body
+			} = await sendPostRequest.response;
+			const response = await body.json();
+			console.log("POST call succeeded", response);
+			// Reset form fields after submission
+		} catch (e) {
+			console.log("POST call failed", e);
+		}
+		loading.value = false;
+	};
+
+
+
+	const createPost = async (event) => {
+		//check validation
+		newPost.postTitle = document.getElementById("title").value;
+		newPost.postBody = document.getElementById("content").value;
+		if (newPost.postTitle === '' || newPost.postBody === '') {
+			alert("Please fill out all fields!");
+			return;
+		}
+
 		var createButton = document.getElementById("create-button");
 		createButton.disabled = true;
 		newPost.diaryEntry = diaryEntryIsChecked.value;
 		newPost.anonymous = anonIsChecked.value;
-		newPost.postTitle = document.getElementById("title").value;
-		newPost.postBody = document.getElementById("content").value;
-	
-		if (newPost.postTitle !== '' && newPost.postBody !== '') {
-			newPost.uid = uid.value;
-			// Make API call to create the post
-			try {
-				const sendPostRequest = post({
-					apiName: "yapp",
-					path: "/api/posts/createPost",
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					options: {
-						body: newPost
-					}
-				});
-				const {
-					body
-				} = await sendPostRequest.response;
-				const response = await body.json();
-				console.log("POST call succeeded", response);
-				// Reset form fields after submission
-				newPost.userName = '';
-				newPost.postTitle,document.getElementById("title").value = '';
-				newPost.postBody, document.getElementById("content").value = '';
-				createButton.disabled = false;
-				// Send to home page
-				router.push("/profile/myposts");
-				// TODO: Show confirmation
-				alert("Posted!");
-			} catch (e) {
-				alert("Post failed to create... Try agin!");
-				createButton.disabled = false;
-			}
-		}
+		newPost.uid = uid.value;
+
+		await postPost();
+
+		createButton.disabled = false;
+		router.push({
+			name: 'profile'
+		});
+
 	}
 
 	function discardPost(event) {
@@ -106,90 +112,86 @@ import BackBtnHeader from "../components/BackBtnHeader.vue";
 	// Modify the diary entry and anonymous values here
 	function toggleDiaryEntry() {
 
-        diaryEntryIsChecked.value = !diaryEntryIsChecked.value;
+		diaryEntryIsChecked.value = !diaryEntryIsChecked.value;
 		var anonymousToggle = document.getElementById("anonymous");
 		var anonymousText = document.getElementById("anonymousText");
 
-		if ( anonymousToggle.hidden == true ) {
+		if (anonymousToggle.hidden == true) {
 			anonymousToggle.hidden = false;
 			anonymousText.hidden = false;
 		} else {
 			anonymousToggle.hidden = true;
 			anonymousText.hidden = true;
-            anonIsChecked.value = true;
+			anonIsChecked.value = true;
 		}
 	}
 
-	function toggleAnonymous(){
-        anonIsChecked.value = !anonIsChecked.value;
+	function toggleAnonymous() {
+		anonIsChecked.value = !anonIsChecked.value;
 	}
 
-	function checkDiaryEntryLimit(){
+	function checkDiaryEntryLimit() {
 		// check if a diary entry has been made by this user that day already
 	}
 </script>
 
 <template>
 
-	<div class="backBtnDiv">
-		<BackBtnHeader header="Create a new post!" subheader="Yapp your heart out."  />
+
+	<LoadingScreen v-if="loading" class="" />
+	<div v-else class="backBtnDiv">
+
+		<BackBtnHeader header="Create a new post!" subheader="Yapp your heart out." />
 
 		<div class="w-full md:px-16 md:mx-6 mt-3">
 
 			<form class="post-heading bg-white p-8 rounded-lg" id="post">
 
-                <div class="border-2 border-gray-300 p-8 rounded-lg mb-4">
-                    
-                    <div class="mb-4 float-root">
-                        <label class="float-left block text-gray-700 text-lg font-semibold">Diary Post?</label>
+				<div class="border-2 border-gray-300 p-8 rounded-lg mb-4">
 
-                        <label class="float-right cursor-pointer select-none items-center">
-                            <div class="relative ml-2 mr-2">
-                                <input type="checkbox" class="sr-only" @change="toggleDiaryEntry" />
-                                <div
-                                    :class="{ '!bg-[#A55678]': diaryEntryIsChecked }"
-                                    class="block h-8 rounded-full box bg-[#9E9E9E] w-14"
-                                ></div>
-                                <div
-                                    :class="{ 'translate-x-full': diaryEntryIsChecked }"
-                                    class="dot absolute left-1 top-1 h-6 w-6 rounded-full bg-white transition"
-                                ></div>
-                            </div>
-                        </label>
-                    </div>
+					<div class="mb-4 float-root">
+						<label class="float-left block text-gray-700 text-lg font-semibold">Diary Post?</label>
 
-                    <div>
-                        <label class="block text-gray-700 mb-2 mt-8">Diary entry posts will only be shown to your friends</label>
-                    </div>
+						<label class="float-right cursor-pointer select-none items-center">
+							<div class="relative ml-2 mr-2">
+								<input type="checkbox" class="sr-only" @change="toggleDiaryEntry" />
+								<div :class="{ '!bg-[#A55678]': diaryEntryIsChecked }"
+									class="block h-8 rounded-full box bg-[#9E9E9E] w-14"></div>
+								<div :class="{ 'translate-x-full': diaryEntryIsChecked }"
+									class="dot absolute left-1 top-1 h-6 w-6 rounded-full bg-white transition"></div>
+							</div>
+						</label>
+					</div>
 
-                    <div hidden id="anonymous" class="mb-4 float-root">
-                        <label class="float-left block text-gray-700 text-lg font-semibold">Anonymous?</label>
+					<div>
+						<label class="block text-gray-700 mb-2 mt-8">Diary entry posts will only be shown to your
+							friends</label>
+					</div>
 
-                        <label class="float-right cursor-pointer select-none items-center">
-                            <div class="relative ml-2 mr-2">
-                                <input type="checkbox" class="sr-only" @change="toggleAnonymous" />
-                                <div
-                                    :class="{ '!bg-[#A55678]': anonIsChecked }"
-                                    class="block h-8 rounded-full box bg-[#9E9E9E] w-14"
-                                ></div>
-                                <div
-                                    :class="{ 'translate-x-full': anonIsChecked }"
-                                    class="dot absolute left-1 top-1 h-6 w-6 rounded-full bg-white transition"
-                                ></div>
-                            </div>
-                        </label>
-                    </div>
+					<div hidden id="anonymous" class="mb-4 float-root">
+						<label class="float-left block text-gray-700 text-lg font-semibold">Anonymous?</label>
 
-                    <div hidden id="anonymousText">
-                        <label class="block text-gray-700 mb-2 mt-10">Anonymous diary posts will not show your username to your friends</label>
-                    </div>
+						<label class="float-right cursor-pointer select-none items-center">
+							<div class="relative ml-2 mr-2">
+								<input type="checkbox" class="sr-only" @change="toggleAnonymous" />
+								<div :class="{ '!bg-[#A55678]': anonIsChecked }"
+									class="block h-8 rounded-full box bg-[#9E9E9E] w-14"></div>
+								<div :class="{ 'translate-x-full': anonIsChecked }"
+									class="dot absolute left-1 top-1 h-6 w-6 rounded-full bg-white transition"></div>
+							</div>
+						</label>
+					</div>
 
-                </div>
+					<div hidden id="anonymousText">
+						<label class="block text-gray-700 mb-2 mt-10">Anonymous diary posts will not show your username
+							to your friends</label>
+					</div>
+
+				</div>
 
 				<div class="form-group w-full mb-4">
 					<label for="title" class="block mb-2 text-gray-700">Title:</label>
-					<input type="text" id="title" required placeholder="Insert your title here."
-						class="input">
+					<input type="text" id="title" required placeholder="Insert your title here." class="input">
 				</div>
 				<div class="form-group w-full mb-4">
 					<label for="content" class="block mb-2 text-gray-700">Content:</label>
@@ -199,7 +201,7 @@ import BackBtnHeader from "../components/BackBtnHeader.vue";
 				</div>
 				<div class="flex flex-col space-y-2 w-full">
 					<button title="Create Post" id="create-button"
-						class="bg-pink-purple text-white px-5 py-3 rounded-xl w-full" type="submit" @click="createPost">
+						class="bg-pink-purple text-white px-5 py-3 rounded-xl w-full" @click="createPost">
 						Create Post
 					</button>
 					<button title="Discard Post"
