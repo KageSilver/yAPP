@@ -50,6 +50,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 android:dateTextAppearance="@style/CalenderViewCustom"
+                android:weekDayTextAppearance="@style/CalenderViewCustom"
                 android:theme="@style/CalenderViewCustom">
             </CalendarView>
         </androidx.cardview.widget.CardView>
