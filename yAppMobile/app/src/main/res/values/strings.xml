@@ -9,4 +9,5 @@
     <string name="discard_button">Discard</string>
     <string name="title">Title:</string>
     <string name="content">Content:</string>
+    <string name="hyperlink"><a href="https://dqn0i6zpqfsuv.cloudfront.net/dashboard">Visit our website instead!</a></string>
 </resources>
