@@ -35,7 +35,7 @@ message: {
         <h4 class="text-lg font-bold text-gray-900  ms-2">{{ props.header }}</h4>
       </div>
       <!-- Close Button on the same line as Header -->
-      <button type="button" class="bg-white text-gray-500 rounded-lg focus:ring-2 focus:ring-gray-400 p-1.5 hover:bg-gray-200 inline-flex items-center justify-center h-8 w-8" data-dismiss-target="#alert-border-5" aria-label="Close">
+      <button type="button" class="bg-white text-gray-500 rounded-lg focus:ring-2 focus:ring-gray-400 p-1.5 hover:bg-gray-200 inline-flex items-center justify-center h-8 w-8" data-dismiss-target="#alert-border-5" aria-label="Close" @click="close">
         <span class="sr-only">Dismiss</span>
         <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
