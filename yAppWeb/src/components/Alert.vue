@@ -23,19 +23,19 @@ message: {
 });
 </script>
 <template>
-<div class="absolute bottom-20 left-10" v-if="showModal">
-  <div id="alert-border-5" class="flex flex-col p-4 border-t-4 border-gray-300 bg-gray-50 dark:bg-gray-800 dark:border-gray-600  rounded-xl" role="alert">
+<div class="absolute bottom-20 left-10 w-[25rem]" v-if="showModal">
+  <div id="alert-border-5" class="flex flex-col p-4 border-t-4 border-gray-300 bg-white rounded-xl" role="alert">
     <div class="flex items-center justify-between w-full">
       <!-- Icon and Header on the same line -->
       <div class="flex items-center">
-        <svg class="flex-shrink-0 w-4 h-4 dark:text-gray-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+        <svg class="flex-shrink-0 w-4 h-4 bg-white text-dark" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
           <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
         </svg>
         <!-- Header -->
-        <h4 class="text-lg font-bold text-gray-900 dark:text-gray-100 ms-2">{{ props.header }}</h4>
+        <h4 class="text-lg font-bold text-gray-900  ms-2">{{ props.header }}</h4>
       </div>
       <!-- Close Button on the same line as Header -->
-      <button type="button" class="bg-gray-50 text-gray-500 rounded-lg focus:ring-2 focus:ring-gray-400 p-1.5 hover:bg-gray-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white" data-dismiss-target="#alert-border-5" aria-label="Close">
+      <button type="button" class="bg-white text-gray-500 rounded-lg focus:ring-2 focus:ring-gray-400 p-1.5 hover:bg-gray-200 inline-flex items-center justify-center h-8 w-8" data-dismiss-target="#alert-border-5" aria-label="Close">
         <span class="sr-only">Dismiss</span>
         <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
@@ -43,8 +43,8 @@ message: {
       </button>
     </div>
     <!-- Subtext -->
-    <div class="text-sm font-medium text-gray-800 dark:text-gray-300 mt-2">
-      <p class="text-gray-600 dark:text-gray-400">{{ props.message }}</p>
+    <div class="text-sm font-medium text-gray-800 dark:text-gray-300 mt-2 ml-8">
+      <p class="text-gray-600">{{ props.message }}</p>
     </div>
   </div>
 </div>
