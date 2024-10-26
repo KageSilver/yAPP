@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 
+import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.CardList.CardListHelper;
 import com.example.yappmobile.Comments.CommentsBottomSheet;
 import com.example.yappmobile.NaviBarDestinations.PublicPostsActivity;
@@ -23,6 +24,8 @@ import java.util.concurrent.CompletableFuture;
 public class PostEntryActivity extends AppCompatActivity
 {
     private String _pid;
+    private  String _uid;
+    private  String _username;
     private TextView postTitle, postBody;
     private CardListHelper postListHelper;
 
@@ -31,6 +34,14 @@ public class PostEntryActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_entry);
+        //get current user
+        Amplify.Auth.getCurrentUser(result -> {
+            Log.i("Auth", "Continuing as " + result.getUsername() + "...");
+            _uid = result.getUserId();
+            _username = result.getUsername();
+        }, error -> {
+            Log.i("Auth", "There is no user signed in!!");
+        });
 
         // Back button code
        ImageButton backButton = findViewById(R.id.backButton);
@@ -88,7 +99,7 @@ public class PostEntryActivity extends AppCompatActivity
         // Set a click listener on the reply button to open the BottomSheetDialogFragment
         replyButton.setOnClickListener(v -> {
             // Create and show the BottomSheetDialogFragment
-            CommentsBottomSheet bottomSheet = CommentsBottomSheet.newInstance(_pid);
+            CommentsBottomSheet bottomSheet = CommentsBottomSheet.newInstance(_pid,_uid);
             bottomSheet.show(getSupportFragmentManager(), bottomSheet.getTag());
         });
     }
