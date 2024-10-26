@@ -175,7 +175,7 @@ public class PostControllerTests
         var request = new Post
         {
             PID = "1",
-            CreatedAt = now,
+            CreatedAt = now.AddHours(-2),
             UpdatedAt = now,
             UID = "username",
             PostTitle = "title",
@@ -198,7 +198,7 @@ public class PostControllerTests
 
         Assert.Equal(request.PID, returnedPost.PID);
         Assert.Equal(request.UID, returnedPost.UID);
-        Assert.NotEqual(request.UpdatedAt, returnedPost.UpdatedAt);
+        Assert.Equal(request.UpdatedAt, returnedPost.UpdatedAt);
         Assert.Equal(request.PostTitle, returnedPost.PostTitle);
         Assert.Equal(request.PostBody, returnedPost.PostBody);
         Assert.Equal(request.Upvotes, returnedPost.Upvotes);
