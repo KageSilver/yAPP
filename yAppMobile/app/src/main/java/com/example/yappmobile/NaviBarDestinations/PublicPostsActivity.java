@@ -58,6 +58,16 @@ public class PublicPostsActivity extends AppCompatActivity implements IListCardI
         });
         refreshPosts(since);
 
+        Button goBack = findViewById(R.id.go_back_button);
+        loadMore.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                refreshPosts(postListHelper.getLastPostTime());
+            }
+        });
+
         // Set up logout button code
         ImageButton logOutButton = findViewById(R.id.log_out_button);
         logOutButton.setOnClickListener(new View.OnClickListener()
