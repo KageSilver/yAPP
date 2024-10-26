@@ -41,6 +41,13 @@ public interface ICommentActions
     Task<bool> DeleteComment(string cid);
 
     /// <summary>
+    /// Deletes all coments under one post from the database by a post id
+    /// </summary>
+    /// <param name="pid">The id of the parent post to be deleted.</param>
+    /// <returns>A boolean indicating whether the deletion was successful.</returns>
+    Task<bool> DeleteComments(string pid);
+
+    /// <summary>
     /// Edits an already existing comment
     /// </summary>
     /// <param name="updatedComment">The new version of the comment after editing.</param>
