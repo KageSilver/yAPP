@@ -1,27 +1,29 @@
 <script setup>
     import {
-    del,
-    get,
-    post,
-    put
-} from 'aws-amplify/api';
-import {
-    getCurrentUser
-} from 'aws-amplify/auth';
-import {
-    onMounted,
-    ref
-} from 'vue';
-import {
-    useRoute,
-    useRouter
-} from 'vue-router';
-import Alert from '../components/Alert.vue';
-import BackBtn from '../components/BackBtn.vue';
-import ConfirmationModal from '../components/ConfirmationModal.vue';
-import DotMenu from '../components/DotMenu.vue';
-import LoadingScreen from '../components/LoadingScreen.vue';
-import { getCurrentTime } from '../composables/helper';
+        del,
+        get,
+        post,
+        put
+    } from 'aws-amplify/api';
+    import {
+        getCurrentUser
+    } from 'aws-amplify/auth';
+    import {
+        onMounted,
+        ref
+    } from 'vue';
+    import {
+        useRoute,
+        useRouter
+    } from 'vue-router';
+    import Alert from '../components/Alert.vue';
+    import BackBtn from '../components/BackBtn.vue';
+    import ConfirmationModal from '../components/ConfirmationModal.vue';
+    import DotMenu from '../components/DotMenu.vue';
+    import LoadingScreen from '../components/LoadingScreen.vue';
+    import {
+        getCurrentTime
+    } from '../composables/helper';
     // Importing necessary modules
     const route = useRoute();
     const router = useRouter();
@@ -108,7 +110,7 @@ import { getCurrentTime } from '../composables/helper';
 
     // Deletes a comment (can integrate API call here)
     const deleteComment = async (comment) => {
-       
+
         loading.value = true;
         try {
             const deleteRequest = del({
@@ -194,7 +196,7 @@ import { getCurrentTime } from '../composables/helper';
         loading.value = false;
     };
 
-const deletePost = async () => {
+    const deletePost = async () => {
         //close the delete modal
         isDeleting.value = false;
         //set loading screen
@@ -206,20 +208,20 @@ const deletePost = async () => {
                 path: `/api/posts/deletePost?pid=${currentPost.value.pid}`,
             });
             await deleteRequest.response;
-           
+
             //set alert
             setAlert("Yipee!", "Post deleted successfully");
             //send it back to the previous page
             loading.value = false;
-            
+
             router.go(-2);
         } catch (e) {
-           console.log('DELETE call failed: ', e);
-           setAlert("Oops!", "Failed to delete post");
+            console.log('DELETE call failed: ', e);
+            setAlert("Oops!", "Failed to delete post");
         }
         //disable loading screen
         loading.value = false;
-    
+
     };
 
     const putPost = async (title, content) => {
@@ -314,16 +316,15 @@ const deletePost = async () => {
 
     const putComment = async (comment, message) => {
         loading.value = true;
-        const updatedComment = ref(
-        {
-        "cid": "",
-        "pid": "",
-        "createdAt": "",
-        "updatedAt": "",
-        "uid": "",
-        "commentBody": "",
-        "upvotes": 0,
-        "downvotes": 0 
+        const updatedComment = ref({
+            "cid": "",
+            "pid": "",
+            "createdAt": "",
+            "updatedAt": "",
+            "uid": "",
+            "commentBody": "",
+            "upvotes": 0,
+            "downvotes": 0
         });
         console.log(comment);
         updatedComment.value.cid = comment.cid;
