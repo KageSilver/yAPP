@@ -110,6 +110,53 @@ public class PostActions : IPostActions
     }
 
     /// <summary>
+    /// Gets the diary entry made by a user within a specific date range
+    /// </summary>
+    /// <param name="uid">The author of the diary entry.</param>
+    /// <param name="date">The date of the diary entry.</param>
+    /// <returns>A diary entry made by a user on the specified date range.</returns>
+    public async Task<Post> GetDailyEntryByUser(string uid, DateTime startDate, DateTime endDate)
+    {
+        try
+        {
+            // Query for diary entries made within start and end dates to narrow down posts to filter out 
+            var expressionAttributeValues = new Dictionary<string, DynamoDBEntry>
+            expressionAttributeValues.Add(":start", startDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
+            expressionAttributeValues.Add(":end", endDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
+
+            var query = new QueryOperationConfig
+            {
+                IndexName = "CreatedAtIndex",  
+                KeyExpression = new Expression
+                {
+                    ExpressionStatement = "CreatedAt BETWEEN :start AND :end",
+                    ExpressionAttributeValues = expressionAttributeValues
+                },
+                Attributes = new List<string>
+                {
+                    "UID", "DiaryEntry"
+                },
+                // Attributes to return are uid and boolean
+                Select = SelectValues.SpecificAttributes  
+            };
+
+            var results = await _dynamoDbContext.FromQueryAsync<Post>(query, _config).GetNextSetAsync();
+
+            // Filter results in memory to match the specific UID and DiaryEntry values
+            var filteredPosts = results
+                .Where(post => post.UID == uid && post.DiaryEntry == true) 
+                .ToList();
+
+            return filteredPosts;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to retrive diary entry: " + e.Message);
+            return new List<Post>();
+        }
+    }
+
+    /// <summary>
     /// Deletes a post from the database by a post id
     /// </summary>
     /// <param name="pid">The id of the post to be deleted.</param>

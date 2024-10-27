@@ -28,12 +28,12 @@ public interface IPostActions
     Task<List<Post>> GetPostsByUser(string uid, bool diaryEntry);
 
     /// <summary>
-    /// Gets the diary entry made by a user on the specified date
+    /// Gets the diary entry made by a user within a specific date range
     /// </summary>
     /// <param name="uid">The author of the diary entry.</param>
     /// <param name="date">The date of the diary entry.</param>
-    /// <returns>A post (representing a diary entry) made by a user on the specified date.</returns>
-    Task<Post> GetDailyEntryByUser(string uid, DateTime date);
+    /// <returns>A diary entry made by a user on the specified date range.</returns>
+    Task<Post> GetDailyEntryByUser(string uid, DateTime startDate, DateTime endDate);
 
     /// <summary>
     /// Deletes a post from the database by a post id
