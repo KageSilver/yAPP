@@ -86,11 +86,11 @@ public class CreatePostActivity extends BasePostActivity
                 runOnUiThread(() -> {
                     try
                     {
-                        newPost.put("postTitle", postTitle);
-                        newPost.put("postBody", postBody);
-                        newPost.put("uid", uid);
-                        newPost.put("diaryEntry", diaryEntry.isChecked());
-                        newPost.put("anonymous", anonymous.isChecked());
+                        post.put("postTitle", postTitle);
+                        post.put("postBody", postBody);
+                        post.put("uid", uid);
+                        post.put("diaryEntry", diaryEntry.isChecked());
+                        post.put("anonymous", anonymous.isChecked());
                     }
                     catch (JSONException e)
                     {
@@ -100,7 +100,7 @@ public class CreatePostActivity extends BasePostActivity
                     // send out newPost through API call
                     try
                     {
-                        String stringPost = newPost.toString();
+                        String stringPost = post.toString();
                         sendPost(stringPost);
                         successDialog.show();
                     }
@@ -185,14 +185,14 @@ public class CreatePostActivity extends BasePostActivity
 
     private void initializeNewPost()
     {
-        newPost = new JSONObject();
+        post = new JSONObject();
         try
         {
-            newPost.put("postTitle", "");
-            newPost.put("postBody", "");
-            newPost.put("uid", "");
-            newPost.put("diaryEntry", false);
-            newPost.put("anonymous", true);
+            post.put("postTitle", "");
+            post.put("postBody", "");
+            post.put("uid", "");
+            post.put("diaryEntry", false);
+            post.put("anonymous", true);
         }
         catch (JSONException e)
         {

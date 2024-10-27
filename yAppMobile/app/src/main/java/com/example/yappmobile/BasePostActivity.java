@@ -22,7 +22,7 @@ public abstract class BasePostActivity extends AppCompatActivity {
     protected MaterialSwitch anonymous;
     protected String postTitle;
     protected String postBody;
-    protected JSONObject newPost;
+    protected JSONObject post;
     protected AlertDialog successDialog;
     protected AlertDialog failureDialog;
     protected AlertDialog discardDialog;
@@ -30,6 +30,10 @@ public abstract class BasePostActivity extends AppCompatActivity {
     protected Button actionButton;
 
     protected Button discardButton;
+
+    protected EditText titleEditText;
+
+    protected EditText contentEditText;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,7 +46,7 @@ public abstract class BasePostActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_create_post);
 
-
+        post = new JSONObject();
         titleText = findViewById(R.id.post_title);
         contentText = findViewById(R.id.post_content);
         diaryEntry = findViewById(R.id.diaryEntry);
@@ -50,8 +54,8 @@ public abstract class BasePostActivity extends AppCompatActivity {
         actionButton = findViewById(R.id.create_button);
         discardButton = findViewById(R.id.discard_button);
 
-        EditText titleEditText = titleText.getEditText();
-        EditText contentEditText = contentText.getEditText();
+        titleEditText = titleText.getEditText();
+        contentEditText = contentText.getEditText();
         titleEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
