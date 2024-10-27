@@ -22,6 +22,7 @@ public class CardListHelper extends AppCompatActivity
     private final ProgressBar loadingSpinner;
     private final String cardType; // Currently 3 types: POST, CURRENT_FRIEND, AND FRIEND_REQUEST
     private List<JSONObject> cardItemList; // List of CardItems
+    private CardListAdapter adapter;
     private final IListCardItemInteractions itemInteractions; // Handles clicks of the CardItem
 
     public CardListHelper(Context context)
@@ -49,7 +50,7 @@ public class CardListHelper extends AppCompatActivity
         loadingSpinner.setVisibility(View.VISIBLE);
 
         // Setup the adapter with an empty list that will be updated later
-        CardListAdapter adapter = new CardListAdapter(context, cardItemList, cardType, itemInteractions);
+        adapter = new CardListAdapter(context, cardItemList, cardType, itemInteractions);
         recyclerView.setAdapter(adapter);
 
         // Fetch card items from API
@@ -139,6 +140,32 @@ public class CardListHelper extends AppCompatActivity
 
     public  String getUID(int position){
         return  getPostKey(position, "uid");
+    }
+
+    public void removePost(String pid)
+    {
+        try {
+            boolean found = false;
+            for(int i = 0; i < cardItemList.size() && !found; i++)
+            {
+                System.out.println(cardItemList.get(i).getString("pid") + " vs. " + pid);
+                if(cardItemList.get(i).getString("pid").equals(pid))
+                {
+                    found = true;
+                    cardItemList.remove(i);
+                }
+            }
+
+            runOnUiThread(() ->
+            {
+                adapter.updateList(cardItemList);
+                adapter.notifyDataSetChanged();
+            });
+        }
+        catch (Exception e)
+        {
+            Log.e("JSON", "Error parsing JSON", e);
+        }
     }
 
     private String getPostKey(int position,String key){
