@@ -130,8 +130,7 @@ public class FriendController : ControllerBase
         ActionResult<Friendship> result;
 
         // Get the request's status
-        var status = _friendshipStatusActions
-            .GetFriendshipStatus(request.Status);
+        var status = _friendshipStatusActions.GetFriendshipStatus(request.Status);
 
         // Retrieve the friendship object described in the request
         var friendship = await _friendshipActions
@@ -143,10 +142,8 @@ public class FriendController : ControllerBase
             // Update the status of the friendship. There are 3 statuses: Pending, Accepted, Declined
             if (friendship.Value != null && status != FriendshipStatus.All)
             {
-                friendship.Value.Status = _friendshipStatusActions
-                    .GetFriendshipStatus(request.Status);
-                var updateResult = await _friendshipActions
-                    .UpdateFriendshipStatus(friendship.Value);
+                friendship.Value.Status = _friendshipStatusActions.GetFriendshipStatus(request.Status);
+                var updateResult = await _friendshipActions.UpdateFriendshipStatus(friendship.Value);
                 result = updateResult.Result is OkObjectResult
                     ? (ActionResult<Friendship>)friendship.Value
                     : BadRequest("Failed to update friendship status");

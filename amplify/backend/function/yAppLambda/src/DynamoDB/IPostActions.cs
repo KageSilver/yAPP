@@ -6,10 +6,10 @@ namespace yAppLambda.DynamoDB;
 public interface IPostActions
 {
     /// <summary>
-    /// Creates a new post
+    /// Creates a post
     /// </summary>
-    /// <param name="post">The post object to be created.</param>
-    /// <returns>An ActionResult containing the created Post object if successful, or an error message if it fails.</returns>
+    /// <param name="post">The post object that contains information on the post.</param>
+    /// <returns>An ActionResult containing the created Post object or an error status.</returns>
     Task<ActionResult<Post>> CreatePost(Post post);
 
     /// <summary>
@@ -20,9 +20,9 @@ public interface IPostActions
     Task<Post> GetPostById(string pid);
 
     /// <summary>
-    /// Gets all (public posts/diary entries) from a user
+    /// Gets the user's public posts/diary entries
     /// </summary>
-    /// <param name="uid">The uid used to find all (public posts/diary entries) created by a user.</param>
+    /// <param name="uid">The author of the public posts/diary entries to be fetched.</param>
     /// <param name="diaryEntry">If the query is for public posts or diary entries.</param>
     /// <returns>A list of posts created by a user, either public posts or diary entries.</returns>
     Task<List<Post>> GetPostsByUser(string uid, bool diaryEntry);
@@ -33,8 +33,8 @@ public interface IPostActions
     /// <param name="uid">The author of the diary entry.</param>
     /// <param name="startDate">The starting point of the date range to query.</param>
     /// <param name="endDate">The ending point of the date range to query.</param>
-    /// <returns>A diary entry made by a user on the specified date range.</returns>
-    Task<Post> GetDailyEntryByUser(string uid, DateTime startDate, DateTime endDate);
+    /// <returns>The diary entry made by a user on the specified date range.</returns>
+    Task<Post> GetEntryByUser(string uid, DateTime startDate, DateTime endDate);
 
     /// <summary>
     /// Gets the diary entries made by the user's friends within a specific date range
@@ -43,8 +43,15 @@ public interface IPostActions
     /// <param name="startDate">The starting point of the date range to query.</param>
     /// <param name="endDate">The ending point of the date range to query.</param>
     /// <returns>A list of diary entries made by the user's friends on the specified date range.</returns>
-    Task<Post> GetDailyEntryByFriends(string uid, DateTime startDate, DateTime endDate);
-
+    Task<List<Post>> GetEntriesByFriends(string uid, DateTime startDate, DateTime endDate);
+    
+    /// <summary>
+    /// Gets all recent posts
+    /// </summary>
+    /// <param name="since">Returns posts made since this time.</param>
+    /// <param name="maxResults">The maximum number of results to retrieve.</param>
+    /// <returns>A list of recent posts.</returns>
+    Task<List<Post>> GetRecentPosts(DateTime since, int maxResults);
 
     /// <summary>
     /// Deletes a post from the database by a post id
@@ -54,17 +61,9 @@ public interface IPostActions
     Task<bool> DeletePost(string pid);
 
     /// <summary>
-    /// Edits an already existing post
+    /// Updates an already existing post
     /// </summary>
     /// <param name="updatedPost">The new version of the post after editing.</param>
-    /// <returns>An ActionResult containing the edited Post object if successful, or an error message if it fails.</returns>
+    /// <returns>An ActionResult containing the edited Post object or an error status.</returns>
     Task<ActionResult<Post>> UpdatePost(Post updatedPost);
-
-    /// <summary>
-    /// Gets all recent posts
-    /// </summary>
-    /// <param name="since">Returns posts made after this time.</param>
-    /// <param name="maxResults">The maximum number of results to retrieve.</param>
-    /// <returns>A list of recent posts.</returns>
-    Task<List<Post>> GetRecentPosts(DateTime since, int maxResults);
 }

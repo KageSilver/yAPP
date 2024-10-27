@@ -3,34 +3,38 @@ using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using yAppLambda.Common;
+using yAppLambda.Controllers;
+using yAppLambda.Enum;
 using yAppLambda.Models;
 
 namespace yAppLambda.DynamoDB;
 
 public class PostActions : IPostActions
 {
-    //This is the default table name for the post table
-    private const string PostTableName = "Post-test";
+    private const string PostTableName = "Post-test"; // This is the default table name for the post table
+    private readonly string _postTable;
     private readonly IAppSettings _appSettings;
     private readonly IDynamoDBContext _dynamoDbContext;
-    private readonly string _postTable;
     private readonly DynamoDBOperationConfig _config;
     private readonly ICommentActions _commentActions;
+    private readonly ICognitoActions _cognitoActions;
     private readonly IFriendshipActions _friendshipActions;
 
     public PostActions(IAppSettings appSettings, IDynamoDBContext dynamoDbContext)
     {
         _appSettings = appSettings;
         _dynamoDbContext = dynamoDbContext;
-
+        
         _postTable = string.IsNullOrEmpty(_appSettings.PostTableName)
             ? PostTableName
             : _appSettings.PostTableName;
+        
         _config = new DynamoDBOperationConfig
         {
             OverrideTableName = _postTable
         };
-
+        
         _commentActions = new CommentActions(appSettings, dynamoDbContext);
         _friendshipActions = new FriendshipActions(appSettings, dynamoDbContext);
     }
@@ -44,17 +48,16 @@ public class PostActions : IPostActions
     {
         try
         {
-            // update the current time
+            // Update the current time
             var now = DateTime.Now;
             post.CreatedAt = now;
             post.UpdatedAt = now;
-            // gets a unique ID for the post
+            
+            // Gets a unique ID for the post
             post.PID = Guid.NewGuid().ToString();
 
             await _dynamoDbContext.SaveAsync(post, _config);
-
             return new OkObjectResult(post);
-
         }
         catch (Exception e)
         {
@@ -73,7 +76,6 @@ public class PostActions : IPostActions
         try
         {
             var post = await _dynamoDbContext.LoadAsync<Post>(pid, _config);
-            
             return post;
         }
         catch (Exception e)
@@ -84,24 +86,23 @@ public class PostActions : IPostActions
     }
 
     /// <summary>
-    /// Gets all public posts from a user
+    /// Gets the user's public posts/diary entries
     /// </summary>
-    /// <param name="uid">The uid used to find all posts created by a user.</param>
+    /// <param name="uid">The author of the public posts/diary entries to be fetched.</param>
     /// <param name="diaryEntry">If the query is for public posts or diary entries.</param>
     /// <returns>A list of posts created by a user, either public posts or diary entries.</returns>
     public async Task<List<Post>> GetPostsByUser(string uid, bool diaryEntry)
     {
         try
         {
+            // Scan for posts where the poster's uid is 'uid' and 'diaryEntry' is equal to the input
             List<ScanCondition> scanConditions = new List<ScanCondition>
             {
                 new ScanCondition("UID", ScanOperator.Equal, uid),
                 new ScanCondition("DiaryEntry", ScanOperator.Equal, diaryEntry)
             };
-
-            // query posts where the poster's uid is 'uid' and 'diaryEntry' is equal to the input
+            
             var posts = await _dynamoDbContext.ScanAsync<Post>(scanConditions, _config).GetRemainingAsync();
-
             return posts;
         }
         catch (Exception e)
@@ -117,15 +118,17 @@ public class PostActions : IPostActions
     /// <param name="uid">The author of the diary entry.</param>
     /// <param name="startDate">The starting point of the date range to query.</param>
     /// <param name="endDate">The ending point of the date range to query.</param>
-    /// <returns>A diary entry made by a user on the specified date range.</returns>
-    public async Task<Post> GetDailyEntryByUser(string uid, DateTime startDate, DateTime endDate)
+    /// <returns>The diary entry made by a user on the specified date range.</returns>
+    public async Task<Post> GetEntryByUser(string uid, DateTime startDate, DateTime endDate)
     {
         try
         {
             // Query for diary entries made within start and end dates to narrow down posts to filter out 
             var expressionAttributeValues = new Dictionary<string, DynamoDBEntry>
-            expressionAttributeValues.Add(":start", startDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
-            expressionAttributeValues.Add(":end", endDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
+            {
+                { ":start", startDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ") },
+                { ":end", endDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ") }
+            };
 
             var query = new QueryOperationConfig
             {
@@ -135,27 +138,30 @@ public class PostActions : IPostActions
                     ExpressionStatement = "CreatedAt BETWEEN :start AND :end",
                     ExpressionAttributeValues = expressionAttributeValues
                 },
-                Attributes = new List<string>
+                AttributesToGet = new List<string>
                 {
                     "UID", "DiaryEntry"
                 },
-                // Attributes to return are uid and boolean
                 Select = SelectValues.SpecificAttributes  
             };
 
             var results = await _dynamoDbContext.FromQueryAsync<Post>(query, _config).GetNextSetAsync();
 
             // Filter results in memory to match the specific UID and DiaryEntry values
-            var filteredPosts = results
-                .Where(post => post.UID == uid && post.DiaryEntry == true) 
-                .ToList();
+            foreach (var post in results)
+            {
+                if (post.UID == uid && post.DiaryEntry)
+                {
+                    return post;
+                }
+            }
 
-            return filteredPosts;
+            return null;
         }
         catch (Exception e)
         {
             Console.WriteLine("Failed to retrive diary entry: " + e.Message);
-            return new List<Post>();
+            return null;
         }
     }
 
@@ -166,41 +172,21 @@ public class PostActions : IPostActions
     /// <param name="startDate">The starting point of the date range to query.</param>
     /// <param name="endDate">The ending point of the date range to query.</param>
     /// <returns>A list of diary entries made by the user's friends on the specified date range.</returns>
-    public async Task<Post> GetDailyEntryByFriends(string uid, DateTime startDate, DateTime endDate)
+    public async Task<List<Post>> GetEntriesByFriends(string uid, DateTime startDate, DateTime endDate)
     {
         try
         {
-            // Query for diary entries made within start and end dates to narrow down posts to filter out 
-            var expressionAttributeValues = new Dictionary<string, DynamoDBEntry>
-            expressionAttributeValues.Add(":start", startDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
-            expressionAttributeValues.Add(":end", endDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
-
-            var query = new QueryOperationConfig
-            {
-                IndexName = "CreatedAtIndex",  
-                KeyExpression = new Expression
-                {
-                    ExpressionStatement = "CreatedAt BETWEEN :start AND :end",
-                    ExpressionAttributeValues = expressionAttributeValues
-                },
-                Attributes = new List<string>
-                {
-                    "UID", "DiaryEntry"
-                },
-                // Attributes to return are uid and boolean
-                Select = SelectValues.SpecificAttributes  
-            };
-
-            var results = await _dynamoDbContext.FromQueryAsync<Post>(query, _config).GetNextSetAsync();
-
-            // TODO: figure out how to get a list of friend uids
-            var friends = _friendshipActions.GetAllFriends(uid, 1);
+            // Get all the user's friends
+            var friends = _friendshipActions.GetAllFriends(uid, FriendshipStatus.Accepted).Result;
             
-            // TODO: figure out how to search if the post uid exists in the retrieved list of friend uid
-            var filteredPosts = results
-                .Where(post => post.UID == uid && post.DiaryEntry == true) 
-                .ToList();
-
+            // Get the posts written by the user's friends
+            var filteredPosts = new List<Post>();
+            foreach (Friendship friendship in friends)
+            {
+                var thisFriendUid = _cognitoActions.GetUser(friendship.ToUserName).Result.Id;
+                var thisPost = GetEntryByUser(thisFriendUid, startDate, endDate).Result;
+                filteredPosts.Add(thisPost);
+            }
             return filteredPosts;
         }
         catch (Exception e)
@@ -209,58 +195,7 @@ public class PostActions : IPostActions
             return new List<Post>();
         }
     }
-
-    /// <summary>
-    /// Deletes a post from the database by a post id
-    /// </summary>
-    /// <param name="pid">The id of the post to be deleted.</param>
-    /// <returns>A boolean indicating whether the deletion was successful.</returns>
-    public async Task<bool> DeletePost(string pid)
-    {
-        try
-        {
-            // Load the post record to check if it exists
-            var post = GetPostById(pid);
-
-            if (post.Result == null)
-            {
-                Console.WriteLine("Failed to retrieve post");
-                return false;
-            }
-
-            // Delete the post from the database
-            await _commentActions.DeleteComments(pid);
-            await _dynamoDbContext.DeleteAsync(post.Result, _config);
-
-            return true;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Failed to delete post: " + e.Message);
-            return false;
-        }
-    }
-    
-    /// <summary>
-    /// Updates an already existing post
-    /// </summary>
-    /// <param name="updatedPost">The new version of the post after editing.</param>
-    /// <returns>An ActionResult containing the edited Post object if successful, or an error message if it fails.</returns>
-    public async Task<ActionResult<Post>> UpdatePost(Post updatedPost)
-    {
-        try
-        {
-            updatedPost.UpdatedAt = DateTime.Now;
-            await _dynamoDbContext.SaveAsync(updatedPost, _config);
-            return new OkObjectResult(updatedPost);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Failed to update post: " + e.Message);
-            return new StatusCodeResult(statusCode: StatusCodes.Status500InternalServerError);
-        }
-    }
-    
+        
     /// <summary>
     /// Gets all recent posts
     /// </summary>
@@ -311,6 +246,57 @@ public class PostActions : IPostActions
         {
             Console.WriteLine("Failed to get recent posts: " + e.Message);
             return new List<Post>();
+        }
+    }
+    
+    /// <summary>
+    /// Deletes a post from the database by a post id
+    /// </summary>
+    /// <param name="pid">The id of the post to be deleted.</param>
+    /// <returns>A boolean indicating whether the deletion was successful.</returns>
+    public async Task<bool> DeletePost(string pid)
+    {
+        try
+        {
+            // Load the post record to check if it exists
+            var post = GetPostById(pid);
+
+            if (post.Result == null)
+            {
+                Console.WriteLine("Failed to retrieve post to be deleted");
+                return false;
+            }
+
+            // Delete the post from the database
+            await _commentActions.DeleteComments(pid);
+            await _dynamoDbContext.DeleteAsync(post.Result, _config);
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to delete post: " + e.Message);
+            return false;
+        }
+    }
+    
+    /// <summary>
+    /// Updates an already existing post
+    /// </summary>
+    /// <param name="updatedPost">The new version of the post after editing.</param>
+    /// <returns>An ActionResult containing the edited Post object or an error status.</returns>
+    public async Task<ActionResult<Post>> UpdatePost(Post updatedPost)
+    {
+        try
+        {
+            updatedPost.UpdatedAt = DateTime.Now; // Set updated time to current time
+            await _dynamoDbContext.SaveAsync(updatedPost, _config);
+            return new OkObjectResult(updatedPost);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to update post: " + e.Message);
+            return new StatusCodeResult(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
 }

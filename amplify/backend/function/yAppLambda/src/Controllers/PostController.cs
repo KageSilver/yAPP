@@ -125,34 +125,7 @@ public class PostController : ControllerBase
 
         return posts;
     }
-
-    // GET: api/posts/getDailyEntryByUser?uid={uid}&startDate={startDate}&endDate={endDate}
-    /// <summary>
-    /// Gets the diary entry made by a user within a specific date range
-    /// </summary>
-    /// <param name="uid">The author of the diary entry.</param>
-    /// <param name="startDate">The starting point of the date range to query.</param>
-    /// <param name="endDate">The ending point of the date range to query.</param>
-    /// <returns>A diary entry made by a user on the specified date range.</returns>
-    [HttpGet("getDailyEntryByUser")]
-    [ProducesResponseType(typeof(Post), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Post> GetDailyEntryByUser(string uid, DateTime startDate, DateTime endDate)
-    {
-        if(string.IsNullOrEmpty(uid))
-        {
-            return BadRequest("uid is required");
-        }
-
-        if(!DateTime.TryParse(startDate.ToString(), out startDate) || !DateTime.TryParse(endDate.ToString(), out endDate))
-        {
-            return BadRequest("requires valid start and end dates");
-        }
-
-        var posts = await _postActions.getDailyEntryByUser(uid, startDate, endDate);
-        return posts;
-    }
-
+    
     // GET: api/posts/getRecentPosts?since={since}&maxResults={maxResults}
     /// <summary>
     /// Gets recent posts from before a specified time.
