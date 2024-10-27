@@ -84,7 +84,10 @@ public abstract class BasePostActivity extends AppCompatActivity {
                 contentText.setError(null);
             }
         });
-
+        diaryEntry.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){ toggleDiaryEntry(); }
+        });
     }
 
     protected void toggleDiaryEntry() {
