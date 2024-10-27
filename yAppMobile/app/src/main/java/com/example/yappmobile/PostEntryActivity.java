@@ -35,8 +35,7 @@ public class PostEntryActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                Intent intent = new Intent(PostEntryActivity.this, PublicPostsActivity.class);
-                startActivity(intent);
+                getOnBackPressedDispatcher().onBackPressed();
             }
         });
 

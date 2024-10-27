@@ -20,9 +20,10 @@ public class CardListHelper extends AppCompatActivity
 {
     private final Context context; // Where CardItems are Contained
     private final ProgressBar loadingSpinner;
-    private final String cardType; // Currently 3 types: POST, CURRENT_FRIEND, AND FRIEND_REQUEST
+    private final String cardType; // Currently 4 types: POST, DIARY, CURRENT_FRIEND, AND FRIEND_REQUEST
     private List<JSONObject> cardItemList; // List of CardItems
     private final IListCardItemInteractions itemInteractions; // Handles clicks of the CardItem
+    private CardListAdapter adapter;
 
     public CardListHelper(Context context)
     {
@@ -48,9 +49,7 @@ public class CardListHelper extends AppCompatActivity
         // Make loading spinner visible while we populate our CardItemAdapter
         loadingSpinner.setVisibility(View.VISIBLE);
 
-        // Setup the adapter with an empty list that will be updated later
-        CardListAdapter adapter = new CardListAdapter(context, cardItemList, cardType, itemInteractions);
-        recyclerView.setAdapter(adapter);
+        createAdapter(recyclerView);
 
         // Fetch card items from API
         CompletableFuture<String> future = getItemsFromAPI(apiUrl);
@@ -59,20 +58,25 @@ public class CardListHelper extends AppCompatActivity
             // Convert API response into a list of CardItems
             cardItemList = handleData(jsonData);
 
-            // Once response is received and parsed successfully,
-            // Hide loading spinner and update UI display
-            // NOTE: The adapter is what populates each card!
-            runOnUiThread(() ->
-            {
-                loadingSpinner.setVisibility(View.GONE);
-                adapter.updateList(cardItemList);
-                adapter.notifyDataSetChanged();
-            });
+            populateCard();
         }).exceptionally(throwable ->
         {
             Log.e("API", "Error fetching data", throwable);
             return null;
         });
+    }
+
+    public void loadDiaries(List<JSONObject> jsonData, RecyclerView recyclerView)
+    {
+        // Make loading spinner visible while we populate our CardItemAdapter
+        loadingSpinner.setVisibility(View.VISIBLE);
+        System.out.println("creating adapter...");
+        createAdapter(recyclerView);
+        // Convert API response into a list of CardItems
+        System.out.println("setting card json: " + jsonData);
+        cardItemList = jsonData;
+        System.out.println("populating cards...");
+        populateCard();
     }
 
     public CompletableFuture<String> getItemsFromAPI(String apiUrl)
@@ -86,6 +90,29 @@ public class CardListHelper extends AppCompatActivity
                                          .build();
         retryAPICall(options, future, MAX_RETRIES);
         return future;
+    }
+
+    private void createAdapter(RecyclerView recyclerView)
+    {
+        runOnUiThread(() ->
+        {
+            // Setup the adapter with an empty list that will be updated later
+            adapter = new CardListAdapter(context, cardItemList, cardType, itemInteractions);
+            recyclerView.setAdapter(adapter);
+        });
+    }
+
+    private void populateCard()
+    {
+        // Once response is received and parsed successfully,
+        // Hide loading spinner and update UI display
+        // NOTE: The adapter is what populates each card!
+        runOnUiThread(() ->
+        {
+            loadingSpinner.setVisibility(View.GONE);
+            adapter.updateList(cardItemList);
+            adapter.notifyDataSetChanged();
+        });
     }
 
     // Retries `retriesLeft` times and captures the response of the API call
@@ -114,7 +141,7 @@ public class CardListHelper extends AppCompatActivity
     }
 
     // Convert the API response into a list of JSON objects
-    private List<JSONObject> handleData(String jsonData)
+    public List<JSONObject> handleData(String jsonData)
     {
         List<JSONObject> parsedItems = new ArrayList<>();
         try
@@ -137,7 +164,7 @@ public class CardListHelper extends AppCompatActivity
         String pid = null;
         try
         {
-            if(cardType.equals("POST"))
+            if(cardType.equals("POST") || cardType.equals("DIARY"))
             {
                 pid = cardItemList.get(position).get("pid").toString();
             }
