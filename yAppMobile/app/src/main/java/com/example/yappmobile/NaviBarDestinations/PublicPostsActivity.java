@@ -116,6 +116,7 @@ public class PublicPostsActivity extends AppCompatActivity implements IListCardI
             loadMore.setVisibility(View.VISIBLE);
             currentDatePosition--;
             String since = dates.get(currentDatePosition);
+            dates.remove(currentDatePosition);
             refreshPosts(since);
         }
         else
