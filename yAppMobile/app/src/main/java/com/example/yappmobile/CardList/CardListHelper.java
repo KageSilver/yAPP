@@ -70,9 +70,12 @@ public class CardListHelper extends AppCompatActivity
     {
         // Make loading spinner visible while we populate our CardItemAdapter
         loadingSpinner.setVisibility(View.VISIBLE);
+        System.out.println("creating adapter...");
         createAdapter(recyclerView);
         // Convert API response into a list of CardItems
+        System.out.println("setting card json: " + jsonData);
         cardItemList = jsonData;
+        System.out.println("populating cards...");
         populateCard();
     }
 
@@ -91,9 +94,12 @@ public class CardListHelper extends AppCompatActivity
 
     private void createAdapter(RecyclerView recyclerView)
     {
-        // Setup the adapter with an empty list that will be updated later
-        adapter = new CardListAdapter(context, cardItemList, cardType, itemInteractions);
-        recyclerView.setAdapter(adapter);
+        runOnUiThread(() ->
+        {
+            // Setup the adapter with an empty list that will be updated later
+            adapter = new CardListAdapter(context, cardItemList, cardType, itemInteractions);
+            recyclerView.setAdapter(adapter);
+        });
     }
 
     private void populateCard()

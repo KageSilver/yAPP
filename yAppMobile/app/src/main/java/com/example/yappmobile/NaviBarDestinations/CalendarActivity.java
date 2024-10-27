@@ -3,7 +3,9 @@ package com.example.yappmobile.NaviBarDestinations;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.CalendarView;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -33,6 +35,8 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
     private TextView selectedDate;
     private CardListHelper diaryEntryHelper;
     private List<JSONObject> userDiariesJson;
+    private ImageButton collapseCalendar;
+    private RecyclerView userDiaries;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -44,6 +48,9 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
         ProgressBar loadingSpinner = findViewById(R.id.indeterminateBar);
         diaryEntryHelper = new CardListHelper(this, loadingSpinner, "DIARY", this);
 
+        userDiaries = findViewById(R.id.user_diary_list);
+        userDiaries.setLayoutManager(new LinearLayoutManager(this));
+
         // fetch all diary entries for current user
         userDiariesJson = new ArrayList<>();
         getUserDiaries();
@@ -54,8 +61,7 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
         Calendar cal = Calendar.getInstance();
         // sets the calendar to the current date
         calendar.setDate(cal.getTimeInMillis());
-        selectedDate.setText(formatDate(cal));
-
+        selectedDate.setText(formatDisplayDate(cal));
 
         calendar.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
@@ -64,24 +70,56 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
                 Calendar cal = Calendar.getInstance();
                 cal.set(year, month, day);
                 calendar.setDate(cal.getTimeInMillis());
-                selectedDate.setText(formatDate(cal));
+                selectedDate.setText(formatDisplayDate(cal));
 
                 loadDiaryView(cal);
             }
         });
-        loadDiaryView(cal);
+
+        collapseCalendar = findViewById(R.id.collapse_calendar);
+
+        collapseCalendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(calendar.getVisibility() == View.VISIBLE)
+                {
+                    calendar.setVisibility(View.GONE);
+                    collapseCalendar.setImageResource(R.drawable.baseline_keyboard_arrow_down_24);
+                }
+                else
+                {
+                    calendar.setVisibility(View.VISIBLE);
+                    collapseCalendar.setImageResource(R.drawable.baseline_keyboard_arrow_up_24);
+                }
+            }
+        });
     }
 
     private List<JSONObject> getUserDiariesFromDate(Calendar cal)
     {
-        return userDiariesJson;
+        List<JSONObject> posts = new ArrayList<>();
+        String date = formatCompareDate(cal).substring(0, 10);
+
+        try{
+
+            for(int i = 0; i < userDiariesJson.size(); i++)
+            {
+                if(userDiariesJson.get(i).getString("createdAt").substring(0, 10).equals(date))
+                {
+                    posts.add(userDiariesJson.get(i));
+                }
+            }
+
+        }catch(Exception e){
+            Log.e("JSON", "Error parsing JSON", e);
+        }
+
+        return posts;
     }
 
     private void loadDiaryView(Calendar cal)
     {
-        // Setup recycler view to display post cards
-        RecyclerView userDiaries = findViewById(R.id.user_diary_list);
-        userDiaries.setLayoutManager(new LinearLayoutManager(this));
+        System.out.println("userDiaries: " + userDiariesJson);
         diaryEntryHelper.loadDiaries(getUserDiariesFromDate(cal), userDiaries);
     }
 
@@ -103,11 +141,11 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
 
             future2.thenAccept(jsonData -> {
                 userDiariesJson = diaryEntryHelper.handleData(jsonData);
-            });
+            }).thenRun(() -> loadDiaryView(Calendar.getInstance())).join();
         });
     }
 
-    private String formatDate(Calendar cal)
+    private String formatDisplayDate(Calendar cal)
     {
         StringBuilder date = new StringBuilder();
 
@@ -121,6 +159,12 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
         date.append(formatter.format(cal.getTime()));
 
         return date.toString();
+    }
+
+    private String formatCompareDate(Calendar cal)
+    {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.FFF'Z'");
+        return formatter.format(cal.getTime());
     }
 
     @Override
