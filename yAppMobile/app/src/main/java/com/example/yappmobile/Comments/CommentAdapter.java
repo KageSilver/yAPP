@@ -1,6 +1,5 @@
 package com.example.yappmobile.Comments;
 import android.annotation.SuppressLint;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,7 +53,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             // Open the EditDeleteBottomSheet when the comment is clicked
             // Set click listener to open the Edit/Delete Bottom Sheet
             holder.itemView.setOnClickListener(v -> {
-                EditDeleteBottomSheet editDeleteBottomSheet = EditDeleteBottomSheet.newInstance(comment.getCommentBody(), comment.getCid());
+                EditDeleteBottomSheet editDeleteBottomSheet = EditDeleteBottomSheet.newInstance(comment.getJsonObject().toString());
                 editDeleteBottomSheet.show(_parentFragment.getParentFragmentManager(), "EditDeleteBottomSheet");
             });
         } else {
