@@ -111,9 +111,6 @@ public class PostEntryActivity extends AppCompatActivity
                     return true;
                 } else if (item.getItemId() == R.id.action_delete) {
                     // Handle Delete action
-                    Intent intent = new Intent();
-                    intent.putExtra("delete", _pid);
-                    setResult(PostEntryActivity.RESULT_OK, intent);
                     showConfirmationDialog();
                     return true;
                 }
@@ -189,6 +186,10 @@ public class PostEntryActivity extends AppCompatActivity
                 Amplify.API.delete(options,
                         response -> {
                             Log.i(LOG_NAME, "DELETE succeeded: " + response);
+                            
+                            Intent intent = new Intent();
+                            intent.putExtra("delete", _pid);
+                            setResult(PostEntryActivity.RESULT_OK, intent);
 
                             // Show a Toast message on the main thread
                             runOnUiThread(() -> {
