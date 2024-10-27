@@ -1,3 +1,4 @@
+using System.Globalization;
 using Amazon.DynamoDBv2.DataModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -140,6 +141,66 @@ public class PostController : ControllerBase
 
         var posts = await _postActions.GetPostsByUser(uid, diaryEntry);
 
+        return posts;
+    }
+    
+    // GET: api/posts/getEntryByUser?uid={uid}&startDate={startDate}&endDate={endDate}
+    /// ----------------------------------------------------------------------------------------------------------------
+    /// <summary>
+    /// Gets the diary entry made by a user within a specific date range
+    /// </summary>
+    /// <param name="uid">The author of the diary entry.</param>
+    /// <param name="startDate">The starting point of the date range to query.</param>
+    /// <param name="endDate">The ending point of the date range to query.</param>
+    /// <returns>The diary entry made by a user on the specified date range.</returns>
+    /// ----------------------------------------------------------------------------------------------------------------
+    [HttpGet("getEntryByUser")]
+    [ProducesResponseType(typeof(List<Post>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<Post>> GetEntryByUser(string uid, DateTime startDate, DateTime endDate)
+    {
+        if (string.IsNullOrEmpty(uid))
+        {
+            return BadRequest("uid is required");
+        }
+        
+        if (!DateTime.TryParse(startDate.ToString(), out startDate) || 
+            !DateTime.TryParse(endDate.ToString(), out endDate))
+        {
+            return BadRequest("valid start and end date is required");
+        }
+        
+        var post = await _postActions.GetEntryByUser(uid, startDate, endDate);
+        return post;
+    }
+    
+    // GET: api/posts/getEntriesByFriends?uid={uid}&startDate={startDate}&endDate={endDate}
+    /// ----------------------------------------------------------------------------------------------------------------
+    /// <summary>
+    /// Gets the diary entries made by the user's friends within a specific date range
+    /// </summary>
+    /// <param name="uid">The user whose friends will be searched for.</param>
+    /// <param name="startDate">The starting point of the date range to query.</param>
+    /// <param name="endDate">The ending point of the date range to query.</param>
+    /// <returns>A list of diary entries made by the user's friends on the specified date range.</returns>
+    /// ----------------------------------------------------------------------------------------------------------------
+    [HttpGet("getEntriesByFriends")]
+    [ProducesResponseType(typeof(List<Post>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<List<Post>>> GetEntriesByFriends(string uid, DateTime startDate, DateTime endDate)
+    {
+        if (string.IsNullOrEmpty(uid))
+        {
+            return BadRequest("uid is required");
+        }
+        
+        if (!DateTime.TryParse(startDate.ToString(), out startDate) || 
+            !DateTime.TryParse(endDate.ToString(), out endDate))
+        {
+            return BadRequest("valid start and end date is required");
+        }
+        
+        var posts = await _postActions.GetEntriesByFriends(uid, startDate, endDate);
         return posts;
     }
     
