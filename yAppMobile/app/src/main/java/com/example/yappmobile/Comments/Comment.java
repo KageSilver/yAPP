@@ -1,5 +1,8 @@
 package com.example.yappmobile.Comments;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class Comment {
     private final String uid;        // User ID
     private final String cid;        // Comment ID
@@ -48,7 +51,7 @@ public class Comment {
         return updateAt;
     }
 
-    // Optional: Override toString for easier debugging or logging
+
     @Override
     public String toString() {
         return "Comment{" +
@@ -59,6 +62,21 @@ public class Comment {
                 ", createAt='" + createAt + '\'' +
                 ", updateAt='" + updateAt + '\'' +
                 '}';
+    }
+
+    public JSONObject getJsonObject() {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("uid", uid);
+            jsonObject.put("cid", cid);
+            jsonObject.put("pid", pid);
+            jsonObject.put("commentBody", commentBody);
+            jsonObject.put("createAt", createAt);
+            jsonObject.put("updateAt", updateAt);
+        } catch (JSONException e) {
+            e.printStackTrace(); // Handle JSON exception
+        }
+        return jsonObject;
     }
 }
 
