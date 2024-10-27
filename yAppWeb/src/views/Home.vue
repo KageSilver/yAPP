@@ -11,18 +11,50 @@
     const { jsonData, loading,  getPosts, updatePath } = usePostHelper(`/api/posts/getRecentPosts?since=${since}&maxResults=${maxResults}`);
     console.log(jsonData);
 
+    var dates = new Array();
+    var currentDatePosition = 0;
+    dates.push(since);
+
     function clickPost(pid) 
     {
         router.push({ name: 'details', params: { pid } });
     }
 
-    function loadMore()
+    function pageForwards()
     {
-        var since = new Date(getLastPostTime());
-        since = since.toJSON();
-        loading.value = true;
-        updatePath(`/api/posts/getRecentPosts?since=${since}&maxResults=${maxResults}`);
-        getPosts();
+        var lastPostTime = getLastPostTime();
+        if (lastPostTime != null && jsonData.value.length == 10) 
+        {
+            document.getElementById("pageBackwards").style.visibility = "visible";
+            var since = new Date(lastPostTime);
+            since = since.toJSON();
+            dates.push(since);
+            currentDatePosition++;
+            loading.value = true;
+            updatePath(`/api/posts/getRecentPosts?since=${since}&maxResults=${maxResults}`);
+            getPosts();
+        }
+        else
+        {
+            document.getElementById("pageForwards").style.visibility = "hidden";
+        }
+    }
+
+    function pageBackwards()
+    {
+        if ( currentDatePosition != 0 ) 
+        {
+            document.getElementById("pageForwards").style.visibility = "visible";            
+            loading.value = true;
+            currentDatePosition--;
+            updatePath(`/api/posts/getRecentPosts?since=${dates.at(currentDatePosition)}&maxResults=${maxResults}`);
+            dates.pop();
+            getPosts();
+        }
+        else
+        {
+            document.getElementById("pageBackwards").style.visibility = "hidden";
+        }
     }
 
     function getLastPostTime()
@@ -49,12 +81,15 @@
                 <PostCard :post="post" />
         
             </div>
-                <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded self-center " type="button"
-        @click="loadMore()">
-        Load more!
-    </button>
-    </div>
-
+                <button id="pageBackwards" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded self-center add-margin" type="button"
+                    @click="pageBackwards()">
+                    Go back
+                </button>
+                <button id="pageForwards" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded self-center " type="button"
+                    @click="pageForwards()">
+                    Load more!
+                </button>
+            </div>
     </div>
 </template>
 
@@ -68,5 +103,9 @@
     to {
         transform: rotate(360deg);
     }
+}
+
+.add-margin {
+    margin-bottom: 5px;
 }
 </style>
