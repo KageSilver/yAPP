@@ -19,11 +19,20 @@
     import {
         ref
     } from 'vue';
-import BackBtnHeader from '../components/BackBtnHeader.vue';
+    import BackBtnHeader from '../components/BackBtnHeader.vue';
+    import LoadingScreen from '../components/LoadingScreen.vue';
+    import Alert from '../components/Alert.vue';
 
     const userId = ref('');
     const username = ref('');
-    const subheader =ref('');
+    const subheader = ref('');
+    const loading = ref(false);
+    const showAlert = ref(false);
+    const alertMsg = ref({
+        header: '',
+        message: ''
+    });
+
     onMounted(async () => {
         const user = await getCurrentUser();
         username.value = user.username;
@@ -34,25 +43,33 @@ import BackBtnHeader from '../components/BackBtnHeader.vue';
 
 
     const router = useRouter();
-   
+    const closeAlert = () => {
+        showAlert.value = false;
+    };
 
 
 
-    async function onSubmit() {
+
+
+
+    const onSubmit = async () => {
         const sender = username.value;
         const receiver = document.getElementById("to-username").value;
         var requestButton = document.getElementById("request-button");
 
         if (receiver !== '') {
             requestButton.disabled = true;
-            sendFriendRequest(sender, receiver);
+            await sendFriendRequest(sender, receiver);
             requestButton.disabled = false;
+            document.getElementById("to-username").value = '';
         } else {
             alert('Enter in their UUID!');
         }
-    }
+       
+    };
 
-    async function sendFriendRequest(fromUser, toUser) {
+const sendFriendRequest = async (fromUser, toUser) => {
+        loading.value = true;
         try {
             const newRequest = {
                 "fromUserName": fromUser,
@@ -70,19 +87,25 @@ import BackBtnHeader from '../components/BackBtnHeader.vue';
                 }
             });
             await sendPostRequest.response;
-            alert('Successfully sent friend request!');
-            document.getElementById("to-username").value = '';
+
+            alertMsg.value.header = "Yipee!";
+            alertMsg.value.message = `Friend request sent to ${toUser}!`;
+            showAlert.value = true;
         } catch (err) {
-            alert('Failed to send friend request. Please try again!');
+            alertMsg.value.header = "Error!";
+            alertMsg.value.message = `Please try again!`;
+            showAlert.value = true;
             console.error(err);
         }
+        loading.value = false;
     }
 </script>
 
 <template>
 
+    <LoadingScreen v-if="loading" />
 
-    <div class="backBtnDiv">
+    <div v-else class="backBtnDiv">
         <BackBtnHeader header="Add a new Friend!" :subheader="subheader" :backBtn="true" />
         <div class="w-full md:px-16 md:mx-6 mt-3">
             <div class="bg-white p-5 rounded-xl">
@@ -101,6 +124,7 @@ import BackBtnHeader from '../components/BackBtnHeader.vue';
             </div>
         </div>
 
+        <Alert :showModal="showAlert" :header="alertMsg.header" :message="alertMsg.message" :close="closeAlert" />
     </div>
 
 
