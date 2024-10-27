@@ -297,6 +297,7 @@ public class FriendshipActionsTests
         .Setup(a => a.FriendshipTableName)
         .Returns(string.Empty);
 
+        // Setup DB mock to return a Friendship Object
         _dynamoDbContextMock
         .Setup(d => d.LoadAsync<Friendship>(fromUserName, toUserName, 
                                             It.IsAny<DynamoDBOperationConfig>(), 
@@ -307,12 +308,16 @@ public class FriendshipActionsTests
         var result = await _friendshipActionsMock.GetFriendship(fromUserName, toUserName);
 
         // Assert
+
+        // Assert that the action returned a valid Friendship Object
         var actionResult = Assert.IsType<ActionResult<Friendship>>(result);
         var returnedFriendship = Assert.IsType<Friendship>(actionResult.Value);
 
+        // Assert that the Friendship Object contains the expected parameters
         Assert.Equal(friendship.FromUserName, returnedFriendship.FromUserName);
         Assert.Equal(friendship.ToUserName, returnedFriendship.ToUserName);
 
+        // Verify that LoadAsync was called once with the correct parameters
         _dynamoDbContextMock
         .Verify(d => d.LoadAsync<Friendship>(fromUserName, toUserName, 
                                              It.IsAny<DynamoDBOperationConfig>(), 
@@ -330,6 +335,7 @@ public class FriendshipActionsTests
         .Setup(a => a.FriendshipTableName)
         .Returns(string.Empty);
 
+        // Set up LoadAsync to throw exception
         _dynamoDbContextMock
         .Setup(d => d.LoadAsync<Friendship>(fromUserName, toUserName, 
                                             It.IsAny<DynamoDBOperationConfig>(), 
