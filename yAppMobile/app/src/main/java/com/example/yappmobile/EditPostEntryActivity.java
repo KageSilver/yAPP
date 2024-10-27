@@ -46,22 +46,23 @@ public class EditPostEntryActivity extends BasePostActivity {
 
 
             } catch (JSONException e) {
-                Toast.makeText(getApplicationContext(),"Something happened!Please try again", Toast.LENGTH_SHORT);
+                Toast.makeText(getApplicationContext(),"Something happened!Please try again", Toast.LENGTH_SHORT).show();
                 Log.e(LOG_NAME,e.getMessage());
             }
         }
-
-
 
         discardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 postTitle = titleText.getEditText().getText().toString();
                 postBody = contentText.getEditText().getText().toString();
-
                 if (!hasFilledForms(postTitle, postBody)) {
-                    Intent intent = new Intent(EditPostEntryActivity.this, PostEntryActivity.class);
-                    startActivity(intent);
+                    try {
+                        redirectToPostEntry();
+                    } catch (JSONException e) {
+                        Toast.makeText(getApplicationContext(),"Something happened!Please try again", Toast.LENGTH_SHORT).show();
+                        Log.e(LOG_NAME,"Failed to discard! "+e.getMessage());
+                    }
                 } else {
                     discardDialog.show();
                 }
@@ -78,6 +79,13 @@ public class EditPostEntryActivity extends BasePostActivity {
 
     }
 
+    private void redirectToPostEntry() throws JSONException {
+        Intent intent = new Intent(EditPostEntryActivity.this, PostEntryActivity.class);
+        intent.putExtra("pid",_currentPost.get("pid").toString());
+        intent.putExtra("uid",_currentPost.get("uid").toString());
+        startActivity(intent);
+    }
+
     private void sendPost(String postData)
     {
         String apiUrl = "/api/posts/updatePost";
@@ -91,6 +99,12 @@ public class EditPostEntryActivity extends BasePostActivity {
                     Log.i(LOG_NAME, "PUT response: " + response.getData().asString());
                     runOnUiThread(() -> {
                         Toast.makeText(getApplicationContext(),"Yipee! Update successfully",Toast.LENGTH_SHORT).show();
+                        try {
+                            redirectToPostEntry();
+                        } catch (JSONException e) {
+                            Toast.makeText(getApplicationContext(),"Something happened!Please try again", Toast.LENGTH_SHORT).show();
+                            Log.e(LOG_NAME,"Redirect "+e.getMessage());
+                        }
                     });
                 },
                 error -> {
@@ -110,14 +124,10 @@ public class EditPostEntryActivity extends BasePostActivity {
         if (hasFilledForms(postTitle, postBody))
         {
             try{
-                post.put("postTitle", postTitle);
-                post.put("postBody", postBody);
-                post.put("uid", _currentPost.get("uid").toString());
-                post.put("diaryEntry", diaryEntry.isChecked());
-                post.put("anonymous", anonymous.isChecked());
-                post.put("createdAt", _currentPost.get("createdAt").toString());
-                post.put("upvotes",0);
-                post.put("downvotes",0);
+
+                _currentPost.put("postBody", postBody);
+                _currentPost.put("diaryEntry", diaryEntry.isChecked());
+                _currentPost.put("postTitle", postTitle);
                 Log.i(LOG_NAME,post.toString());
 
             }catch (Exception error){
@@ -125,7 +135,7 @@ public class EditPostEntryActivity extends BasePostActivity {
             }
             //after having all that
 
-            sendPost(post.toString());
+            sendPost(_currentPost.toString());
 
 
         }
