@@ -8,6 +8,11 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -96,6 +101,27 @@ public class PublicPostsActivity extends AppCompatActivity implements IListCardI
         String uid = postListHelper.getUID(position);
         intent.putExtra("pid", pid);
         intent.putExtra("uid",uid);
-        startActivity(intent);
+        activityLauncher.launch(intent);
     }
+
+    ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result){
+                    if (result.getResultCode() == RESULT_OK)
+                    {
+                        Intent intent = result.getData();
+                        try
+                        {
+                            String deleted = intent.getStringExtra("delete");
+                            postListHelper.removePost(deleted);
+                        }
+                        catch (Exception e)
+                        {
+                            Log.i("POST", "Post was not deleted");
+                        }
+                    }
+                }
+        });
 }
