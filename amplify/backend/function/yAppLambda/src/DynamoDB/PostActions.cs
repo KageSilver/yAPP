@@ -108,7 +108,7 @@ public class PostActions : IPostActions
             return new List<Post>();
         }
     }
-    
+
     /// <summary>
     /// Deletes a post from the database by a post id
     /// </summary>

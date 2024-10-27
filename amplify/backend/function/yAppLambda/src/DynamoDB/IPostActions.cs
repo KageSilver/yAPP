@@ -20,13 +20,21 @@ public interface IPostActions
     Task<Post> GetPostById(string pid);
 
     /// <summary>
-    /// Gets all public posts from a user
+    /// Gets all (public posts/diary entries) from a user
     /// </summary>
-    /// <param name="uid">The uid used to find all posts created by a user.</param>
+    /// <param name="uid">The uid used to find all (public posts/diary entries) created by a user.</param>
     /// <param name="diaryEntry">If the query is for public posts or diary entries.</param>
     /// <returns>A list of posts created by a user, either public posts or diary entries.</returns>
     Task<List<Post>> GetPostsByUser(string uid, bool diaryEntry);
-    
+
+    /// <summary>
+    /// Gets the diary entry made by a user on the specified date
+    /// </summary>
+    /// <param name="uid">The author of the diary entry.</param>
+    /// <param name="date">The date of the diary entry.</param>
+    /// <returns>A post (representing a diary entry) made by a user on the specified date.</returns>
+    Task<Post> GetDailyEntryByUser(string uid, DateTime date);
+
     /// <summary>
     /// Deletes a post from the database by a post id
     /// </summary>
