@@ -1,5 +1,6 @@
 package com.example.yappmobile;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,10 +8,13 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 
+import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.CardList.CardListHelper;
 import com.example.yappmobile.Comments.CommentsBottomSheet;
@@ -24,10 +28,16 @@ import java.util.concurrent.CompletableFuture;
 public class PostEntryActivity extends AppCompatActivity
 {
     private String _pid;
-    private  String _uid;
+    private String _uid;
+
+    private String _uuid;
     private  String _username;
     private TextView postTitle, postBody;
     private CardListHelper postListHelper;
+
+    private ImageView _moreOptions;
+
+    private final static  String LOG_NAME ="POST_ENTRY";
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -35,12 +45,19 @@ public class PostEntryActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_entry);
         //get current user
+        ImageButton replyButton = findViewById(R.id.replyButton);
         Amplify.Auth.getCurrentUser(result -> {
-            Log.i("Auth", "Continuing as " + result.getUsername() + "...");
-            _uid = result.getUserId();
+            Log.i(LOG_NAME, "Continuing as " + result.getUsername() + "...");
+            _uuid = result.getUserId();
             _username = result.getUsername();
+            runOnUiThread(() -> {
+                replyButton.setOnClickListener(v -> {
+                    CommentsBottomSheet bottomSheet = CommentsBottomSheet.newInstance(_pid, _uid, _uuid);
+                    bottomSheet.show(getSupportFragmentManager(), bottomSheet.getTag());
+                });
+            });
         }, error -> {
-            Log.i("Auth", "There is no user signed in!!");
+            Log.i(LOG_NAME, "There is no user signed in!!");
         });
 
         // Back button code
@@ -59,6 +76,7 @@ public class PostEntryActivity extends AppCompatActivity
 
         // Setup content view to display post content
         _pid = getIntent().getStringExtra("pid");
+        _uid = getIntent().getStringExtra("uid");
         postTitle = findViewById(R.id.post_title);
         postBody = findViewById(R.id.post_body);
 
@@ -66,8 +84,17 @@ public class PostEntryActivity extends AppCompatActivity
         loadPost(getPostAPI);
 
         //set up edit and delete
-        ImageView moreOptions = findViewById(R.id.menuButton);
-        moreOptions.setOnClickListener(view -> {
+
+        _moreOptions = findViewById(R.id.menuButton);
+        // check if it is the current user
+        if(_uid.equals(_uuid)){
+            _moreOptions.setVisibility(View.VISIBLE);
+
+        }else{
+            _moreOptions.setVisibility(View.INVISIBLE);
+        }
+
+        _moreOptions.setOnClickListener(view -> {
             // Create a PopupMenu
             PopupMenu popup = new PopupMenu(PostEntryActivity.this, view);
 
@@ -76,32 +103,27 @@ public class PostEntryActivity extends AppCompatActivity
 
             // Handle menu item clicks
             popup.setOnMenuItemClickListener(item -> {
-                switch (item.getItemId()) {
-//                    case R.id.action_edit:
-//                        // Handle Edit action
-//                        return true;
-//                    case R.id.action_delete:
-//                        // Handle Delete action
-//                        return true;
-                    default:
-                        return false;
+                if (item.getItemId() == R.id.action_edit) {
+                    // Handle Edit action
+                    return true;
+                } else if (item.getItemId() == R.id.action_delete) {
+                    // Handle Delete action
+                    showConfirmationDialog();
+                    return true;
                 }
+                return false;
             });
 
             // Show the popup menu
             popup.show();
         });
 
-        // Find the reply button
-        // Find the reply button in the layout
-        ImageButton replyButton = findViewById(R.id.replyButton);
 
-        // Set a click listener on the reply button to open the BottomSheetDialogFragment
-        replyButton.setOnClickListener(v -> {
-            // Create and show the BottomSheetDialogFragment
-            CommentsBottomSheet bottomSheet = CommentsBottomSheet.newInstance(_pid,_uid);
-            bottomSheet.show(getSupportFragmentManager(), bottomSheet.getTag());
-        });
+
+    }
+    private  void deletePost(){
+        String url = "/api/post/deletePost?pid="+_pid;
+
     }
 
     private void loadPost(String apiUrl)
@@ -112,17 +134,26 @@ public class PostEntryActivity extends AppCompatActivity
             try
             {
                 // Handle API response
-                Log.d("API", "Received data: " + jsonData);
+                Log.d(LOG_NAME, "Received data: " + jsonData);
 
                 // Get the post's title and body from the response JSON
                 JSONObject jsonObject = new JSONObject(jsonData);
                 String title = jsonObject.get("postTitle").toString();
                 String body = jsonObject.get("postBody").toString();
-
-                // Update fields:
+                String uid = jsonObject.get("uid").toString();
                 runOnUiThread(() -> {
-                    postTitle.setText(title);
-                    postBody.setText(body);
+                    // Ensure title and body are not null before updating
+                    if (postTitle != null) {
+                        postTitle.setText(title);
+                    }
+                    if (postBody != null) {
+                        postBody.setText(body);
+                    }
+                    if (uid.equals(_uuid)){
+                        _moreOptions.setVisibility(View.VISIBLE);
+                    }else{
+                        _moreOptions.setVisibility(View.INVISIBLE);
+                    }
                 });
             }
             catch (JSONException jsonException)
@@ -134,5 +165,61 @@ public class PostEntryActivity extends AppCompatActivity
             return null;
         });
     }
+
+
+    public void showConfirmationDialog() {
+        // Create the AlertDialog builder
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        // Set the title and message of the dialog
+        builder.setTitle("Woah there")
+                .setMessage("Are you sure you want to delete this post?");
+
+        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // create delete
+                RestOptions options = RestOptions.builder()
+                        .addPath("/api/posts/deletePost?pid="+_pid)
+                        .addHeader("Content-Type","application/json")
+                        .build();
+
+                Amplify.API.delete(options,
+                        response -> {
+                            Log.i(LOG_NAME, "DELETE succeeded: " + response);
+
+                            // Show a Toast message on the main thread
+                            runOnUiThread(() -> {
+                                Toast.makeText(getApplicationContext(), "Delete successful!", Toast.LENGTH_SHORT).show();
+                                finish();
+                            });
+                        },
+                        error -> {
+                            Log.e(LOG_NAME, "DELETE failed.", error);
+
+                            // Optionally, show a Toast for failure as well
+                            runOnUiThread(() -> {
+                                Toast.makeText(getApplicationContext(), "Delete failed!", Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                );
+
+            }
+        });
+
+        // Set the negative button (e.g., "No" or "Cancel")
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Dismiss the dialog when the user cancels
+                dialog.dismiss();
+            }
+        });
+
+        // Create and show the dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
 
 }
