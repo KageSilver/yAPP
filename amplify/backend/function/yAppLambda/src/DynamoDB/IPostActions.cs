@@ -31,9 +31,20 @@ public interface IPostActions
     /// Gets the diary entry made by a user within a specific date range
     /// </summary>
     /// <param name="uid">The author of the diary entry.</param>
-    /// <param name="date">The date of the diary entry.</param>
+    /// <param name="startDate">The starting point of the date range to query.</param>
+    /// <param name="endDate">The ending point of the date range to query.</param>
     /// <returns>A diary entry made by a user on the specified date range.</returns>
     Task<Post> GetDailyEntryByUser(string uid, DateTime startDate, DateTime endDate);
+
+    /// <summary>
+    /// Gets the diary entries made by the user's friends within a specific date range
+    /// </summary>
+    /// <param name="uid">The user whose friends will be searched for.</param>
+    /// <param name="startDate">The starting point of the date range to query.</param>
+    /// <param name="endDate">The ending point of the date range to query.</param>
+    /// <returns>A list of diary entries made by the user's friends on the specified date range.</returns>
+    Task<Post> GetDailyEntryByFriends(string uid, DateTime startDate, DateTime endDate);
+
 
     /// <summary>
     /// Deletes a post from the database by a post id

@@ -131,7 +131,8 @@ public class PostController : ControllerBase
     /// Gets the diary entry made by a user within a specific date range
     /// </summary>
     /// <param name="uid">The author of the diary entry.</param>
-    /// <param name="date">The date of the diary entry.</param>
+    /// <param name="startDate">The starting point of the date range to query.</param>
+    /// <param name="endDate">The ending point of the date range to query.</param>
     /// <returns>A diary entry made by a user on the specified date range.</returns>
     [HttpGet("getDailyEntryByUser")]
     [ProducesResponseType(typeof(Post), StatusCodes.Status200OK)]
