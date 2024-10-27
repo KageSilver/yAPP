@@ -440,7 +440,7 @@ public class CommentControllerIntegrationTests
 
         // Create a new post for testing
         var response = await _client.PostAsync("/api/posts/createPost", content);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString = await response.Content.ReadAsStringAsync();
         var responsePost = JsonConvert.DeserializeObject<Post>(responseString);
@@ -534,7 +534,7 @@ public class CommentControllerIntegrationTests
 
         // Create a new comment for testing
         var response1 = await _client.PostAsync("/api/comments/createComment", content);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString = await response1.Content.ReadAsStringAsync();
         var responseComment = JsonConvert.DeserializeObject<Comment>(responseString);

@@ -169,7 +169,7 @@
           "header": [],
           "body": {
             "mode": "raw",
-            "raw": "{\n\t\"pid\": \"\",\n\t\"createdAt\": \"\",\n\t\"uid\": \"\",\n\t\"postTitle\": \"\",\n\t\"postBody\": \"\",\n\t\"upvotes\": 0,\n\t\"downvotes\": 0,\n\t\"diaryEntry\": false,\n\t\"anonymous\": true\n}",
+            "raw": "{\n\t\"pid\": \"\",\n\t\"createdAt\": \"\",\n\t\"updatedAt\": \"\",\n\t\"uid\": \"\",\n\t\"postTitle\": \"\",\n\t\"postBody\": \"\",\n\t\"upvotes\": 0,\n\t\"downvotes\": 0,\n\t\"diaryEntry\": false,\n\t\"anonymous\": true\n}",
             "options": {
               "raw": {
                 "language": "json"

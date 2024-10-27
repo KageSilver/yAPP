@@ -225,6 +225,7 @@ public class CommentActions : ICommentActions
     {
         try
         {
+            updatedComment.UpdatedAt = DateTime.Now;
             await _dynamoDbContext.SaveAsync(updatedComment, _config);
             return new OkObjectResult(updatedComment);
         }
