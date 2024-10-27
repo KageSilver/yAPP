@@ -50,6 +50,7 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
         ProgressBar loadingSpinner = findViewById(R.id.indeterminateBar);
         diaryEntryHelper = new CardListHelper(this, loadingSpinner, "DIARY", this);
 
+        // sets up recycler view
         userDiaries = findViewById(R.id.user_diary_list);
         userDiaries.setLayoutManager(new LinearLayoutManager(this));
 
@@ -57,10 +58,13 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
         userDiariesJson = new ArrayList<>();
         getUserDiaries();
 
+        // finds elements in the xml file that will be changed later
         calendar = findViewById(R.id.calendarView);
         selectedDate = findViewById(R.id.selectedDate);
         calendarCard = findViewById(R.id.calendarCard);
+        collapseCalendar = findViewById(R.id.collapse_calendar);
 
+        // gets current date and time
         Calendar cal = Calendar.getInstance();
         // sets the calendar to the current date
         calendar.setDate(cal.getTimeInMillis());
@@ -74,16 +78,16 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
                 cal.set(year, month, day);
                 calendar.setDate(cal.getTimeInMillis());
                 selectedDate.setText(formatDisplayDate(cal));
-
-                loadDiaryView(cal);
+                // loads diary entries for the new selected date
+                diaryEntryHelper.loadDiaries(getUserDiariesFromDate(cal), userDiaries);
             }
         });
 
-        collapseCalendar = findViewById(R.id.collapse_calendar);
-
+        // sets up button to collapse and open calendar
         collapseCalendar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // changes arrow image on button and changes visibility of calendar
                 if(calendarCard.getVisibility() == View.VISIBLE)
                 {
                     calendarCard.setVisibility(View.GONE);
@@ -100,6 +104,7 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
 
     private List<JSONObject> getUserDiariesFromDate(Calendar cal)
     {
+        // searches for posts for a specific date
         List<JSONObject> posts = new ArrayList<>();
         String date = formatCompareDate(cal).substring(0, 10);
 
@@ -120,16 +125,11 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
         return posts;
     }
 
-    private void loadDiaryView(Calendar cal)
-    {
-        System.out.println("userDiaries: " + userDiariesJson);
-        diaryEntryHelper.loadDiaries(getUserDiariesFromDate(cal), userDiaries);
-    }
-
     private void getUserDiaries()
     {
         CompletableFuture<String> future = new CompletableFuture<>();
 
+        // gets user information
         Amplify.Auth.getCurrentUser(result -> {
             future.complete(result.getUserId());
         }, error -> {
@@ -139,17 +139,21 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
         });
 
         future.thenAccept(uid -> {
+            // gets diary entries from user
             String apiUrl = "/api/posts/getPostsByUser?uid=" + uid + "&diaryEntry=true";
             CompletableFuture<String> future2 = diaryEntryHelper.getItemsFromAPI(apiUrl);
 
+            // loads user diaries into a list of json objects
+            // then loads diary entries onto the page for the current date
             future2.thenAccept(jsonData -> {
                 userDiariesJson = diaryEntryHelper.handleData(jsonData);
-            }).thenRun(() -> loadDiaryView(Calendar.getInstance())).join();
+            }).thenRun(() -> diaryEntryHelper.loadDiaries(getUserDiariesFromDate(Calendar.getInstance()), userDiaries)).join();
         });
     }
 
     private String formatDisplayDate(Calendar cal)
     {
+        // formats date to display as Oct 26 2024
         StringBuilder date = new StringBuilder();
 
         SimpleDateFormat formatter = new SimpleDateFormat("MMM");
@@ -166,6 +170,7 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
 
     private String formatCompareDate(Calendar cal)
     {
+        // formats date to compare with values in the api response
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.FFF'Z'");
         return formatter.format(cal.getTime());
     }
