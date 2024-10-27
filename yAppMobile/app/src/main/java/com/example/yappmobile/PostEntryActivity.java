@@ -39,6 +39,8 @@ public class PostEntryActivity extends AppCompatActivity
 
     private final static  String LOG_NAME ="POST_ENTRY";
 
+    private JSONObject _currentPost;
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -105,6 +107,9 @@ public class PostEntryActivity extends AppCompatActivity
             popup.setOnMenuItemClickListener(item -> {
                 if (item.getItemId() == R.id.action_edit) {
                     // Handle Edit action
+                    Intent intent = new Intent(this, EditPostEntryActivity.class);
+                    intent.putExtra("post",_currentPost.toString());
+                    startActivity(intent);
                     return true;
                 } else if (item.getItemId() == R.id.action_delete) {
                     // Handle Delete action
@@ -121,10 +126,6 @@ public class PostEntryActivity extends AppCompatActivity
 
 
     }
-    private  void deletePost(){
-        String url = "/api/post/deletePost?pid="+_pid;
-
-    }
 
     private void loadPost(String apiUrl)
     {
@@ -137,10 +138,10 @@ public class PostEntryActivity extends AppCompatActivity
                 Log.d(LOG_NAME, "Received data: " + jsonData);
 
                 // Get the post's title and body from the response JSON
-                JSONObject jsonObject = new JSONObject(jsonData);
-                String title = jsonObject.get("postTitle").toString();
-                String body = jsonObject.get("postBody").toString();
-                String uid = jsonObject.get("uid").toString();
+                _currentPost = new JSONObject(jsonData);
+                String title = _currentPost.get("postTitle").toString();
+                String body = _currentPost.get("postBody").toString();
+                String uid = _currentPost.get("uid").toString();
                 runOnUiThread(() -> {
                     // Ensure title and body are not null before updating
                     if (postTitle != null) {
@@ -220,6 +221,5 @@ public class PostEntryActivity extends AppCompatActivity
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-
 
 }
