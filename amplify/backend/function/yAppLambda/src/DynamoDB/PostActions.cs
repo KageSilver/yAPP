@@ -15,6 +15,7 @@ public class PostActions : IPostActions
     private readonly IDynamoDBContext _dynamoDbContext;
     private readonly string _postTable;
     private readonly DynamoDBOperationConfig _config;
+    private readonly ICommentActions _commentActions;
 
     public PostActions(IAppSettings appSettings, IDynamoDBContext dynamoDbContext)
     {
@@ -28,6 +29,8 @@ public class PostActions : IPostActions
         {
             OverrideTableName = _postTable
         };
+
+        _commentActions = new CommentActions(appSettings, dynamoDbContext);
     }
     
     /// <summary>
@@ -40,7 +43,9 @@ public class PostActions : IPostActions
         try
         {
             // update the current time
-            post.CreatedAt = DateTime.Now;
+            var now = DateTime.Now;
+            post.CreatedAt = now;
+            post.UpdatedAt = now;
             // gets a unique ID for the post
             post.PID = Guid.NewGuid().ToString();
 
@@ -123,6 +128,7 @@ public class PostActions : IPostActions
             }
 
             // Delete the post from the database
+            await _commentActions.DeleteComments(pid);
             await _dynamoDbContext.DeleteAsync(post.Result, _config);
 
             return true;
@@ -143,6 +149,7 @@ public class PostActions : IPostActions
     {
         try
         {
+            updatedPost.UpdatedAt = DateTime.Now;
             await _dynamoDbContext.SaveAsync(updatedPost, _config);
             return new OkObjectResult(updatedPost);
         }

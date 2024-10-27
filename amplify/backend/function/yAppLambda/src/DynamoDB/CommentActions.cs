@@ -150,4 +150,90 @@ public class CommentActions : ICommentActions
         }
     }
     
+    /// <summary>
+    /// Deletes a comment from the database by a comment id
+    /// </summary>
+    /// <param name="cid">The id of the comment to be deleted.</param>
+    /// <returns>A boolean indicating whether the deletion was successful.</returns>
+    public async Task<bool> DeleteComment(string cid)
+    {
+        bool result = true;
+        try
+        {
+            // Load the comment record to check if it exists
+            var comment = GetCommentById(cid);
+
+            if (comment.Result == null)
+            {
+                Console.WriteLine("Failed to retrieve comment");
+                result = false;
+            }
+            else
+            {
+                // Delete the comment from the database
+                await _dynamoDbContext.DeleteAsync(comment.Result, _config);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to delete comment: " + e.Message);
+            result = false;
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// Deletes all coments under one post from the database by a post id
+    /// </summary>
+    /// <param name="pid">The id of the parent post to be deleted.</param>
+    /// <returns>A boolean indicating whether the deletion was successful.</returns>
+    public async Task<bool> DeleteComments(string pid)
+    {
+        var result = true;
+        try
+        {
+            // Load the comments to check if the pid exists
+            var comments = await GetCommentsByPid(pid);
+
+            if (comments.Count == 0)
+            {
+                Console.WriteLine("Failed to retrieve comments");
+                result = false;
+            }
+            else
+            {
+                // Delete all comments under the post from the database
+                foreach ( var comment in comments )
+                    if ( ! await DeleteComment(comment.CID) )
+                        result = false;
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to delete comments: " + e.Message);
+            result = false;
+        }
+        return result;
+    }
+    
+    /// <summary>
+    /// Edits an already existing comment
+    /// </summary>
+    /// <param name="updatedComment">The new version of the comment after editing.</param>
+    /// <returns>An ActionResult containing the edited Comment object if successful, or an error message if it fails.</returns>
+    public async Task<ActionResult<Comment>> UpdateComment(Comment updatedComment)
+    {
+        try
+        {
+            updatedComment.UpdatedAt = DateTime.Now;
+            await _dynamoDbContext.SaveAsync(updatedComment, _config);
+            return new OkObjectResult(updatedComment);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to update comment: " + e.Message);
+            return new StatusCodeResult(statusCode: StatusCodes.Status500InternalServerError);
+        }
+    }
+    
 }

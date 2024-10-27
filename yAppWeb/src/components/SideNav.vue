@@ -51,7 +51,7 @@ function logOut() {
                 </li>
                 <!-- Profile Item -->
                 <li class="group hover:bg-light-purple transition-all duration-300  w-full">
-                    <a href="/profile/myposts" class="flex flex-col items-center justify-center p-2">
+                    <a href="/profile/myPosts" class="flex flex-col items-center justify-center p-2">
                         <img src="../assets/navigation/profile.svg" alt="Profile Icon"
                             :class="{ 'w-full h-full': true, 'bg-light-purple p-2 rounded-full': isActive('/profile') }">
                         <span class="font-medium">Profile</span>

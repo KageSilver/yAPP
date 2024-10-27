@@ -123,7 +123,7 @@
  - GET: api/posts/getPostById?pid={pid}
     - pid: The unique identifier for a post
  - Response: returns the post with the specified id
-    - { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true }
+    - { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true }
  - Status codes:
     - 200 OK
     - 400 Bad Request: Post ID is required
@@ -135,7 +135,7 @@
     - uid: The uid used to find all posts created by a user
     - diaryEntry: If the query is for public posts or diary entries
  - Response: returns a list of posts by the specified user
-    - [ { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true } ]
+    - [ { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true } ]
  - Status codes:
     - 200 OK
     - 400 Bad Request: uid is required
@@ -146,7 +146,7 @@
     - since: Returns posts made after this time
     - maxResults: The maximum number of results to retrieve.
  - Response: returns a list of posts created before a specified time with a specified maximum length
-    - [ { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true } ]
+    - [ { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true } ]
  - Status codes:
     - 200 OK
     - 400 Bad Request: requires valid max result number and valid time
@@ -156,7 +156,7 @@
  - POST: api/posts/createPost
  - Request body: { "uid": "uid", "postTitle": "title", "postBody": "body", "diaryEntry": false, "anonymous": false }
  - Response: returns the post object created from the new post
-    - { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true }
+    - { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true }
  - Status codes:
     - 200 OK
     - 400 Bad Request:
@@ -167,7 +167,7 @@
 ### UpdatePost
  - Edits an already existing post.
  - PUT: api/posts/updatePost
- - Request body: { "pid": "pid", "createdAt": "createdAt", "uid": "uid", "postTitle": "title", "postBody": "body", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": false }
+ - Request body: { "pid": "pid", "createdAt": "createdAt", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "uid", "postTitle": "title", "postBody": "body", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": false }
  - Response: returns the updated post object
     - { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true }
  - Status codes:
