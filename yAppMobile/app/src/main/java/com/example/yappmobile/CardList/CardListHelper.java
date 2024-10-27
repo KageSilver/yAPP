@@ -134,24 +134,33 @@ public class CardListHelper extends AppCompatActivity
 
     public String getPID(int position)
     {
-        String pid = null;
+        return getPostKey(position, "pid");
+    }
+
+    public  String getUID(int position){
+        return  getPostKey(position, "uid");
+    }
+
+    private String getPostKey(int position,String key){
+        String value = null;
         try
         {
             if(cardType.equals("POST"))
             {
-                pid = cardItemList.get(position).get("pid").toString();
+                value = cardItemList.get(position).get(key).toString();
             }
             else
             {
-                Log.d("CardListHelper", 
-                      "You're trying to invoke a method on the wrong card type");
+                Log.d("CardListHelper",
+                        "You're trying to invoke a method on the wrong card type");
             }
         }
         catch (JSONException jsonException)
         {
             Log.e("JSON", "Error parsing JSON", jsonException);
         }
-        return pid;
+        return value;
+
     }
 
     public String getLastPostTime()
