@@ -66,21 +66,29 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.bottom_sheet_comments, container, false);
+        // Inflate the layout for the fragment
+        return inflater.inflate(R.layout.bottom_sheet_comments, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         // Initialize ProgressBar
         _progressBar = view.findViewById(R.id.progressBar);
         _progressBar.setVisibility(View.VISIBLE);  // Show the loading spinner
-        
+
+        // Initialize RecyclerView and Adapter
         _recyclerView = view.findViewById(R.id.comments_recycler_view);
         _recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        _adapter = new CommentAdapter(commentList,_uid,this);
+
+        // Initialize the adapter with the fragment reference
+        _adapter = new CommentAdapter(commentList, _uid, this);
         _recyclerView.setAdapter(_adapter);
 
-
-        // Load existing comments
+        // After loading the data, hide the progress bar
+        // For example, when comments are loaded:
         loadComments();
-
         // Handle the "Send Comment" button click
         EditText newCommentInput = view.findViewById(R.id.new_comment_input);
         Button sendCommentButton = view.findViewById(R.id.send_comment_button);
@@ -93,9 +101,9 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
                 newCommentInput.setText("");  // Clear the input field
             }
         });
-
-        return view;
     }
+
+
 
 
     private void loadComments() {
