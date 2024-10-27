@@ -13,6 +13,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.core.Amplify;
@@ -69,8 +71,7 @@ public class PostEntryActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                Intent intent = new Intent(PostEntryActivity.this, PublicPostsActivity.class);
-                startActivity(intent);
+                getOnBackPressedDispatcher().onBackPressed();
             }
         });
 
@@ -113,6 +114,9 @@ public class PostEntryActivity extends AppCompatActivity
                     return true;
                 } else if (item.getItemId() == R.id.action_delete) {
                     // Handle Delete action
+                    Intent intent = new Intent();
+                    intent.putExtra("delete", _pid);
+                    setResult(PostEntryActivity.RESULT_OK, intent);
                     showConfirmationDialog();
                     return true;
                 }
