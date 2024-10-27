@@ -8,7 +8,7 @@ using yAppLambda.Models;
 namespace yAppLambda.Controllers;
 
 /// <summary>
-/// The 'PostController" class is an API controller in the 'yAppLamba project. 
+/// The "PostController" class is an API controller in the yAppLambda project. 
 /// It is responsible for handling HTTP requests related to post operations.
 /// </summary>
 [ApiController]
@@ -20,7 +20,8 @@ public class PostController : ControllerBase
     private readonly ICognitoActions _cognitoActions;
     private readonly IPostActions _postActions;
 
-    public PostController(IAppSettings appSettings, ICognitoActions cognitoActions, IDynamoDBContext dbContext, IPostActions postActions)
+    public PostController(IAppSettings appSettings, ICognitoActions cognitoActions, 
+                          IDynamoDBContext dbContext, IPostActions postActions)
     {
         _appSettings = appSettings;
         _cognitoActions = cognitoActions;
@@ -28,12 +29,23 @@ public class PostController : ControllerBase
         _postActions = postActions;
     }
 
-    // POST: api/posts/createPost with body { "uid": "uid", "postTitle": "title", "postBody": "body", "diaryEntry": false, "anonymous": false }
+    /// <code>
+    /// POST: api/posts/createPost with body
+    /// {
+    ///     "uid": "uid",
+    ///     "postBody": "body",
+    ///     "postTitle": "title",
+    ///     "diaryEntry": false,
+    ///     "anonymous": false
+    /// }
+    /// </code>
+    /// ----------------------------------------------------------------------------------------------------------------
     /// <summary>
     /// Creates a new post.
     /// </summary>
     /// <param name="post">The post object containing the details of the post</param>
     /// <returns>An ActionResult containing the Post object if the request is successful, or an error message if it fails</returns>
+    /// ----------------------------------------------------------------------------------------------------------------
     [HttpPost("createPost")]
     [ProducesResponseType(typeof(Post), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -41,7 +53,8 @@ public class PostController : ControllerBase
     {
         ActionResult<Post> result;
 
-        if(request == null || string.IsNullOrEmpty(request.PostBody) || string.IsNullOrEmpty(request.PostTitle) || string.IsNullOrEmpty(request.UID))
+        if(request == null || string.IsNullOrEmpty(request.PostBody) || 
+           string.IsNullOrEmpty(request.PostTitle) || string.IsNullOrEmpty(request.UID))
         {
             result = BadRequest("request body is required and must contain poster's uid, post title and post body");
         }
@@ -74,16 +87,18 @@ public class PostController : ControllerBase
                     : BadRequest("Failed to create post");
             }
         }
-
+        
         return result;
     }
 
     // GET: api/posts/getPostById?pid={pid}
+    /// ----------------------------------------------------------------------------------------------------------------
     /// <summary>
     /// Retrieves a post by a unique identifier.
     /// </summary>
     /// <param name="pid">The unique identifier for a post.</param>
     /// <returns>An ActionResult containing the Post object if found, or a NotFound result otherwise</returns>
+    /// ----------------------------------------------------------------------------------------------------------------
     [HttpGet("getPostById")]
     [ProducesResponseType(typeof(Post), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -105,12 +120,14 @@ public class PostController : ControllerBase
     }
 
     // GET: api/posts/getPostsByUser?uid={uid}&diaryEntry={diaryEntry}
+    /// ----------------------------------------------------------------------------------------------------------------
     /// <summary>
     /// Retrieves all posts from a user, either all public posts or all diary entries.
     /// </summary>
     /// <param name="uid">The uid used to find all posts created by a user.</param>
     /// <param name="diaryEntry">If the query is for public posts or diary entries.</param>
     /// <returns>A list of posts created by a user, either public posts or diary entries.</returns>
+    /// ----------------------------------------------------------------------------------------------------------------
     [HttpGet("getPostsByUser")]
     [ProducesResponseType(typeof(List<Post>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -127,12 +144,14 @@ public class PostController : ControllerBase
     }
     
     // GET: api/posts/getRecentPosts?since={since}&maxResults={maxResults}
+    /// ----------------------------------------------------------------------------------------------------------------
     /// <summary>
     /// Gets recent posts from before a specified time.
     /// </summary>
     /// <param name="since">Returns posts made after this time.</param>
     /// <param name="maxResults">The maximum number of results to retrieve.</param>
     /// <returns>A list of recent posts.</returns>
+    /// ----------------------------------------------------------------------------------------------------------------
     [HttpGet("getRecentPosts")]
     [ProducesResponseType(typeof(List<Post>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -149,11 +168,13 @@ public class PostController : ControllerBase
     }
     
     // DELETE: api/posts/deletePost?pid={pid}
+    /// ----------------------------------------------------------------------------------------------------------------
     /// <summary>
     /// Deletes a post from the database by a post id.
     /// </summary>
     /// <param name="pid">The id of the post to be deleted.</param>
     /// <returns>A boolean indicating whether the deletion was successful.</returns>
+    /// ----------------------------------------------------------------------------------------------------------------
     [HttpDelete("deletePost")]
     [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -169,18 +190,35 @@ public class PostController : ControllerBase
         return deleted;
     }
 
-    // PUT: api/posts/updatePost with body { "pid": "pid", "createdAt": "createdAt", "updatedAt": "updatedAt", "uid": "uid", "postTitle": "title", "postBody": "body", "upvotes": "upvotes", "downvotes": "downvotes", "diaryEntry": false, "anonymous": false }
+    /// <code>
+    /// PUT: api/posts/updatePost with body
+    /// {
+    ///     "pid": "pid",
+    ///     "createdAt": "createdAt",
+    ///     "updatedAt": "updatedAt",
+    ///     "uid": "uid",
+    ///     "postTitle": "title",
+    ///     "postBody": "body",
+    ///     "upvotes": "upvotes",
+    ///     "downvotes": "downvotes",
+    ///     "diaryEntry": false,
+    ///     "anonymous": false
+    /// }
+    /// </code>
+    /// ----------------------------------------------------------------------------------------------------------------
     /// <summary>
     /// Edits an already existing post.
     /// </summary>
     /// <param name="request">The new version of the post after editing.</param>
     /// <returns>An ActionResult containing the edited Post object if successful, or an error message if it fails.</returns>
+    /// ----------------------------------------------------------------------------------------------------------------
     [HttpPut("updatePost")]
     [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Post>> UpdatePost([FromBody] Post request)
     {
-        if(request == null || string.IsNullOrEmpty(request.UID) || string.IsNullOrEmpty(request.PostBody) || string.IsNullOrEmpty(request.PostTitle))
+        if(request == null || string.IsNullOrEmpty(request.UID) || 
+           string.IsNullOrEmpty(request.PostBody) || string.IsNullOrEmpty(request.PostTitle))
         {
             return BadRequest("request body is required and must contain uid, post title, post body");
         }
