@@ -24,7 +24,6 @@ public class CardListHelper extends AppCompatActivity
     private List<JSONObject> cardItemList; // List of CardItems
     private CardListAdapter adapter;
     private final IListCardItemInteractions itemInteractions; // Handles clicks of the CardItem
-    private CardListAdapter adapter;
 
     public CardListHelper(Context context)
     {
