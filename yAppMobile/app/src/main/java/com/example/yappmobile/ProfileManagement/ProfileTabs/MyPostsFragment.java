@@ -1,5 +1,7 @@
 package com.example.yappmobile.ProfileManagement.ProfileTabs;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -68,6 +74,27 @@ public class MyPostsFragment extends Fragment implements IListCardItemInteractio
         String uid = postListHelper.getUID(position);
         intent.putExtra("pid", pid);
         intent.putExtra("uid",uid);
-        startActivity(intent);
+        activityLauncher.launch(intent);
     }
+
+    ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result){
+                    if (result.getResultCode() == RESULT_OK)
+                    {
+                        Intent intent = result.getData();
+                        try
+                        {
+                            String deleted = intent.getStringExtra("delete");
+                            postListHelper.removePost(deleted);
+                        }
+                        catch (Exception e)
+                        {
+                            Log.i("POST", "Post was not deleted");
+                        }
+                    }
+                }
+            });
 }
