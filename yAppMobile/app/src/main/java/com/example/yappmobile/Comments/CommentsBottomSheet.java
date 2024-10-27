@@ -27,20 +27,28 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
 
     private static final String ARG_PID = "pid";
     private static  final String ARG_UID = "uid";
+
+    private static  final String ARG_UUID = "uuid";
+
     private String _pid;
     private String _uid;
-    private List<Comment> commentList = new ArrayList<>();
-    private CommentAdapter adapter;
-    private ProgressBar progressBar;
+
+    private String _uuid;
+    private final List<Comment> commentList = new ArrayList<>();
+    private CommentAdapter _adapter;
+    private ProgressBar _progressBar;
+    
+    private RecyclerView _recyclerView;
 
     private static final  String LOG_NAME = "COMMENTS";
 
 
-    public static CommentsBottomSheet newInstance(String pid,String uid) {
+    public static CommentsBottomSheet newInstance(String pid,String uid,String uuid) {
         CommentsBottomSheet fragment = new CommentsBottomSheet();
         Bundle args = new Bundle();
         args.putString(ARG_PID, pid);
         args.putString(ARG_UID,uid);
+        args.putString(ARG_UID,uuid);
         fragment.setArguments(args);
         return fragment;
     }
@@ -51,6 +59,7 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
         if (getArguments() != null) {
             _pid = getArguments().getString(ARG_PID);
             _uid = getArguments().getString(ARG_UID);
+            _uuid = getArguments().getString(ARG_UUID);
         }
     }
 
@@ -60,12 +69,14 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
         View view = inflater.inflate(R.layout.bottom_sheet_comments, container, false);
 
         // Initialize ProgressBar
-        progressBar = view.findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.VISIBLE);  // Show the loading spinner
-        RecyclerView recyclerView = view.findViewById(R.id.comments_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new CommentAdapter(commentList);
-        recyclerView.setAdapter(adapter);
+        _progressBar = view.findViewById(R.id.progressBar);
+        _progressBar.setVisibility(View.VISIBLE);  // Show the loading spinner
+        
+        _recyclerView = view.findViewById(R.id.comments_recycler_view);
+        _recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        _adapter = new CommentAdapter(commentList,_uid,this);
+        _recyclerView.setAdapter(_adapter);
+
 
         // Load existing comments
         loadComments();
@@ -86,8 +97,7 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
         return view;
     }
 
-    // Method to load existing comments
-// Method to load existing comments
+
     private void loadComments() {
         RestOptions options = RestOptions.builder()
                 .addPath("/api/comments/getCommentsByPid?pid=" + _pid)
@@ -111,8 +121,8 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
                         }
 
                         getActivity().runOnUiThread(() -> {
-                            adapter.notifyDataSetChanged();
-                            progressBar.setVisibility(View.GONE);  // Hide the loading spinner when done
+                            _adapter.notifyDataSetChanged();
+                            _progressBar.setVisibility(View.GONE);  // Hide the loading spinner when done
                         });
 
                     } catch (Exception e) {
@@ -121,7 +131,7 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
                 },
                 apiFailure -> {
                     Log.e(LOG_NAME, "GET failed.", apiFailure);
-                    getActivity().runOnUiThread(() -> progressBar.setVisibility(View.GONE));  // Hide the loading spinner if failed
+                    getActivity().runOnUiThread(() -> _progressBar.setVisibility(View.GONE));  // Hide the loading spinner if failed
                 }
         );
     }
@@ -155,7 +165,7 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
 
                         // Hide the progress bar once the response is received
                         getActivity().runOnUiThread(() -> {
-                            progressBar.setVisibility(View.GONE);
+                            _progressBar.setVisibility(View.GONE);
                             commentList.clear();
                             loadComments();
                         });
@@ -165,7 +175,7 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
 
                         // Hide the progress bar if the request fails
                         getActivity().runOnUiThread(() -> {
-                            progressBar.setVisibility(View.GONE);
+                            _progressBar.setVisibility(View.GONE);
                         });
                     }
             );
@@ -174,6 +184,10 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
             Log.e(LOG_NAME, "Error posting comment", e);
         }
     }
+
+
+
+
 }
 
 
