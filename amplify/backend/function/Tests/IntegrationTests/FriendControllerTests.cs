@@ -29,7 +29,7 @@ public class FriendControllerIntegrationTests
 
     private readonly IAppSettings _appSettings;
 
-    //we must use simulator email to test the user without using email quota
+    // We must use simulator email to test the user without using email quota
     private const string TestUserEmail1 = "bounce2@simulator.amazonses.com";
     private const string TestUserEmail2 = "bounce3@simulator.amazonses.com";
 
@@ -59,9 +59,7 @@ public class FriendControllerIntegrationTests
         var client = new AmazonDynamoDBClient(config);
         IDynamoDBContext dynamoDbContext = new DynamoDBContext(client);
 
-        _friendshipActions = new FriendshipActions(_appSettings, dynamoDbContext);
-
-       
+        _friendshipActions = new FriendshipActions(_appSettings, dynamoDbContext); 
     }
 
     [Fact, Order(1)]
