@@ -9,13 +9,15 @@ namespace yAppLambda.DynamoDB;
 
 public class FriendshipActions: IFriendshipActions
 {
-    //This is the default table name for the friendship table, but we can try to use whatever one in the app settings first,
+    // This is the default table name for the friendship table,
+    // but we can try to use whatever one in the app settings first,
     // and if it doesn't exist, we can use this one.
     private const string FriendshipTableName = "Friendship-test";
     private readonly IAppSettings _appSettings;
     private readonly IDynamoDBContext _dynamoDbContext;
     private readonly string _friendshipTable;
     private readonly DynamoDBOperationConfig _config;
+
     public FriendshipActions(IAppSettings appSettings,IDynamoDBContext dynamoDbContext)
     {
         _appSettings = appSettings;
@@ -24,6 +26,7 @@ public class FriendshipActions: IFriendshipActions
         _friendshipTable = string.IsNullOrEmpty(_appSettings.FriendshipTableName)
             ? FriendshipTableName
             : _appSettings.FriendshipTableName;
+
         _config = new DynamoDBOperationConfig
         {
             OverrideTableName = _friendshipTable
@@ -39,10 +42,9 @@ public class FriendshipActions: IFriendshipActions
     {
         try
         {
-            // update the current time
+            // Create the friendship with current time as `CreatedAt` value
             friendship.CreatedAt = DateTime.Now;
             await _dynamoDbContext.SaveAsync(friendship, _config);
-
             return new OkObjectResult(friendship);
         }
         catch (Exception e)
@@ -53,7 +55,7 @@ public class FriendshipActions: IFriendshipActions
     }
 
     /// <summary>
-    /// To accept/decline a friendship, we need to update the status of the friendship to "Accepted"/ "Declined"
+    /// To accept/decline a friendship, we need to update the status of the friendship to "Accepted"/"Declined"
     /// </summary>
     /// <param name="friendship">The friendship object containing updated details.</param>
     /// <returns>An ActionResult containing the updated Friendship object or an error status.</returns>
@@ -61,19 +63,19 @@ public class FriendshipActions: IFriendshipActions
     {
         try
         {
-            // if the friendship is accepted or declined, we need to update the updated time
+            // If the friendship is accepted or declined, we need to update the value for `UpdatedAt`
             if (friendship.Status == FriendshipStatus.Accepted || friendship.Status == FriendshipStatus.Declined)
             {
                 friendship.UpdatedAt = DateTime.Now;
-                
-            }else if (friendship.Status == FriendshipStatus.Pending)
+            }
+            else if (friendship.Status == FriendshipStatus.Pending)
             {
-                // if the friendship is pending,
+                // If the friendship is pending,
                 // we need to update the created time since the request user would send a new request
                 friendship.CreatedAt = DateTime.Now;
             }
           
-            // update the friendship status
+            // Update the friendship status
             await _dynamoDbContext.SaveAsync(friendship, _config);
             return new OkObjectResult(friendship);
         }
@@ -95,16 +97,20 @@ public class FriendshipActions: IFriendshipActions
         try
         {
             // Query friendships where the user is the `FromUserName` with the specified status
-            var friendshipsFrom = await _dynamoDbContext.QueryAsync<Friendship>(userName, _config).GetRemainingAsync();
+            var friendshipsFrom = await _dynamoDbContext.QueryAsync<Friendship>
+                (userName, _config).GetRemainingAsync();
 
             var filteredFriendshipsFrom = friendshipsFrom.ToList();
             List<ScanCondition> scanConditions;
 
-            if (friendshipStatus == FriendshipStatus.Accepted || friendshipStatus == FriendshipStatus.Pending ||
+            if (friendshipStatus == FriendshipStatus.Accepted || 
+                friendshipStatus == FriendshipStatus.Pending ||
                 friendshipStatus == FriendshipStatus.Declined)
             {
                 filteredFriendshipsFrom = friendshipsFrom.Where(f => f.Status == friendshipStatus).ToList();
-                // Use ScanCondition to scan friendships where the user is the `ToUserName` and the status is 1
+
+                // Set ScanCondition to scan friendships where
+                // the user is the `ToUserName` and the status is the sent `friendshipStatus`
                 scanConditions = new List<ScanCondition>
                 {
                     new ScanCondition("ToUserName", ScanOperator.Equal, userName),
@@ -113,16 +119,17 @@ public class FriendshipActions: IFriendshipActions
             }
             else
             {
-                // get all the friends of a user regardless of the status
+                // Get all the friends of a user regardless of the status
                 scanConditions = new List<ScanCondition>();
                 scanConditions.Add(new ScanCondition("ToUserName", ScanOperator.Equal, userName));
             }
 
-            var friendshipsTo = await _dynamoDbContext.ScanAsync<Friendship>(scanConditions, _config).GetRemainingAsync();
+            // Query friendships where the user is the `ToUserName` with the specified status
+            var friendshipsTo = await _dynamoDbContext.ScanAsync<Friendship>
+                (scanConditions, _config).GetRemainingAsync();
 
-            // Combine the filtered results
+            // Combine the filtered results and return it
             var allFilteredFriendships = filteredFriendshipsFrom.Concat(friendshipsTo).ToList();
-
             return allFilteredFriendships;
         }
         catch (Exception e)
@@ -131,7 +138,6 @@ public class FriendshipActions: IFriendshipActions
             return new List<Friendship>();
         }
     }
-
 
     /// <summary>
     /// Checks if a friendship exists between two users.
@@ -143,7 +149,8 @@ public class FriendshipActions: IFriendshipActions
     {
         try
         {
-            var friendship = await _dynamoDbContext.LoadAsync<Friendship>(fromUserName, toUserName, _config);
+            var friendship = await _dynamoDbContext.LoadAsync<Friendship>
+                (fromUserName, toUserName, _config);
             return friendship;
         }
         catch (Exception e)
@@ -177,5 +184,4 @@ public class FriendshipActions: IFriendshipActions
             return false;
         }
     }
-
 }
