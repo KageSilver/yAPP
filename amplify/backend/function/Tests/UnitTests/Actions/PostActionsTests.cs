@@ -122,10 +122,12 @@ public class PostActionsTests
     public async Task DeletePost_ShouldCallDeleteAsync()
     {
         // Arrange
+        var now = DateTime.Now;
         var request = new Post
         {
             PID = "11111",
-            CreatedAt = DateTime.Now,
+            CreatedAt = now,
+            UpdatedAt = now,
             UID = "uid",
             PostTitle = "title",
             PostBody = "body",
@@ -154,10 +156,12 @@ public class PostActionsTests
     public async Task DeletePost_ShouldHandleException_WhenPostDoesNotExist()
     {
         // Arrange
+        var now = DateTime.Now;
         var request = new Post
         {
             PID = "11111",
-            CreatedAt = DateTime.Now,
+            CreatedAt = now,
+            UpdatedAt = now,
             UID = "uid",
             PostTitle = "title",
             PostBody = "body",
@@ -182,10 +186,12 @@ public class PostActionsTests
     public async Task DeletePost_ShouldHandleException_WhenDeletePostFails()
     {
         // Arrange
+        var now = DateTime.Now;
         var request = new Post
         {
             PID = "11111",
-            CreatedAt = DateTime.Now,
+            CreatedAt = now,
+            UpdatedAt = now,
             UID = "uid",
             PostTitle = "title",
             PostBody = "body",
@@ -219,10 +225,12 @@ public class PostActionsTests
     public async Task UpdatePost_ShouldReturnOk_WhenPostIsUpdatedSuccessfully()
     {
         // Arrange
+        var now = DateTime.Now;
         var request = new Post
         {
             PID = "1",
-            CreatedAt = DateTime.Now,
+            CreatedAt = now,
+            UpdatedAt = now,
             UID = "uid",
             PostTitle = "title",
             PostBody = "body",
@@ -259,10 +267,12 @@ public class PostActionsTests
     public async Task UpdatePost_ShouldReturnStatus500_WhenExceptionIsThrown()
     {
         // Arrange
+        var now = DateTime.Now;
         var request = new Post
         {
             PID = "1",
-            CreatedAt = DateTime.Now,
+            CreatedAt = now,
+            UpdatedAt = now,
             UID = "uid",
             PostTitle = "title",
             PostBody = "body",
@@ -293,10 +303,12 @@ public class PostActionsTests
     public async Task GetPostById_ShouldReturnPost_WhenSuccessful()
     {
         // Arrange
+        var now = DateTime.Now;
         var request = new Post
         {
             PID = "11111",
-            CreatedAt = DateTime.Now,
+            CreatedAt = now,
+            UpdatedAt = now,
             UID = "uid",
             PostTitle = "title",
             PostBody = "body",
@@ -317,6 +329,7 @@ public class PostActionsTests
         var returnedPost = Assert.IsType<Post>(result);
         Assert.Equal(request.PID, returnedPost.PID);
         Assert.Equal(request.CreatedAt, returnedPost.CreatedAt);
+        Assert.Equal(request.UpdatedAt, returnedPost.UpdatedAt);
         Assert.Equal(request.UID, returnedPost.UID);
         Assert.Equal(request.PostTitle, returnedPost.PostTitle);
         Assert.Equal(request.PostBody, returnedPost.PostBody);
@@ -350,11 +363,13 @@ public class PostActionsTests
     public async Task GetPostsByUser_ShouldReturnPosts_WhenSuccessful()
     {
         // Arrange
+        var now = DateTime.Now;
         var post = new Post
         {
             PID = "1",
             UID = "uid",
-            CreatedAt = DateTime.Now,
+            CreatedAt = now,
+            UpdatedAt = now,
             PostTitle = "title",
             PostBody = "body",
             Upvotes = 0,
@@ -381,6 +396,7 @@ public class PostActionsTests
         Assert.Equal(1, result.Count);
         Assert.Equal(post.PID, result.First().PID);
         Assert.Equal(post.CreatedAt, result.First().CreatedAt);
+        Assert.Equal(post.UpdatedAt, result.First().UpdatedAt);
         Assert.Equal(post.UID, result.First().UID);
         Assert.Equal(post.PostTitle, result.First().PostTitle);
         Assert.Equal(post.PostBody, result.First().PostBody);
@@ -414,10 +430,12 @@ public class PostActionsTests
     public async Task GetRecentPosts_ShouldReturnPosts_WithAValidQuery()
     {
         // Arrange
+        var now = DateTime.Now;
         var post = new Post
         {
             PID = "1",
-            CreatedAt = DateTime.Now,
+            CreatedAt = now,
+            UpdatedAt = now,
             UID = "uid",
             PostTitle = "title",
             PostBody = "body",

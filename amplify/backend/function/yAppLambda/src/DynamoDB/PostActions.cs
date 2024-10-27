@@ -43,7 +43,9 @@ public class PostActions : IPostActions
         try
         {
             // update the current time
-            post.CreatedAt = DateTime.Now;
+            var now = DateTime.Now;
+            post.CreatedAt = now;
+            post.UpdatedAt = now;
             // gets a unique ID for the post
             post.PID = Guid.NewGuid().ToString();
 
@@ -147,6 +149,7 @@ public class PostActions : IPostActions
     {
         try
         {
+            updatedPost.UpdatedAt = DateTime.Now;
             await _dynamoDbContext.SaveAsync(updatedPost, _config);
             return new OkObjectResult(updatedPost);
         }
