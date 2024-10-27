@@ -181,6 +181,11 @@ public class CardListHelper extends AppCompatActivity
         return since;
     }
 
+    public int getCardListSize()
+    {
+        return cardItemList.size();
+    }
+
     public JSONObject getFriendship(int position)
     {
         String sender = null;
