@@ -16,6 +16,7 @@ public class PostActions : IPostActions
     private readonly string _postTable;
     private readonly DynamoDBOperationConfig _config;
     private readonly ICommentActions _commentActions;
+    private readonly IFriendshipActions _friendshipActions;
 
     public PostActions(IAppSettings appSettings, IDynamoDBContext dynamoDbContext)
     {
@@ -31,6 +32,7 @@ public class PostActions : IPostActions
         };
 
         _commentActions = new CommentActions(appSettings, dynamoDbContext);
+        _friendshipActions = new FriendshipActions(appSettings, dynamoDbContext);
     }
     
     /// <summary>
@@ -192,6 +194,8 @@ public class PostActions : IPostActions
             var results = await _dynamoDbContext.FromQueryAsync<Post>(query, _config).GetNextSetAsync();
 
             // TODO: figure out how to get a list of friend uids
+            var friends = _friendshipActions.GetAllFriends(uid, 1);
+            
             // TODO: figure out how to search if the post uid exists in the retrieved list of friend uid
             var filteredPosts = results
                 .Where(post => post.UID == uid && post.DiaryEntry == true) 
