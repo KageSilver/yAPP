@@ -7,9 +7,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.yappmobile.R;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +19,11 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     private ArrayList _commentList;
     private String _uuid;
 
-    private BottomSheetDialogFragment _parentFragment;
+    private Fragment _parentFragment;
 
 
     // Constructor to initialize the comment list
-    public CommentAdapter(List<Comment> commentList, String uuid, BottomSheetDialogFragment parentFragment) {
+    public CommentAdapter(List<Comment> commentList, String uuid, Fragment parentFragment) {
 
         _commentList = (ArrayList) commentList;
         _uuid = uuid;
@@ -42,8 +42,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     @Override
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
         Comment comment = (Comment) _commentList.get(position);
-        Log.d("test222",comment.toString());
-
         // Set comment body and time
         holder.commentBody.setText(comment.getCommentBody());
         holder.commentTime.setText(comment.getCreateAt());
