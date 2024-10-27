@@ -23,7 +23,9 @@
     function pageForwards()
     {
         var lastPostTime = getLastPostTime();
-        if (lastPostTime != null && jsonData.value.length == 10) {
+        if (lastPostTime != null && jsonData.value.length == 10) 
+        {
+            document.getElementById("pageBackwards").style.visibility = "visible";
             var since = new Date(lastPostTime);
             since = since.toJSON();
             dates.push(since);
@@ -32,16 +34,26 @@
             updatePath(`/api/posts/getRecentPosts?since=${since}&maxResults=${maxResults}`);
             getPosts();
         }
+        else
+        {
+            document.getElementById("pageForwards").style.visibility = "hidden";
+        }
     }
 
     function pageBackwards()
     {
-        if ( currentDatePosition != 0 ) {
+        if ( currentDatePosition != 0 ) 
+        {
+            document.getElementById("pageForwards").style.visibility = "visible";            
             loading.value = true;
-            console.log(currentDatePosition);
             currentDatePosition--;
             updatePath(`/api/posts/getRecentPosts?since=${dates.at(currentDatePosition)}&maxResults=${maxResults}`);
+            dates.pop();
             getPosts();
+        }
+        else
+        {
+            document.getElementById("pageBackwards").style.visibility = "hidden";
         }
     }
 
@@ -69,11 +81,11 @@
                 <PostCard :post="post" />
         
             </div>
-                <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded self-center add-margin" type="button"
+                <button id="pageBackwards" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded self-center add-margin" type="button"
                     @click="pageBackwards()">
                     Go back
                 </button>
-                <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded self-center " type="button"
+                <button id="pageForwards" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded self-center " type="button"
                     @click="pageForwards()">
                     Load more!
                 </button>

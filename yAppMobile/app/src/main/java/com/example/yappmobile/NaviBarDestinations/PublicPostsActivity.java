@@ -24,10 +24,15 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.ArrayList;
 
 public class PublicPostsActivity extends AppCompatActivity implements IListCardItemInteractions
 {
     private CardListHelper postListHelper;
+    private ArrayList<String> dates;
+    private int currentDatePosition;
+    private Button goBack;
+    private Button loadMore;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -47,24 +52,29 @@ public class PublicPostsActivity extends AppCompatActivity implements IListCardI
         Date date = new Date();
         String since = format.format(date);
 
-        Button loadMore = findViewById(R.id.load_more_button);
+        currentDatePosition = 0;
+        dates = new ArrayList<String>();
+        dates.add(since);
+
+        loadMore = findViewById(R.id.load_more_button);
         loadMore.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                refreshPosts(postListHelper.getLastPostTime());
+                pageForwards();
             }
         });
         refreshPosts(since);
 
-        Button goBack = findViewById(R.id.go_back_button);
-        loadMore.setOnClickListener(new View.OnClickListener()
+        goBack = findViewById(R.id.go_back_button);
+        goBack.setVisibility(View.INVISIBLE);
+        goBack.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                refreshPosts(postListHelper.getLastPostTime());
+                pageBackwards();
             }
         });
 
@@ -82,6 +92,39 @@ public class PublicPostsActivity extends AppCompatActivity implements IListCardI
                 });
             }
         });
+    }
+
+    private void pageForwards() {
+        int listSize = postListHelper.getCardListSize();
+        if ( listSize == 10 )
+        {
+            goBack.setVisibility(View.VISIBLE);
+            String since = postListHelper.getLastPostTime();
+            currentDatePosition++;
+            dates.add(since);
+            refreshPosts(since);
+        }
+        else
+        {
+            loadMore.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void pageBackwards() {
+        if ( currentDatePosition != 0 )
+        {
+            loadMore.setVisibility(View.VISIBLE);
+            currentDatePosition--;
+            String since = dates.get(currentDatePosition);
+            refreshPosts(since);
+        }
+        else
+        {
+            goBack.setVisibility(View.INVISIBLE);
+        }
+        // This needs to be here to get rid of the button upon going back to the first page
+        if ( currentDatePosition == 0 )
+            goBack.setVisibility(View.INVISIBLE);
     }
 
     private void refreshPosts(String since)
