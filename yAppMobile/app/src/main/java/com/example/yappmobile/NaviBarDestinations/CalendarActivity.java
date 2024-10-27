@@ -10,6 +10,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,6 +33,7 @@ import java.util.concurrent.CompletableFuture;
 public class CalendarActivity extends AppCompatActivity implements IListCardItemInteractions
 {
     private CalendarView calendar;
+    private CardView calendarCard;
     private TextView selectedDate;
     private CardListHelper diaryEntryHelper;
     private List<JSONObject> userDiariesJson;
@@ -57,6 +59,7 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
 
         calendar = findViewById(R.id.calendarView);
         selectedDate = findViewById(R.id.selectedDate);
+        calendarCard = findViewById(R.id.calendarCard);
 
         Calendar cal = Calendar.getInstance();
         // sets the calendar to the current date
@@ -81,14 +84,14 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
         collapseCalendar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(calendar.getVisibility() == View.VISIBLE)
+                if(calendarCard.getVisibility() == View.VISIBLE)
                 {
-                    calendar.setVisibility(View.GONE);
+                    calendarCard.setVisibility(View.GONE);
                     collapseCalendar.setImageResource(R.drawable.baseline_keyboard_arrow_down_24);
                 }
                 else
                 {
-                    calendar.setVisibility(View.VISIBLE);
+                    calendarCard.setVisibility(View.VISIBLE);
                     collapseCalendar.setImageResource(R.drawable.baseline_keyboard_arrow_up_24);
                 }
             }

@@ -49,12 +49,14 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/calendarCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_margin="12dp"
             app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="15dp">
+            app:cardCornerRadius="15dp"
+            android:visibility="visible">
 
             <CalendarView
                 android:id="@+id/calendarView"
@@ -67,8 +69,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 android:dateTextAppearance="@style/CalenderViewCustom"
                 android:weekDayTextAppearance="@style/CalenderViewCustom"
-                android:theme="@style/CalenderViewCustom"
-                android:visibility="visible">
+                android:theme="@style/CalenderViewCustom">
             </CalendarView>
         </androidx.cardview.widget.CardView>
 
