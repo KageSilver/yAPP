@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.core.Amplify;
+import com.example.yappmobile.PostEntryActivity;
 import com.example.yappmobile.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import org.json.JSONArray;
@@ -41,15 +42,17 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
     private RecyclerView _recyclerView;
 
     private static final  String LOG_NAME = "COMMENTS";
+    private static PostEntryActivity _parent;
 
 
-    public static CommentsBottomSheet newInstance(String pid,String uid,String uuid) {
+    public static CommentsBottomSheet newInstance(String pid,String uid,String uuid, PostEntryActivity parent) {
         CommentsBottomSheet fragment = new CommentsBottomSheet();
         Bundle args = new Bundle();
         args.putString(ARG_PID, pid);
         args.putString(ARG_UID,uid);
         args.putString(ARG_UID,uuid);
         fragment.setArguments(args);
+        _parent = parent;
         return fragment;
     }
 
@@ -83,7 +86,7 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
         _recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Initialize the adapter with the fragment reference
-        _adapter = new CommentAdapter(commentList, _uid, this);
+        _adapter = new CommentAdapter(commentList, _uid, this, _parent);
         _recyclerView.setAdapter(_adapter);
 
         // After loading the data, hide the progress bar
@@ -192,10 +195,6 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
             Log.e(LOG_NAME, "Error posting comment", e);
         }
     }
-
-
-
-
 }
 
 

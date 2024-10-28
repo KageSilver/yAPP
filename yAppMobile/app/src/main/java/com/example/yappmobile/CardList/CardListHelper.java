@@ -70,12 +70,9 @@ public class CardListHelper extends AppCompatActivity
     {
         // Make loading spinner visible while we populate our CardItemAdapter
         loadingSpinner.setVisibility(View.VISIBLE);
-        System.out.println("creating adapter...");
         createAdapter(recyclerView);
         // Convert API response into a list of CardItems
-        System.out.println("setting card json: " + jsonData);
         cardItemList = jsonData;
-        System.out.println("populating cards...");
         populateCard();
     }
 

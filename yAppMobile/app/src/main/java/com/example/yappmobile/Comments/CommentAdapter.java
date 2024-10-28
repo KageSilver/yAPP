@@ -1,13 +1,26 @@
 package com.example.yappmobile.Comments;
+import static android.app.Activity.RESULT_OK;
+import static androidx.activity.result.ActivityResultCallerKt.registerForActivityResult;
+
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.yappmobile.PostEntryActivity;
 import com.example.yappmobile.R;
 
 import java.util.ArrayList;
@@ -19,14 +32,16 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     private String _uuid;
 
     private Fragment _parentFragment;
+    private PostEntryActivity _parentActivity;
 
 
     // Constructor to initialize the comment list
-    public CommentAdapter(List<Comment> commentList, String uuid, Fragment parentFragment) {
+    public CommentAdapter(List<Comment> commentList, String uuid, Fragment parentFragment, PostEntryActivity parentActivity) {
 
         _commentList = (ArrayList) commentList;
         _uuid = uuid;
         _parentFragment = parentFragment;
+        _parentActivity = parentActivity;
     }
 
     @NonNull
@@ -53,7 +68,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             // Open the EditDeleteBottomSheet when the comment is clicked
             // Set click listener to open the Edit/Delete Bottom Sheet
             holder.itemView.setOnClickListener(v -> {
-                EditDeleteBottomSheet editDeleteBottomSheet = EditDeleteBottomSheet.newInstance(comment.getJsonObject().toString());
+                EditDeleteBottomSheet editDeleteBottomSheet = EditDeleteBottomSheet.newInstance(comment.getJsonObject().toString(), this);
                 editDeleteBottomSheet.show(_parentFragment.getParentFragmentManager(), "EditDeleteBottomSheet");
             });
         } else {
@@ -62,6 +77,22 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
             // Remove the click listener for non-user comments
             holder.itemView.setOnClickListener(null);
+        }
+    }
+
+    public void removeComment(String cid)
+    {
+        boolean found = false;
+        for(int i = 0; i < _commentList.size() && !found; i++)
+        {
+            if(((Comment)_commentList.get(i)).getCid().equals(cid))
+            {
+                found = true;
+                _commentList.remove(i);
+                _parentActivity.runOnUiThread(() -> {
+                    notifyDataSetChanged();
+                });
+            }
         }
     }
 

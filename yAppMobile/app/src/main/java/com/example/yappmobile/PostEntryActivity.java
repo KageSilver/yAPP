@@ -53,7 +53,7 @@ public class PostEntryActivity extends AppCompatActivity
             _username = result.getUsername();
             runOnUiThread(() -> {
                 replyButton.setOnClickListener(v -> {
-                    CommentsBottomSheet bottomSheet = CommentsBottomSheet.newInstance(_pid, _uid, _uuid);
+                    CommentsBottomSheet bottomSheet = CommentsBottomSheet.newInstance(_pid, _uid, _uuid, this);
                     bottomSheet.show(getSupportFragmentManager(), bottomSheet.getTag());
                 });
             });
@@ -186,7 +186,7 @@ public class PostEntryActivity extends AppCompatActivity
                 Amplify.API.delete(options,
                         response -> {
                             Log.i(LOG_NAME, "DELETE succeeded: " + response);
-                            
+
                             Intent intent = new Intent();
                             intent.putExtra("delete", _pid);
                             setResult(PostEntryActivity.RESULT_OK, intent);

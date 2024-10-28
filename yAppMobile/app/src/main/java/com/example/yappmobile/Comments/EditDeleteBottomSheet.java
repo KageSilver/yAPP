@@ -40,7 +40,9 @@ public class EditDeleteBottomSheet extends BottomSheetDialogFragment {
     private JSONObject _commentJsonObject;
 
     private final String LOG_NAME = "EditDelete";
-    public static EditDeleteBottomSheet newInstance(String body) {
+    private static CommentAdapter _adapter;
+    public static EditDeleteBottomSheet newInstance(String body, CommentAdapter adapter) {
+        _adapter = adapter;
         EditDeleteBottomSheet fragment = new EditDeleteBottomSheet();
         Bundle args = new Bundle();
         args.putString(ARG_COMMENT,  body);
@@ -144,13 +146,12 @@ public class EditDeleteBottomSheet extends BottomSheetDialogFragment {
                 Amplify.API.delete(options,
                         response -> {
                             Log.i(LOG_NAME, "DELETE succeeded: " + response);
-
+                            _adapter.removeComment(_cid);
                         },
                         error -> {
                             Log.e(LOG_NAME, "DELETE failed.", error);
                         }
                 );
-
             }
         });
 
