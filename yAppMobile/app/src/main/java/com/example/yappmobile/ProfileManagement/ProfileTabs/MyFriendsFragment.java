@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.amplifyframework.api.rest.RestOptions;
+import com.amplifyframework.auth.AuthUser;
 import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.CardList.CardListHelper;
 import com.example.yappmobile.CardList.IListCardItemInteractions;
@@ -22,12 +23,14 @@ import com.example.yappmobile.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.concurrent.CompletableFuture;
+
 public class MyFriendsFragment extends Fragment implements IListCardItemInteractions
 {
     private CardListHelper friendListHelper;
     private RecyclerView rvFriends;
     private AlertDialog confirmUnfollow;
-    private boolean confirmed = false;
+    private int position;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -58,7 +61,10 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
         {
             public void onClick(DialogInterface dialog, int id)
             {
-                confirmed = true;
+                // If confirmed, send an API request to update your friendship
+                // And reload the displayed friendship list
+                removeFriendship(position);
+                reloadFriendList();
             }
         });
         confirmUnfollow.setButton(AlertDialog.BUTTON_NEGATIVE,
@@ -75,14 +81,8 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
     public void onItemClick(int position)
     {
         // Show confirmUnfollow dialogue
-        // If confirmed, send an API request to update your friendship
-        // And reload the displayed friendship list
         confirmUnfollow.show();
-        if (confirmed)
-        {
-            removeFriendship(position);
-            reloadFriendList();
-        }
+        this.position = position;
     }
 
     private void removeFriendship(int position)
@@ -91,15 +91,10 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
         JSONObject result = friendListHelper.getFriendship(position);
         try
         {
-            // Although we restricted the DB to not accept duplicate friendships AB and BA,
-            // Race conditions can and will occur at some point, affecting the "sanity" of the DB
-            // Thus, duplicates are also removed in CardListHelper for rendering
-            // And we'll send out PUT requests for both AB and BA to ensure full removal
-
+            // NOTE: Backend only allows for one instance of the same relationship AB and BA
             String personA = result.get("sender").toString();
             String personB = result.get("receiver").toString();
             removeFriendship(personA, personB);
-            removeFriendship(personB, personA);
         }
         catch (JSONException error)
         {
@@ -141,12 +136,18 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
     // Reload RecyclerView of FriendCards
     private void reloadFriendList()
     {
-        Amplify.Auth.getCurrentUser(result -> {
-            String userName = result.getUsername();
-            String myRequestsAPI = "/api/friends/getFriendsByStatus?userName=" + userName + "&status=1";
-            friendListHelper.loadItems(myRequestsAPI, rvFriends);
-        }, error -> {
+        CompletableFuture<AuthUser> future = new CompletableFuture<>();
+
+        Amplify.Auth.getCurrentUser(future::complete, error -> {
             Log.e("Auth", "Uh oh! THere's trouble getting the current user", error);
+        });
+
+        future.thenAccept(user -> {
+            getActivity().runOnUiThread(() -> {
+                String username = user.getUsername();
+                String myRequestsAPI = "/api/friends/getFriendsByStatus?userName=" + username + "&status=1";
+                friendListHelper.loadItems(myRequestsAPI, rvFriends);
+            });
         });
     }
 }

@@ -77,7 +77,9 @@ public class CardListHelper extends AppCompatActivity
             cardItemList = handleData(jsonData);
 
             if ( myPosts )
+            {
                 sortPosts();
+            }
             populateCard();
         }).exceptionally(throwable ->
         {
@@ -115,7 +117,8 @@ public class CardListHelper extends AppCompatActivity
         });
     }
 
-    private String truncateToMS(String date) {
+    private String truncateToMS(String date)
+    {
         if (date.length() > 20)
         {
             // Replace the +Z
