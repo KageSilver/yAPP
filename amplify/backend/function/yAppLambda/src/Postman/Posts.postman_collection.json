@@ -133,7 +133,7 @@
           "method": "GET",
           "header": [],
           "url": {
-            "raw": "{{base_url}}/api/posts/getEntryByUser?uid=${uid}&startDate={startDate}&endDate={endDate}",
+            "raw": "{{base_url}}/api/posts/getEntryByUser?uid=${uid}&startDate=${startDate}&endDate=${endDate}",
             "host": ["{{base_url}}"],
             "path": ["api", "posts", "getEntryByUser"],
             "query": [
@@ -174,7 +174,7 @@
           "method": "GET",
           "header": [],
           "url": {
-            "raw": "{{base_url}}/api/posts/getEntriesByFriends?uid=${uid}&startDate={startDate}&endDate={endDate}",
+            "raw": "{{base_url}}/api/posts/getEntriesByFriends?uid=${uid}&startDate=${startDate}&endDate=${endDate}",
             "host": ["{{base_url}}"],
             "path": ["api", "posts", "getEntriesByFriends"],
             "query": [
