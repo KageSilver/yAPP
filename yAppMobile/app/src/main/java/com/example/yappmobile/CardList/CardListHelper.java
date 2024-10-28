@@ -12,9 +12,14 @@ import com.amplifyframework.core.Amplify;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.concurrent.CompletableFuture;
+import java.util.Date;
 
 public class CardListHelper extends AppCompatActivity
 {
@@ -24,6 +29,7 @@ public class CardListHelper extends AppCompatActivity
     private List<JSONObject> cardItemList; // List of CardItems
     private final IListCardItemInteractions itemInteractions; // Handles clicks of the CardItem
     private CardListAdapter adapter;
+    private boolean myPosts;
 
     public CardListHelper(Context context)
     {
@@ -44,6 +50,18 @@ public class CardListHelper extends AppCompatActivity
         this.itemInteractions = itemInteractions;
     }
 
+    public CardListHelper(Context context, ProgressBar loadingSpinner,
+                          String cardType, IListCardItemInteractions itemInteractions,
+                          boolean myPosts)
+    {
+        this.context = context;
+        this.loadingSpinner = loadingSpinner;
+        this.cardType = cardType;
+        this.cardItemList = new ArrayList<>();
+        this.itemInteractions = itemInteractions;
+        this.myPosts = myPosts;
+    }
+
     public void loadItems(String apiUrl, RecyclerView recyclerView)
     {
         // Make loading spinner visible while we populate our CardItemAdapter
@@ -58,12 +76,48 @@ public class CardListHelper extends AppCompatActivity
             // Convert API response into a list of CardItems
             cardItemList = handleData(jsonData);
 
+            if ( myPosts )
+                sortPosts();
             populateCard();
         }).exceptionally(throwable ->
         {
             Log.e("API", "Error fetching data", throwable);
             return null;
         });
+    }
+
+    private void sortPosts()
+    {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+
+        // Sort the list by createdAt in descending order
+        Collections.sort(cardItemList, new Comparator<JSONObject>()
+        {
+            @Override
+            public int compare(JSONObject post1, JSONObject post2)
+            {
+                try
+                {
+                    // Extract and truncate the createdAt date to milliseconds and timezone
+                    String createdAt1 = truncateToMS(post1.getString("createdAt"));
+                    String createdAt2 = truncateToMS(post2.getString("createdAt"));
+
+                    Date date1 = dateFormat.parse(createdAt1);
+                    Date date2 = dateFormat.parse(createdAt2);
+                    return date2.compareTo(date1); // Descending order
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                    return 0;
+                }
+            }
+        });
+    }
+
+    private String truncateToMS(String date)
+    {
+        return date.length() > 23 ? date.substring(0, 23) + "Z" : date;
     }
 
     public void loadDiaries(List<JSONObject> jsonData, RecyclerView recyclerView)

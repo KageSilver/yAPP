@@ -37,7 +37,7 @@ public class MyPostsFragment extends Fragment implements IListCardItemInteractio
         super.onCreate(savedInstanceState);
 
         ProgressBar loadingSpinner = view.findViewById(R.id.indeterminateBar);
-        postListHelper = new CardListHelper(this.getContext(), loadingSpinner, "POST", this);
+        postListHelper = new CardListHelper(this.getContext(), loadingSpinner, "POST", this, true);
 
         // Setup recycler view to display post list cards
         RecyclerView rvPosts = view.findViewById(R.id.my_posts_list);
