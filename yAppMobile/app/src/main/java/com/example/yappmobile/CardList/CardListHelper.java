@@ -283,7 +283,7 @@ public class CardListHelper extends AppCompatActivity
         String receiver = null;
         try
         {
-            if(cardType.equals("CURRENT_FRIEND"))
+            if(cardType.equals("CURRENT_FRIEND") || cardType.equals("FRIEND_REQUEST"))
             {
                 sender = cardItemList.get(position).get("FromUserName").toString();
                 receiver = cardItemList.get(position).get("ToUserName").toString();
