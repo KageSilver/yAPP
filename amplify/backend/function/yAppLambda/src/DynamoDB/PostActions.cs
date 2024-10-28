@@ -118,14 +118,14 @@ public class PostActions : IPostActions
     /// <param name="uid">The author of the diary entry.</param>
     /// <param name="current">The current day to query.</param>
     /// <returns>The diary entry made by a user on the specified day.</returns>
-    public async Task<Post> GetDiariesByUser(string uid, DateTime current)
+    public async Task<List<Post>> GetDiariesByUser(string uid, DateTime current)
     {
         try
         {
             // Query for diary entries made within start and end dates to narrow down posts to filter out 
             var expressionAttributeValues = new Dictionary<string, DynamoDBEntry>
             {
-                { ":diaryEntry", true}
+                {":diaryEntry", true }
             };
 
             var query = new QueryOperationConfig
@@ -133,28 +133,36 @@ public class PostActions : IPostActions
                 IndexName = "CreatedAtIndex",  
                 KeyExpression = new Expression
                 {
-                    ExpressionStatement = "DiaryEntry = :diaryEntry AND CreatedAt BETWEEN :start AND :end",
+                    ExpressionStatement = "DiaryEntry = :diaryEntry",
                     ExpressionAttributeValues = expressionAttributeValues
-                }  
+                },
+                AttributesToGet = new List<string>
+                {
+                    "PID" 
+                },
+                Select = SelectValues.SpecificAttributes,
+                BackwardSearch = true
             };
 
-            var results = await _dynamoDbContext.FromQueryAsync<Post>(query, _config).GetNextSetAsync();
-
-            // Filter results in memory to match the specific UID and DiaryEntry values
-            foreach (var post in results)
+            var result = await _dynamoDbContext.FromQueryAsync<Post>(query, _config).GetNextSetAsync();
+            
+            var posts = new List<Post>();
+            
+            foreach(Post post in result)
             {
-                if (post.UID == uid)
+                var thisPost = GetPostById(post.PID).Result;
+                if (thisPost.UID == uid)
                 {
-                    return post;
+                    posts.Add(thisPost);
                 }
             }
 
-            return null;
+            return posts;
         }
         catch (Exception e)
         {
-            Console.WriteLine("Failed to retrive diary entry: " + e.Message);
-            return null;
+            Console.WriteLine("Failed to retrieve diary entry: " + e.Message);
+            return new List<Post>();
         }
     }
 
@@ -169,17 +177,21 @@ public class PostActions : IPostActions
         try
         {
             // Get all the user's friends
-            var friends = _friendshipActions.GetAllFriends(uid, FriendshipStatus.Accepted).Result;
+            var username = _cognitoActions.GetUserById(uid).Result.UserName;
+            var friends = _friendshipActions.GetAllFriends(username, FriendshipStatus.Accepted).Result;
             
             // Get the posts written by the user's friends
-            var filteredPosts = new List<Post>();
+            var posts = new List<Post>();
             foreach (Friendship friendship in friends)
             {
-                var thisFriendUid = _cognitoActions.GetUser(friendship.ToUserName).Result.Id;
-                var thisPost = GetDiariesByUser(thisFriendUid, current).Result;
-                filteredPosts.Add(thisPost);
+                var thisUid = username == friendship.FromUserName 
+                    ? _cognitoActions.GetUser(friendship.ToUserName).Result.Id 
+                    : _cognitoActions.GetUser(friendship.FromUserName).Result.Id;
+                
+                var thisPost = GetDiariesByUser(thisUid, current).Result.First();
+                posts.Add(thisPost);
             }
-            return filteredPosts;
+            return posts;
         }
         catch (Exception e)
         {

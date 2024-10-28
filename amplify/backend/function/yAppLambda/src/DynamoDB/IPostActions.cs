@@ -33,7 +33,7 @@ public interface IPostActions
     /// <param name="uid">The author of the diary entry.</param>
     /// <param name="current">The current day to query.</param>
     /// <returns>The diary entry made by a user on the specified day.</returns>
-    Task<Post> GetDiariesByUser(string uid, DateTime current);
+    Task<List<Post>> GetDiariesByUser(string uid, DateTime current);
 
     /// <summary>
     /// Gets the diary entries made by the user's friends within a specific day

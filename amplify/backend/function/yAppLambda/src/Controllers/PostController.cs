@@ -156,7 +156,7 @@ public class PostController : ControllerBase
     [HttpGet("getDiariesByUser")]
     [ProducesResponseType(typeof(List<Post>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Post>> GetDiariesByUser (string uid, DateTime current)
+    public async Task<ActionResult<List<Post>>> GetDiariesByUser (string uid, DateTime current)
     {
         if (string.IsNullOrEmpty(uid))
         {
@@ -168,8 +168,8 @@ public class PostController : ControllerBase
             return BadRequest("valid date is required");
         }
         
-        var post = await _postActions.GetDiariesByUser(uid, current);
-        return post;
+        var posts = await _postActions.GetDiariesByUser(uid, current);
+        return posts;
     }
     
     // GET: api/posts/getDiariesByFriends?uid={uid}&current={current}

@@ -115,7 +115,7 @@
         "response": []
       },
       {
-        "name": "GetEntryByUser",
+        "name": "GetDiariesByUser",
         "event": [
           {
             "listen": "test",
@@ -133,9 +133,9 @@
           "method": "GET",
           "header": [],
           "url": {
-            "raw": "{{base_url}}/api/posts/getDiaryByUser?uid=${uid}&current=${current}",
+            "raw": "{{base_url}}/api/posts/getDiariesByUser?uid=${uid}&current=${current}",
             "host": ["{{base_url}}"],
-            "path": ["api", "posts", "getDiaryByUser"],
+            "path": ["api", "posts", "getDiariesByUser"],
             "query": [
               {
                 "key": "uid",
@@ -152,7 +152,7 @@
         "response": []
       },
       {
-        "name": "GetEntriesByFriends",
+        "name": "GetDiariesByFriends",
         "event": [
           {
             "listen": "test",
