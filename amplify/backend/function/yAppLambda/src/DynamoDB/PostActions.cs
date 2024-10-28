@@ -122,10 +122,15 @@ public class PostActions : IPostActions
     {
         try
         {
+            var startOfDay = current.Date; // 12 AM
+            var endOfDay = current.Date.AddDays(1).AddSeconds(-1); // 11:59 PM
+            
             // Query for diary entries made within start and end dates to narrow down posts to filter out 
             var expressionAttributeValues = new Dictionary<string, DynamoDBEntry>
             {
-                {":diaryEntry", true }
+                {":diaryEntry", true},
+                {":start", startOfDay.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")},
+                {":end", endOfDay.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")}
             };
 
             var query = new QueryOperationConfig
@@ -133,7 +138,7 @@ public class PostActions : IPostActions
                 IndexName = "CreatedAtIndex",  
                 KeyExpression = new Expression
                 {
-                    ExpressionStatement = "DiaryEntry = :diaryEntry",
+                    ExpressionStatement = "DiaryEntry = :diaryEntry AND CreatedAt BETWEEN :start AND :end",
                     ExpressionAttributeValues = expressionAttributeValues
                 },
                 AttributesToGet = new List<string>
