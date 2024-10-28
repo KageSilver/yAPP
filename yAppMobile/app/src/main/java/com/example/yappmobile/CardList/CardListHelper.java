@@ -76,7 +76,7 @@ public class CardListHelper extends AppCompatActivity
             // Convert API response into a list of CardItems
             cardItemList = handleData(jsonData);
 
-            if ( myPosts )
+            if (myPosts)
             {
                 sortPosts();
             }

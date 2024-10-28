@@ -136,6 +136,7 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
         // Then update friend list
         future.thenAccept(restResponse -> {
             getActivity().runOnUiThread(() -> {
+                Log.i("API", restResponse.toString());
                 reloadFriendList();
             });
         });

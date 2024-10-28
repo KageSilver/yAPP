@@ -61,10 +61,8 @@ public class FriendController : ControllerBase
             else
             {
                 // Get friendships AB and BA
-                var existingFriendship = await _friendshipActions
-                    .GetFriendship(request.FromUserName, friend.UserName); 
-                var existingReversedFriendship = await _friendshipActions
-                    .GetFriendship(friend.UserName, request.FromUserName); 
+                var existingFriendship = await _friendshipActions.GetFriendship(request.FromUserName, friend.UserName); 
+                var existingReversedFriendship = await _friendshipActions.GetFriendship(friend.UserName, request.FromUserName); 
 
                 bool noAB = existingFriendship == null || existingFriendship.Value == null;
                 bool noBA = existingReversedFriendship == null || existingReversedFriendship.Value == null;
