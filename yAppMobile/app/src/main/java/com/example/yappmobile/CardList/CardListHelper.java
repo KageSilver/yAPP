@@ -98,18 +98,18 @@ public class CardListHelper extends AppCompatActivity
             {
                 try
                 {
-                    // Extract and truncate the createdAt date to milliseconds and timezone
+                    // createdAt needs to have the milliseconds truncated for this format
                     String createdAt1 = truncateToMS(post1.getString("createdAt"));
                     String createdAt2 = truncateToMS(post2.getString("createdAt"));
 
                     Date date1 = dateFormat.parse(createdAt1);
                     Date date2 = dateFormat.parse(createdAt2);
-                    return date2.compareTo(date1); // Descending order
+                    return date2.compareTo(date1);
                 }
                 catch (Exception e)
                 {
                     e.printStackTrace();
-                    return 0;
+                    return 0; // Fail application if this broke
                 }
             }
         });
