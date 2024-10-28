@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.amplifyframework.api.rest.RestOptions;
+import com.amplifyframework.api.rest.RestResponse;
 import com.amplifyframework.auth.AuthUser;
 import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.CardList.CardListHelper;
@@ -24,6 +25,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class MyFriendsFragment extends Fragment implements IListCardItemInteractions
 {
@@ -31,6 +34,7 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
     private RecyclerView rvFriends;
     private AlertDialog confirmUnfollow;
     private int position;
+    private Lock positionLock;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -42,6 +46,8 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
     public void onViewCreated(View view, Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        positionLock = new ReentrantLock();
 
         ProgressBar loadingSpinner = view.findViewById(R.id.indeterminateBar);
         friendListHelper = new CardListHelper(this.getContext(), loadingSpinner,
@@ -62,9 +68,7 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
             public void onClick(DialogInterface dialog, int id)
             {
                 // If confirmed, send an API request to update your friendship
-                // And reload the displayed friendship list
                 removeFriendship(position);
-                reloadFriendList();
             }
         });
         confirmUnfollow.setButton(AlertDialog.BUTTON_NEGATIVE,
@@ -123,14 +127,23 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
 
     private void sendPutRequest(String apiUrl, String putBody)
     {
+        CompletableFuture<RestResponse> future = new CompletableFuture<>();
+
         RestOptions options = RestOptions.builder()
                                          .addPath(apiUrl)
                                          .addHeader("Content-Type", "application/json")
                                          .addBody(putBody.getBytes())
                                          .build();
         Amplify.API.put(options,
-                        response -> Log.i("API", "PUT RESPONSE:" + response.getData()),
+                        future::complete,
                         error -> Log.e("API", "PUT request failed", error));
+
+        // Then update friend list
+        future.thenAccept(restResponse -> {
+            getActivity().runOnUiThread(() -> {
+                reloadFriendList();
+            });
+        });
     }
 
     // Reload RecyclerView of FriendCards
@@ -146,6 +159,9 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
             getActivity().runOnUiThread(() -> {
                 String username = user.getUsername();
                 String myRequestsAPI = "/api/friends/getFriendsByStatus?userName=" + username + "&status=1";
+
+                rvFriends = (RecyclerView) this.getView().findViewById(R.id.my_friends_list);
+                rvFriends.setLayoutManager(new LinearLayoutManager(this.getContext()));
                 friendListHelper.loadItems(myRequestsAPI, rvFriends);
             });
         });
