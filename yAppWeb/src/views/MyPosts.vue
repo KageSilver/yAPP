@@ -12,36 +12,45 @@ const uid = ref('');
 const jsonData = ref([]);
 const loading = ref(false);
 
-const diaryEntry = false; // Replace with logic for setting whether it's diary entries or not
 // Retrieve the necessary data and function from the helper
-onMounted(async () => {
+onMounted(async () => 
+{
     const user = await getCurrentUser();
     uid.value = user.userId;
-    await getPosts(uid, diaryEntry);
-
+    await getPosts(uid);
 });
 
-async function getPosts(uid, diaryEntry) {
+async function getPosts(uid) 
+{
     loading.value = true;
-    try {
-       
-        const restOperation = get({
+    try 
+    {   
+        const restOperation = get(
+        {
             apiName: 'yapp',
             path: `/api/posts/getPostsByUser?uid=${uid.value}`
         });
         const { body } = await restOperation.response;
         jsonData.value = await body.json();
+        sortPosts();
     }
-    catch (error) {
+    catch (error) 
+    {
         console.log('GET call failed', error);
     }
     loading.value = false;
 }
 
-function clickPost(pid) {
+function clickPost(pid) 
+{
     router.push({ name: 'details', params: { pid } });
 }
 
+function sortPosts() 
+{
+    if (Array.isArray(jsonData.value))
+        jsonData.value.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+}
 
 </script>
 

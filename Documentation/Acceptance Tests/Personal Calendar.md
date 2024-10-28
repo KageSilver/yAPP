@@ -28,7 +28,11 @@
     - Email
     - Password
 4. Select the "Sign In" button at the bottom of the panel
-5. 
+5. Select the "Calendar" button on the panel on the right of the screen
+6. The default date on the calendar is the current date, but you can select any date to view diary entries from that day instead
+7. If you made a diary entry on this date, it will appear at the top of the list of diary entries below the calendar
+    - To see the full post, you can click on it
+8. Done!
 
 ### View You Friends' Diary Entries - Website
 1. Navigate to the yAPP website
@@ -37,7 +41,11 @@
     - Email
     - Password
 4. Select the "Sign In" button at the bottom of the panel
-5. 
+5. Select the "Calendar" button on the panel on the right of the screen
+6. The default date on the calendar is the current date, but you can select any date to view diary entries from that day instead
+7. If any of your friends made a diary entry on this date, they will appear in a list of diary entries below the calendar
+    - To see the full post, you can click on it
+8. Done!
 
 ## Mobile Acceptance Tests
 
@@ -68,7 +76,11 @@
     - Email
     - Password
 4. Select the "Sign in" button at the bottom of the panel
-5. 
+5. Select the "Calendar" button on the bottom navigation bar
+6. The default date on the calendar is the current date, but you can select any date to view diary entries from that day instead
+7. If you made a diary entry on this date, it will appear at the top of the list of diary entries below the calendar
+    - To see the full post, you can click on it
+8. Done!
 
 ### View You Friends' Diary Entries - Mobile
 1. Navigate to the yAPP mobile app
@@ -77,4 +89,8 @@
     - Email
     - Password
 4. Select the "Sign in" button at the bottom of the panel
-5. 
+5. Select the "Calendar" button on the panel on the right of the screen
+6. The default date on the calendar is the current date, but you can select any date to view diary entries from that day instead
+7. If any of your friends made a diary entry on this date, they will appear in a list of diary entries below the calendar
+    - To see the full post, you can click on it
+8. Done!
