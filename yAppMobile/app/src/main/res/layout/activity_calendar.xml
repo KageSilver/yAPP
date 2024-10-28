@@ -23,7 +23,7 @@
             app:cardCornerRadius="8dp">
 
             <TextView
-                android:id="@+id/selectedDate"
+                android:id="@+id/selected_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="22sp"
@@ -49,7 +49,7 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/calendarCard"
+            android:id="@+id/calendar_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -59,7 +59,7 @@
             android:visibility="visible">
 
             <CalendarView
-                android:id="@+id/calendarView"
+                android:id="@+id/calendar_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
@@ -89,20 +89,20 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ProgressBar
-                android:id="@+id/indeterminateBar"
+                android:id="@+id/indeterminate_bar"
                 style="?android:attr/progressBarStyleLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_margin="12dp"
                 android:indeterminate="true"
-                app:layout_constraintBottom_toBottomOf="@+id/user_diary_list"
+                app:layout_constraintBottom_toBottomOf="@+id/diary_list"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/line" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/user_diary_list"
+                android:id="@+id/diary_list"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_margin="16dp"

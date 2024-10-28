@@ -36,9 +36,9 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
     private CardView calendarCard;
     private TextView selectedDate;
     private CardListHelper diaryEntryHelper;
-    private List<JSONObject> userDiariesJson;
+    private List<JSONObject> userDiariesJson, friendDiariesJson;
     private ImageButton collapseCalendar;
-    private RecyclerView userDiaries;
+    private RecyclerView diaries;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -47,21 +47,23 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
         setContentView(R.layout.activity_calendar);
         NavBar.establishNavBar(this, "CALENDAR");
 
-        ProgressBar loadingSpinner = findViewById(R.id.indeterminateBar);
+        ProgressBar loadingSpinner = findViewById(R.id.indeterminate_bar);
         diaryEntryHelper = new CardListHelper(this, loadingSpinner, "DIARY", this);
 
         // sets up recycler view
-        userDiaries = findViewById(R.id.user_diary_list);
-        userDiaries.setLayoutManager(new LinearLayoutManager(this));
+        diaries = findViewById(R.id.diary_list);
+        diaries.setLayoutManager(new LinearLayoutManager(this));
 
         // fetch all diary entries for current user
         userDiariesJson = new ArrayList<>();
         getUserDiaries();
+        friendDiariesJson = new ArrayList<>();
+        getFriendDiaries();
 
         // finds elements in the xml file that will be changed later
-        calendar = findViewById(R.id.calendarView);
-        selectedDate = findViewById(R.id.selectedDate);
-        calendarCard = findViewById(R.id.calendarCard);
+        calendar = findViewById(R.id.calendar_view);
+        selectedDate = findViewById(R.id.selected_date);
+        calendarCard = findViewById(R.id.calendar_card);
         collapseCalendar = findViewById(R.id.collapse_calendar);
 
         // gets current date and time
@@ -79,7 +81,7 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
                 calendar.setDate(cal.getTimeInMillis());
                 selectedDate.setText(formatDisplayDate(cal));
                 // loads diary entries for the new selected date
-                diaryEntryHelper.loadDiaries(getUserDiariesFromDate(cal), userDiaries);
+                diaryEntryHelper.loadDiaries(getUserDiariesFromDate(cal), diaries);
             }
         });
 
@@ -102,7 +104,7 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
         });
     }
 
-    private List<JSONObject> getUserDiariesFromDate(Calendar cal)
+    private List<JSONObject> getDiariesFromDate(List<JSONObject> diaries, Calendar cal)
     {
         // searches for posts for a specific date
         List<JSONObject> posts = new ArrayList<>();
@@ -110,11 +112,11 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
 
         try{
 
-            for(int i = 0; i < userDiariesJson.size(); i++)
+            for(int i = 0; i < diaries.size(); i++)
             {
-                if(userDiariesJson.get(i).getString("createdAt").substring(0, 10).equals(date))
+                if(diaries.get(i).getString("createdAt").substring(0, 10).equals(date))
                 {
-                    posts.add(userDiariesJson.get(i));
+                    posts.add(diaries.get(i));
                 }
             }
 
@@ -147,7 +149,33 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
             // then loads diary entries onto the page for the current date
             future2.thenAccept(jsonData -> {
                 userDiariesJson = diaryEntryHelper.handleData(jsonData);
-            }).thenRun(() -> diaryEntryHelper.loadDiaries(getUserDiariesFromDate(Calendar.getInstance()), userDiaries)).join();
+            }).thenRun(() -> diaryEntryHelper.loadDiaries(getUserDiariesFromDate(userDiariesJson, Calendar.getInstance()), diaries)).join();
+        });
+    }
+
+    private void getFriendDiaries()
+    {
+        CompletableFuture<String> future = new CompletableFuture<>();
+
+        // gets user information
+        Amplify.Auth.getCurrentUser(result -> {
+            future.complete(result.getUserId());
+        }, error -> {
+            Log.e("Auth", "Error occurred when getting current user. Redirecting to authenticator");
+            Intent intent = new Intent(CalendarActivity.this, AuthenticatorActivity.class);
+            startActivity(intent);
+        });
+
+        future.thenAccept(uid -> {
+            // gets diary entries from user
+            String apiUrl = "/api/posts/getDiariesByFriends?uid=" + uid + "&current=" + formatCompareDate(Calendar.getInstance());
+            CompletableFuture<String> future2 = diaryEntryHelper.getItemsFromAPI(apiUrl);
+
+            // loads user diaries into a list of json objects
+            // then loads diary entries onto the page for the current date
+            future2.thenAccept(jsonData -> {
+                friendDiariesJson = diaryEntryHelper.handleData(jsonData);
+            }).thenRun(() -> diaryEntryHelper.loadDiaries(getDiariesFromDate(friendDiariesJson, Calendar.getInstance()), diaries)).join();
         });
     }
 
