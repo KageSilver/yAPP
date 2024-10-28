@@ -144,63 +144,59 @@ public class PostController : ControllerBase
         return posts;
     }
     
-    // GET: api/posts/getDiariesByUser?uid={uid}&startDate={startDate}&endDate={endDate}
+    // GET: api/posts/getDiariesByUser?uid={uid}&current={current}
     /// ----------------------------------------------------------------------------------------------------------------
     /// <summary>
-    /// Gets the diary entry made by a user within a specific date range
+    /// Gets the diary entries made by a user within a specific day
     /// </summary>
     /// <param name="uid">The author of the diary entry.</param>
-    /// <param name="startDate">The starting point of the date range to query.</param>
-    /// <param name="endDate">The ending point of the date range to query.</param>
-    /// <returns>The diary entry made by a user on the specified date range.</returns>
+    /// <param name="current">The current day to query.</param>
+    /// <returns>The diary entry made by a user on the specified day.</returns>
     /// ----------------------------------------------------------------------------------------------------------------
     [HttpGet("getDiariesByUser")]
     [ProducesResponseType(typeof(List<Post>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Post>> GetDiariesByUser (string uid, DateTime startDate, DateTime endDate)
+    public async Task<ActionResult<Post>> GetDiariesByUser (string uid, DateTime current)
     {
         if (string.IsNullOrEmpty(uid))
         {
             return BadRequest("uid is required");
         }
         
-        if (!DateTime.TryParse(startDate.ToString(), out startDate) || 
-            !DateTime.TryParse(endDate.ToString(), out endDate))
+        if (!DateTime.TryParse(current.ToString(), out current))
         {
-            return BadRequest("valid start and end date is required");
+            return BadRequest("valid date is required");
         }
         
-        var post = await _postActions.GetDiariesByUser(uid, startDate, endDate);
+        var post = await _postActions.GetDiariesByUser(uid, current);
         return post;
     }
     
-    // GET: api/posts/getDiariesByFriends?uid={uid}&startDate={startDate}&endDate={endDate}
+    // GET: api/posts/getDiariesByFriends?uid={uid}&current={current}
     /// ----------------------------------------------------------------------------------------------------------------
     /// <summary>
-    /// Gets the diary entries made by the user's friends within a specific date range
+    /// Gets the diary entries made by the user's friends within a specific day
     /// </summary>
     /// <param name="uid">The user whose friends will be searched for.</param>
-    /// <param name="startDate">The starting point of the date range to query.</param>
-    /// <param name="endDate">The ending point of the date range to query.</param>
-    /// <returns>A list of diary entries made by the user's friends on the specified date range.</returns>
+    /// <param name="current">The current day to query.</param>
+    /// <returns>A list of diary entries made by the user's friends on the specified day</returns>
     /// ----------------------------------------------------------------------------------------------------------------
     [HttpGet("getDiariesByFriends")]
     [ProducesResponseType(typeof(List<Post>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<List<Post>>> GetDiariesByFriends(string uid, DateTime startDate, DateTime endDate)
+    public async Task<ActionResult<List<Post>>> GetDiariesByFriends(string uid, DateTime current)
     {
         if (string.IsNullOrEmpty(uid))
         {
             return BadRequest("uid is required");
         }
         
-        if (!DateTime.TryParse(startDate.ToString(), out startDate) || 
-            !DateTime.TryParse(endDate.ToString(), out endDate))
+        if (!DateTime.TryParse(current.ToString(), out current))
         {
             return BadRequest("valid start and end date is required");
         }
         
-        var posts = await _postActions.GetDiariesByFriends(uid, startDate, endDate);
+        var posts = await _postActions.GetDiariesByFriends(uid, current);
         return posts;
     }
     
