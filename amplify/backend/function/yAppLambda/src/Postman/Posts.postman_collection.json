@@ -133,7 +133,7 @@
           "method": "GET",
           "header": [],
           "url": {
-            "raw": "{{base_url}}/api/posts/getDiaryByUser?uid=${uid}&startDate=${startDate}&endDate=${endDate}",
+            "raw": "{{base_url}}/api/posts/getDiaryByUser?uid=${uid}&current=${current}",
             "host": ["{{base_url}}"],
             "path": ["api", "posts", "getDiaryByUser"],
             "query": [
@@ -142,11 +142,7 @@
                 "value": ""
               },
               {
-                "key": "startDate",
-                "value": ""
-              },
-              {
-                "key": "endDate",
+                "key": "current",
                 "value": ""
               }
             ]
@@ -174,7 +170,7 @@
           "method": "GET",
           "header": [],
           "url": {
-            "raw": "{{base_url}}/api/posts/getDiariesByFriends?uid=${uid}&startDate=${startDate}&endDate=${endDate}",
+            "raw": "{{base_url}}/api/posts/getDiariesByFriends?uid=${uid}&current=${current}",
             "host": ["{{base_url}}"],
             "path": ["api", "posts", "getDiariesByFriends"],
             "query": [
@@ -183,11 +179,7 @@
                 "value": ""
               },
               {
-                "key": "startDate",
-                "value": ""
-              },
-              {
-                "key": "endDate",
+                "key": "current",
                 "value": ""
               }
             ]
