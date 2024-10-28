@@ -133,9 +133,9 @@
           "method": "GET",
           "header": [],
           "url": {
-            "raw": "{{base_url}}/api/posts/getEntryByUser?uid=${uid}&startDate=${startDate}&endDate=${endDate}",
+            "raw": "{{base_url}}/api/posts/getDiaryByUser?uid=${uid}&startDate=${startDate}&endDate=${endDate}",
             "host": ["{{base_url}}"],
-            "path": ["api", "posts", "getEntryByUser"],
+            "path": ["api", "posts", "getDiaryByUser"],
             "query": [
               {
                 "key": "uid",
@@ -174,9 +174,9 @@
           "method": "GET",
           "header": [],
           "url": {
-            "raw": "{{base_url}}/api/posts/getEntriesByFriends?uid=${uid}&startDate=${startDate}&endDate=${endDate}",
+            "raw": "{{base_url}}/api/posts/getDiariesByFriends?uid=${uid}&startDate=${startDate}&endDate=${endDate}",
             "host": ["{{base_url}}"],
-            "path": ["api", "posts", "getEntriesByFriends"],
+            "path": ["api", "posts", "getDiariesByFriends"],
             "query": [
               {
                 "key": "uid",

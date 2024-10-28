@@ -144,7 +144,7 @@ public class PostController : ControllerBase
         return posts;
     }
     
-    // GET: api/posts/getEntryByUser?uid={uid}&startDate={startDate}&endDate={endDate}
+    // GET: api/posts/getDiariesByUser?uid={uid}&startDate={startDate}&endDate={endDate}
     /// ----------------------------------------------------------------------------------------------------------------
     /// <summary>
     /// Gets the diary entry made by a user within a specific date range
@@ -154,10 +154,10 @@ public class PostController : ControllerBase
     /// <param name="endDate">The ending point of the date range to query.</param>
     /// <returns>The diary entry made by a user on the specified date range.</returns>
     /// ----------------------------------------------------------------------------------------------------------------
-    [HttpGet("getEntryByUser")]
+    [HttpGet("getDiariesByUser")]
     [ProducesResponseType(typeof(List<Post>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Post>> GetEntryByUser(string uid, DateTime startDate, DateTime endDate)
+    public async Task<ActionResult<Post>> GetDiariesByUser (string uid, DateTime startDate, DateTime endDate)
     {
         if (string.IsNullOrEmpty(uid))
         {
@@ -170,11 +170,11 @@ public class PostController : ControllerBase
             return BadRequest("valid start and end date is required");
         }
         
-        var post = await _postActions.GetEntryByUser(uid, startDate, endDate);
+        var post = await _postActions.GetDiariesByUser(uid, startDate, endDate);
         return post;
     }
     
-    // GET: api/posts/getEntriesByFriends?uid={uid}&startDate={startDate}&endDate={endDate}
+    // GET: api/posts/getDiariesByFriends?uid={uid}&startDate={startDate}&endDate={endDate}
     /// ----------------------------------------------------------------------------------------------------------------
     /// <summary>
     /// Gets the diary entries made by the user's friends within a specific date range
@@ -184,10 +184,10 @@ public class PostController : ControllerBase
     /// <param name="endDate">The ending point of the date range to query.</param>
     /// <returns>A list of diary entries made by the user's friends on the specified date range.</returns>
     /// ----------------------------------------------------------------------------------------------------------------
-    [HttpGet("getEntriesByFriends")]
+    [HttpGet("getDiariesByFriends")]
     [ProducesResponseType(typeof(List<Post>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<List<Post>>> GetEntriesByFriends(string uid, DateTime startDate, DateTime endDate)
+    public async Task<ActionResult<List<Post>>> GetDiariesByFriends(string uid, DateTime startDate, DateTime endDate)
     {
         if (string.IsNullOrEmpty(uid))
         {
@@ -200,7 +200,7 @@ public class PostController : ControllerBase
             return BadRequest("valid start and end date is required");
         }
         
-        var posts = await _postActions.GetEntriesByFriends(uid, startDate, endDate);
+        var posts = await _postActions.GetDiariesByFriends(uid, startDate, endDate);
         return posts;
     }
     

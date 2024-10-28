@@ -34,7 +34,7 @@ public interface IPostActions
     /// <param name="startDate">The starting point of the date range to query.</param>
     /// <param name="endDate">The ending point of the date range to query.</param>
     /// <returns>The diary entry made by a user on the specified date range.</returns>
-    Task<Post> GetEntryByUser(string uid, DateTime startDate, DateTime endDate);
+    Task<Post> GetDiariesByUser(string uid, DateTime startDate, DateTime endDate);
 
     /// <summary>
     /// Gets the diary entries made by the user's friends within a specific date range
@@ -43,7 +43,7 @@ public interface IPostActions
     /// <param name="startDate">The starting point of the date range to query.</param>
     /// <param name="endDate">The ending point of the date range to query.</param>
     /// <returns>A list of diary entries made by the user's friends on the specified date range.</returns>
-    Task<List<Post>> GetEntriesByFriends(string uid, DateTime startDate, DateTime endDate);
+    Task<List<Post>> GetDiariesByFriends(string uid, DateTime startDate, DateTime endDate);
     
     /// <summary>
     /// Gets all recent posts

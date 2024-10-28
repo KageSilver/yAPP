@@ -119,7 +119,7 @@ public class PostActions : IPostActions
     /// <param name="startDate">The starting point of the date range to query.</param>
     /// <param name="endDate">The ending point of the date range to query.</param>
     /// <returns>The diary entry made by a user on the specified date range.</returns>
-    public async Task<Post> GetEntryByUser(string uid, DateTime startDate, DateTime endDate)
+    public async Task<Post> GetDiariesByUser(string uid, DateTime startDate, DateTime endDate)
     {
         try
         {
@@ -172,7 +172,7 @@ public class PostActions : IPostActions
     /// <param name="startDate">The starting point of the date range to query.</param>
     /// <param name="endDate">The ending point of the date range to query.</param>
     /// <returns>A list of diary entries made by the user's friends on the specified date range.</returns>
-    public async Task<List<Post>> GetEntriesByFriends(string uid, DateTime startDate, DateTime endDate)
+    public async Task<List<Post>> GetDiariesByFriends(string uid, DateTime startDate, DateTime endDate)
     {
         try
         {
@@ -184,7 +184,7 @@ public class PostActions : IPostActions
             foreach (Friendship friendship in friends)
             {
                 var thisFriendUid = _cognitoActions.GetUser(friendship.ToUserName).Result.Id;
-                var thisPost = GetEntryByUser(thisFriendUid, startDate, endDate).Result;
+                var thisPost = GetDiariesByUser(thisFriendUid, startDate, endDate).Result;
                 filteredPosts.Add(thisPost);
             }
             return filteredPosts;
