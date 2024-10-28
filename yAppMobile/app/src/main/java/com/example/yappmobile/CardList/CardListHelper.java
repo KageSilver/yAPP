@@ -88,7 +88,7 @@ public class CardListHelper extends AppCompatActivity
 
     private void sortPosts()
     {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
         // Sort the list by createdAt in descending order
         Collections.sort(cardItemList, new Comparator<JSONObject>()
@@ -115,9 +115,16 @@ public class CardListHelper extends AppCompatActivity
         });
     }
 
-    private String truncateToMS(String date)
-    {
-        return date.length() > 23 ? date.substring(0, 23) + "Z" : date;
+    private String truncateToMS(String date) {
+        if (date.length() > 20)
+        {
+            // Replace the +Z
+            return date.substring(0, 20);
+        }
+        else
+        {
+            return date;
+        }
     }
 
     public void loadDiaries(List<JSONObject> jsonData, RecyclerView recyclerView)
