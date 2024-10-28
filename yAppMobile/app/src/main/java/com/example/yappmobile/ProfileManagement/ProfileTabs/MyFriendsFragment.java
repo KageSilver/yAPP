@@ -25,8 +25,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class MyFriendsFragment extends Fragment implements IListCardItemInteractions
 {
@@ -34,7 +32,6 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
     private RecyclerView rvFriends;
     private AlertDialog confirmUnfollow;
     private int position;
-    private Lock positionLock;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -46,8 +43,6 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
     public void onViewCreated(View view, Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
-        positionLock = new ReentrantLock();
 
         ProgressBar loadingSpinner = view.findViewById(R.id.indeterminateBar);
         friendListHelper = new CardListHelper(this.getContext(), loadingSpinner,
