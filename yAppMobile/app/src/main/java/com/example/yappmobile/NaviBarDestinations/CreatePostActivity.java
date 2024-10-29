@@ -3,152 +3,67 @@ package com.example.yappmobile.NaviBarDestinations;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.AuthenticatorActivity;
-import com.example.yappmobile.R;
-import com.google.android.material.materialswitch.MaterialSwitch;
-import com.google.android.material.textfield.TextInputLayout;
+import com.example.yappmobile.BasePostActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.concurrent.CompletableFuture;
 
-public class CreatePostActivity extends AppCompatActivity
+public class CreatePostActivity extends BasePostActivity
 {
-    private TextInputLayout titleText;
-    private TextInputLayout contentText;
-    private MaterialSwitch diaryEntry;
-    private MaterialSwitch anonymous;
-    private String postTitle;
-    private String postBody;
-    private JSONObject newPost;
-    private AlertDialog successDialog;
-    private AlertDialog failureDialog;
-    private AlertDialog discardDialog;
-
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Set the activity to be full screen
-        View decorView = getWindow().getDecorView();
-        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN;
-        decorView.setSystemUiVisibility(uiOptions);
-
-        setContentView(R.layout.activity_create_post);
-
         initializeSuccessDialog();
         initializeFailureDialog();
         initializeDiscardDialog();
         initializeNewPost();
 
-        titleText = findViewById(R.id.post_title);
-        contentText = findViewById(R.id.post_content);
-        diaryEntry = findViewById(R.id.diaryEntry);
-        anonymous = findViewById(R.id.anonymous);
-
-        EditText titleEditText = titleText.getEditText();
-        EditText contentEditText = contentText.getEditText();
-        titleEditText.addTextChangedListener(new TextWatcher()
-        {
+        discardButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) 
-            {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) 
-            {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s)
-            {
-                titleText.setError(null);
-            }
-        });
-        contentEditText.addTextChangedListener(new TextWatcher()
-        {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after)
-            {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count)
-            {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s)
-            {
-                contentText.setError(null);
-            }
-        });
-
-        // Set up discard button code
-        Button discardPostButton = findViewById(R.id.discard_button);
-        discardPostButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 postTitle = titleText.getEditText().getText().toString();
                 postBody = contentText.getEditText().getText().toString();
 
-                if (!hasFilledForms(postTitle, postBody))
-                {
+                if (postTitle.equals("")&&postBody.equals("")) {
                     Intent intent = new Intent(CreatePostActivity.this, PublicPostsActivity.class);
                     startActivity(intent);
-                }
-                else
-                {
+                } else {
                     discardDialog.show();
                 }
             }
         });
 
-        // Set up create button code
-        Button createPostButton = findViewById(R.id.create_button);
-        createPostButton.setOnClickListener(new View.OnClickListener()
-        {
+
+        actionButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 createPost();
             }
         });
 
-        diaryEntry.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){ toggleDiaryEntry(); }
-        });
     }
 
-    private void toggleDiaryEntry()
+    private void sendPost(String postData)
     {
-        if(diaryEntry.isChecked())
-        {
-            anonymous.setVisibility(View.VISIBLE);
-        }
-        else
-        {
-            anonymous.setVisibility(View.GONE);
-            anonymous.setChecked(true);
-        }
+        String apiUrl = "/api/posts/createPost";
+        RestOptions options = RestOptions.builder()
+                .addPath(apiUrl)
+                .addBody(postData.getBytes())
+                .addHeader("Content-Type", "application/json")
+                .build();
+        Amplify.API.post(options,
+                response -> Log.i("API", "POST response: " + response.getData().asString()),
+                error -> Log.e("API", "POST request failed", error));
     }
 
     private void createPost()
@@ -171,11 +86,11 @@ public class CreatePostActivity extends AppCompatActivity
                 runOnUiThread(() -> {
                     try
                     {
-                        newPost.put("postTitle", postTitle);
-                        newPost.put("postBody", postBody);
-                        newPost.put("uid", uid);
-                        newPost.put("diaryEntry", diaryEntry.isChecked());
-                        newPost.put("anonymous", anonymous.isChecked());
+                        post.put("postTitle", postTitle);
+                        post.put("postBody", postBody);
+                        post.put("uid", uid);
+                        post.put("diaryEntry", diaryEntry.isChecked());
+                        post.put("anonymous", anonymous.isChecked());
                     }
                     catch (JSONException e)
                     {
@@ -185,7 +100,7 @@ public class CreatePostActivity extends AppCompatActivity
                     // send out newPost through API call
                     try
                     {
-                        String stringPost = newPost.toString();
+                        String stringPost = post.toString();
                         sendPost(stringPost);
                         successDialog.show();
                     }
@@ -212,25 +127,8 @@ public class CreatePostActivity extends AppCompatActivity
         }
     }
 
-    private void sendPost(String postData)
-    {
-        String apiUrl = "/api/posts/createPost";
-        RestOptions options = RestOptions.builder()
-                                         .addPath(apiUrl)
-                                         .addBody(postData.getBytes())
-                                         .addHeader("Content-Type", "application/json")
-                                         .build();
-        Amplify.API.post(options,
-                         response -> Log.i("API", "POST response: " + response.getData().asString()),
-                         error -> Log.e("API", "POST request failed", error));
-    }
 
-    private boolean hasFilledForms(String postTitle, String postBody)
-    {
-        return !postTitle.equals("") && !postBody.equals("");
-    }
-
-    private void initializeSuccessDialog()
+    public void initializeSuccessDialog()
     {
         // Create post alert dialog
         successDialog = new AlertDialog.Builder(this).create();
@@ -246,7 +144,7 @@ public class CreatePostActivity extends AppCompatActivity
         });
     }
 
-    private void initializeFailureDialog()
+    public void initializeFailureDialog()
     {
         // Create post alert dialog
         failureDialog = new AlertDialog.Builder(this).create();
@@ -261,7 +159,7 @@ public class CreatePostActivity extends AppCompatActivity
         });
     }
 
-    private void initializeDiscardDialog()
+    public void initializeDiscardDialog()
     {
         discardDialog = new AlertDialog.Builder(this).create();
         discardDialog.setTitle("Woah there!");
@@ -287,14 +185,14 @@ public class CreatePostActivity extends AppCompatActivity
 
     private void initializeNewPost()
     {
-        newPost = new JSONObject();
+        post = new JSONObject();
         try
         {
-            newPost.put("postTitle", "");
-            newPost.put("postBody", "");
-            newPost.put("uid", "");
-            newPost.put("diaryEntry", false);
-            newPost.put("anonymous", true);
+            post.put("postTitle", "");
+            post.put("postBody", "");
+            post.put("uid", "");
+            post.put("diaryEntry", false);
+            post.put("anonymous", true);
         }
         catch (JSONException e)
         {
