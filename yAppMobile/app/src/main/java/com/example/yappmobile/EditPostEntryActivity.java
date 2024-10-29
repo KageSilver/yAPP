@@ -68,6 +68,8 @@ public class EditPostEntryActivity extends BasePostActivity {
                 }
             }
         });
+        //update the action button text
+        actionButton.setText("Update");
 
 
         actionButton.setOnClickListener(new View.OnClickListener() {
@@ -81,8 +83,7 @@ public class EditPostEntryActivity extends BasePostActivity {
 
     private void redirectToPostEntry() throws JSONException {
         Intent intent = new Intent(EditPostEntryActivity.this, PostEntryActivity.class);
-        intent.putExtra("pid",_currentPost.get("pid").toString());
-        intent.putExtra("uid",_currentPost.get("uid").toString());
+        intent.putExtra("currentPost",_currentPost.toString());
         startActivity(intent);
         finish();
     }
