@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using yAppLambda.Common;
 using yAppLambda.Enum;
 using yAppLambda.Models;
-using yAppLambda.Common;
 
 namespace yAppLambda.DynamoDB;
 
