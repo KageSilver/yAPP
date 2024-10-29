@@ -196,6 +196,7 @@ public class EditDeleteBottomSheet extends BottomSheetDialogFragment {
                 if (!comment.isEmpty()) {
                     try {
                         updateComment(comment);
+                        _adapter.updateComment(_cid,comment);
                         dialog.dismiss();
                     } catch (JSONException e) {
                       Log.e(LOG_NAME, "Fail to update comment: " +e.getMessage());
