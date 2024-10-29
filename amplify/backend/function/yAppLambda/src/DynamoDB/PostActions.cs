@@ -126,9 +126,6 @@ public class PostActions : IPostActions
 
             startOfDay = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(startOfDay, "GMT Standard Time");
             endOfDay = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(endOfDay, "GMT Standard Time");
-
-            var am = startOfDay.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
-            var pm = endOfDay.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
             
             // Query for diary entries made within start and end dates to narrow down posts to filter out 
             var expressionAttributeValues = new Dictionary<string, DynamoDBEntry>
