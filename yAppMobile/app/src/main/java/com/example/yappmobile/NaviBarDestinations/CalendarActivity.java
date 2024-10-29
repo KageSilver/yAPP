@@ -9,6 +9,10 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -209,7 +213,30 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
         // Switch activity to view an individual diary entry when a card is clicked
         Intent intent = new Intent(CalendarActivity.this, PostEntryActivity.class);
         String pid = diaryEntryHelper.getPID(position);
+        String uid = diaryEntryHelper.getUID(position);
         intent.putExtra("pid", pid);
-        startActivity(intent);
+        intent.putExtra("uid",uid);
+        activityLauncher.launch(intent);
     }
+
+    ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result){
+                    if (result.getResultCode() == RESULT_OK)
+                    {
+                        Intent intent = result.getData();
+                        try
+                        {
+                            String deleted = intent.getStringExtra("delete");
+                            diaryEntryHelper.removePost(deleted);
+                        }
+                        catch (Exception e)
+                        {
+                            Log.i("POST", "Post was not deleted");
+                        }
+                    }
+                }
+            });
 }

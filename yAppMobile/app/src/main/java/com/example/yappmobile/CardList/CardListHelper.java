@@ -29,6 +29,7 @@ public class CardListHelper extends AppCompatActivity
     private List<JSONObject> cardItemList; // List of CardItems
     private final IListCardItemInteractions itemInteractions; // Handles clicks of the CardItem
     private CardListAdapter adapter;
+
     private boolean myPosts;
 
     public CardListHelper(Context context)
@@ -222,24 +223,63 @@ public class CardListHelper extends AppCompatActivity
 
     public String getPID(int position)
     {
-        String pid = null;
+        return getPostKey(position, "pid");
+    }
+
+    public  String getUID(int position){
+        return  getPostKey(position, "uid");
+    }
+
+    public void removePost(String pid)
+    {
+        try {
+            boolean found = false;
+            for(int i = 0; i < cardItemList.size() && !found; i++)
+            {
+                System.out.println(cardItemList.get(i).getString("pid") + " vs. " + pid);
+                if(cardItemList.get(i).getString("pid").equals(pid))
+                {
+                    found = true;
+                    cardItemList.remove(i);
+                }
+            }
+
+            runOnUiThread(() ->
+            {
+                adapter.updateList(cardItemList);
+                adapter.notifyDataSetChanged();
+            });
+        }
+        catch (Exception e)
+        {
+            Log.e("JSON", "Error parsing JSON", e);
+        }
+    }
+
+    public JSONObject getItem(int position){
+        return cardItemList.get(position);
+    }
+
+    private String getPostKey(int position,String key){
+        String value = null;
         try
         {
             if(cardType.equals("POST") || cardType.equals("DIARY"))
             {
-                pid = cardItemList.get(position).get("pid").toString();
+                value = cardItemList.get(position).get(key).toString();
             }
             else
             {
-                Log.d("CardListHelper", 
-                      "You're trying to invoke a method on the wrong card type");
+                Log.d("CardListHelper",
+                        "You're trying to invoke a method on the wrong card type");
             }
         }
         catch (JSONException jsonException)
         {
             Log.e("JSON", "Error parsing JSON", jsonException);
         }
-        return pid;
+        return value;
+
     }
 
     public String getLastPostTime()

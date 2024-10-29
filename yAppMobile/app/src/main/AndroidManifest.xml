@@ -48,6 +48,9 @@
         <activity
             android:name=".PostEntryActivity"
             android:exported="false" />
+        <activity
+            android:name=".EditPostEntryActivity"
+            android:exported="false" />
          <activity
             android:name=".NaviBarDestinations.PublicPostsActivity"
             android:exported="false" />

@@ -40,6 +40,8 @@ public class ProfileActivity extends AppCompatActivity
             }
         });
 
+
+
         // Set up profile settings button code
         ImageButton viewSettings = findViewById(R.id.profile_settings_button);
         viewSettings.setOnClickListener(new View.OnClickListener()
@@ -92,5 +94,13 @@ public class ProfileActivity extends AppCompatActivity
                 tabLayout.getTabAt(position).select();
             }
         });
+    }
+
+    @Override
+    public void onRestart()
+    {
+        super.onRestart();
+        finish();
+        startActivity(getIntent());
     }
 }
