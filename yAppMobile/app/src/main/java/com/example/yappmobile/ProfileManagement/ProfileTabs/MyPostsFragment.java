@@ -75,6 +75,7 @@ public class MyPostsFragment extends Fragment implements IListCardItemInteractio
         activityLauncher.launch(intent);
     }
 
+
     ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {

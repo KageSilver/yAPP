@@ -101,10 +101,7 @@ public class PostEntryActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                // force it to update
-                Intent intent = new Intent(PostEntryActivity.this, PublicPostsActivity.class);
-                startActivity(intent);
-                finish();
+                getOnBackPressedDispatcher().onBackPressed();
             }
         });
 

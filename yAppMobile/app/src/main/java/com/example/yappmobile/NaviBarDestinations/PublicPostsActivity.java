@@ -157,6 +157,14 @@ public class PublicPostsActivity extends AppCompatActivity implements IListCardI
         activityLauncher.launch(intent);
     }
 
+    @Override
+    public void onRestart()
+    {
+        super.onRestart();
+        finish();
+        startActivity(getIntent());
+    }
+
     ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
