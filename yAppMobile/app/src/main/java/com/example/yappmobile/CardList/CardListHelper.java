@@ -191,6 +191,10 @@ public class CardListHelper extends AppCompatActivity
         }
     }
 
+    public JSONObject getItem(int position){
+        return cardItemList.get(position);
+    }
+
     private String getPostKey(int position,String key){
         String value = null;
         try
