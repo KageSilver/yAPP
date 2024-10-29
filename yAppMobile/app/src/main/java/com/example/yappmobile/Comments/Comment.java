@@ -7,7 +7,7 @@ public class Comment {
     private final String uid;        // User ID
     private final String cid;        // Comment ID
     private final String pid;        // Post ID
-    private final String commentBody; // Comment text
+    private String commentBody; // Comment text
     private final String createAt;   // Comment creation timestamp
     private final String updateAt;   // Comment update timestamp
 
@@ -39,6 +39,10 @@ public class Comment {
     // Getter for commentBody (Comment content)
     public String getCommentBody() {
         return commentBody;
+    }
+
+    public void setCommentBody(String commentBody){
+        this.commentBody = commentBody;
     }
 
     // Getter for createAt (Creation timestamp)
