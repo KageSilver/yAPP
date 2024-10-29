@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using yAppLambda.Models;
+using yAppLambda.Common;
 
 namespace yAppLambda.DynamoDB;
 
@@ -41,7 +42,7 @@ public interface IPostActions
     /// <param name="uid">The user whose friends will be searched for.</param>
     /// <param name="current">The current day to query.</param>
     /// <returns>A list of diary entries made by the user's friends on the specified day</returns>
-    Task<List<Post>> GetDiariesByFriends(string uid, DateTime current);
+    Task<List<Post>> GetDiariesByFriends(ICognitoActions _cognitoActions, string uid, DateTime current);
     
     /// <summary>
     /// Gets all recent posts

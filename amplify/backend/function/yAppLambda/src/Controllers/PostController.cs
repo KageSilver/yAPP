@@ -177,7 +177,7 @@ public class PostController : ControllerBase
             return BadRequest("valid start and end date is required");
         }
         
-        var posts = await _postActions.GetDiariesByFriends(uid, current);
+        var posts = await _postActions.GetDiariesByFriends(_cognitoActions, uid, current);
         return posts;
     }
     

@@ -1,12 +1,11 @@
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
-using Amazon.DynamoDBv2.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using yAppLambda.Common;
-using yAppLambda.Controllers;
 using yAppLambda.Enum;
 using yAppLambda.Models;
+using yAppLambda.Common;
 
 namespace yAppLambda.DynamoDB;
 
@@ -18,7 +17,6 @@ public class PostActions : IPostActions
     private readonly IDynamoDBContext _dynamoDbContext;
     private readonly DynamoDBOperationConfig _config;
     private readonly ICommentActions _commentActions;
-    private readonly ICognitoActions _cognitoActions;
     private readonly IFriendshipActions _friendshipActions;
 
     public PostActions(IAppSettings appSettings, IDynamoDBContext dynamoDbContext)
@@ -122,8 +120,15 @@ public class PostActions : IPostActions
     {
         try
         {
+            current = current.ToLocalTime();
             var startOfDay = current.Date; // 12 AM
             var endOfDay = current.Date.AddDays(1).AddSeconds(-1); // 11:59 PM
+
+            startOfDay = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(startOfDay, "GMT Standard Time");
+            endOfDay = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(endOfDay, "GMT Standard Time");
+
+            var am = startOfDay.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+            var pm = endOfDay.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
             
             // Query for diary entries made within start and end dates to narrow down posts to filter out 
             var expressionAttributeValues = new Dictionary<string, DynamoDBEntry>
@@ -177,7 +182,7 @@ public class PostActions : IPostActions
     /// <param name="uid">The user whose friends will be searched for.</param>
     /// <param name="current">The current day to query.</param>
     /// <returns>A list of diary entries made by the user's friends on the specified day</returns>
-    public async Task<List<Post>> GetDiariesByFriends(string uid, DateTime current)
+    public async Task<List<Post>> GetDiariesByFriends(ICognitoActions _cognitoActions, string uid, DateTime current)
     {
         try
         {
@@ -192,8 +197,8 @@ public class PostActions : IPostActions
                 var thisUid = username == friendship.FromUserName 
                     ? _cognitoActions.GetUser(friendship.ToUserName).Result.Id 
                     : _cognitoActions.GetUser(friendship.FromUserName).Result.Id;
-                
-                var thisPost = GetDiariesByUser(thisUid, current).Result.First();
+
+                Post thisPost = GetDiariesByUser(thisUid, current).Result.First();
                 posts.Add(thisPost);
             }
             return posts;
