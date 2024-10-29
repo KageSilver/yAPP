@@ -78,6 +78,17 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/profile_uuid_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginRight="24dp"
+                    android:layout_marginBottom="24dp"
+                    android:text="UUID"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+                <TextView
                     android:id="@+id/profile_bio_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
