@@ -1,3 +1,4 @@
+using System.Globalization;
 using Amazon.DynamoDBv2.DataModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,7 @@ using yAppLambda.Models;
 namespace yAppLambda.Controllers;
 
 /// <summary>
-/// The 'PostController" class is an API controller in the 'yAppLamba project. 
+/// The "PostController" class is an API controller in the yAppLambda project. 
 /// It is responsible for handling HTTP requests related to post operations.
 /// </summary>
 [ApiController]
@@ -20,14 +21,15 @@ public class PostController : ControllerBase
     private readonly ICognitoActions _cognitoActions;
     private readonly IPostActions _postActions;
 
-    public PostController(IAppSettings appSettings, ICognitoActions cognitoActions, IDynamoDBContext dbContext, IPostActions postActions)
+    public PostController(IAppSettings appSettings, ICognitoActions cognitoActions, 
+                          IDynamoDBContext dbContext, IPostActions postActions)
     {
         _appSettings = appSettings;
         _cognitoActions = cognitoActions;
         _dbContext = dbContext;
         _postActions = postActions;
     }
-
+    
     // POST: api/posts/createPost with body { "uid": "uid", "postTitle": "title", "postBody": "body", "diaryEntry": false, "anonymous": false }
     /// <summary>
     /// Creates a new post.
@@ -74,7 +76,7 @@ public class PostController : ControllerBase
                     : BadRequest("Failed to create post");
             }
         }
-
+        
         return result;
     }
 
@@ -125,34 +127,59 @@ public class PostController : ControllerBase
 
         return posts;
     }
-
-    // GET: api/posts/getDailyEntryByUser?uid={uid}&startDate={startDate}&endDate={endDate}
+    
+    // GET: api/posts/getDiariesByUser?uid={uid}&current={current}
     /// <summary>
-    /// Gets the diary entry made by a user within a specific date range
+    /// Gets the diary entries made by a user within a specific day
     /// </summary>
     /// <param name="uid">The author of the diary entry.</param>
-    /// <param name="startDate">The starting point of the date range to query.</param>
-    /// <param name="endDate">The ending point of the date range to query.</param>
-    /// <returns>A diary entry made by a user on the specified date range.</returns>
-    [HttpGet("getDailyEntryByUser")]
-    [ProducesResponseType(typeof(Post), StatusCodes.Status200OK)]
+    /// <param name="current">The current day to query.</param>
+    /// <returns>The diary entry made by a user on the specified day.</returns>
+    [HttpGet("getDiariesByUser")]
+    [ProducesResponseType(typeof(List<Post>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Post> GetDailyEntryByUser(string uid, DateTime startDate, DateTime endDate)
+    public async Task<ActionResult<List<Post>>> GetDiariesByUser (string uid, DateTime current)
     {
-        if(string.IsNullOrEmpty(uid))
+        if (string.IsNullOrEmpty(uid))
         {
             return BadRequest("uid is required");
         }
-
-        if(!DateTime.TryParse(startDate.ToString(), out startDate) || !DateTime.TryParse(endDate.ToString(), out endDate))
+        
+        if (!DateTime.TryParse(current.ToString(), out current))
         {
-            return BadRequest("requires valid start and end dates");
+            return BadRequest("valid date is required");
         }
-
-        var posts = await _postActions.getDailyEntryByUser(uid, startDate, endDate);
+        
+        var posts = await _postActions.GetDiariesByUser(uid, current);
         return posts;
     }
-
+    
+    // GET: api/posts/getDiariesByFriends?uid={uid}&current={current}
+    /// <summary>
+    /// Gets the diary entries made by the user's friends within a specific day
+    /// </summary>
+    /// <param name="uid">The user whose friends will be searched for.</param>
+    /// <param name="current">The current day to query.</param>
+    /// <returns>A list of diary entries made by the user's friends on the specified day</returns>
+    [HttpGet("getDiariesByFriends")]
+    [ProducesResponseType(typeof(List<Post>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<List<Post>>> GetDiariesByFriends(string uid, DateTime current)
+    {
+        if (string.IsNullOrEmpty(uid))
+        {
+            return BadRequest("uid is required");
+        }
+        
+        if (!DateTime.TryParse(current.ToString(), out current))
+        {
+            return BadRequest("valid start and end date is required");
+        }
+        
+        var posts = await _postActions.GetDiariesByFriends(_cognitoActions, uid, current);
+        return posts;
+    }
+    
     // GET: api/posts/getRecentPosts?since={since}&maxResults={maxResults}
     /// <summary>
     /// Gets recent posts from before a specified time.
@@ -196,7 +223,7 @@ public class PostController : ControllerBase
         return deleted;
     }
 
-    // PUT: api/posts/updatePost with body { "pid": "pid", "createdAt": "createdAt", "updatedAt": "updatedAt", "uid": "uid", "postTitle": "title", "postBody": "body", "upvotes": "upvotes", "downvotes": "downvotes", "diaryEntry": false, "anonymous": false }
+    // PUT: api/posts/updatePost with body { "pid": "pid", "createdAt": "createdAt", "updatedAt": "updatedAt", "uid": "uid", "postTitle": "title", "postBody": "body", "upvotes": "upvotes", "downvotes": "downvotes", "diaryEntry": false, "anonymous": false }    
     /// <summary>
     /// Edits an already existing post.
     /// </summary>

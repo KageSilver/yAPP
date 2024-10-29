@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using yAppLambda.Models;
+using yAppLambda.Common;
 
 namespace yAppLambda.DynamoDB;
 
@@ -20,31 +21,37 @@ public interface IPostActions
     Task<Post> GetPostById(string pid);
 
     /// <summary>
-    /// Gets all (public posts/diary entries) from a user
+    /// Gets the user's public posts or diary entries
     /// </summary>
-    /// <param name="uid">The uid used to find all (public posts/diary entries) created by a user.</param>
+    /// <param name="uid">The author of the posts to be fetched.</param>
     /// <param name="diaryEntry">If the query is for public posts or diary entries.</param>
     /// <returns>A list of posts created by a user, either public posts or diary entries.</returns>
     Task<List<Post>> GetPostsByUser(string uid, bool diaryEntry);
 
     /// <summary>
-    /// Gets the diary entry made by a user within a specific date range
+    /// Gets the diary entries made by a user within a specific day
     /// </summary>
     /// <param name="uid">The author of the diary entry.</param>
-    /// <param name="startDate">The starting point of the date range to query.</param>
-    /// <param name="endDate">The ending point of the date range to query.</param>
-    /// <returns>A diary entry made by a user on the specified date range.</returns>
-    Task<Post> GetDailyEntryByUser(string uid, DateTime startDate, DateTime endDate);
+    /// <param name="current">The current day to query.</param>
+    /// <returns>The diary entry made by a user on the specified day.</returns>
+    Task<List<Post>> GetDiariesByUser(string uid, DateTime current);
 
     /// <summary>
-    /// Gets the diary entries made by the user's friends within a specific date range
+    /// Gets the diary entries made by the user's friends within a specific day
     /// </summary>
+    /// <param name="_cognitoActions">An instance of CognitoActions to query user information.</param>
     /// <param name="uid">The user whose friends will be searched for.</param>
-    /// <param name="startDate">The starting point of the date range to query.</param>
-    /// <param name="endDate">The ending point of the date range to query.</param>
-    /// <returns>A list of diary entries made by the user's friends on the specified date range.</returns>
-    Task<Post> GetDailyEntryByFriends(string uid, DateTime startDate, DateTime endDate);
-
+    /// <param name="current">The current day to query.</param>
+    /// <returns>A list of diary entries made by the user's friends on the specified day</returns>
+    Task<List<Post>> GetDiariesByFriends(ICognitoActions _cognitoActions, string uid, DateTime current);
+    
+    /// <summary>
+    /// Gets a specified number of recent posts
+    /// </summary>
+    /// <param name="since">Returns posts made before this time.</param>
+    /// <param name="maxResults">The maximum number of results to retrieve.</param>
+    /// <returns>A list of recent posts.</returns>
+    Task<List<Post>> GetRecentPosts(DateTime since, int maxResults);
 
     /// <summary>
     /// Deletes a post from the database by a post id
@@ -59,12 +66,4 @@ public interface IPostActions
     /// <param name="updatedPost">The new version of the post after editing.</param>
     /// <returns>An ActionResult containing the edited Post object if successful, or an error message if it fails.</returns>
     Task<ActionResult<Post>> UpdatePost(Post updatedPost);
-
-    /// <summary>
-    /// Gets all recent posts
-    /// </summary>
-    /// <param name="since">Returns posts made after this time.</param>
-    /// <param name="maxResults">The maximum number of results to retrieve.</param>
-    /// <returns>A list of recent posts.</returns>
-    Task<List<Post>> GetRecentPosts(DateTime since, int maxResults);
 }
