@@ -19,6 +19,7 @@ import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.CardList.CardListHelper;
 import com.example.yappmobile.Comments.CommentsBottomSheet;
+import com.example.yappmobile.NaviBarDestinations.PublicPostsActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -100,7 +101,10 @@ public class PostEntryActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                getOnBackPressedDispatcher().onBackPressed();
+                // force it to update
+                Intent intent = new Intent(PostEntryActivity.this, PublicPostsActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
 
