@@ -198,8 +198,16 @@ public class PostActions : IPostActions
                     ? _cognitoActions.GetUser(friendship.ToUserName).Result.Id 
                     : _cognitoActions.GetUser(friendship.FromUserName).Result.Id;
 
-                Post thisPost = GetDiariesByUser(thisUid, current).Result.First();
-                posts.Add(thisPost);
+                var result = GetDiariesByUser(thisUid, current).Result;
+                if (result.Count() > 0)
+                {
+                    var friendsPosts = GetDiariesByUser(thisUid, current).Result;
+                    foreach (Post post in friendsPosts)
+                    {
+                        posts.Add(post);
+                    }
+                    
+                }
             }
             return posts;
         }

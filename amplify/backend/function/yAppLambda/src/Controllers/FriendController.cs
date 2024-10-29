@@ -85,7 +85,7 @@ public class FriendController : ControllerBase
                         ? (ActionResult<Friendship>)friendship
                         : BadRequest("Failed to create friendship");
                 }
-                else if(noBA) // If BA friendship doesn't exist, AB friendship does
+                else if (noBA) // If BA friendship doesn't exist, AB friendship does
                 {
                     // Update existing AB friendship
                     existingFriendship.Value.Status = FriendshipStatus.Pending;
