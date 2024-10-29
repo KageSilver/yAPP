@@ -7,7 +7,7 @@
 1. Navigate to the yAPP website
 2. If not already selected, select the "Sign In" tab at the top of the panel
 3. Enter account details
-    - Email
+    - Username
     - Password
 4. Select the "Sign In" button at the bottom of the panel
 5. Select the "Create Post" button on the panel on the right of the screen
@@ -25,7 +25,7 @@
 1. Navigate to the yAPP website
 2. If not already selected, select the "Sign In" tab at the top of the panel
 3. Enter account details
-    - Email
+    - Username
     - Password
 4. Select the "Sign In" button at the bottom of the panel
 5. Select the "Calendar" button on the panel on the right of the screen
@@ -38,7 +38,7 @@
 1. Navigate to the yAPP website
 2. If not already selected, select the "Sign In" tab at the top of the panel
 3. Enter account details
-    - Email
+    - Username
     - Password
 4. Select the "Sign In" button at the bottom of the panel
 5. Select the "Calendar" button on the panel on the right of the screen
@@ -53,7 +53,7 @@
 1. Navigate to the yAPP mobile app
 2. To sign in, you will be redirected to a browser webpage
 3. Enter account details
-    - Email
+    - Username
     - Password
 4. Select the "Sign in" button at the bottom of the panel
 5. Select the "Create Post" button on the bottom navigation bar
@@ -73,7 +73,7 @@
 1. Navigate to the yAPP mobile app
 2. To sign in, you will be redirected to a browser webpage
 3. Enter account details
-    - Email
+    - Username
     - Password
 4. Select the "Sign in" button at the bottom of the panel
 5. Select the "Calendar" button on the bottom navigation bar
@@ -86,7 +86,7 @@
 1. Navigate to the yAPP mobile app
 2. To sign in, you will be redirected to a browser webpage
 3. Enter account details
-    - Email
+    - Username
     - Password
 4. Select the "Sign in" button at the bottom of the panel
 5. Select the "Calendar" button on the panel on the right of the screen

@@ -7,7 +7,7 @@
 1. Navigate to the yAPP website
 2. If not already selected, select the "Sign In" tab at the top of the panel
 3. Enter account details
-    - Email
+    - Username
     - Password
 4. Select the "Sign In" button at the bottom of the panel
 5. Select a post you would like to reply to on the home page
@@ -22,7 +22,7 @@
 1. Navigate to the yAPP website
 2. If not already selected, select the "Sign In" tab at the top of the panel
 3. Enter account details
-    - Email
+    - Username
     - Password
 4. Select the "Sign In" button at the bottom of the panel
 5. Editing a post can be done from any full screen post that you have created by selecting any preview of a post
@@ -43,7 +43,7 @@
 1. Navigate to the yAPP website
 2. If not already selected, select the "Sign In" tab at the top of the panel
 3. Enter account details
-    - Email
+    - Username
     - Password
 4. Select the "Sign In" button at the bottom of the panel
 5. Editing a comment can be done from any full screen post that you have commented on by selecting the preview of the post you commented on
@@ -61,7 +61,7 @@
 1. Navigate to the yAPP website
 2. If not already selected, select the "Sign In" tab at the top of the panel
 3. Enter account details
-    - Email
+    - Username
     - Password
 4. Select the "Sign In" button at the bottom of the panel
 5. Deleting a post can be done from any full screen post that you have created by selecting any preview of a post
@@ -78,7 +78,7 @@
 1. Navigate to the yAPP website
 2. If not already selected, select the "Sign In" tab at the top of the panel
 3. Enter account details
-    - Email
+    - Username
     - Password
 4. Select the "Sign In" button at the bottom of the panel
 5. Deleting a comment can be done from any full screen post that you have commented on by selecting the preview of the post you commented on
@@ -95,7 +95,7 @@
 1. Navigate to the yAPP mobile app
 2. To sign in, you will be redirected to a browser webpage
 3. Enter account details
-    - Email
+    - Username
     - Password
 4. Select the "Sign in" button at the bottom of the panel
 5. **continue acceptance test here from home screen**
@@ -104,7 +104,7 @@
 1. Navigate to the yAPP mobile app
 2. To sign in, you will be redirected to a browser webpage
 3. Enter account details
-    - Email
+    - Username
     - Password
 4. Select the "Sign in" button at the bottom of the panel
 5. **continue acceptance test here from home screen**
@@ -113,7 +113,7 @@
 1. Navigate to the yAPP mobile app
 2. To sign in, you will be redirected to a browser webpage
 3. Enter account details
-    - Email
+    - Username
     - Password
 4. Select the "Sign in" button at the bottom of the panel
 5. **continue acceptance test here from home screen**
@@ -122,7 +122,7 @@
 1. Navigate to the yAPP mobile app
 2. To sign in, you will be redirected to a browser webpage
 3. Enter account details
-    - Email
+    - Username
     - Password
 4. Select the "Sign in" button at the bottom of the panel
 5. **continue acceptance test here from home screen**
@@ -131,7 +131,7 @@
 1. Navigate to the yAPP mobile app
 2. To sign in, you will be redirected to a browser webpage
 3. Enter account details
-    - Email
+    - Username
     - Password
 4. Select the "Sign in" button at the bottom of the panel
 5. **continue acceptance test here from home screen**
