@@ -25,6 +25,7 @@ import com.example.yappmobile.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
 
@@ -89,6 +90,25 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             {
                 found = true;
                 _commentList.remove(i);
+                _parentActivity.runOnUiThread(() -> {
+                    notifyDataSetChanged();
+                });
+            }
+        }
+    }
+
+    public void updateComment(String cid,String newConent)
+    {
+        boolean found = false;
+        for(int i = 0; i < _commentList.size() && !found; i++)
+        {
+            Comment current = (Comment)_commentList.get(i);
+
+            if(current.getCid().equals(cid))
+            {
+                found = true;
+                current.setCommentBody(newConent);
+                _commentList.set(i,current);
                 _parentActivity.runOnUiThread(() -> {
                     notifyDataSetChanged();
                 });
