@@ -90,6 +90,16 @@
                         android:textColor="@color/black"
                         android:text="Post Title Content" />
 
+                    <TextView
+                        android:id="@+id/post_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="monospace"
+                        android:textColor="@color/discard"
+                        android:textSize="16sp"
+                        android:text="Post body content goes here." />
+
                     <!-- Post Body -->
                     <TextView
                         android:id="@+id/post_body"
