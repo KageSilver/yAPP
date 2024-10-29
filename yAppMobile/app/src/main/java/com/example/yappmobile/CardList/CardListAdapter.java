@@ -60,6 +60,11 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 View view = inflater.inflate(R.layout.card_post, parent, false);
                 return new PostViewHolder(view, itemInteractions);
             }
+            case "DIARY":
+            {
+                View view = inflater.inflate(R.layout.card_diary, parent, false);
+                return new DiaryViewHolder(view, itemInteractions);
+            }
         }
         throw new RuntimeException("Unknown view type");
     }
@@ -81,6 +86,10 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         else if (holder instanceof PostViewHolder)
         {
             ((PostViewHolder) holder).bind(item);
+        }
+        else if (holder instanceof DiaryViewHolder)
+        {
+            ((DiaryViewHolder) holder).bind(item);
         }
     }
 
@@ -231,6 +240,54 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
 
         // Populate data into a PostCard
+        public void bind(JSONObject card)
+        {
+            try
+            {
+                postTitle.setText(card.get("postTitle").toString());
+                postDate.setText(card.get("createdAt").toString());
+                postBody.setText(card.get("postBody").toString());
+            }
+            catch (JSONException jsonException)
+            {
+                Log.e("JSON", "Error parsing JSON", jsonException);
+            }
+        }
+    }
+
+    // Populate data into a DiaryCard
+    public static class DiaryViewHolder extends RecyclerView.ViewHolder
+    {
+        public TextView postTitle, postDate, postBody, postAuthor;
+
+        public DiaryViewHolder(View itemView, IListCardItemInteractions diaryCardInteractions)
+        {
+            super(itemView);
+
+            postTitle = itemView.findViewById(R.id.diary_title);
+            postDate = itemView.findViewById(R.id.diary_date);
+            postBody = itemView.findViewById(R.id.diary_body);
+            postAuthor = itemView.findViewById(R.id.diary_author);
+
+            // Set up an onClickListener for the post list card
+            itemView.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    if (diaryCardInteractions != null)
+                    {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION)
+                        {
+                            diaryCardInteractions.onItemClick(position);
+                        }
+                    }
+                }
+            });
+        }
+
+        // Populate data into a DiaryCard
         public void bind(JSONObject card)
         {
             try
