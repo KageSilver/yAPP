@@ -7,10 +7,10 @@ namespace yAppLambda.DynamoDB;
 public interface IPostActions
 {
     /// <summary>
-    /// Creates a post
+    /// Creates a new post
     /// </summary>
-    /// <param name="post">The post object that contains information on the post.</param>
-    /// <returns>An ActionResult containing the created Post object or an error status.</returns>
+    /// <param name="post">The post object to be created.</param>
+    /// <returns>An ActionResult containing the created Post object if successful, or an error message if it fails.</returns>
     Task<ActionResult<Post>> CreatePost(Post post);
 
     /// <summary>
@@ -21,9 +21,9 @@ public interface IPostActions
     Task<Post> GetPostById(string pid);
 
     /// <summary>
-    /// Gets the user's public posts/diary entries
+    /// Gets the user's public posts or diary entries
     /// </summary>
-    /// <param name="uid">The author of the public posts/diary entries to be fetched.</param>
+    /// <param name="uid">The author of the posts to be fetched.</param>
     /// <param name="diaryEntry">If the query is for public posts or diary entries.</param>
     /// <returns>A list of posts created by a user, either public posts or diary entries.</returns>
     Task<List<Post>> GetPostsByUser(string uid, bool diaryEntry);
@@ -46,9 +46,9 @@ public interface IPostActions
     Task<List<Post>> GetDiariesByFriends(ICognitoActions _cognitoActions, string uid, DateTime current);
     
     /// <summary>
-    /// Gets all recent posts
+    /// Gets a specified number of recent posts
     /// </summary>
-    /// <param name="since">Returns posts made since this time.</param>
+    /// <param name="since">Returns posts made before this time.</param>
     /// <param name="maxResults">The maximum number of results to retrieve.</param>
     /// <returns>A list of recent posts.</returns>
     Task<List<Post>> GetRecentPosts(DateTime since, int maxResults);
@@ -61,9 +61,9 @@ public interface IPostActions
     Task<bool> DeletePost(string pid);
 
     /// <summary>
-    /// Updates an already existing post
+    /// Edits an already existing post
     /// </summary>
     /// <param name="updatedPost">The new version of the post after editing.</param>
-    /// <returns>An ActionResult containing the edited Post object or an error status.</returns>
+    /// <returns>An ActionResult containing the edited Post object if successful, or an error message if it fails.</returns>
     Task<ActionResult<Post>> UpdatePost(Post updatedPost);
 }

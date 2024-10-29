@@ -11,7 +11,8 @@ namespace yAppLambda.DynamoDB;
 
 public class PostActions : IPostActions
 {
-    private const string PostTableName = "Post-test"; // This is the default table name for the post table
+    // This is the default table name for the post table
+    private const string PostTableName = "Post-test"; 
     private readonly string _postTable;
     private readonly IAppSettings _appSettings;
     private readonly IDynamoDBContext _dynamoDbContext;
@@ -38,7 +39,7 @@ public class PostActions : IPostActions
     }
     
     /// <summary>
-    /// Creates a post
+    /// Creates a new post
     /// </summary>
     /// <param name="post">The post object that contains information on the post.</param>
     /// <returns>An ActionResult containing the created Post object or an error status.</returns>
@@ -46,7 +47,7 @@ public class PostActions : IPostActions
     {
         try
         {
-            // Update the current time
+            // update the current time
             var now = DateTime.Now;
             post.CreatedAt = now;
             post.UpdatedAt = now;
@@ -84,9 +85,9 @@ public class PostActions : IPostActions
     }
 
     /// <summary>
-    /// Gets the user's public posts/diary entries
+    /// Gets the user's public posts or diary entries
     /// </summary>
-    /// <param name="uid">The author of the public posts/diary entries to be fetched.</param>
+    /// <param name="uid">The author of the posts to be fetched.</param>
     /// <param name="diaryEntry">If the query is for public posts or diary entries.</param>
     /// <returns>A list of posts created by a user, either public posts or diary entries.</returns>
     public async Task<List<Post>> GetPostsByUser(string uid, bool diaryEntry)
@@ -298,8 +299,7 @@ public class PostActions : IPostActions
     /// Updates an already existing post
     /// </summary>
     /// <param name="updatedPost">The new version of the post after editing.</param>
-    /// <returns>An ActionResult containing the edited Post object or an error status.</returns>
-    public async Task<ActionResult<Post>> UpdatePost(Post updatedPost)
+    /// <returns>An ActionResult containing the edited Post object if successful, or an error message if it fails.</returns>    public async Task<ActionResult<Post>> UpdatePost(Post updatedPost)
     {
         try
         {

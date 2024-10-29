@@ -30,7 +30,7 @@ public class PostController : ControllerBase
         _postActions = postActions;
     }
     
-    // POST: api/posts/createPost with body {"uid": "uid", "postBody": "body", "postTitle": "title", "diaryEntry": false, "anonymous": false}
+    // POST: api/posts/createPost with body { "uid": "uid", "postTitle": "title", "postBody": "body", "diaryEntry": false, "anonymous": false }
     /// <summary>
     /// Creates a new post.
     /// </summary>
@@ -43,8 +43,7 @@ public class PostController : ControllerBase
     {
         ActionResult<Post> result;
 
-        if(request == null || string.IsNullOrEmpty(request.PostBody) || 
-           string.IsNullOrEmpty(request.PostTitle) || string.IsNullOrEmpty(request.UID))
+        if(request == null || string.IsNullOrEmpty(request.PostBody) || string.IsNullOrEmpty(request.PostTitle) || string.IsNullOrEmpty(request.UID))
         {
             result = BadRequest("request body is required and must contain poster's uid, post title and post body");
         }
@@ -223,8 +222,8 @@ public class PostController : ControllerBase
 
         return deleted;
     }
-    
-    // PUT: api/posts/updatePost with body {"pid": "pid", "createdAt": "createdAt", "updatedAt": "updatedAt", "uid": "uid", "postTitle": "title", "postBody": "body", "upvotes": "upvotes", "downvotes": "downvotes", "diaryEntry": false, "anonymous": false}
+
+    // PUT: api/posts/updatePost with body { "pid": "pid", "createdAt": "createdAt", "updatedAt": "updatedAt", "uid": "uid", "postTitle": "title", "postBody": "body", "upvotes": "upvotes", "downvotes": "downvotes", "diaryEntry": false, "anonymous": false }    
     /// <summary>
     /// Edits an already existing post.
     /// </summary>
@@ -235,8 +234,7 @@ public class PostController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Post>> UpdatePost([FromBody] Post request)
     {
-        if(request == null || string.IsNullOrEmpty(request.UID) || 
-           string.IsNullOrEmpty(request.PostBody) || string.IsNullOrEmpty(request.PostTitle))
+        if(request == null || string.IsNullOrEmpty(request.UID) || string.IsNullOrEmpty(request.PostBody) || string.IsNullOrEmpty(request.PostTitle))
         {
             return BadRequest("request body is required and must contain uid, post title, post body");
         }
