@@ -19,7 +19,8 @@ import org.json.JSONObject;
 public class EditPostEntryActivity extends BasePostActivity {
 
     private JSONObject _currentPost;
-    private final String LOG_NAME ="EDIT_POST";
+    private final String LOG_NAME = "EDIT_POST";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,16 +39,16 @@ public class EditPostEntryActivity extends BasePostActivity {
 
                 // Now you can access the data inside the JSONObject
                 String title = _currentPost.get("postTitle").toString();
-                String body= _currentPost.get("postBody").toString();
-                boolean isDiary  = Boolean.parseBoolean(_currentPost.getString("diaryEntry"));
+                String body = _currentPost.get("postBody").toString();
+                boolean isDiary = Boolean.parseBoolean(_currentPost.getString("diaryEntry"));
                 diaryEntry.setChecked(isDiary);
                 titleEditText.setText(title);
                 contentEditText.setText(body);
 
 
             } catch (JSONException e) {
-                Toast.makeText(getApplicationContext(),"Something happened!Please try again", Toast.LENGTH_SHORT).show();
-                Log.e(LOG_NAME,e.getMessage());
+                Toast.makeText(getApplicationContext(), "Something happened!Please try again", Toast.LENGTH_SHORT).show();
+                Log.e(LOG_NAME, e.getMessage());
             }
         }
 
@@ -57,12 +58,9 @@ public class EditPostEntryActivity extends BasePostActivity {
                 postTitle = titleText.getEditText().getText().toString();
                 postBody = contentText.getEditText().getText().toString();
                 if (!hasFilledForms(postTitle, postBody)) {
-                    try {
-                        redirectToPostEntry();
-                    } catch (JSONException e) {
-                        Toast.makeText(getApplicationContext(),"Something happened!Please try again", Toast.LENGTH_SHORT).show();
-                        Log.e(LOG_NAME,"Failed to discard! "+e.getMessage());
-                    }
+
+                    redirectToPostEntry();
+
                 } else {
                     discardDialog.show();
                 }
@@ -81,15 +79,14 @@ public class EditPostEntryActivity extends BasePostActivity {
 
     }
 
-    private void redirectToPostEntry() throws JSONException {
+    private void redirectToPostEntry() {
         Intent intent = new Intent(EditPostEntryActivity.this, PostEntryActivity.class);
-        intent.putExtra("currentPost",_currentPost.toString());
+        intent.putExtra("currentPost", _currentPost.toString());
         startActivity(intent);
         finish();
     }
 
-    private void sendPost(String postData)
-    {
+    private void sendPost(String postData) {
         String apiUrl = "/api/posts/updatePost";
         RestOptions options = RestOptions.builder()
                 .addPath(apiUrl)
@@ -100,70 +97,58 @@ public class EditPostEntryActivity extends BasePostActivity {
                 response -> {  // Corrected "response" spelling
                     Log.i(LOG_NAME, "PUT response: " + response.getData().asString());
                     runOnUiThread(() -> {
-                        Toast.makeText(getApplicationContext(),"Yipee! Update successfully",Toast.LENGTH_SHORT).show();
-                        try {
-                            redirectToPostEntry();
-                        } catch (JSONException e) {
-                            Toast.makeText(getApplicationContext(),"Something happened!Please try again", Toast.LENGTH_SHORT).show();
-                            Log.e(LOG_NAME,"Redirect "+e.getMessage());
-                        }
+                        Toast.makeText(getApplicationContext(), "Yipee! Update successfully", Toast.LENGTH_SHORT).show();
+
+                        redirectToPostEntry();
+
                     });
                 },
                 error -> {
                     Log.e(LOG_NAME, "PUT failed: ", error);
                     runOnUiThread(() -> {
-                        Toast.makeText(getApplicationContext(),"Error! Failed to update",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Error! Failed to update", Toast.LENGTH_SHORT).show();
                     });
                 });
     }
 
-    private void updatePost()
-    {
+    private void updatePost() {
         postTitle = titleText.getEditText().getText().toString();
         postBody = contentText.getEditText().getText().toString();
 
         // Make API call when invoked
-        if (hasFilledForms(postTitle, postBody))
-        {
-            try{
+        if (hasFilledForms(postTitle, postBody)) {
+            try {
 
                 _currentPost.put("postBody", postBody);
                 _currentPost.put("diaryEntry", diaryEntry.isChecked());
                 _currentPost.put("postTitle", postTitle);
-                Log.i(LOG_NAME,post.toString());
+                Log.i(LOG_NAME, post.toString());
 
-            }catch (Exception error){
-                    Log.e(LOG_NAME, "Get all values for post: " +error.getMessage());
+            } catch (Exception error) {
+                Log.e(LOG_NAME, "Get all values for post: " + error.getMessage());
             }
             //after having all that
 
             sendPost(_currentPost.toString());
 
 
-        }
-        else if (postTitle.equals(""))
-        {
+        } else if (postTitle.equals("")) {
             Log.d(LOG_NAME, "You have to put in a title, silly!");
             titleText.setError("You have to put in a title, silly!");
-        }
-        else
-        {
+        } else {
             Log.d(LOG_NAME, "You have to add content, silly!");
             contentText.setError("You have to add content, silly!");
         }
     }
 
 
-    public void initializeSuccessDialog()
-    {
+    public void initializeSuccessDialog() {
         // Create post alert dialog
         successDialog = new AlertDialog.Builder(this).create();
         successDialog.setTitle("Update successfully created!");
         successDialog.setButton(AlertDialog.BUTTON_POSITIVE,
-                "Heck yeah", new DialogInterface.OnClickListener()
-                {
-                    public void onClick(DialogInterface dialog, int id)
-                    {
+                "Heck yeah", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
                         Intent intent = new Intent(EditPostEntryActivity.this, PostEntryActivity.class);
                         startActivity(intent);
                     }
@@ -171,41 +156,32 @@ public class EditPostEntryActivity extends BasePostActivity {
     }
 
 
-    public void initializeFailureDialog()
-    {
+    public void initializeFailureDialog() {
         // Create post alert dialog
         failureDialog = new AlertDialog.Builder(this).create();
         failureDialog.setTitle("Update failed to create... Try again!");
         failureDialog.setButton(AlertDialog.BUTTON_POSITIVE,
-                "Aw man...", new DialogInterface.OnClickListener()
-                {
-                    public void onClick(DialogInterface dialog, int id)
-                    {
+                "Aw man...", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
                         failureDialog.dismiss();
                     }
                 });
     }
 
 
-    public void initializeDiscardDialog()
-    {
+    public void initializeDiscardDialog() {
         discardDialog = new AlertDialog.Builder(this).create();
         discardDialog.setTitle("Woah there!");
         discardDialog.setMessage("Are you really sure that you want to discard your changes?");
         discardDialog.setButton(AlertDialog.BUTTON_POSITIVE,
-                "Yes", new DialogInterface.OnClickListener()
-                {
-                    public void onClick(DialogInterface dialog, int id)
-                    {
-                        Intent intent = new Intent(EditPostEntryActivity.this, PostEntryActivity.class);
-                        startActivity(intent);
+                "Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        redirectToPostEntry();
                     }
                 });
         discardDialog.setButton(AlertDialog.BUTTON_NEGATIVE,
-                "No, keep editing", new DialogInterface.OnClickListener()
-                {
-                    public void onClick(DialogInterface dialog, int id)
-                    {
+                "No, keep editing", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
                         System.out.println("Keep editing");
                     }
                 });
