@@ -151,10 +151,9 @@ public class PublicPostsActivity extends AppCompatActivity implements IListCardI
     {
         // Switch activity to view an individual post entry when a card is clicked
         Intent intent = new Intent(PublicPostsActivity.this, PostEntryActivity.class);
-        String pid = postListHelper.getPID(position);
-        String uid = postListHelper.getUID(position);
-        intent.putExtra("pid", pid);
-        intent.putExtra("uid",uid);
+        // passing the whole object so we don't need to fetch
+        String postObject = postListHelper.getItem(position).toString();
+        intent.putExtra("currentPost",postObject);
         activityLauncher.launch(intent);
     }
 
