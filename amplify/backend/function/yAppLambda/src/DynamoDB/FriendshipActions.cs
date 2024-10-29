@@ -70,8 +70,8 @@ public class FriendshipActions: IFriendshipActions
             }
             else if (friendship.Status == FriendshipStatus.Pending)
             {
-                // If the friendship is pending,
-                // we need to update the created time since the request user would send a new request
+                // If the friendship is pending, we need to update the created time
+                // since the request user would send a new request
                 friendship.CreatedAt = DateTime.Now;
             }
           

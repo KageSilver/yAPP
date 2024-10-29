@@ -8,6 +8,11 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -146,8 +151,38 @@ public class PublicPostsActivity extends AppCompatActivity implements IListCardI
     {
         // Switch activity to view an individual post entry when a card is clicked
         Intent intent = new Intent(PublicPostsActivity.this, PostEntryActivity.class);
-        String pid = postListHelper.getPID(position);
-        intent.putExtra("pid", pid);
-        startActivity(intent);
+        // passing the whole object so we don't need to fetch
+        String postObject = postListHelper.getItem(position).toString();
+        intent.putExtra("currentPost",postObject);
+        activityLauncher.launch(intent);
     }
+
+    @Override
+    public void onRestart()
+    {
+        super.onRestart();
+        finish();
+        startActivity(getIntent());
+    }
+
+    ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result){
+                    if (result.getResultCode() == RESULT_OK)
+                    {
+                        Intent intent = result.getData();
+                        try
+                        {
+                            String deleted = intent.getStringExtra("delete");
+                            postListHelper.removePost(deleted);
+                        }
+                        catch (Exception e)
+                        {
+                            Log.i("POST", "Post was not deleted");
+                        }
+                    }
+                }
+        });
 }
