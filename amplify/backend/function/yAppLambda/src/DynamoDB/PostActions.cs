@@ -298,7 +298,8 @@ public class PostActions : IPostActions
     /// Updates an already existing post
     /// </summary>
     /// <param name="updatedPost">The new version of the post after editing.</param>
-    /// <returns>An ActionResult containing the edited Post object if successful, or an error message if it fails.</returns>    public async Task<ActionResult<Post>> UpdatePost(Post updatedPost)
+    /// <returns>An ActionResult containing the edited Post object if successful, or an error message if it fails.</returns>
+    public async Task<ActionResult<Post>> UpdatePost(Post updatedPost)
     {
         try
         {
