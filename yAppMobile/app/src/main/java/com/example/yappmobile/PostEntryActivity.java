@@ -1,5 +1,6 @@
 package com.example.yappmobile;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,17 +23,11 @@ import com.example.yappmobile.Comments.CommentsBottomSheet;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.concurrent.CompletableFuture;
-
 public class PostEntryActivity extends AppCompatActivity
 {
-    private String _pid;
-    private String _uid;
-
-    private String _uuid;
-    private  String _username;
-    private TextView postTitle, postBody;
-    private CardListHelper postListHelper;
+    private String _pid, _uid, _title, _createdAt, _content, _updatedAt, _uuid;
+    private TextView _postTitle, _postBody, _postDate;
+    private CardListHelper _postListHelper;
 
     private ImageView _moreOptions;
 
@@ -40,18 +35,56 @@ public class PostEntryActivity extends AppCompatActivity
 
     private JSONObject _currentPost;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_entry);
+        _postListHelper = new CardListHelper(this);
+        _postTitle = findViewById(R.id.post_title);
+        _postBody = findViewById(R.id.post_body);
+        _postDate = findViewById(R.id.post_date);
+        _moreOptions = findViewById(R.id.menuButton);
+        // Back button code
+        ImageButton backButton = findViewById(R.id.backButton);
+
+        // Setup content view to display post content
+        String jsonString = getIntent().getStringExtra("currentPost");
+        try {
+            _currentPost = new JSONObject(jsonString);
+            _pid = _currentPost.getString("pid");
+            _uid = _currentPost.getString("uid");
+            _title =  _currentPost.getString("postTitle");
+            _content = _currentPost.getString("postBody");
+            _createdAt =  _currentPost.getString("createdAt");
+
+            _postTitle.setText(_title);
+            _postBody.setText(_content);
+            _postDate.setText(_createdAt);
+
+
+        } catch (JSONException e) {
+            Toast.makeText(getApplicationContext(),"Error! failed to read the post", Toast.LENGTH_SHORT).show();
+            Log.e(LOG_NAME,"Error of parsing the intent extra: "+e.getMessage());
+        }
+
         //get current user
         ImageButton replyButton = findViewById(R.id.replyButton);
         Amplify.Auth.getCurrentUser(result -> {
             Log.i(LOG_NAME, "Continuing as " + result.getUsername() + "...");
             _uuid = result.getUserId();
-            _username = result.getUsername();
+            Log.i(LOG_NAME,"uid: "+_uid);
+            Log.i(LOG_NAME,"uuid"+_uuid);
+
             runOnUiThread(() -> {
+                if(_uid.equals(_uuid)){
+                    _moreOptions.setVisibility(View.VISIBLE);
+
+                }else{
+                    _moreOptions.setVisibility(View.INVISIBLE);
+                }
+
                 replyButton.setOnClickListener(v -> {
                     CommentsBottomSheet bottomSheet = CommentsBottomSheet.newInstance(_pid, _uid, _uuid, this);
                     bottomSheet.show(getSupportFragmentManager(), bottomSheet.getTag());
@@ -61,8 +94,7 @@ public class PostEntryActivity extends AppCompatActivity
             Log.i(LOG_NAME, "There is no user signed in!!");
         });
 
-        // Back button code
-       ImageButton backButton = findViewById(R.id.backButton);
+
         backButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -71,28 +103,6 @@ public class PostEntryActivity extends AppCompatActivity
                 getOnBackPressedDispatcher().onBackPressed();
             }
         });
-
-        postListHelper = new CardListHelper(this);
-
-        // Setup content view to display post content
-        _pid = getIntent().getStringExtra("pid");
-        _uid = getIntent().getStringExtra("uid");
-        postTitle = findViewById(R.id.post_title);
-        postBody = findViewById(R.id.post_body);
-
-        String getPostAPI = "/api/posts/getPostById?pid=" + _pid;
-        loadPost(getPostAPI);
-
-        //set up edit and delete
-
-        _moreOptions = findViewById(R.id.menuButton);
-        // check if it is the current user
-        if(_uid.equals(_uuid)){
-            _moreOptions.setVisibility(View.VISIBLE);
-
-        }else{
-            _moreOptions.setVisibility(View.INVISIBLE);
-        }
 
         _moreOptions.setOnClickListener(view -> {
             // Create a PopupMenu
@@ -124,46 +134,6 @@ public class PostEntryActivity extends AppCompatActivity
 
 
 
-    }
-
-    private void loadPost(String apiUrl)
-    {
-        // Fetch post (only singular, should return the same thing based on the url passed
-        CompletableFuture<String> future = postListHelper.getItemsFromAPI(apiUrl);
-        future.thenAccept(jsonData -> {
-            try
-            {
-                // Handle API response
-                Log.d(LOG_NAME, "Received data: " + jsonData);
-
-                // Get the post's title and body from the response JSON
-                _currentPost = new JSONObject(jsonData);
-                String title = _currentPost.get("postTitle").toString();
-                String body = _currentPost.get("postBody").toString();
-                String uid = _currentPost.get("uid").toString();
-                runOnUiThread(() -> {
-                    // Ensure title and body are not null before updating
-                    if (postTitle != null) {
-                        postTitle.setText(title);
-                    }
-                    if (postBody != null) {
-                        postBody.setText(body);
-                    }
-                    if (uid.equals(_uuid)){
-                        _moreOptions.setVisibility(View.VISIBLE);
-                    }else{
-                        _moreOptions.setVisibility(View.INVISIBLE);
-                    }
-                });
-            }
-            catch (JSONException jsonException)
-            {
-                Log.e("JSON", "Error parsing JSON", jsonException);
-            }
-        }).exceptionally(throwable -> {
-            Log.e("API", "Error fetching data", throwable);
-            return null;
-        });
     }
 
 
