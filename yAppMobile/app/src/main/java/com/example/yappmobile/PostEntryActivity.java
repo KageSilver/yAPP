@@ -108,6 +108,7 @@ public class PostEntryActivity extends AppCompatActivity
                     Intent intent = new Intent(this, EditPostEntryActivity.class);
                     intent.putExtra("post",_currentPost.toString());
                     startActivity(intent);
+                    finish();
                     return true;
                 } else if (item.getItemId() == R.id.action_delete) {
                     // Handle Delete action
@@ -194,8 +195,9 @@ public class PostEntryActivity extends AppCompatActivity
                             // Show a Toast message on the main thread
                             runOnUiThread(() -> {
                                 Toast.makeText(getApplicationContext(), "Delete successful!", Toast.LENGTH_SHORT).show();
-                                finish();
+
                             });
+                            finish();
                         },
                         error -> {
                             Log.e(LOG_NAME, "DELETE failed.", error);

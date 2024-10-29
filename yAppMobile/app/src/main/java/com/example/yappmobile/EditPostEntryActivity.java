@@ -84,6 +84,7 @@ public class EditPostEntryActivity extends BasePostActivity {
         intent.putExtra("pid",_currentPost.get("pid").toString());
         intent.putExtra("uid",_currentPost.get("uid").toString());
         startActivity(intent);
+        finish();
     }
 
     private void sendPost(String postData)
