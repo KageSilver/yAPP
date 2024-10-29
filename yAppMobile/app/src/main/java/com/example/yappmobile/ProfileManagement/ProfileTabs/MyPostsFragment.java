@@ -70,10 +70,8 @@ public class MyPostsFragment extends Fragment implements IListCardItemInteractio
     {
         // Setup activity switch when a post list card is pressed
         Intent intent = new Intent(this.getContext(), PostEntryActivity.class);
-        String pid = postListHelper.getPID(position);
-        String uid = postListHelper.getUID(position);
-        intent.putExtra("pid", pid);
-        intent.putExtra("uid",uid);
+        String currentPost = postListHelper.getItem(position).toString();
+        intent.putExtra("currentPost", currentPost);
         activityLauncher.launch(intent);
     }
 
