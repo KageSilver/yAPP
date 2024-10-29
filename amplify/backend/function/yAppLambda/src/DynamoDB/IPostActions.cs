@@ -20,13 +20,32 @@ public interface IPostActions
     Task<Post> GetPostById(string pid);
 
     /// <summary>
-    /// Gets all public posts from a user
+    /// Gets all (public posts/diary entries) from a user
     /// </summary>
-    /// <param name="uid">The uid used to find all posts created by a user.</param>
+    /// <param name="uid">The uid used to find all (public posts/diary entries) created by a user.</param>
     /// <param name="diaryEntry">If the query is for public posts or diary entries.</param>
     /// <returns>A list of posts created by a user, either public posts or diary entries.</returns>
     Task<List<Post>> GetPostsByUser(string uid, bool diaryEntry);
-    
+
+    /// <summary>
+    /// Gets the diary entry made by a user within a specific date range
+    /// </summary>
+    /// <param name="uid">The author of the diary entry.</param>
+    /// <param name="startDate">The starting point of the date range to query.</param>
+    /// <param name="endDate">The ending point of the date range to query.</param>
+    /// <returns>A diary entry made by a user on the specified date range.</returns>
+    Task<Post> GetDailyEntryByUser(string uid, DateTime startDate, DateTime endDate);
+
+    /// <summary>
+    /// Gets the diary entries made by the user's friends within a specific date range
+    /// </summary>
+    /// <param name="uid">The user whose friends will be searched for.</param>
+    /// <param name="startDate">The starting point of the date range to query.</param>
+    /// <param name="endDate">The ending point of the date range to query.</param>
+    /// <returns>A list of diary entries made by the user's friends on the specified date range.</returns>
+    Task<Post> GetDailyEntryByFriends(string uid, DateTime startDate, DateTime endDate);
+
+
     /// <summary>
     /// Deletes a post from the database by a post id
     /// </summary>
