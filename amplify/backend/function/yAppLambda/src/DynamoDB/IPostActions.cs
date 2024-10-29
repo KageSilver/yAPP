@@ -39,6 +39,7 @@ public interface IPostActions
     /// <summary>
     /// Gets the diary entries made by the user's friends within a specific day
     /// </summary>
+    /// <param name="_cognitoActions">An instance of CognitoActions to query user information.</param>
     /// <param name="uid">The user whose friends will be searched for.</param>
     /// <param name="current">The current day to query.</param>
     /// <returns>A list of diary entries made by the user's friends on the specified day</returns>

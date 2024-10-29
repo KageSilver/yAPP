@@ -120,10 +120,12 @@ public class PostActions : IPostActions
     {
         try
         {
+            // convert input time to local time to calculate the start and end of the input date
             current = current.ToLocalTime();
             var startOfDay = current.Date; // 12 AM
             var endOfDay = current.Date.AddDays(1).AddSeconds(-1); // 11:59 PM
 
+            // convert start and end time to GMT for query to work properly against times in the database stored in GMT
             startOfDay = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(startOfDay, "GMT Standard Time");
             endOfDay = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(endOfDay, "GMT Standard Time");
             
@@ -176,6 +178,7 @@ public class PostActions : IPostActions
     /// <summary>
     /// Gets the diary entries made by the user's friends within a specific day
     /// </summary>
+    /// <param name="_cognitoActions">An instance of CognitoActions to query user information.</param>
     /// <param name="uid">The user whose friends will be searched for.</param>
     /// <param name="current">The current day to query.</param>
     /// <returns>A list of diary entries made by the user's friends on the specified day</returns>
