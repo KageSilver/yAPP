@@ -7,7 +7,8 @@
 1. Navigate to the yAPP website
 2. Select the "Create Account" tab at the top of the login panel
 3. Enter account details
-    - Enter and confirm a valid email address you have access to, as you will need to retrieve the confirmation code for a later step
+    - Enter a username
+    - Enter a valid email address you have access to, as you will need to retrieve the confirmation code for a later step
     - Enter and confirm your password
 4. Select the "Create Account" button at the bottom of the panel
 5. Enter the confirmation code abtained from the email address entered in step 3
@@ -116,7 +117,7 @@
 1. Navigate to the yAPP mobile app
 2. To sign in, you will be redirected to a browser webpage
 3. Enter account details
-    - Email
+    - Username
     - Password
 4. Select the "Sign in" button at the bottom of the panel
 5. Done!
@@ -128,7 +129,7 @@
 1. Navigate to the yAPP mobile app
 2. To sign in, you will be redirected to a browser webpage
 3. Enter account details
-    - Email
+    - Username
     - Password
 4. Select the "Sign in" button at the bottom of the panel
 5. Select the "Profile" button on the bottom navigation bar
@@ -143,7 +144,7 @@
 1. Navigate to the yAPP mobile app
 2. To sign in, you will be redirected to a browser webpage
 3. Enter account details
-    - Email
+    - Username
     - Password
 4. Select the "Sign in" button at the bottom of the panel
 5. Select the "Profile" button on the bottom navigation bar
@@ -157,7 +158,7 @@
 1. Navigate to the yAPP mobile app
 2. To sign in, you will be redirected to a browser webpage
 3. Enter account details
-    - Email
+    - Username
     - Password
 4. Select the "Sign in" button at the bottom of the panel
 5. Select the "Profile" button on the bottom navigation bar
@@ -169,7 +170,7 @@
 1. Navigate to the yAPP mobile app
 2. To sign in, you will be redirected to a browser webpage
 3. Enter account details
-    - Email
+    - Username
     - Password
 4. Select the "Sign in" button at the bottom of the panel
 5. Select the "Profile" button on the bottom navigation bar

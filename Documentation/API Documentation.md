@@ -151,6 +151,32 @@
     - 200 OK
     - 400 Bad Request: requires valid max result number and valid time
 
+### GetDiariesByUser
+ - Gets diary entry posts from a specified user from a specified date
+ - GET: api/posts/getDiariesByUser?uid={uid}&current={current}
+    - uid: The uid to find a diary entry by the user
+    - current: The specified date to search for diary entries made on that date
+ - Response: returns a diary entry post that was created by the specified user on a specified date
+    - { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true }
+ - Status codes:
+    - 200 OK
+    - 400 Bad Request:
+      - uid is required
+      - valid date is required
+
+### GetDiariesByFriends
+ - Gets diary entry posts from all friends of a specified user
+ - GET: api/posts/getDiariesByFriends?uid={uid}&current={current}
+    - uid: The uid to find a diary entry by the user's friends
+    - current: The specified date to search for diary entries made on that date
+ - Response: returns a list of posts made by the users friends on a specified date
+    - [ { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true } ]
+ - Status codes:
+    - 200 OK
+    - 400 Bad Request:
+      - uid is required
+      - valid date is required
+
 ### CreatePost
  - Creates a new post.
  - POST: api/posts/createPost
