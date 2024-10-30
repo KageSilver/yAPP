@@ -128,16 +128,36 @@ public class CardListHelper extends AppCompatActivity
         }
     }
 
-    public void loadDiaries(List<JSONObject> jsonData, RecyclerView recyclerView)
+    public void loadDiaries(String apiUrlUser, String apiUrlFriends, RecyclerView recyclerView)
     {
         // Make loading spinner visible while we populate our CardItemAdapter
         loadingSpinner.setVisibility(View.VISIBLE);
-        System.out.println("creating adapter...");
+
         createAdapter(recyclerView);
-        // Convert API response into a list of CardItems
-        System.out.println("setting card json: " + jsonData);
-        cardItemList = jsonData;
-        System.out.println("populating cards...");
+
+        // Fetch card items from API
+        CompletableFuture<String> future = getItemsFromAPI(apiUrlUser);
+        future.thenAccept(jsonData ->
+        {
+            // Convert API response into a list of CardItems
+            cardItemList = handleData(jsonData);
+        }).exceptionally(throwable ->
+        {
+            Log.e("API", "Error fetching data", throwable);
+            return null;
+        });
+
+        future = getItemsFromAPI(apiUrlFriends);
+        future.thenAccept(jsonData ->
+        {
+            // Convert API response into a list of CardItems
+            cardItemList.addAll(handleData(jsonData));
+        }).exceptionally(throwable ->
+        {
+            Log.e("API", "Error fetching data", throwable);
+            return null;
+        });
+
         populateCard();
     }
 
