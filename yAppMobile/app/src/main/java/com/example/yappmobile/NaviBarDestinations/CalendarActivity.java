@@ -26,12 +26,8 @@ import com.example.yappmobile.NavBar;
 import com.example.yappmobile.PostEntryActivity;
 import com.example.yappmobile.R;
 
-import org.json.JSONObject;
-
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class CalendarActivity extends AppCompatActivity implements IListCardItemInteractions
