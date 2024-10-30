@@ -7,27 +7,24 @@
     const router = useRouter(); // Use router hook
     const uid = ref('');
     const userDiaries = ref([]);
-    const userDiariesDate = ref([]);
-    const loading = false;
+    const friendDiaries = ref([]);
 
     var today = new Date();
     var selectedDate = today;
 
-    // Retrieve the necessary data and function from the helper
     onMounted(async () => {
-        resetCalendar();
+        setCalendar();
         const user = await getCurrentUser();
         uid.value = user.userId;
-        await getMyDiaryEntries(uid);
-        getSelectDateDiaries();
+        await getUserDiaries(uid);
+        await getFriendDiaries(uid);
     });
 
-    async function getMyDiaryEntries(uid) {
+    async function getUserDiaries(uid) {
         try {
-            console.log(uid);
             const restOperation = get({
                 apiName: 'yapp',
-                path: `/api/posts/getPostsByUser?uid=${uid.value}&diaryEntry=${true}`
+                path: `/api/posts/getDiariesByUser?uid=${uid.value}&current=${selectedDate.toJSON()}`
             });
             const { body } = await restOperation.response;
             const response = await ((await body.blob()).arrayBuffer());
@@ -39,17 +36,24 @@
         }
     }
 
-    function getSelectDateDiaries() {
-        console.log(JSON.stringify(userDiaries.value, null, 2));
-
-        userDiariesDate.value = userDiaries.value.filter(
-            function(post){ 
-                return new Date(post.createdAt).toLocaleDateString() == selectedDate.toLocaleDateString() 
-            } 
-        );
+    async function getFriendDiaries(uid) {
+        try {
+            console.log(uid);
+            const restOperation = get({
+                apiName: 'yapp',
+                path: `/api/posts/getDiariesByFriends?uid=${uid.value}&current=${selectedDate.toJSON()}`
+            });
+            const { body } = await restOperation.response;
+            const response = await ((await body.blob()).arrayBuffer());
+            const decoder = new TextDecoder('utf-8'); // Use TextDecoder to decode the ArrayBuffer to a string
+            const decodedText = decoder.decode(response);
+            friendDiaries.value = JSON.parse(decodedText); // Update with parsed JSON
+        } catch (e) {
+            console.log('GET call failed', e);
+        }
     }
 
-    function resetCalendar() {
+    function setCalendar() {
         var daysInMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0).getDate();
         var blankDays = new Date(selectedDate.getFullYear(), selectedDate.getMonth()).getDay();
 
@@ -57,7 +61,13 @@
         changeDateHeader();
         moveFirstDay(blankDays);
         adjustDaysInMonth(daysInMonth);
-        getSelectDateDiaries();
+        
+    }
+
+    async function reset() {
+        setCalendar();
+        await getUserDiaries(uid);
+        await getFriendDiaries(uid);
     }
 
     function moveFirstDay(blankDays) {
@@ -105,7 +115,7 @@
             selectedDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth()-1, 1);
         }
 
-        resetCalendar();
+        reset();
     }
 
     function nextMonth() {
@@ -117,13 +127,15 @@
             selectedDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth()+1, 1);
         }
 
-        resetCalendar();
+        reset();
     }
 
-    function changeSelectedDate(date) {
+    async function changeSelectedDate(date) {
         selectedDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), date);
         changeDateHeader();
-        getSelectDateDiaries();
+       
+        await getUserDiaries(uid);
+        await getFriendDiaries(uid);
     }
 
     function changeDateHeader() {
@@ -296,7 +308,27 @@
 
         <div class="flex flex-col items-center w-full mx-auto">
             <div class="card bg-gray-300 border border-gray-500 rounded-lg p-5 shadow transition-shadow hover:shadow-md cursor-pointer w-full max-w-4xl m-2"
-                v-for="post in userDiariesDate" :key="post.pid" @click="clickPost(post.pid)">
+                v-for="post in userDiaries" :key="post.pid" @click="clickPost(post.pid)">
+                <div class="card-header mb-2">
+                    <h3 class="text-lg font-semibold truncate">{{ post.postTitle }}</h3>
+                    <p class="text-sm text-gray-600 overflow-hidden overflow-ellipsis whitespace-nowrap">
+                        <strong>Posted By:</strong> You 
+                    </p>
+                    <p class="text-sm text-gray-600 overflow-hidden overflow-ellipsis whitespace-nowrap">
+                        <strong>Created At:</strong> {{ new Date(post.createdAt).toLocaleString() }}
+                    </p>
+                </div>
+                <div class="card-body">
+                    <p class="text-gray-700 overflow-hidden text-ellipsis whitespace-nowrap">
+                        {{ post.postBody }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col items-center w-full mx-auto">
+            <div class="card bg-gray-100 border border-gray-500 rounded-lg p-5 shadow transition-shadow hover:shadow-md cursor-pointer w-full max-w-4xl m-2"
+                v-for="post in userDiaries" :key="post.pid" @click="clickPost(post.pid)">
                 <div class="card-header mb-2">
                     <h3 class="text-lg font-semibold truncate">{{ post.postTitle }}</h3>
                     <p class="text-sm text-gray-600 overflow-hidden overflow-ellipsis whitespace-nowrap">
