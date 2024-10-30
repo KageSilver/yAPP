@@ -26,8 +26,11 @@ import com.example.yappmobile.NavBar;
 import com.example.yappmobile.PostEntryActivity;
 import com.example.yappmobile.R;
 
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class CalendarActivity extends AppCompatActivity implements IListCardItemInteractions
@@ -38,6 +41,8 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
     private CardListHelper diaryEntryHelper;
     private ImageButton collapseCalendar;
     private RecyclerView diaries;
+    private List<JSONObject> friends;
+    private String uid, username;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -96,27 +101,47 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
             }
         });
 
+        getUserInfo();
+        getFriends();
         getDiaries(cal);
     }
 
     private void getDiaries(Calendar cal)
     {
-        CompletableFuture<String> future = new CompletableFuture<>();
-
-        // gets user information
-        Amplify.Auth.getCurrentUser(result -> {
-            future.complete(result.getUserId());
-        }, error -> {
-            Log.e("Auth", "Error occurred when getting current user. Redirecting to authenticator");
-            Intent intent = new Intent(CalendarActivity.this, AuthenticatorActivity.class);
-            startActivity(intent);
-        });
-
         // gets diary entries from user for date selected
         String apiUrlUser = "/api/posts/getDiariesByUser?uid=" + uid + "&current=" + formatCompareDate(cal);
         // gets diary entries from users friends for date selected
         String apiUrlFriends = "/api/posts/getDiariesByFriends?uid=" + uid + "&current=" + formatCompareDate(cal);
         diaryEntryHelper.loadDiaries(apiUrlUser, apiUrlFriends, diaries);
+    }
+
+    private void getUserInfo()
+    {
+        // gets user information
+        Amplify.Auth.getCurrentUser(result -> {
+            uid = result.getUserId();
+            username = result.getUsername();
+        }, error -> {
+            Log.e("Auth", "Error occurred when getting current user. Redirecting to authenticator");
+            Intent intent = new Intent(CalendarActivity.this, AuthenticatorActivity.class);
+            startActivity(intent);
+        });
+    }
+
+    private void getFriends()
+    {
+        String apiUrl = "/api/friends/getFriendsByStatus?userName=" + username + "&status=1";
+        // Fetch card items from API
+        CompletableFuture<String> future = diaryEntryHelper.getItemsFromAPI(apiUrl);
+        future.thenAccept(jsonData ->
+        {
+            // Convert API response into a list of CardItems
+            friends = diaryEntryHelper.handleData(jsonData);
+        }).exceptionally(throwable ->
+        {
+            Log.e("API", "Error fetching data", throwable);
+            return null;
+        });
     }
 
     private String formatDisplayDate(Calendar cal)
