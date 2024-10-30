@@ -9,19 +9,6 @@
 
 	const router = useRouter();
 
-	// Tweak labels of sign up component by using Internationalization
-	// https://ui.docs.amplify.aws/vue/connected-components/authenticator/customization
-	I18n.putVocabularies(translations);
-	I18n.setLanguage('en');
-	I18n.putVocabularies({
-		en: {
-			'Username': 'Email',
-			'Enter your Username': 'Enter your Email',
-			'Email': 'Confirm Email',
-			'Enter your Email': 'Please confirm your Email'
-		}
-	});
-
 const currentUser = ref(null);
 
 Hub.listen("auth", async data => {

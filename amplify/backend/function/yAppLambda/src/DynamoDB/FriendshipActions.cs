@@ -96,7 +96,7 @@ public class FriendshipActions: IFriendshipActions
     {
         try
         {
-            // Query friendships where the user is the `FromUserName` with the specified status
+            // Query friendships where the user is the `FromUserName`
             var friendshipsFrom = await _dynamoDbContext.QueryAsync<Friendship>
                 (userName, _config).GetRemainingAsync();
 
@@ -107,6 +107,7 @@ public class FriendshipActions: IFriendshipActions
                 friendshipStatus == FriendshipStatus.Pending ||
                 friendshipStatus == FriendshipStatus.Declined)
             {
+                // Only get friendships where the user is `FromUserName` with the specified status
                 filteredFriendshipsFrom = friendshipsFrom.Where(f => f.Status == friendshipStatus).ToList();
 
                 // Set ScanCondition to scan friendships where
