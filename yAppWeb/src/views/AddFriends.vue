@@ -57,15 +57,16 @@
         const receiver = document.getElementById("to-username").value;
         var requestButton = document.getElementById("request-button");
 
-        if (receiver !== '') {
+        if (receiver === '') {
+            alert('Enter in their UUID!');
+        } else if (receiver === userId.value || receiver === username.value) {
+            alert('You can\’t add yourself as a friend, silly!');
+        } else {
             requestButton.disabled = true;
             await sendFriendRequest(sender, receiver);
             requestButton.disabled = false;
             document.getElementById("to-username").value = '';
-        } else {
-            alert('Enter in their UUID!');
         }
-       
     };
 
 const sendFriendRequest = async (fromUser, toUser) => {
@@ -126,8 +127,4 @@ const sendFriendRequest = async (fromUser, toUser) => {
 
         <Alert :showModal="showAlert" :header="alertMsg.header" :message="alertMsg.message" :close="closeAlert" />
     </div>
-
-
-
-
 </template>
