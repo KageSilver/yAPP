@@ -45,37 +45,36 @@ public class PostController : ControllerBase
 
         if(request == null || string.IsNullOrEmpty(request.PostBody) || string.IsNullOrEmpty(request.PostTitle) || string.IsNullOrEmpty(request.UID))
         {
-            result = BadRequest("request body is required and must contain poster's uid, post title and post body");
+            return BadRequest("request body is required and must contain poster's uid, post title and post body");
         }
-        else
+
+        var poster = await _cognitoActions.GetUserById(request.UID);
+
+        if(poster == null)
         {
-            Console.WriteLine("Post request from: " + request.UID + " and title: " + request.PostTitle);
-
-            var poster = await _cognitoActions.GetUserById(request.UID);
-
-            if(poster == null)
-            {
-                result = NotFound("Post creator not found");
-            }
-            else
-            {
-                var post = new Post
-                {
-                    UID = request.UID,
-                    PostTitle = request.PostTitle,
-                    PostBody = request.PostBody,
-                    DiaryEntry = request.DiaryEntry,
-                    Anonymous = request.Anonymous,
-                    Upvotes = 0,
-                    Downvotes = 0
-                };
-
-                var createResult = await _postActions.CreatePost(post);
-                result = createResult.Result is OkObjectResult
-                    ? (ActionResult<Post>)post
-                    : BadRequest("Failed to create post");
-            }
+            return NotFound("Post creator not found");
         }
+
+        if (request.diaryEntry && getDiariesByUser(request.UID, DateTime.now()).Result.Count() > 0)
+        {
+            return BadRequest("Cannot make more than one diary entry a day");
+        }
+
+        var post = new Post
+        {
+            UID = request.UID,
+            PostTitle = request.PostTitle,
+            PostBody = request.PostBody,
+            DiaryEntry = request.DiaryEntry,
+            Anonymous = request.Anonymous,
+            Upvotes = 0,
+            Downvotes = 0
+        };
+
+        var createResult = await _postActions.CreatePost(post);
+        result = createResult.Result is OkObjectResult
+            ? (ActionResult<Post>)post
+            : BadRequest("Failed to create post");
         
         return result;
     }
