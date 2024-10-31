@@ -16,7 +16,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using yAppLambda;
-using Newtonsoft.Json;
 using System.Net;
 using Moq;
 using yAppLambda.Models;
