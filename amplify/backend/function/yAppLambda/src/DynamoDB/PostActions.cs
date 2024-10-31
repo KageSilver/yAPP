@@ -126,8 +126,8 @@ public class PostActions : IPostActions
             var endOfDay = current.Date.AddDays(1).AddSeconds(-1); // 11:59 PM
 
             // convert start and end time to GMT for query to work properly against times in the database stored in GMT
-            startOfDay = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(startOfDay, "GMT Standard Time");
-            endOfDay = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(endOfDay, "GMT Standard Time");
+            startOfDay = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(startOfDay, "GMT");
+            endOfDay = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(endOfDay, "GMT");
             
             // Query for diary entries made within start and end dates to narrow down posts to filter out 
             var expressionAttributeValues = new Dictionary<string, DynamoDBEntry>
@@ -170,8 +170,21 @@ public class PostActions : IPostActions
         }
         catch (Exception e)
         {
+            Post post = new Post
+            {
+                UID = uid,
+                PostTitle = e.Message,
+                PostBody = "request.PostBody",
+                DiaryEntry = true,
+                Anonymous = true,
+                Upvotes = 0,
+                Downvotes = 0
+            };
+            List<Post> posts = new List<Post>();
+            posts.Add(post);
             Console.WriteLine("Failed to retrieve diary entry: " + e.Message);
-            return new List<Post>();
+
+            return posts;        
         }
     }
 
