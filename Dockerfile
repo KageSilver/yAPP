@@ -24,13 +24,9 @@ RUN apt-get update && apt-get install -y \
 # --------------------------------------------------
 # Download and run the dotnet-install script to install .NET 6
 # Download and install Microsoft's package repository for Ubuntu 22.04
-RUN wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && \
-    dpkg -i packages-microsoft-prod.deb && \
-    rm packages-microsoft-prod.deb
-
-# Update package lists and install .NET SDK 6.0
-RUN apt-get update && \
-    apt-get install -y dotnet-sdk-6.0
+RUN curl -sSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh && \
+    chmod +x dotnet-install.sh && \
+    ./dotnet-install.sh --channel 6.0 --install-dir /usr/share/dotnet
 
 # Set environment variables for the dotnet command
 ENV DOTNET_ROOT=/usr/share/dotnet
@@ -39,12 +35,12 @@ ENV PATH=$PATH:/usr/share/dotnet
 # Verify .NET 6 installation
 RUN dotnet --version
 
-# Install Amazon Lambda .NET CLI tools globally
 RUN dotnet tool install -g Amazon.Lambda.Tools
+
 RUN dotnet tool install -g Amazon.Lambda.TestTool-6.0
 
-# Update the PATH for dotnet tools to be available in the shell
 RUN echo "export PATH=\$PATH:/root/.dotnet/tools" >> /root/.bashrc
+
 
 # --------------------------------------------------
 # Install Node.js using NVM (Node Version Manager)
