@@ -170,21 +170,8 @@ public class PostActions : IPostActions
         }
         catch (Exception e)
         {
-            Post post = new Post
-            {
-                UID = uid,
-                PostTitle = e.Message,
-                PostBody = "request.PostBody",
-                DiaryEntry = true,
-                Anonymous = true,
-                Upvotes = 0,
-                Downvotes = 0
-            };
-            List<Post> posts = new List<Post>();
-            posts.Add(post);
             Console.WriteLine("Failed to retrieve diary entry: " + e.Message);
-
-            return posts;        
+            return new List<Post>();       
         }
     }
 
