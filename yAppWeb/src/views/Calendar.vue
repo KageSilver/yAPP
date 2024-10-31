@@ -19,6 +19,7 @@
     var friendDiariesArr = new Array();
 
     onMounted(async () => {
+        loading.value = true;
         setCalendar();
         const user = await getCurrentUser();
         uid.value = user.userId;
