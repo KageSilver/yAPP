@@ -9,11 +9,12 @@
     const username = ref('');
     const userDiaries = ref([]);
     const friendDiaries = ref([]);
-    const friendUsernames = ref([]);
 
     var today = new Date();
     var selectedDate = today;
     var friends = new Array();
+    var friendUsernames = new Array();
+    var friendDiariesArr = new Array();
 
     onMounted(async () => {
         setCalendar();
@@ -55,7 +56,7 @@
             try {
                 const restOperation = get({
                     apiName: 'yapp',
-                    path: `api/cognito/getUserByName?userName=${friendUsername}`
+                    path: `/api/users/getUserByName?userName=${friendUsername}`
                 });
 
                 const { body } = await restOperation.response;
@@ -64,8 +65,8 @@
                 const decodedText = decoder.decode(response);
                 var thisFriend = JSON.parse(decodedText); // Update with parsed JSON
 
-                var friendInfo = { "userName": friendUsername, "uid": thisFriend.uid };
-                friendUsernames.value += friendInfo;
+                var friendInfo = { "userName": friendUsername, "uid": thisFriend.id };
+                friendUsernames.push(friendInfo);
 
             } catch (error) {
                 console.log('GET call failed', error);
@@ -99,7 +100,7 @@
             const response = await ((await body.blob()).arrayBuffer());
             const decoder = new TextDecoder('utf-8'); // Use TextDecoder to decode the ArrayBuffer to a string
             const decodedText = decoder.decode(response);
-            friendDiaries.value = JSON.parse(decodedText); // Update with parsed JSON
+            friendDiariesArr = JSON.parse(decodedText); // Update with parsed JSON
 
             getUsernamesForPosts();
         } catch (e) {
@@ -108,17 +109,20 @@
     }
 
     function getUsernamesForPosts() {
-        for(var friendDiary in friendDiaries) {
-            if(friendDiary.anonymous) {
-                friendDiary.username = "Anonymous";
+        for(let i = 0; i < friendDiariesArr.length; i++) {
+            if(friendDiariesArr[i].anonymous) {
+                friendDiariesArr[i].username = "Anonymous";
             } else {
-                friendDiary.username = friendUsernames.value.filter(
+                var match = friendUsernames.filter(
                     function(friend) {
-                        return friend.uid == friendDiary.uid;
+                        return friend.uid == friendDiariesArr[i].uid;
                     }
                 );
+                friendDiariesArr[i].username = match[0].userName;
             }
         }
+
+        friendDiaries.value = friendDiariesArr;
     }
 
     function setCalendar() {
