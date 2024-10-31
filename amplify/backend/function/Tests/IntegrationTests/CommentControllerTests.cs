@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using Xunit;
 using yAppLambda;
 using System.Net;
+using Newtonsoft.Json;
 using yAppLambda.Models;
 
 namespace Tests.IntegrationTests;

@@ -12,12 +12,11 @@ using Xunit.Extensions.Ordering;
 using yAppLambda.Common;
 using yAppLambda.DynamoDB;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using yAppLambda;
 using System.Net;
-using Moq;
+using Newtonsoft.Json;
 using yAppLambda.Models;
 
 namespace Tests.IntegrationTests;
