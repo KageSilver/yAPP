@@ -24,11 +24,12 @@
         uid.value = user.userId;
         username.value = user.username;
         await getFriendsByStatus(username);
-        await getFriendUsernames(username);
+        await getFriendUIDs(username);
         await getUserDiaries(uid);
         await getFriendDiaries(uid);
     });
 
+    // get list of accepted friends for their usernames
     async function getFriendsByStatus(username) {
         try {
             const restOperation = get({
@@ -45,7 +46,8 @@
         }
     }
 
-    async function getFriendUsernames(username) {
+    // get uids for all friends to attach their username to non-anonymous diary entries
+    async function getFriendUIDs(username) {
         for(let i = 0; i < friends.length; i++) {
             var friendUsername;
 
@@ -76,6 +78,7 @@
         }
     }
 
+    // gets diaries from the current user by date
     async function getUserDiaries(uid) {
         loading.value = true;
         try {
@@ -93,6 +96,7 @@
         }
     }
 
+    // gets diaries from the current user's friends by date
     async function getFriendDiaries(uid) {
         try {
             const restOperation = get({
@@ -112,6 +116,7 @@
         loading.value = false;
     }
 
+    // attaches usernames to friends diary posts if non-anonymous
     function getUsernamesForPosts() {
         for(let i = 0; i < friendDiariesArr.length; i++) {
             if(friendDiariesArr[i].anonymous) {
@@ -129,6 +134,7 @@
         friendDiaries.value = friendDiariesArr;
     }
 
+    // sets the layout of the calendar
     function setCalendar() {
         var daysInMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0).getDate();
         var blankDays = new Date(selectedDate.getFullYear(), selectedDate.getMonth()).getDay();
@@ -139,12 +145,14 @@
         adjustDaysInMonth(daysInMonth);
     }
 
+    // resets the calendar for changing the month
     async function reset() {
         setCalendar();
         await getUserDiaries(uid);
         await getFriendDiaries(uid);
     }
 
+    // adjusts where the first day of the month is located
     function moveFirstDay(blankDays) {
         for(var i = 0; i < 6; i++){
             var string = "blank" + i;
@@ -158,6 +166,7 @@
         }
     }
 
+    // adjusts the number of days displayed in the month
     function adjustDaysInMonth(daysInMonth) {
         if(daysInMonth == 28) {
             document.getElementById("29").style.display = 'none';
@@ -176,11 +185,13 @@
         }
     }
 
+    // sets the month displayed above the calendar based on the selected date/month
     function resetMonthPicker() {
         var monthPicker = document.getElementById("monthPicker");
         monthPicker.innerHTML = selectedDate.toLocaleString('default', { month: 'long' }) + " " + selectedDate.getFullYear();
     }
 
+    // moves the calendar to the previous month
     function prevMonth() {
         if(selectedDate.getMonth() == 1){
             // go to dec prev year
@@ -193,6 +204,7 @@
         reset();
     }
 
+    // moves the calendar to the next month
     function nextMonth() {
         if(selectedDate.getMonth() == 11){
             // go to jan next year
@@ -205,6 +217,7 @@
         reset();
     }
 
+    // changes the date selected on the calendar and fetches diaries from that date
     async function changeSelectedDate(date) {
         userDiaries.value = null;
         friendDiaries.value = null;
@@ -216,10 +229,12 @@
         await getFriendDiaries(uid);
     }
 
+    // changes the header that displayed the current selected date
     function changeDateHeader() {
         document.getElementById("date").innerHTML = selectedDate.toDateString();
     }
 
+    // collapses the calendar
     function collapseCalendar() {
         if(calendar.style.display == 'none') {
             document.getElementById("calendar").style.display = 'block';
