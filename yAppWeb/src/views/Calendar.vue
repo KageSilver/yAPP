@@ -6,19 +6,72 @@
 
     const router = useRouter(); // Use router hook
     const uid = ref('');
+    const username = ref('');
     const userDiaries = ref([]);
     const friendDiaries = ref([]);
+    const friendUsernames = ref([]);
 
     var today = new Date();
     var selectedDate = today;
+    var friends = new Array();
 
     onMounted(async () => {
         setCalendar();
         const user = await getCurrentUser();
         uid.value = user.userId;
+        username.value = user.username;
+        await getFriendsByStatus(username);
+        await getFriendUsernames(username);
         await getUserDiaries(uid);
         await getFriendDiaries(uid);
     });
+
+    async function getFriendsByStatus(username) {
+        try {
+            const restOperation = get({
+                apiName: 'yapp',
+                path: `/api/friends/getFriendsByStatus?userName=${username.value}&status=1`
+            });
+            const { body } = await restOperation.response;
+            const response = await ((await body.blob()).arrayBuffer());
+            const decoder = new TextDecoder('utf-8'); // Use TextDecoder to decode the ArrayBuffer to a string
+            const decodedText = decoder.decode(response);
+            friends = JSON.parse(decodedText); // Update with parsed JSON
+        } catch (error) {
+            console.log('GET call failed', error);
+        }
+    }
+
+    async function getFriendUsernames(username) {
+        for(let i = 0; i < friends.length; i++) {
+            var friendUsername;
+
+            if(friends[i].FromUserName == username.value) {
+                friendUsername = friends[i].ToUserName;
+            } else {
+                friendUsername = friends[i].FromUserName;
+            }
+
+            try {
+                const restOperation = get({
+                    apiName: 'yapp',
+                    path: `api/cognito/getUserByName?userName=${friendUsername}`
+                });
+
+                const { body } = await restOperation.response;
+                const response = await ((await body.blob()).arrayBuffer());
+                const decoder = new TextDecoder('utf-8'); // Use TextDecoder to decode the ArrayBuffer to a string
+                const decodedText = decoder.decode(response);
+                var thisFriend = JSON.parse(decodedText); // Update with parsed JSON
+
+                var friendInfo = { "userName": friendUsername, "uid": thisFriend.uid };
+                friendUsernames.value += friendInfo;
+
+            } catch (error) {
+                console.log('GET call failed', error);
+            }
+        }
+    }
 
     async function getUserDiaries(uid) {
         try {
@@ -38,7 +91,6 @@
 
     async function getFriendDiaries(uid) {
         try {
-            console.log(uid);
             const restOperation = get({
                 apiName: 'yapp',
                 path: `/api/posts/getDiariesByFriends?uid=${uid.value}&current=${selectedDate.toJSON()}`
@@ -48,8 +100,24 @@
             const decoder = new TextDecoder('utf-8'); // Use TextDecoder to decode the ArrayBuffer to a string
             const decodedText = decoder.decode(response);
             friendDiaries.value = JSON.parse(decodedText); // Update with parsed JSON
+
+            getUsernamesForPosts();
         } catch (e) {
             console.log('GET call failed', e);
+        }
+    }
+
+    function getUsernamesForPosts() {
+        for(var friendDiary in friendDiaries) {
+            if(friendDiary.anonymous) {
+                friendDiary.username = "Anonymous";
+            } else {
+                friendDiary.username = friendUsernames.value.filter(
+                    function(friend) {
+                        return friend.uid == friendDiary.uid;
+                    }
+                );
+            }
         }
     }
 
@@ -61,7 +129,6 @@
         changeDateHeader();
         moveFirstDay(blankDays);
         adjustDaysInMonth(daysInMonth);
-        
     }
 
     async function reset() {
@@ -328,11 +395,11 @@
 
         <div class="flex flex-col items-center w-full mx-auto">
             <div class="card bg-gray-100 border border-gray-500 rounded-lg p-5 shadow transition-shadow hover:shadow-md cursor-pointer w-full max-w-4xl m-2"
-                v-for="post in userDiaries" :key="post.pid" @click="clickPost(post.pid)">
+                v-for="post in friendDiaries" :key="post.pid" @click="clickPost(post.pid)">
                 <div class="card-header mb-2">
                     <h3 class="text-lg font-semibold truncate">{{ post.postTitle }}</h3>
                     <p class="text-sm text-gray-600 overflow-hidden overflow-ellipsis whitespace-nowrap">
-                        <strong>Posted By:</strong> You 
+                        <strong>Posted By:</strong> {{  post.username }}
                     </p>
                     <p class="text-sm text-gray-600 overflow-hidden overflow-ellipsis whitespace-nowrap">
                         <strong>Created At:</strong> {{ new Date(post.createdAt).toLocaleString() }}
