@@ -1,0 +1,166 @@
+def project = "yApp"
+def major = 0
+def minor = 0
+def revision = 0
+
+def appversion = "$major.$minor.$revision"
+
+def amplify_env = ""
+def cognito_pool = ""
+def pool_id = ""
+def cloudfront_id = ""
+def awsProfile = "yapp"
+def awsRegion = "us-east-2"
+
+
+
+//environment name
+def MAIN_ENV = "main"
+def DEV_ENV = "dev"
+def TEST_ENV = "test"
+
+// app id
+def AMPLIFY_APP_ID = "d34oy4u1icq89e"
+def MAIN_CLOUDFRONT_ID = "E1J2AXX98R4GJP" 
+def DEV_CLOUDFRONT_ID = "E31QWRSIU8H00V"
+
+//file path we need to update
+def LAMBDA_PATH = "amplify/backend/function/yAppLambda/src/appSettings.json"
+def GOLBAL_PATH = "amplify/backend/function/yAppLambda/src/global.json"
+
+//cognito
+def POOL_URL= "https://cognito-idp.us-east-2.amazonaws.com/"
+def TEST_POOL = "us-east-2_DpPbDoSUa"
+def DEV_POOL = "us-east-2_AoahD29kD"
+def MAIN_POOL = "us-east-2_itXR8ULJ4"
+
+//dotnet tests path
+def SOLUTION = "amplify/backend/function/Lambdas.sln"
+
+
+
+pipeline {
+    environment {
+        def label = null // TODO:Update later
+        def title = null // filled in later
+        AWS_SDK_LOAD_CONFIG = "1"
+        AWS_PROFILE = "default"
+        IMAGE_NAME = 'my-docker-image-main' // Replace with your image name
+        //DOCKER_REGISTRY = 'my-registry' // Optional: if you are using a private registry
+        ACCESS_KEY_ID ="AAKIA23WHT5F5J2CZOKNS"
+        SECRET_ACCESS_KEY ="vJnMiQhPExnL0+ksaeTNVCEzJJPBgqq+Ydt9cmLs"
+        AWS_DEFAULT_REGION = "us-east-2"
+    }
+    agent any
+    options {
+        timeout(time: 1, unit: "HOURS")
+        parallelsAlwaysFailFast()
+        disableConcurrentBuilds()
+    }
+    stages {
+
+   
+        
+        stage('Initialize environment') {
+            steps {
+                script {
+                    echo 'Initializing Amplify'
+                    amplify_env = MAIN_ENV
+                    pool_id = MAIN_POOL
+                    cloudfront_id = MAIN_CLOUDFRONT_ID
+
+                    cognito_pool = "${POOL_URL}${pool_id}"
+                }
+            }
+        }
+        stage('Update Version & App settings') {
+            steps {
+                script {
+                    //To update the version number that display in the app
+                    echo "Update lambda settings"
+   
+                    def jsonData = [
+                        Environment: "dev",
+                        AwsRegion: "us-east-2",
+                        UserPoolId: "${pool_id}",
+                        FriendshipTableName: "Friendship-${amplify_env}",
+                        PostTableName: "Post-${amplify_env}",
+                        CommentTableName: "Comment-${amplify_env}",
+                    ]
+                    // Convert JSON data to string
+                    def jsonString = groovy.json.JsonOutput.toJson(jsonData)
+                    // Write JSON string to file
+                    writeFile file: LAMBDA_PATH, text: jsonString
+
+                    echo "Show the content of the file"
+                    sh ("cat ${LAMBDA_PATH}")
+
+                    // echo "Update global dotnet version"
+                    // def dotnetVersion = [
+                    //          sdk: [
+                    //             version: "6.0.427"
+                    //         ]
+                    // ]
+                    // def dotnetVersionString = groovy.json.JsonOutput.toJson(dotnetVersion)
+                    // writeFile file: GOLBAL_PATH, text: dotnetVersionString
+                    // sh ("cat ${GLOBAL_PATH}")
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Pass the AWS Access Key and other build arguments during Docker build
+                    sh("docker build  --build-arg AWS_ACCESS_KEY_ID=${ACCESS_KEY_ID} --build-arg AWS_SECRET_ACCESS_KEY=${SECRET_ACCESS_KEY} --build-arg AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} -t ${IMAGE_NAME} .")
+                }
+            }
+        }
+
+        stage('Run tests') {
+            steps {
+                script {
+                    echo 'Running tests'
+                    def testStatus = sh(script: "docker run ${IMAGE_NAME} dotnet test ${SOLUTION}", returnStatus: true)
+                    if (testStatus != 0) {
+                        error("Tests failed. Exiting...")
+                    }
+                }
+            }
+        }
+          stage('Initialize Amplify') {
+            steps {
+                script {
+                    echo 'Initializing Amplify'
+                    def amplify_project = "{\
+                    \"projectName\":\"yApp\",\
+                    \"envName\":\"${amplify_env}\",\
+                    \"defaultEditor\":\"code\"\
+                    }"
+                   //sh(script:"docker run ${IMAGE_NAME} sh -c 'ls'")
+                   sh(script: "docker run ${IMAGE_NAME} sh -c 'chmod +x ./bash.sh && ./bash.sh'")
+                }
+            }
+        }
+
+        stage('Invalidate Cloudfront cache') {
+            steps {
+                script {
+                    echo 'Invalidate Cloudfront cache'
+                    //sh(script: "docker run ${IMAGE_NAME} aws cloudfront create-invalidation --distribution-id ${cloudfront_id} --paths \"/*\" ")
+                    
+                }
+            }
+        }
+    }
+    post {
+        always {
+            echo "Post run"
+            // to create a webhook for the github repo
+        }
+        cleanup {
+            echo "Clean up Post"
+            cleanWs()
+        }
+    }
+}
