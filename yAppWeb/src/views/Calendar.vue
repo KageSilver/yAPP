@@ -3,12 +3,14 @@
     import { getCurrentUser } from 'aws-amplify/auth';
     import { onMounted, ref } from 'vue';
     import { useRouter } from 'vue-router';
+    import LoadingScreen from '../components/LoadingScreen.vue';
 
     const router = useRouter(); // Use router hook
     const uid = ref('');
     const username = ref('');
     const userDiaries = ref([]);
     const friendDiaries = ref([]);
+    const loading = ref(false);
 
     var today = new Date();
     var selectedDate = today;
@@ -75,6 +77,7 @@
     }
 
     async function getUserDiaries(uid) {
+        loading.value = true;
         try {
             const restOperation = get({
                 apiName: 'yapp',
@@ -106,6 +109,7 @@
         } catch (e) {
             console.log('GET call failed', e);
         }
+        loading.value = false;
     }
 
     function getUsernamesForPosts() {
@@ -202,6 +206,9 @@
     }
 
     async function changeSelectedDate(date) {
+        userDiaries.value = null;
+        friendDiaries.value = null;
+
         selectedDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), date);
         changeDateHeader();
        
@@ -376,6 +383,8 @@
         </div>
         
         <hr class="w-full h-0.1 mx-auto mt-4 mb-8 bg-white">
+
+        <LoadingScreen v-if="loading" />
 
         <div class="flex flex-col items-center w-full mx-auto">
             <div class="card bg-gray-300 border border-gray-500 rounded-lg p-5 shadow transition-shadow hover:shadow-md cursor-pointer w-full max-w-4xl m-2"
