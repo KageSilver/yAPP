@@ -41,7 +41,7 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
     private CardListHelper diaryEntryHelper;
     private ImageButton collapseCalendar;
     private RecyclerView diaries;
-    private List<JSONObject> friends;
+    private List<JSONObject> friends, friendUsernames;
     private String uid, username;
 
     @Override
@@ -53,6 +53,9 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
 
         ProgressBar loadingSpinner = findViewById(R.id.indeterminate_bar);
         diaryEntryHelper = new CardListHelper(this, loadingSpinner, "DIARY", this);
+
+        getUserInfo();
+        getFriends();
 
         // sets up recycler view
         diaries = findViewById(R.id.diary_list);
@@ -73,6 +76,7 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
         calendar.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(CalendarView calendarView, int year, int month, int day) {
+                diaryEntryHelper.clearItems();
                 // set calendar to the new date selected
                 Calendar cal = Calendar.getInstance();
                 cal.set(year, month, day);
@@ -82,6 +86,8 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
                 getDiaries(cal);
             }
         });
+
+        getDiaries(cal);
 
         // sets up button to collapse and open calendar
         collapseCalendar.setOnClickListener(new View.OnClickListener() {
@@ -100,10 +106,6 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
                 }
             }
         });
-
-        getUserInfo();
-        getFriends();
-        getDiaries(cal);
     }
 
     private void getDiaries(Calendar cal)
@@ -137,11 +139,59 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
         {
             // Convert API response into a list of CardItems
             friends = diaryEntryHelper.handleData(jsonData);
+            getFriendUIDs();
         }).exceptionally(throwable ->
         {
             Log.e("API", "Error fetching data", throwable);
             return null;
         });
+    }
+
+    private void getFriendUIDs()
+    {
+        for(int i = 0; i < friends.size(); i++)
+        {
+            try
+            {
+                String friendUsername;
+
+                if(friends.get(i).get("FromUserName").toString().equals(username))
+                {
+                    friendUsername = friends.get(i).get("ToUserName").toString();
+                }
+                else
+                {
+                    friendUsername = friends.get(i).get("FromUserName").toString();
+                }
+
+                String apiUrl = "/api/users/getUserByName?userName=" + friendUsername;
+
+                CompletableFuture<String> future = diaryEntryHelper.getItemsFromAPI(apiUrl);
+                future.thenAccept(jsonData ->
+                {
+                    try {
+                        // Convert API response into a list of CardItems
+                        List<JSONObject> thisFriend = diaryEntryHelper.handleData(jsonData);
+
+                        String friendInfo = "{ \"userName\": " + friendUsername + ", \"uid\": " + thisFriend.get(0).get("id") +"}";
+                        friendUsernames.add(new JSONObject(friendInfo));
+                    }
+                    catch (Exception e)
+                    {
+                        Log.e("JSON", "Error parsing JSON", e);
+                    }
+
+                }).exceptionally(throwable ->
+                {
+                    Log.e("API", "Error fetching data", throwable);
+                    return null;
+                });
+            }
+            catch (Exception e)
+            {
+                Log.e("JSON", "Error parsing JSON", e);
+            }
+        }
     }
 
     private String formatDisplayDate(Calendar cal)
