@@ -144,6 +144,9 @@ public class CardListHelper extends AppCompatActivity
         {
             // Convert API response into a list of CardItems
             cardItemList = handleData(jsonData);
+            populateCard();
+            // Make loading spinner visible while we populate our CardItemAdapter
+            loadingSpinner.setVisibility(View.VISIBLE);
         }).exceptionally(throwable ->
         {
             Log.e("API", "Error fetching data", throwable);
@@ -154,14 +157,19 @@ public class CardListHelper extends AppCompatActivity
         future.thenAccept(jsonData ->
         {
             // Convert API response into a list of CardItems
-            cardItemList.addAll(handleData(jsonData));
+            cardItemList.addAll(0, handleData(jsonData));
+            populateCard();
         }).exceptionally(throwable ->
         {
             Log.e("API", "Error fetching data", throwable);
             return null;
         });
+    }
 
-        populateCard();
+    public void clearItems()
+    {
+        cardItemList.clear();
+        adapter.updateList(cardItemList);
     }
 
     public CompletableFuture<String> getItemsFromAPI(String apiUrl)
