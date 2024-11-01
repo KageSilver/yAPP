@@ -9,7 +9,7 @@ def amplify_env = ""
 def cognito_pool = ""
 def pool_id = ""
 def cloudfront_id = ""
-def awsProfile = "yapp"
+def awsProfile = "yApp"
 def awsRegion = "us-east-2"
 
 
@@ -121,7 +121,10 @@ pipeline {
             steps {
                 script {
                     echo 'Running tests'
-                    sh("docker run ${IMAGE_NAME} dotnet test ${SOLUTION}")
+                    def testStatus = sh(script: "docker run ${IMAGE_NAME} dotnet test ${SOLUTION}", returnStatus: true)
+                    // if (testStatus != 0) {
+                    //     error("Tests failed. Exiting...")
+                    // }
                 }
             }
         }
@@ -134,8 +137,8 @@ pipeline {
                     \"envName\":\"${amplify_env}\",\
                     \"defaultEditor\":\"code\"\
                     }"
-                   //sh(script:"docker run ${IMAGE_NAME} sh -c 'ls'")
-                 //  sh(script: "docker run ${IMAGE_NAME} sh -c 'chmod +x ./bashDev.sh && ./bashDev.sh'")
+                   sh(script:"docker run ${IMAGE_NAME} sh -c 'ls'")
+                   sh(script: "docker run ${IMAGE_NAME} sh -c 'chmod +x ./bashDev.sh && ./bashDev.sh'")
                 }
             }
         }
@@ -143,8 +146,8 @@ pipeline {
         stage('Invalidate Cloudfront cache') {
             steps {
                 script {
-                    echo 'Invalidate Cloudfront cache'
-                    sh(script: "docker run ${IMAGE_NAME} aws cloudfront create-invalidation --distribution-id ${cloudfront_id} --paths \"/*\" --profile default")
+                    echo 'Invalidate Cloudfront (Not working)'
+                    //sh(script: "aws cloudfront create-invalidation --distribution-id ${cloudfront_id} --paths \"/*\" --profile ${awsProfile}")
                     
                 }
             }
