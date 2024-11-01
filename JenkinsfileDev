@@ -121,7 +121,7 @@ pipeline {
             steps {
                 script {
                     echo 'Running tests'
-                    // def testStatus = sh(script: "docker run ${IMAGE_NAME} dotnet test ${SOLUTION}", returnStatus: true)
+                    def testStatus = sh(script: "docker run ${IMAGE_NAME} dotnet test ${SOLUTION}", returnStatus: true)
                     // if (testStatus != 0) {
                     //     error("Tests failed. Exiting...")
                     // }
@@ -147,7 +147,7 @@ pipeline {
             steps {
                 script {
                     echo 'Invalidate Cloudfront cache'
-                    //sh(script: "docker run ${IMAGE_NAME} aws cloudfront create-invalidation --distribution-id ${cloudfront_id} --paths \"/*\" ")
+                    sh(script: "docker run ${IMAGE_NAME} aws cloudfront create-invalidation --distribution-id ${cloudfront_id} --paths \"/*\" ")
                     
                 }
             }
