@@ -214,7 +214,7 @@
 
 ### GetUserById
  - Retrieves a user by their unique identifier.
- - GET: api/cognito/getUserById?id={id}
+ - GET: api/users/getUserById?id={id}
     - id: The unique identifier of the user
  - Response: returns the user object with the specified id
     - { "userName": "string", "nickName": "string", "id": "string", "name": "string", "email": "string", "Attributes": { "additionalProp1": "string", "additionalProp2": "string", "additionalProp3": "string" } }
@@ -225,7 +225,7 @@
 
 ### GetUserByName
  - Retrieves a user by their username.
- - GET: api/cognito/getUserByName?userName={username}
+ - GET: api/users/getUserByName?userName={username}
     - userName: The username of the user to retrieve
  - Response: returns the user object with the specified username
     - { "userName": "string", "nickName": "string", "id": "string", "name": "string", "email": "string", "Attributes": { "additionalProp1": "string", "additionalProp2": "string", "additionalProp3": "string" } }
