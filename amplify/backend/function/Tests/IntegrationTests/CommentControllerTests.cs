@@ -23,7 +23,6 @@ namespace Tests.IntegrationTests;
 
 public class CommentControllerIntegrationTests
 {
-    // change
     private readonly HttpClient _client;
 
     private readonly IAppSettings _appSettings;
