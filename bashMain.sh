@@ -38,6 +38,9 @@ amplify init \
 
 amplify status
 
-# amplify push --yes
+echo "Pushing..."
+amplify push --yes --debug
 
-# amplify publish --yes
+
+echo "Publishing..."
+amplify publish --yes  --debug
