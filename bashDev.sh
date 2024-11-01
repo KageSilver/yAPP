@@ -38,6 +38,6 @@ amplify init \
 
 amplify status
 
-amplify push --yes
+amplify push --yes --debug
 
 amplify publish --yes
