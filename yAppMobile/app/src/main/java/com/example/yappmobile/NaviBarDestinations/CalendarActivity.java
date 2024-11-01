@@ -29,6 +29,7 @@ import com.example.yappmobile.R;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -48,14 +49,15 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_calendar);
         NavBar.establishNavBar(this, "CALENDAR");
 
         ProgressBar loadingSpinner = findViewById(R.id.indeterminate_bar);
         diaryEntryHelper = new CardListHelper(this, loadingSpinner, "DIARY", this);
+        friendUsernames = new ArrayList<>();
 
         getUserInfo();
-        getFriends();
 
         // sets up recycler view
         diaries = findViewById(R.id.diary_list);
@@ -87,8 +89,6 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
             }
         });
 
-        getDiaries(cal);
-
         // sets up button to collapse and open calendar
         collapseCalendar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,19 +114,37 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
         String apiUrlUser = "/api/posts/getDiariesByUser?uid=" + uid + "&current=" + formatCompareDate(cal);
         // gets diary entries from users friends for date selected
         String apiUrlFriends = "/api/posts/getDiariesByFriends?uid=" + uid + "&current=" + formatCompareDate(cal);
-        diaryEntryHelper.loadDiaries(apiUrlUser, apiUrlFriends, diaries);
+        diaryEntryHelper.loadDiaries(apiUrlUser, apiUrlFriends, diaries, friendUsernames, uid);
     }
 
     private void getUserInfo()
     {
         // gets user information
+        CompletableFuture<String> futureUsername = new CompletableFuture<>();
         Amplify.Auth.getCurrentUser(result -> {
-            uid = result.getUserId();
-            username = result.getUsername();
+            futureUsername.complete(result.getUsername());
         }, error -> {
             Log.e("Auth", "Error occurred when getting current user. Redirecting to authenticator");
             Intent intent = new Intent(CalendarActivity.this, AuthenticatorActivity.class);
             startActivity(intent);
+        });
+
+        futureUsername.thenAccept(_username -> {
+            username = _username;
+            getFriends();
+        });
+
+        CompletableFuture<String> futureUID = new CompletableFuture<>();
+        Amplify.Auth.getCurrentUser(result -> {
+            futureUID.complete(result.getUserId());
+        }, error -> {
+            Log.e("Auth", "Error occurred when getting current user. Redirecting to authenticator");
+            Intent intent = new Intent(CalendarActivity.this, AuthenticatorActivity.class);
+            startActivity(intent);
+        });
+
+        futureUID.thenAccept(_uid -> {
+            uid = _uid;
         });
     }
 
@@ -140,6 +158,7 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
             // Convert API response into a list of CardItems
             friends = diaryEntryHelper.handleData(jsonData);
             getFriendUIDs();
+            getDiaries(Calendar.getInstance());
         }).exceptionally(throwable ->
         {
             Log.e("API", "Error fetching data", throwable);
@@ -149,6 +168,7 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
 
     private void getFriendUIDs()
     {
+        System.out.println("friends: " + friends);
         for(int i = 0; i < friends.size(); i++)
         {
             try
@@ -171,16 +191,15 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
                 {
                     try {
                         // Convert API response into a list of CardItems
-                        List<JSONObject> thisFriend = diaryEntryHelper.handleData(jsonData);
+                        JSONObject thisFriend = new JSONObject(jsonData);
 
-                        String friendInfo = "{ \"userName\": " + friendUsername + ", \"uid\": " + thisFriend.get(0).get("id") +"}";
+                        String friendInfo = "{ \"userName\": " + friendUsername + ", \"uid\": " + thisFriend.getString("id") +"}";
                         friendUsernames.add(new JSONObject(friendInfo));
                     }
                     catch (Exception e)
                     {
                         Log.e("JSON", "Error parsing JSON", e);
                     }
-
                 }).exceptionally(throwable ->
                 {
                     Log.e("API", "Error fetching data", throwable);
