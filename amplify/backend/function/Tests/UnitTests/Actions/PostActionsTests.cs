@@ -525,7 +525,7 @@ public class PostActionsTests
             PostBody = "body",
             Upvotes = 0,
             Downvotes = 0,
-            DiaryEntry = false,
+            DiaryEntry = true,
             Anonymous = true
         };
         var response = new Post { PID = "1" };
@@ -698,7 +698,7 @@ public class PostActionsTests
             PostBody = "body",
             Upvotes = 0,
             Downvotes = 0,
-            DiaryEntry = false,
+            DiaryEntry = true,
             Anonymous = true
         };
         var response = new Post { PID = "1" };
