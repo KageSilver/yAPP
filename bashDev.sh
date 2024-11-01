@@ -5,7 +5,7 @@ IFS='|'
 REACTCONFIG="{\
 \"SourceDir\":\"yAppWeb/src\",\
 \"DistributionDir\":\"yAppWeb/dist\",\
-\"BuildCommand\":\"npm run-script build\",\
+\"BuildCommand\":\"pnpm build\",\
 \"StartCommand\":\"npm run-script start\"\
 }"
 AWSCLOUDFORMATIONCONFIG="{\
