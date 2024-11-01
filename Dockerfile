@@ -40,8 +40,7 @@ RUN dotnet tool install -g Amazon.Lambda.Tools
 
 RUN dotnet tool install -g Amazon.Lambda.TestTool-6.0
 
-RUN echo "export PATH=\$PATH:/root/.dotnet/tools" >> /root/.bashrc
-
+ENV PATH="${PATH}:/root/.dotnet/tools"
 
 # --------------------------------------------------
 # Install Node.js using NVM (Node Version Manager)
@@ -65,7 +64,6 @@ RUN node -v && npm -v
 # Install PNPM (Performant Node.js Package Manager)
 # --------------------------------------------------
 # Install PNPM globally using NPM
-RUN npm install --save-dev typescript
 RUN npm install -g pnpm
 ENV PNPM_HOME="/pnpm"
 ENV PATH=$PNPM_HOME:$PATH

@@ -38,6 +38,14 @@ amplify init \
 
 amplify status
 
-amplify push --yes
+echo "Pushing..."
+amplify push --yes --debug
 
-amplify publish --yes
+
+echo "chaning path..."
+cd yAppWeb
+echo "installing pnpm packages..."
+pnpm install
+
+echo "Publishing..."
+amplify publish --yes  --debug
