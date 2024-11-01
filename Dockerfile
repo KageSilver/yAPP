@@ -65,6 +65,7 @@ RUN node -v && npm -v
 # Install PNPM (Performant Node.js Package Manager)
 # --------------------------------------------------
 # Install PNPM globally using NPM
+RUN npm install --save-dev typescript
 RUN npm install -g pnpm
 ENV PNPM_HOME="/pnpm"
 ENV PATH=$PNPM_HOME:$PATH
