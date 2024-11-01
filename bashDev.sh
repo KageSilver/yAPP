@@ -42,7 +42,7 @@ echo "Pushing..."
 amplify push --yes --debug
 
 
-echo "chaning path..."
+echo "changing path..."
 cd yAppWeb
 echo "installing pnpm packages..."
 pnpm install
