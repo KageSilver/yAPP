@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     libicu-dev \
     zlib1g \
     unzip \
+    zip \
     ca-certificates \
     sudo \
     wget \
