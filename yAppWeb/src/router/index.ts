@@ -1,18 +1,18 @@
 import { getCurrentUser } from "aws-amplify/auth";
 import { createRouter, createWebHistory } from "vue-router";
 
+import AccountSettings from "../views/AccountSettings.vue";
+import AddFriends from "../views/AddFriends.vue";
+import Calendar from "../views/Calendar.vue";
+import CreatePost from "../views/CreatePost.vue";
 import Home from "../views/Home.vue";
-import Index from "../views/Index.vue";
+import Index from "../views/index.vue";
+import MyAwards from "../views/MyAwards.vue";
+import MyFriends from "../views/MyFriends.vue";
+import MyPosts from "../views/MyPosts.vue";
+import MyRequests from "../views/MyRequests.vue";
 import PostDetails from "../views/PostDetails.vue";
 import Signin from "../views/Signin.vue";
-import MyPosts from "../views/MyPosts.vue";
-import MyFriends from "../views/MyFriends.vue";
-import MyRequests from "../views/MyRequests.vue";
-import AddFriends from "../views/AddFriends.vue";
-import CreatePost from "../views/CreatePost.vue";
-import AccountSettings from "../views/AccountSettings.vue";
-import Calendar from "../views/Calendar.vue";
-import MyAwards from "../views/MyAwards.vue";
 
 const routes = [
 	{
@@ -92,7 +92,6 @@ const routes = [
 		component: Signin,
 	},
 ];
-			
 
 const router = createRouter({
 	history: createWebHistory(),
@@ -101,11 +100,9 @@ const router = createRouter({
 router.beforeEach(async to => {
 	try {
 		var user = await getCurrentUser();
-		if (!user) { 
+		if (!user) {
 			throw new Error("User not signed in");
 		}
-		
-
 	} catch (e: unknown) {
 		// avoid infinite redirect
 		if (to.name !== "signIn") {
