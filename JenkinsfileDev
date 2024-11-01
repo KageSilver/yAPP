@@ -138,7 +138,7 @@ pipeline {
                     \"defaultEditor\":\"code\"\
                     }"
                    //sh(script:"docker run ${IMAGE_NAME} sh -c 'ls'")
-                   sh(script: "docker run ${IMAGE_NAME} sh -c 'chmod +x ./bash.sh && ./bash.sh'")
+                   sh(script: "docker run ${IMAGE_NAME} sh -c 'chmod +x ./bashDev.sh && ./bashDev.sh'")
                 }
             }
         }
