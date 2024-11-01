@@ -147,7 +147,7 @@ pipeline {
             steps {
                 script {
                     echo 'Invalidate Cloudfront cache using the profile in the Jenkins server'
-                    sh (script: "aws cloudfront create-invalidation --distribution-id ${cloudfront_id} --paths '/*' --profile ${awsProfile}")
+                    sh(script: "aws cloudfront create-invalidation --distribution-id ${cloudfront_id} --paths \"/*\" --profile ${awsProfile}")
                     
                 }
             }
