@@ -12,7 +12,7 @@ import MyFriends from "../views/MyFriends.vue";
 import MyPosts from "../views/MyPosts.vue";
 import MyRequests from "../views/MyRequests.vue";
 import PostDetails from "../views/PostDetails.vue";
-import Signin from "../views/Signin.vue";
+import SignIn from "../views/SignIn.vue";
 
 const routes = [
 	{
@@ -89,7 +89,7 @@ const routes = [
 	{
 		path: "/signIn",
 		name: "signIn",
-		component: Signin,
+		component: SignIn,
 	},
 ];
 
