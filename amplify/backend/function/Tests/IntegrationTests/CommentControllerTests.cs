@@ -28,7 +28,7 @@ public class CommentControllerIntegrationTests
     private readonly IAppSettings _appSettings;
 
     // We must use simulator email to test the user without using email quota
-    private const string TestUserEmail = "bounce4@simulator.amazonses.com";
+    private const string TestUserEmail = "bounce5@simulator.amazonses.com";
     private static string _testUid = "";
 
     private ICognitoActions _cognitoActions;
@@ -443,8 +443,10 @@ public class CommentControllerIntegrationTests
         await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString = await response.Content.ReadAsStringAsync();
+        Console.WriteLine(responseString);
         var responsePost = JsonConvert.DeserializeObject<Post>(responseString);
-
+        Console.WriteLine(responsePost);
+        
         // Arrange comments now
         var newComment1 = new NewComment
         {
