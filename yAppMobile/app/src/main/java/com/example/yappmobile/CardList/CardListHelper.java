@@ -131,7 +131,7 @@ public class CardListHelper extends AppCompatActivity
         }
     }
 
-    public void loadDiaries(String apiUrlUser, String apiUrlFriends, RecyclerView recyclerView)
+    public void loadDiaries(String apiUrlUser, String apiUrlFriends, RecyclerView recyclerView, List<JSONObject> friends, String uid)
     {
         // Make loading spinner visible while we populate our CardItemAdapter
         loadingSpinner.setVisibility(View.VISIBLE);
@@ -143,7 +143,8 @@ public class CardListHelper extends AppCompatActivity
         future.thenAccept(jsonData ->
         {
             // Convert API response into a list of CardItems
-            cardItemList = handleData(jsonData);
+            cardItemList.addAll(0, handleData(jsonData));
+            getUsernamesForDiaries(friends, uid);
             populateCard();
             // Make loading spinner visible while we populate our CardItemAdapter
             loadingSpinner.setVisibility(View.VISIBLE);
@@ -157,13 +158,48 @@ public class CardListHelper extends AppCompatActivity
         future.thenAccept(jsonData ->
         {
             // Convert API response into a list of CardItems
-            cardItemList.addAll(0, handleData(jsonData));
+            cardItemList.addAll(handleData(jsonData));
+            getUsernamesForDiaries(friends, uid);
             populateCard();
         }).exceptionally(throwable ->
         {
             Log.e("API", "Error fetching data", throwable);
             return null;
         });
+    }
+
+    private void getUsernamesForDiaries(List<JSONObject> friends, String uid)
+    {
+        for(int i = 0; i < cardItemList.size(); i++)
+        {
+            try
+            {
+                if(cardItemList.get(i).getString("uid").equals(uid))
+                {
+                    cardItemList.get(i).put("username", "You");
+                }
+                else if(cardItemList.get(i).getBoolean("anonymous"))
+                {
+                    cardItemList.get(i).put("username", "Anonymous");
+                }
+                else
+                {
+                    String friendUid = cardItemList.get(i).getString("uid");
+
+                    for(int j = 0; j < friends.size(); j++)
+                    {
+                        if(friendUid.equals(friends.get(j).getString("uid")))
+                        {
+                            cardItemList.get(i).put("username", friends.get(j).getString("userName"));
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Log.e("JSON", "Error parsing JSON", e);
+            }
+        }
     }
 
     public void clearItems()
