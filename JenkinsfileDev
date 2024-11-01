@@ -128,14 +128,6 @@ pipeline {
                 }
             }
         }
-        stage('Installing packages') {
-            steps {
-                script {
-                    echo 'Installing packages'
-                    //sh(script: "docker run ${IMAGE_NAME} sh -c 'cd yAppWeb && pnpm install'")
-                }
-            }
-        }
           stage('Initialize Amplify') {
             steps {
                 script {
