@@ -5,7 +5,7 @@ IFS='|'
 REACTCONFIG="{\
 \"SourceDir\":\"yAppWeb/src\",\
 \"DistributionDir\":\"yAppWeb/dist\",\
-\"BuildCommand\":\"pnpm build\",\
+\"BuildCommand\":\"npm run-script build\",\
 \"StartCommand\":\"npm run-script start\"\
 }"
 AWSCLOUDFORMATIONCONFIG="{\
@@ -41,6 +41,11 @@ amplify status
 echo "Pushing..."
 amplify push --yes --debug
 
+
+echo "chaning path..."
+cd yAppWeb
+echo "installing pnpm packages..."
+pnpm install
 
 echo "Publishing..."
 amplify publish --yes  --debug
