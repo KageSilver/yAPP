@@ -56,7 +56,7 @@ public class UserControllerIntegrationTests
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
-    [Fact, Order(1)]
+    [Fact, Order(2)]
     public async Task GetUser_ShouldReturnFound_WhenUserExist()
     {
         var response = await _client.GetAsync($"/api/users/getUserByName?username={TestUserEmail}");
@@ -64,14 +64,14 @@ public class UserControllerIntegrationTests
        
     }
 
-    [Fact, Order(2)]
+    [Fact, Order(3)]
     public async Task GetUserById_ShouldReturnNotFound_WhenUserDoesNotExist()
     {
         var response = await _client.GetAsync("/api/users/getUserById?id=nonexistentUser");
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
-    [Fact, Order(2)]
+    [Fact, Order(4)]
     public async Task GetUserById_ShouldReturnFound_WhenUserExist()
     {
         //update id 
@@ -87,7 +87,7 @@ public class UserControllerIntegrationTests
     }
     
 
-    [Fact, Order(3)]
+    [Fact, Order(5)]
     public async Task UpdateUser_ShouldReturnBadRequest_WhenRequestIsNull()
     {
         // Arrange
@@ -102,7 +102,7 @@ public class UserControllerIntegrationTests
     }
 
 
-    [Fact, Order(3)]
+    [Fact, Order(6)]
     public async Task UpdateUser_ShouldReturnBadRequest_WhenUserNameIsNull()
     {
         var user = new User { UserName = null, Name = "", NickName = "" };
@@ -111,7 +111,7 @@ public class UserControllerIntegrationTests
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
-    [Fact, Order(3)]
+    [Fact, Order(7)]
     public async Task UpdateUser_ShouldReturnNotFound_WhenUserDoesNotExist()
     {
         var user = new User { UserName = "nonexistentUser", Name = "Test User", NickName = "TestNick" };
@@ -121,7 +121,7 @@ public class UserControllerIntegrationTests
     }
 
 
-    [Fact, Order(3)]
+    [Fact, Order(8)]
     public async Task UpdateUser_ShouldReturnOk_WhenUserExist()
     {
         var user = new User { UserName = TestUserEmail, Name = "Test User", NickName = "TestNick" };
@@ -134,7 +134,4 @@ public class UserControllerIntegrationTests
         var response2 = await _client.GetAsync($"/api/users/getUserByName?username={TestUserEmail}");
         Assert.Equal(HttpStatusCode.NotFound, response2.StatusCode);
     }
-
-
-  
 }
