@@ -95,15 +95,6 @@ pipeline {
                     echo "Show the content of the file"
                     sh ("cat ${LAMBDA_PATH}")
 
-                    // echo "Update global dotnet version"
-                    // def dotnetVersion = [
-                    //          sdk: [
-                    //             version: "6.0.427"
-                    //         ]
-                    // ]
-                    // def dotnetVersionString = groovy.json.JsonOutput.toJson(dotnetVersion)
-                    // writeFile file: GOLBAL_PATH, text: dotnetVersionString
-                    // sh ("cat ${GLOBAL_PATH}")
                 }
             }
         }
@@ -137,7 +128,7 @@ pipeline {
                     \"envName\":\"${amplify_env}\",\
                     \"defaultEditor\":\"code\"\
                     }"
-                   //sh(script:"docker run ${IMAGE_NAME} sh -c 'ls'")
+                   sh(script:"docker run ${IMAGE_NAME} sh -c 'ls'")
                    sh(script: "docker run ${IMAGE_NAME} sh -c 'chmod +x ./bashMain.sh && ./bashMain.sh'")
                 }
             }
@@ -146,8 +137,8 @@ pipeline {
         stage('Invalidate Cloudfront cache') {
             steps {
                 script {
-                    echo 'Invalidate Cloudfront cache'
-                    sh(script: "docker run ${IMAGE_NAME} aws cloudfront create-invalidation --distribution-id ${cloudfront_id} --paths \"/*\" ")
+                    echo 'Invalidate Cloudfront cache (Not implemented)'
+                    //sh(script: "docker run ${IMAGE_NAME} aws cloudfront create-invalidation --distribution-id ${cloudfront_id} --paths \"/*\" ")
                     
                 }
             }
