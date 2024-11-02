@@ -139,14 +139,9 @@ public class PostController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<List<Post>>> GetDiariesByUser (string uid, DateTime current)
     {
-        if (string.IsNullOrEmpty(uid))
+        if (string.IsNullOrEmpty(uid) || !DateTime.TryParse(current.ToString(), out current))
         {
-            return BadRequest("uid is required");
-        }
-        
-        if (!DateTime.TryParse(current.ToString(), out current))
-        {
-            return BadRequest("valid date is required");
+            return BadRequest("uid and valid datetime is required");
         }
         
         var posts = await _postActions.GetDiariesByUser(uid, current);
@@ -165,14 +160,9 @@ public class PostController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<List<Post>>> GetDiariesByFriends(string uid, DateTime current)
     {
-        if (string.IsNullOrEmpty(uid))
+        if (string.IsNullOrEmpty(uid) || !DateTime.TryParse(current.ToString(), out current))
         {
-            return BadRequest("uid is required");
-        }
-        
-        if (!DateTime.TryParse(current.ToString(), out current))
-        {
-            return BadRequest("valid start and end date is required");
+            return BadRequest("uid and valid datetime is required");
         }
         
         var posts = await _postActions.GetDiariesByFriends(_cognitoActions, uid, current);

@@ -131,17 +131,90 @@ public class CardListHelper extends AppCompatActivity
         }
     }
 
-    public void loadDiaries(List<JSONObject> jsonData, RecyclerView recyclerView)
+    public void loadDiaries(String apiUrlUser, String apiUrlFriends, RecyclerView recyclerView, List<JSONObject> friends, String uid)
     {
         // Make loading spinner visible while we populate our CardItemAdapter
         loadingSpinner.setVisibility(View.VISIBLE);
-        System.out.println("creating adapter...");
+
         createAdapter(recyclerView);
-        // Convert API response into a list of CardItems
-        System.out.println("setting card json: " + jsonData);
-        cardItemList = jsonData;
-        System.out.println("populating cards...");
-        populateCard();
+
+        // Fetch card items from API
+        CompletableFuture<String> future = getItemsFromAPI(apiUrlUser);
+        future.thenAccept(jsonData ->
+        {
+            // Convert API response into a list of CardItems
+            // add user diaries at the start of the list to appear at the top of the recycler view
+            cardItemList.addAll(0, handleData(jsonData));
+            // get usernames to appear on posts
+            getUsernamesForDiaries(friends, uid);
+            populateCard();
+            runOnUiThread(() -> {
+                // Make loading spinner visible while we populate our CardItemAdapter
+                loadingSpinner.setVisibility(View.VISIBLE);
+            });
+        }).exceptionally(throwable ->
+        {
+            Log.e("API", "Error fetching data", throwable);
+            return null;
+        });
+
+        future = getItemsFromAPI(apiUrlFriends);
+        future.thenAccept(jsonData ->
+        {
+            // Convert API response into a list of CardItems
+            cardItemList.addAll(handleData(jsonData));
+            // get usernames to appear on posts
+            getUsernamesForDiaries(friends, uid);
+            populateCard();
+        }).exceptionally(throwable ->
+        {
+            Log.e("API", "Error fetching data", throwable);
+            return null;
+        });
+    }
+
+    private void getUsernamesForDiaries(List<JSONObject> friends, String uid)
+    {
+        for(int i = 0; i < cardItemList.size(); i++)
+        {
+            try
+            {
+                if(cardItemList.get(i).getString("uid").equals(uid))
+                {
+                    // display username for diaries from current user as "You"
+                    cardItemList.get(i).put("username", "You");
+                }
+                else if(cardItemList.get(i).getBoolean("anonymous"))
+                {
+                    // displays username for anonymous diaries as "Anonymous"
+                    cardItemList.get(i).put("username", "Anonymous");
+                }
+                else
+                {
+                    // find friend's username based on their uid to display
+                    String friendUid = cardItemList.get(i).getString("uid");
+
+                    for(int j = 0; j < friends.size(); j++)
+                    {
+                        if(friendUid.equals(friends.get(j).getString("uid")))
+                        {
+                            cardItemList.get(i).put("username", friends.get(j).getString("userName"));
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Log.e("JSON", "Error parsing JSON", e);
+            }
+        }
+    }
+
+    public void clearItems()
+    {
+        // clears items in the recycler view for cleaner transitions between calendar dates
+        cardItemList = new ArrayList<>();
+        adapter.updateList(cardItemList);
     }
 
     public CompletableFuture<String> getItemsFromAPI(String apiUrl)

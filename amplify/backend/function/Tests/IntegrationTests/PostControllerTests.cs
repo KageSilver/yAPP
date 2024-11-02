@@ -18,6 +18,7 @@ using yAppLambda;
 using System.Net;
 using Newtonsoft.Json;
 using yAppLambda.Models;
+using System.Text;
 
 namespace Tests.IntegrationTests;
 
@@ -29,6 +30,7 @@ public class PostControllerIntegrationTests
 
     //we must use simulator email to test the user without using email quota
     private const string TestUserEmail = "bounce4@simulator.amazonses.com";
+    private const string TestUserEmail2 = "bounce3@simulator.amazonses.com";
     private static string _testUserId = ""; // this will be updated in the first test when the test user is created
 
     private ICognitoActions _cognitoActions;
@@ -105,7 +107,7 @@ public class PostControllerIntegrationTests
 
         // Clean up
         await _postActions.DeletePost(post.PID);
-        // Test user is deleted in GetPostsByUser_ShouldReturnPosts_WhenSuccessful()
+        // Test user is deleted in GetDiariesByFriends_ShouldReturnPosts_WhenSuccessful()
     }
 
     [Fact, Order(2)]
@@ -278,7 +280,7 @@ public class PostControllerIntegrationTests
         
         // Clean up
         await _postActions.DeletePost(responsePost.PID);
-
+        // Test user is deleted in GetDiariesByFriends_ShouldReturnPosts_WhenSuccessful()
     }
     
     [Fact, Order(7)]
@@ -327,7 +329,7 @@ public class PostControllerIntegrationTests
         // Assert
         Assert.True(result);
 
-        // Test user is deleted in GetPostsByUser_ShouldReturnPosts_WhenSuccessful()
+        // Test user is deleted in GetDiariesByFriends_ShouldReturnPosts_WhenSuccessful()
     }
     
     [Fact, Order(9)]
@@ -405,7 +407,7 @@ public class PostControllerIntegrationTests
 
         // Clean up
         await _postActions.DeletePost(responsePost.PID);
-        // Test user is deleted in GetPostsByUser_ShouldReturnPosts_WhenSuccessful()
+        // Test user is deleted in GetDiariesByFriends_ShouldReturnPosts_WhenSuccessful()
     }
     
     [Fact, Order(12)]
@@ -468,7 +470,7 @@ public class PostControllerIntegrationTests
 
         // Clean up
         await _postActions.DeletePost(post.PID);
-        // Test user is deleted in GetPostsByUser_ShouldReturnPosts_WhenSuccessful()
+        // Test user is deleted in GetDiariesByFriends_ShouldReturnPosts_WhenSuccessful()
     }
 
     [Fact, Order(14)]
@@ -537,15 +539,173 @@ public class PostControllerIntegrationTests
         Assert.Equal(newPost.Anonymous, postList.First().Anonymous);
 
         // Clean up
-        await _cognitoActions.DeleteUser(TestUserEmail);
         await _postActions.DeletePost(newPost.PID);
+        // Test user is deleted in GetDiariesByFriends_ShouldReturnPosts_WhenSuccessful()
     }
 
     [Fact, Order(17)]
     public async Task GetPostsByUser_ShouldReturnBadRequest_WithInvalidUID()
     {
         // Act
-        var response = await _client.GetAsync($"/api/posts/getpostsByUser?uid={null}&diaryEntry={false}");
+        var response = await _client.GetAsync($"/api/posts/getPostsByUser?uid={null}&diaryEntry={false}");
+        
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    #endregion
+
+    #region GetDiariesByUser Tests
+
+    [Fact, Order(16)]
+    public async Task GetDiariesByUser_ShouldReturnPosts_WhenSuccessful()
+    {
+        // Uses the test user set up in CreatePost_ValidRequest_ReturnsPost()
+
+        // Arrange
+        var request = new NewPost
+        {
+            UID = _testUserId,
+            PostTitle = "GetDiariesByUser_ShouldReturnPosts_WhenSuccessful()",
+            PostBody = "body",
+            DiaryEntry = true,
+            Anonymous = true
+        };
+        
+        var content = new StringContent(JsonConvert.SerializeObject(request), System.Text.Encoding.UTF8,
+            "application/json");
+
+        // Creates a new post to query
+        var response1 = await _client.PostAsync("/api/posts/createPost", content);
+        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        var responseString1 = await response1.Content.ReadAsStringAsync();
+        var newPost = JsonConvert.DeserializeObject<Post>(responseString1);
+
+        // Act
+        var date = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffK");
+        var response2 = await _client.GetAsync($"/api/posts/getDiariesByUser?uid={_testUserId}&current={date}");
+        var responseString2 = await response2.Content.ReadAsStringAsync();
+        var postList = JsonConvert.DeserializeObject<List<Post>>(responseString2);
+
+        // Assert
+        Assert.Equal(1, postList.Count);
+        Assert.Equal(newPost.PID, postList.First().PID);
+        Assert.Equal(newPost.UID, postList.First().UID);
+        Assert.Equal(newPost.PostTitle, postList.First().PostTitle);
+        Assert.Equal(newPost.PostBody, postList.First().PostBody);
+        Assert.Equal(newPost.Upvotes, postList.First().Upvotes);
+        Assert.Equal(newPost.Downvotes, postList.First().Downvotes);
+        Assert.Equal(newPost.DiaryEntry, postList.First().DiaryEntry);
+        Assert.Equal(newPost.Anonymous, postList.First().Anonymous);
+
+        // Clean up
+        await _postActions.DeletePost(newPost.PID);
+        // Test user is deleted in GetDiariesByFriends_ShouldReturnPosts_WhenSuccessful()
+    }
+
+    [Fact, Order(17)]
+    public async Task GetDiariesByUser_ShouldReturnBadRequest_WithInvalidUID()
+    {
+        // Act
+        var response = await _client.GetAsync($"/api/posts/getDiariesByUser?uid={null}&current={DateTime.Now}");
+        
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    #endregion
+
+    #region GetDiariesByFriends Tests
+
+    [Fact, Order(18)]
+    public async Task GetDiariesByFriends_ShouldReturnPosts_WhenSuccessful()
+    {
+        // Uses the test user set up in CreatePost_ValidRequest_ReturnsPost()
+
+        // Creating test user for friendship setup
+        await _cognitoActions.CreateUser(TestUserEmail2);
+        await Task.Delay(TimeSpan.FromSeconds(5)); // make sure the user is created
+
+        var responseId = await _client.GetAsync($"/api/users/getUserByName?username={TestUserEmail2}");
+        Assert.Equal(HttpStatusCode.OK, responseId.StatusCode);
+        var responseIdString = await responseId.Content.ReadAsStringAsync();
+        var user = JsonConvert.DeserializeObject<User>(responseIdString);
+        string _testUserId2 = user.Id;
+
+        // Arrange
+        var friendRequest = new FriendRequest
+        {
+            FromUserName = TestUserEmail2,
+            ToUserId = _testUserId
+        };
+
+        var content = new StringContent(JsonConvert.SerializeObject(friendRequest), System.Text.Encoding.UTF8,
+            "application/json");
+        var friendshipResponse = await _client.PostAsync("/api/friends/friendRequest", content);
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
+        await friendshipResponse.Content.ReadAsStringAsync();
+
+        var friendRequest2 = new FriendRequest
+        {
+            FromUserName = TestUserEmail2,
+            ToUserName = TestUserEmail,
+            Status = 1 // Accepted
+        };
+
+        var content2 = new StringContent(JsonConvert.SerializeObject(friendRequest2), Encoding.UTF8, "application/json");
+
+        // Act
+        var updateRequest = await _client.PutAsync("/api/friends/updateFriendRequest", content2);
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
+        await updateRequest.Content.ReadAsStringAsync();
+
+        // Arrange
+        var request = new NewPost
+        {
+            UID = _testUserId2,
+            PostTitle = "GetDiariesByFriends_ShouldReturnPosts_WhenSuccessful()",
+            PostBody = "body",
+            DiaryEntry = true,
+            Anonymous = true
+        };
+        
+        content = new StringContent(JsonConvert.SerializeObject(request), System.Text.Encoding.UTF8,
+            "application/json");
+
+        // Creates a new post to query
+        var response1 = await _client.PostAsync("/api/posts/createPost", content);
+        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        var responseString1 = await response1.Content.ReadAsStringAsync();
+        var newPost = JsonConvert.DeserializeObject<Post>(responseString1);
+
+        // Act
+        var date = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffK");
+        var response2 = await _client.GetAsync($"/api/posts/getDiariesByFriends?uid={_testUserId}&current={date}");
+        var responseString2 = await response2.Content.ReadAsStringAsync();
+        var postList = JsonConvert.DeserializeObject<List<Post>>(responseString2);
+
+        // Assert
+        Assert.Equal(1, postList.Count);
+        Assert.Equal(newPost.PID, postList.First().PID);
+        Assert.Equal(newPost.UID, postList.First().UID);
+        Assert.Equal(newPost.PostTitle, postList.First().PostTitle);
+        Assert.Equal(newPost.PostBody, postList.First().PostBody);
+        Assert.Equal(newPost.Upvotes, postList.First().Upvotes);
+        Assert.Equal(newPost.Downvotes, postList.First().Downvotes);
+        Assert.Equal(newPost.DiaryEntry, postList.First().DiaryEntry);
+        Assert.Equal(newPost.Anonymous, postList.First().Anonymous);
+
+        // Clean up
+        await _cognitoActions.DeleteUser(TestUserEmail);
+        await _cognitoActions.DeleteUser(TestUserEmail2);
+        await _postActions.DeletePost(newPost.PID);
+    }
+
+    [Fact, Order(19)]
+    public async Task GetDiariesByFriends_ShouldReturnBadRequest_WithInvalidUID()
+    {
+        // Act
+        var response = await _client.GetAsync($"/api/posts/getDiariesByFriends?uid={null}&current={DateTime.Now}");
         
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);

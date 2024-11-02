@@ -8,9 +8,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
+using Amazon.CognitoIdentityProvider;
+using Amazon.CognitoIdentityProvider.Model;
 using Amazon.DynamoDBv2.DataModel;
 using yAppLambda.Models;
 using yAppLambda.DynamoDB;
+using yAppLambda.Common;
+using System.Net;
+using yAppLambda.Enum;
 
 namespace Tests.UnitTests.Actions;
 
@@ -19,6 +24,8 @@ public class PostActionsTests
     private readonly Mock<IAppSettings> _appSettingsMock;
     private readonly Mock<IDynamoDBContext> _dynamoDbContextMock;
     private readonly IPostActions _postActionsMock;
+    private readonly Mock<IAmazonCognitoIdentityProvider> _cognitoClientMock;
+    private readonly CognitoActions _cognitoActions;
     private const string PostTableName = "Post-test";
 
     public PostActionsTests()
@@ -33,9 +40,13 @@ public class PostActionsTests
         
         // Initialize the PostActions with the mocks
         _postActionsMock = new PostActions(_appSettingsMock.Object, _dynamoDbContextMock.Object);
+
+        // Initialize the CognitoActions with the mocks
+        _cognitoClientMock = new Mock<IAmazonCognitoIdentityProvider>();
+        _cognitoActions = new CognitoActions(_cognitoClientMock.Object, _appSettingsMock.Object);
     }
     
-    #region CreatPost Tests
+    #region CreatePost Tests
 
     [Fact]
     public async Task CreatePost_ShouldReturnOK_WhenPostIsCreatedSuccessfully()
@@ -495,5 +506,252 @@ public class PostActionsTests
         Assert.Empty(result);
     }
     
+    #endregion
+
+    #region GetDiariesByUser Tests
+
+    [Fact]
+    public async Task GetDiariesByUser_ShouldReturnDiaries_WithAValidQuery()
+    {
+        // Arrange
+        var now = DateTime.Now;
+        var post = new Post
+        {
+            PID = "1",
+            UID = "user1",
+            CreatedAt = now,
+            UpdatedAt = now,
+            PostTitle = "title",
+            PostBody = "body",
+            Upvotes = 0,
+            Downvotes = 0,
+            DiaryEntry = true,
+            Anonymous = true
+        };
+        var response = new Post { PID = "1" };
+
+        // Sets up LoadAsync to return the request post (for in GetPostById)
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Post>(post.PID, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(post);
+
+        var list = new List<Post>();
+        list.Add(response);
+
+        // Mock the AsyncSearch<Post> returned by QueryAsync
+        var queryFromSearchMock = new Mock<AsyncSearch<Post>>();
+        queryFromSearchMock.Setup(q => q.GetNextSetAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(list);
+
+        // Sets up FromQueryAsync to succeed
+        _dynamoDbContextMock.Setup(d => d.FromQueryAsync<Post>(It.IsAny<QueryOperationConfig>(), It.IsAny<DynamoDBOperationConfig>()))
+            .Returns(queryFromSearchMock.Object);
+
+        // Act
+        var result = await _postActionsMock.GetDiariesByUser(post.UID, now);
+
+        // Assert
+        Assert.Equal(1, result.Count);
+        Assert.Equal(post.PID, result.First().PID);
+        Assert.Equal(post.CreatedAt, result.First().CreatedAt);
+        Assert.Equal(post.UpdatedAt, result.First().UpdatedAt);
+        Assert.Equal(post.UID, result.First().UID);
+        Assert.Equal(post.PostTitle, result.First().PostTitle);
+        Assert.Equal(post.PostBody, result.First().PostBody);
+        Assert.Equal(post.Upvotes, result.First().Upvotes);
+        Assert.Equal(post.Downvotes, result.First().Downvotes);
+        Assert.Equal(post.DiaryEntry, result.First().DiaryEntry);
+        Assert.Equal(post.Anonymous, result.First().Anonymous);
+
+        _dynamoDbContextMock.Verify(d => d.FromQueryAsync<Post>(It.IsAny<QueryOperationConfig>(), It.IsAny<DynamoDBOperationConfig>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetDiariesByUser_ShouldReturnEmptyList_WhenExceptionIsThrown()
+    {
+        // Arrange
+        var scanToSearchMock = new Mock<AsyncSearch<Post>>();
+        scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new Exception("error querying diaries"));
+
+        // Act
+        var result = await _postActionsMock.GetDiariesByUser("uid", DateTime.Now);
+
+        // Assert
+        Assert.Empty(result);
+    }
+
+    #endregion
+
+    #region GetDiariesByFriends Tests
+
+    [Fact]
+    public async Task GetDiariesByFriends_ShouldReturnDiaries_WithAValidQuery()
+    {
+        
+        // Setup user
+        var user = new User { UserName = "user1", Id = "12345", Name = "User One", NickName = "User1Nick" };
+
+        var updateResponse = new AdminUpdateUserAttributesResponse
+        {
+            HttpStatusCode = HttpStatusCode.OK
+        };
+
+        var getUserResponse = new AdminGetUserResponse
+        {
+            Username = "user1",
+            UserAttributes = new List<AttributeType>
+            {
+                new AttributeType { Name = "email", Value = "user1@example.com" },
+                new AttributeType { Name = "name", Value = "User One" },
+                new AttributeType { Name = "nickname", Value = "User1Nick" },
+                new AttributeType { Name = "sub", Value = "12345" }
+            }
+        };
+
+        var listUsersResponse = new ListUsersResponse
+        {
+            Users = new List<UserType>
+            {
+                new UserType
+                {
+                    Username = "user1",
+                    Attributes = new List<AttributeType>
+                    {
+                        new AttributeType { Name = "email", Value = "user1@example.com" },
+                        new AttributeType { Name = "name", Value = "User One" },
+                        new AttributeType { Name = "nickname", Value = "User1Nick" },
+                        new AttributeType { Name = "sub", Value = "12345" }
+                    }
+                }
+            }
+        };
+
+        _cognitoClientMock.Setup(c =>
+                c.AdminUpdateUserAttributesAsync(It.IsAny<AdminUpdateUserAttributesRequest>(),
+                    It.IsAny<CancellationToken>()))
+            .ReturnsAsync(updateResponse);
+
+        _cognitoClientMock.Setup(c =>
+                c.AdminGetUserAsync(It.IsAny<AdminGetUserRequest>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(getUserResponse);
+            
+        _cognitoClientMock.Setup(c => c.ListUsersAsync(It.IsAny<ListUsersRequest>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(listUsersResponse);
+
+        await _cognitoActions.UpdateUser(user);
+
+        // Setup friendship
+        const FriendshipStatus friendshipStatus = FriendshipStatus.Accepted;
+        var friendshipsFrom = new List<Friendship>
+        {
+            new Friendship 
+            { 
+                FromUserName = user.UserName, 
+                ToUserName = "user2@example.com", 
+                Status = friendshipStatus 
+            }
+        };
+        var friendshipsTo = new List<Friendship>
+        {
+            new Friendship 
+            { 
+                FromUserName = "user2@example.com", 
+                ToUserName = user.UserName, 
+                Status = friendshipStatus 
+            }
+        };
+
+        _appSettingsMock.Setup(a => a.FriendshipTableName).Returns(string.Empty);
+        
+        // Mock the AsyncSearch<Friendship> returned by QueryAsync
+        var queryFromSearchMock = new Mock<AsyncSearch<Friendship>>();
+        queryFromSearchMock
+        .Setup(q => q.GetRemainingAsync(It.IsAny<CancellationToken>()))
+        .ReturnsAsync(friendshipsFrom);
+
+        // Mock the AsyncSearch<Friendship> returned by ScanAsync
+        var scanToSearchMock = new Mock<AsyncSearch<Friendship>>();
+        scanToSearchMock
+        .Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
+        .ReturnsAsync(friendshipsTo);
+
+        // Setup the IDynamoDBContext mock to return the mocked AsyncSearch objects
+        _dynamoDbContextMock
+        .Setup(d => d.QueryAsync<Friendship>(user.UserName, 
+                                             It.IsAny<DynamoDBOperationConfig>()))
+        .Returns(queryFromSearchMock.Object);
+
+        _dynamoDbContextMock
+        .Setup(d => d.ScanAsync<Friendship>(It.IsAny<List<ScanCondition>>(), 
+                                            It.IsAny<DynamoDBOperationConfig>()))
+        .Returns(scanToSearchMock.Object);
+
+        // Now setup the post
+        var now = DateTime.Now;
+        var post = new Post
+        {
+            PID = "1",
+            UID = "12345",
+            CreatedAt = now,
+            UpdatedAt = now,
+            PostTitle = "title",
+            PostBody = "body",
+            Upvotes = 0,
+            Downvotes = 0,
+            DiaryEntry = true,
+            Anonymous = true
+        };
+        var response = new Post { PID = "1" };
+
+        // Sets up LoadAsync to return the request post (for in GetPostById)
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Post>(post.PID, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(post);
+
+        var list = new List<Post>();
+        list.Add(response);
+
+        // Mock the AsyncSearch<Post> returned by QueryAsync
+        var queryFromSearchMockPost = new Mock<AsyncSearch<Post>>();
+        queryFromSearchMockPost.Setup(q => q.GetNextSetAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(list);
+
+        // Sets up FromQueryAsync to succeed
+        _dynamoDbContextMock.Setup(d => d.FromQueryAsync<Post>(It.IsAny<QueryOperationConfig>(), It.IsAny<DynamoDBOperationConfig>()))
+            .Returns(queryFromSearchMockPost.Object);
+
+        // Act
+        var result = await _postActionsMock.GetDiariesByFriends(_cognitoActions, post.UID, now);
+
+        // Assert
+        Assert.Equal(2, result.Count); // Needs to be 2 since there's "technically" two friends and both their posts return
+        Assert.Equal(post.PID, result.First().PID);
+        Assert.Equal(post.CreatedAt, result.First().CreatedAt);
+        Assert.Equal(post.UpdatedAt, result.First().UpdatedAt);
+        Assert.Equal(post.UID, result.First().UID);
+        Assert.Equal(post.PostTitle, result.First().PostTitle);
+        Assert.Equal(post.PostBody, result.First().PostBody);
+        Assert.Equal(post.Upvotes, result.First().Upvotes);
+        Assert.Equal(post.Downvotes, result.First().Downvotes);
+        Assert.Equal(post.DiaryEntry, result.First().DiaryEntry);
+        Assert.Equal(post.Anonymous, result.First().Anonymous);
+        
+        _dynamoDbContextMock.Verify(d => d.FromQueryAsync<Post>(It.IsAny<QueryOperationConfig>(), It.IsAny<DynamoDBOperationConfig>()), Times.AtLeastOnce);
+    }
+
+    [Fact]
+    public async Task GetDiariesByFriends_ShouldReturnEmptyList_WhenExceptionIsThrown()
+    {
+        // Arrange
+        // Sets up FromQueryAsync to fail
+        _dynamoDbContextMock.Setup(d => d.FromQueryAsync<Post>(It.IsAny<QueryOperationConfig>(), It.IsAny<DynamoDBOperationConfig>()))
+            .Throws(new Exception("Could not load diary entries"));
+            
+        // Act
+        var result = await _postActionsMock.GetDiariesByFriends(_cognitoActions, "uid", DateTime.Now);
+
+        // Assert
+        Assert.Empty(result);
+    }
+
     #endregion
 }

@@ -160,9 +160,7 @@
     - { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true }
  - Status codes:
     - 200 OK
-    - 400 Bad Request:
-      - uid is required
-      - valid date is required
+    - 400 Bad Request: uid and valid datetime is required
 
 ### GetDiariesByFriends
  - Gets diary entry posts from all friends of a specified user
@@ -173,9 +171,7 @@
     - [ { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true } ]
  - Status codes:
     - 200 OK
-    - 400 Bad Request:
-      - uid is required
-      - valid date is required
+    - 400 Bad Request: uid and valid datetime is required
 
 ### CreatePost
  - Creates a new post.

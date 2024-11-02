@@ -2,11 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Amazon.DynamoDBv2.DocumentModel;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Tests.UnitTests.Controllers;
 
@@ -18,8 +13,11 @@ using yAppLambda.Controllers;
 using yAppLambda.Models;
 using yAppLambda.Common;
 using Amazon.DynamoDBv2.DataModel;
-using yAppLambda.Models;
 using yAppLambda.DynamoDB;
+using Amazon.CognitoIdentityProvider.Model;
+using System.Net;
+using yAppLambda.Enum;
+using Amazon.CognitoIdentityProvider;
 
 public class PostControllerTests
 {
@@ -28,6 +26,8 @@ public class PostControllerTests
     private readonly Mock<ICognitoActions> _mockCognitoActions;
     private readonly PostController _postController;
     private readonly Mock<IPostActions> _mockPostActions;
+    private readonly Mock<IAmazonCognitoIdentityProvider> _cognitoClientMock;
+    private readonly CognitoActions _cognitoActions;
 
     public PostControllerTests()
     {
@@ -570,6 +570,120 @@ public class PostControllerTests
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
         Assert.Equal("uid is required", badRequestResult.Value);
+    }
+
+    #endregion
+
+    #region GetDiariesByUser Tests
+
+    [Fact]
+    public async Task GetDiariesByUser_ShouldReturnPosts_WhenSuccessful()
+    {
+        // Arrange
+        var now = DateTime.Now;
+        var post = new Post
+        {
+            PID = "1",
+            CreatedAt = now,
+            UpdatedAt = now,
+            UID = "uid",
+            PostTitle = "title",
+            PostBody = "body",
+            Upvotes = 0,
+            Downvotes = 0,
+            DiaryEntry = true,
+            Anonymous = true
+        };
+
+        var list = new List<Post>();
+        list.Add(post);
+        
+        _mockPostActions.Setup(p => p.GetDiariesByUser(It.IsAny<string>(),It.IsAny<DateTime>())).ReturnsAsync(list);
+
+        // Act
+        var result = await _postController.GetDiariesByUser(post.UID, DateTime.Now);
+        var resultPosts = result.Value;
+        
+        // Assert
+        Assert.IsType<List<Post>>(resultPosts);
+        Assert.Equal(1, resultPosts.Count);
+        Assert.Equal(post.PID, resultPosts.First().PID);
+        Assert.Equal(post.UID, resultPosts.First().UID);
+        Assert.Equal(post.PostTitle, resultPosts.First().PostTitle);
+        Assert.Equal(post.PostBody, resultPosts.First().PostBody);
+        Assert.Equal(post.Upvotes, resultPosts.First().Upvotes);
+        Assert.Equal(post.Downvotes, resultPosts.First().Downvotes);
+        Assert.Equal(post.DiaryEntry, resultPosts.First().DiaryEntry);
+        Assert.Equal(post.Anonymous, resultPosts.First().Anonymous);
+    }
+
+    [Fact]
+    public async Task GetDiariesByUser_ShouldReturnBadRequest_WithInvalidUID()
+    {
+        // Act
+        var result = await _postController.GetDiariesByUser(null, DateTime.Now);
+
+        // Assert
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+        Assert.Equal("uid and valid datetime is required", badRequestResult.Value);
+    }
+
+    #endregion
+    
+    #region GetDiariesByFriends Tests
+
+    [Fact]
+    public async Task GetDiariesByFriends_ShouldReturnPosts_WhenSuccessful()
+    {
+        
+        // Arrange
+        var now = DateTime.Now;
+        var post = new Post
+        {
+            PID = "1",
+            UID = "uid",
+            CreatedAt = now,
+            UpdatedAt = now,
+            PostTitle = "title",
+            PostBody = "body",
+            Upvotes = 0,
+            Downvotes = 0,
+            DiaryEntry = true,
+            Anonymous = true
+        };
+
+        var list = new List<Post>();
+        list.Add(post);
+
+        _mockPostActions.Setup(p => p.GetDiariesByFriends(It.IsAny<ICognitoActions>(), It.IsAny<string>(), It.IsAny<DateTime>())).ReturnsAsync(list);
+
+        // Act
+        var result = await _postController.GetDiariesByFriends(post.UID, now);
+
+        // Assert
+        var returnedList = Assert.IsType<List<Post>>(result.Value);
+        Assert.Equal(1, returnedList.Count);
+        Assert.Equal(post.PID, returnedList.First().PID);
+        Assert.Equal(post.CreatedAt, returnedList.First().CreatedAt);
+        Assert.Equal(post.UpdatedAt, returnedList.First().UpdatedAt);
+        Assert.Equal(post.UID, returnedList.First().UID);
+        Assert.Equal(post.PostTitle, returnedList.First().PostTitle);
+        Assert.Equal(post.PostBody, returnedList.First().PostBody);
+        Assert.Equal(post.Upvotes, returnedList.First().Upvotes);
+        Assert.Equal(post.Downvotes, returnedList.First().Downvotes);
+        Assert.Equal(post.DiaryEntry, returnedList.First().DiaryEntry);
+        Assert.Equal(post.Anonymous, returnedList.First().Anonymous);
+    }
+
+    [Fact]
+    public async Task GetDiariesByFriends_ShouldReturnBadRequest_WithInvalidUID()
+    {
+        // Act
+        var result = await _postController.GetDiariesByFriends(null, DateTime.Now);
+
+        // Assert
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+        Assert.Equal("uid and valid datetime is required", badRequestResult.Value);
     }
 
     #endregion
