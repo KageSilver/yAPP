@@ -557,26 +557,28 @@ public class PostControllerIntegrationTests
         var friendRequest = new FriendRequest
         {
             FromUserName = TestUserEmail2,
-            ToUserId = TestUserEmail
+            ToUserId = _testUserId
         };
 
         var content = new StringContent(JsonConvert.SerializeObject(friendRequest), System.Text.Encoding.UTF8,
             "application/json");
-        await _client.PostAsync("/api/friends/friendRequest", content);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        var friendshipResponse = await _client.PostAsync("/api/friends/friendRequest", content);
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
+        await friendshipResponse.Content.ReadAsStringAsync();
 
-        friendRequest = new FriendRequest
+        var friendRequest2 = new FriendRequest
         {
             FromUserName = TestUserEmail2,
             ToUserName = TestUserEmail,
             Status = 1 // Accepted
         };
 
-        content = new StringContent(JsonConvert.SerializeObject(friendRequest), Encoding.UTF8, "application/json");
+        var content2 = new StringContent(JsonConvert.SerializeObject(friendRequest2), Encoding.UTF8, "application/json");
 
         // Act
-        await _client.PutAsync("/api/friends/updateFriendRequest", content);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        var updateRequest = await _client.PutAsync("/api/friends/updateFriendRequest", content2);
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
+        await updateRequest.Content.ReadAsStringAsync();
 
         // Arrange
         var request = new NewPost
@@ -593,7 +595,7 @@ public class PostControllerIntegrationTests
 
         // Creates a new post to query
         var response1 = await _client.PostAsync("/api/posts/createPost", content);
-        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(10)); // Adjust the delay duration as needed
         var responseString1 = await response1.Content.ReadAsStringAsync();
         var newPost = JsonConvert.DeserializeObject<Post>(responseString1);
 
