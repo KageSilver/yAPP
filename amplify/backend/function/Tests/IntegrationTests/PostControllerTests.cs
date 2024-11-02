@@ -157,6 +157,22 @@ public class PostControllerIntegrationTests
     }
 
     [Fact, Order(4)]
+    public async Task CreatePost_FirstDiaryPost_ReturnsPost()
+    {
+        
+    }
+    
+    [Fact, Order(5)]
+    public async Task CreatePost_SecondDiaryPost_ReturnsBadRequest()
+    {
+        
+    }
+    
+    #endregion
+
+    #region GetRecentPosts Tests
+
+    [Fact, Order(4)]
     public async Task GetRecentPosts_ShouldReturnPosts_WhenRequestIsSuccessful()
     {
         // Uses the test user set up in CreatePost_ValidRequest_ReturnsPost()
