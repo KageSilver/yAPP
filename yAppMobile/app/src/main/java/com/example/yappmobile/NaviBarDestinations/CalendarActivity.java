@@ -119,7 +119,7 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
 
     private void getUserInfo()
     {
-        // gets user information
+        // gets current user's username
         CompletableFuture<String> futureUsername = new CompletableFuture<>();
         Amplify.Auth.getCurrentUser(result -> {
             futureUsername.complete(result.getUsername());
@@ -134,6 +134,7 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
             getFriends();
         });
 
+        // gets current user's uid
         CompletableFuture<String> futureUID = new CompletableFuture<>();
         Amplify.Auth.getCurrentUser(result -> {
             futureUID.complete(result.getUserId());
@@ -150,6 +151,7 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
 
     private void getFriends()
     {
+        // get all current user's friends with status = accepted
         String apiUrl = "/api/friends/getFriendsByStatus?userName=" + username + "&status=1";
         // Fetch card items from API
         CompletableFuture<String> future = diaryEntryHelper.getItemsFromAPI(apiUrl);
@@ -157,7 +159,9 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
         {
             // Convert API response into a list of CardItems
             friends = diaryEntryHelper.handleData(jsonData);
+            // get uids of all friends
             getFriendUIDs();
+            // gets user and friend diaries for current date
             getDiaries(Calendar.getInstance());
         }).exceptionally(throwable ->
         {
@@ -168,13 +172,13 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
 
     private void getFriendUIDs()
     {
-        System.out.println("friends: " + friends);
         for(int i = 0; i < friends.size(); i++)
         {
             try
             {
                 String friendUsername;
 
+                // find friend's username from friendship
                 if(friends.get(i).get("FromUserName").toString().equals(username))
                 {
                     friendUsername = friends.get(i).get("ToUserName").toString();
@@ -184,6 +188,7 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
                     friendUsername = friends.get(i).get("FromUserName").toString();
                 }
 
+                // get friend's info to get their uid
                 String apiUrl = "/api/users/getUserByName?userName=" + friendUsername;
 
                 CompletableFuture<String> future = diaryEntryHelper.getItemsFromAPI(apiUrl);
@@ -193,6 +198,7 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
                         // Convert API response into a list of CardItems
                         JSONObject thisFriend = new JSONObject(jsonData);
 
+                        // make new json object with just friends username and uid to easier searching
                         String friendInfo = "{ \"userName\": " + friendUsername + ", \"uid\": " + thisFriend.getString("id") +"}";
                         friendUsernames.add(new JSONObject(friendInfo));
                     }
