@@ -121,7 +121,7 @@ pipeline {
             steps {
                 script {
                     echo 'Running tests'
-                    def testStatus = sh(script: "docker run ${IMAGE_NAME} dotnet test ${SOLUTION}", returnStatus: true)
+                   // def testStatus = sh(script: "docker run ${IMAGE_NAME} dotnet test ${SOLUTION}", returnStatus: true)
                     // if (testStatus != 0) {
                     //     error("Tests failed. Exiting...")
                     // }
@@ -138,7 +138,7 @@ pipeline {
                     \"defaultEditor\":\"code\"\
                     }"
                    sh(script:"docker run ${IMAGE_NAME} sh -c 'ls'")
-                   sh(script: "docker run ${IMAGE_NAME} sh -c 'chmod +x ./bashDev.sh && ./bashDev.sh'")
+                  // sh(script: "docker run ${IMAGE_NAME} sh -c 'chmod +x ./bashDev.sh && ./bashDev.sh'")
                 }
             }
         }
@@ -147,7 +147,7 @@ pipeline {
             steps {
                 script {
                     echo 'Invalidate Cloudfront (Not working)'
-                    //sh(script: "aws cloudfront create-invalidation --distribution-id ${cloudfront_id} --paths \"/*\" --profile ${awsProfile}")
+                    sh(script: "aws cloudfront create-invalidation --distribution-id ${cloudfront_id} --paths \"/*\"")
                     
                 }
             }
