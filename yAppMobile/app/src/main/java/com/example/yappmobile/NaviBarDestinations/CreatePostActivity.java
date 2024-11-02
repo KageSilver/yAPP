@@ -12,6 +12,7 @@ import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.AuthenticatorActivity;
 import com.example.yappmobile.BasePostActivity;
+import com.example.yappmobile.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,6 +30,13 @@ public class CreatePostActivity extends BasePostActivity
         initializeFailureDialog();
         initializeDiscardDialog();
         initializeNewPost();
+
+        // set up toggles
+        diaryEntry.setVisibility(View.VISIBLE);
+        diaryEntry.setChecked(false);
+        anonymous.setVisibility(View.GONE);
+        anonymous.setChecked(true);
+        findViewById(R.id.divider).setVisibility(View.VISIBLE);
 
         discardButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,6 +58,7 @@ public class CreatePostActivity extends BasePostActivity
             @Override
             public void onClick(View v) {
                 createPost();
+                actionButton.setEnabled(false);
             }
         });
 
@@ -77,6 +86,7 @@ public class CreatePostActivity extends BasePostActivity
                             System.out.println("success dialog");
                             successDialog.show();
                         }
+                        actionButton.setEnabled(true);
                     });
                 },
                 error -> {
