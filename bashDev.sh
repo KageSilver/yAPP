@@ -38,19 +38,12 @@ amplify init \
 
 amplify status
 
-echo "changing path to tests..."
-cd amplify/backend/function/Tests
-echo "running tests..."
-dotnet test Tests.csproj
-
-
 echo "Pushing..."
 amplify push --yes --debug
 
 
-echo "changing path for web..."
-
-cd /app/yAppWeb
+echo "changing path..."
+cd yAppWeb
 echo "installing pnpm packages..."
 pnpm install
 

@@ -112,7 +112,7 @@ pipeline {
             steps {
                 script {
                     // Pass the AWS Access Key and other build arguments during Docker build
-                    sh("docker build  --build-arg AWS_ACCESS_KEY_ID=${ACCESS_KEY_ID} --build-arg AWS_SECRET_ACCESS_KEY=${SECRET_ACCESS_KEY} --build-arg AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} -t ${IMAGE_NAME} .")
+                    sh("docker build  --no-cache --build-arg AWS_ACCESS_KEY_ID=${ACCESS_KEY_ID} --build-arg AWS_SECRET_ACCESS_KEY=${SECRET_ACCESS_KEY} --build-arg AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} -t ${IMAGE_NAME} .")
                 }
             }
         }
@@ -121,7 +121,7 @@ pipeline {
             steps {
                 script {
                     echo 'Running tests'
-                    // def testStatus = sh(script: "docker run ${IMAGE_NAME} dotnet test ${SOLUTION}", returnStatus: true)
+                    def testStatus = sh(script: "docker run ${IMAGE_NAME} dotnet test ${SOLUTION}", returnStatus: true)
                     // if (testStatus != 0) {
                     //     error("Tests failed. Exiting...")
                     // }
