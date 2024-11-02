@@ -1,29 +1,21 @@
 package com.example.yappmobile.NaviBarDestinations;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.CalendarView;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.FragmentContainerView;
 
+import com.amplifyframework.auth.AuthUser;
 import com.amplifyframework.core.Amplify;
-import com.example.yappmobile.AuthenticatorActivity;
 import com.example.yappmobile.CardList.CardListHelper;
-import com.example.yappmobile.CardList.IListCardItemInteractions;
 import com.example.yappmobile.NavBar;
-import com.example.yappmobile.PostEntryActivity;
 import com.example.yappmobile.R;
 
 import org.json.JSONObject;
@@ -34,38 +26,33 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class CalendarActivity extends AppCompatActivity implements IListCardItemInteractions
+public class CalendarActivity extends AppCompatActivity
 {
     private CalendarView calendar;
     private CardView calendarCard;
     private TextView selectedDate;
     private CardListHelper diaryEntryHelper;
-    private List<JSONObject> userDiariesJson;
     private ImageButton collapseCalendar;
-    private RecyclerView userDiaries;
+    private List<JSONObject> friends, friendUsernames;
+    private String username;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_calendar);
         NavBar.establishNavBar(this, "CALENDAR");
+        friendUsernames = new ArrayList<>();
 
-        ProgressBar loadingSpinner = findViewById(R.id.indeterminateBar);
-        diaryEntryHelper = new CardListHelper(this, loadingSpinner, "DIARY", this);
+        diaryEntryHelper = new CardListHelper(this);
 
-        // sets up recycler view
-        userDiaries = findViewById(R.id.user_diary_list);
-        userDiaries.setLayoutManager(new LinearLayoutManager(this));
-
-        // fetch all diary entries for current user
-        userDiariesJson = new ArrayList<>();
-        getUserDiaries();
+        getFriends();
 
         // finds elements in the xml file that will be changed later
-        calendar = findViewById(R.id.calendarView);
-        selectedDate = findViewById(R.id.selectedDate);
-        calendarCard = findViewById(R.id.calendarCard);
+        calendar = findViewById(R.id.calendar_view);
+        selectedDate = findViewById(R.id.selected_date);
+        calendarCard = findViewById(R.id.calendar_card);
         collapseCalendar = findViewById(R.id.collapse_calendar);
 
         // gets current date and time
@@ -82,8 +69,15 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
                 cal.set(year, month, day);
                 calendar.setDate(cal.getTimeInMillis());
                 selectedDate.setText(formatDisplayDate(cal));
-                // loads diary entries for the new selected date
-                diaryEntryHelper.loadDiaries(getUserDiariesFromDate(cal), userDiaries);
+
+                Bundle bundle = new Bundle();
+                bundle.putString("friendUsernames", friendUsernames.toString());
+                bundle.putString("selectedDate", formatCompareDate(cal));
+
+                getSupportFragmentManager().beginTransaction()
+                        .setReorderingAllowed(true)
+                        .replace(R.id.fragment_container_view, DiaryEntriesFragment.class, bundle)
+                        .commit();
             }
         });
 
@@ -106,53 +100,95 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
         });
     }
 
-    private List<JSONObject> getUserDiariesFromDate(Calendar cal)
+    private void createDiaryFragment()
     {
-        // searches for posts for a specific date
-        List<JSONObject> posts = new ArrayList<>();
-        String date = formatCompareDate(cal).substring(0, 10);
+        Bundle bundle = new Bundle();
+        bundle.putString("friendUsernames", friendUsernames.toString());
+        bundle.putString("selectedDate", formatCompareDate(Calendar.getInstance()));
 
-        try{
-
-            for(int i = 0; i < userDiariesJson.size(); i++)
-            {
-                if(userDiariesJson.get(i).getString("createdAt").substring(0, 10).equals(date))
-                {
-                    posts.add(userDiariesJson.get(i));
-                }
-            }
-
-        }catch(Exception e){
-            Log.e("JSON", "Error parsing JSON", e);
-        }
-
-        return posts;
+        getSupportFragmentManager().beginTransaction()
+                .setReorderingAllowed(true)
+                .add(R.id.fragment_container_view, DiaryEntriesFragment.class, bundle)
+                .commit();
     }
 
-    private void getUserDiaries()
+    private void getFriends()
     {
-        CompletableFuture<String> future = new CompletableFuture<>();
-
-        // gets user information
-        Amplify.Auth.getCurrentUser(result -> {
-            future.complete(result.getUserId());
-        }, error -> {
-            Log.e("Auth", "Error occurred when getting current user. Redirecting to authenticator");
-            Intent intent = new Intent(CalendarActivity.this, AuthenticatorActivity.class);
-            startActivity(intent);
+        CompletableFuture<AuthUser> future = new CompletableFuture<>();
+        Amplify.Auth.getCurrentUser(future::complete, error -> {
+            Log.e("Auth", "Uh oh! THere's trouble getting the current user", error);
         });
 
-        future.thenAccept(uid -> {
-            // gets diary entries from user
-            String apiUrl = "/api/posts/getPostsByUser?uid=" + uid + "&diaryEntry=true";
-            CompletableFuture<String> future2 = diaryEntryHelper.getItemsFromAPI(apiUrl);
+        future.thenAccept(user -> {
+            runOnUiThread(() -> {
+                username = user.getUsername();
+                String apiUrl = "/api/friends/getFriendsByStatus?userName=" + username + "&status=1";
 
-            // loads user diaries into a list of json objects
-            // then loads diary entries onto the page for the current date
-            future2.thenAccept(jsonData -> {
-                userDiariesJson = diaryEntryHelper.handleData(jsonData);
-            }).thenRun(() -> diaryEntryHelper.loadDiaries(getUserDiariesFromDate(Calendar.getInstance()), userDiaries)).join();
+                CompletableFuture<String> future2 = diaryEntryHelper.getItemsFromAPI(apiUrl);
+                future2.thenAccept(jsonData ->
+                {
+                    // Convert API response into a list of CardItems
+                    friends = diaryEntryHelper.handleData(jsonData);
+                    // get uids of all friends
+                    getFriendUIDs();
+                }).exceptionally(throwable ->
+                {
+                    Log.e("API", "Error fetching data", throwable);
+                    return null;
+                });
+            });
         });
+    }
+
+    private void getFriendUIDs()
+    {
+        for(int i = 0; i < friends.size(); i++)
+        {
+            try
+            {
+                String friendUsername;
+
+                // find friend's username from friendship
+                if(friends.get(i).get("FromUserName").toString().equals(username))
+                {
+                    friendUsername = friends.get(i).get("ToUserName").toString();
+                }
+                else
+                {
+                    friendUsername = friends.get(i).get("FromUserName").toString();
+                }
+
+                // get friend's info to get their uid
+                String apiUrl = "/api/users/getUserByName?userName=" + friendUsername;
+
+                CompletableFuture<String> future = diaryEntryHelper.getItemsFromAPI(apiUrl);
+                future.thenAccept(jsonData ->
+                {
+                    try {
+                        // Convert API response into a list of CardItems
+                        JSONObject thisFriend = new JSONObject(jsonData);
+
+                        // make new json object with just friends username and uid to easier searching
+                        String friendInfo = "{ \"userName\": " + friendUsername + ", \"uid\": " + thisFriend.getString("id") +"}";
+                        friendUsernames.add(new JSONObject(friendInfo));
+                    }
+                    catch (Exception e)
+                    {
+                        Log.e("JSON", "Error parsing JSON", e);
+                    }
+                }).exceptionally(throwable ->
+                {
+                    Log.e("API", "Error fetching data", throwable);
+                    return null;
+                });
+            }
+            catch (Exception e)
+            {
+                Log.e("JSON", "Error parsing JSON", e);
+            }
+        }
+
+        createDiaryFragment();
     }
 
     private String formatDisplayDate(Calendar cal)
@@ -178,37 +214,4 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.FFF'Z'");
         return formatter.format(cal.getTime());
     }
-
-    @Override
-    public void onItemClick(int position)
-    {
-        // Switch activity to view an individual diary entry when a card is clicked
-        Intent intent = new Intent(CalendarActivity.this, PostEntryActivity.class);
-        String pid = diaryEntryHelper.getPID(position);
-        String uid = diaryEntryHelper.getUID(position);
-        intent.putExtra("pid", pid);
-        intent.putExtra("uid",uid);
-        activityLauncher.launch(intent);
-    }
-
-    ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result){
-                    if (result.getResultCode() == RESULT_OK)
-                    {
-                        Intent intent = result.getData();
-                        try
-                        {
-                            String deleted = intent.getStringExtra("delete");
-                            diaryEntryHelper.removePost(deleted);
-                        }
-                        catch (Exception e)
-                        {
-                            Log.i("POST", "Post was not deleted");
-                        }
-                    }
-                }
-            });
 }
