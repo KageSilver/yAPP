@@ -120,6 +120,18 @@ public class PostControllerTests
         Assert.Equal(post.DiaryEntry, returnedPost.DiaryEntry);
         Assert.Equal(post.Anonymous, returnedPost.Anonymous);
     }
+
+    [Fact]
+    public async Task CreatePost_FirstDiaryPost_ReturnsPost()
+    {
+        
+    }
+
+    [Fact]
+    public async Task CreatePost_SecondDiaryPost_ReturnsBadRequest()
+    {
+        
+    }
     
     #endregion
 
