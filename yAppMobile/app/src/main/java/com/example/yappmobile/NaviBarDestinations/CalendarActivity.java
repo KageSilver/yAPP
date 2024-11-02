@@ -242,10 +242,8 @@ public class CalendarActivity extends AppCompatActivity implements IListCardItem
     {
         // Switch activity to view an individual diary entry when a card is clicked
         Intent intent = new Intent(CalendarActivity.this, PostEntryActivity.class);
-        String pid = diaryEntryHelper.getPID(position);
-        String uid = diaryEntryHelper.getUID(position);
-        intent.putExtra("pid", pid);
-        intent.putExtra("uid",uid);
+        String currentPost = diaryEntryHelper.getItem(position).toString();
+        intent.putExtra("currentPost", currentPost);
         activityLauncher.launch(intent);
     }
 
