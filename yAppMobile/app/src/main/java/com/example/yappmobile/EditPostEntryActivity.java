@@ -40,11 +40,26 @@ public class EditPostEntryActivity extends BasePostActivity {
                 // Now you can access the data inside the JSONObject
                 String title = _currentPost.get("postTitle").toString();
                 String body = _currentPost.get("postBody").toString();
-                boolean isDiary = Boolean.parseBoolean(_currentPost.getString("diaryEntry"));
-                diaryEntry.setChecked(isDiary);
                 titleEditText.setText(title);
                 contentEditText.setText(body);
 
+                boolean isDiary = Boolean.parseBoolean(_currentPost.getString("diaryEntry"));
+                boolean isAnon = Boolean.parseBoolean(_currentPost.getString("anonymous"));
+
+                // hide diary entry and anonymous toggles so they can't be changed when editing
+                diaryEntry.setVisibility(View.GONE);
+
+                if(isDiary)
+                {
+                    anonymous.setVisibility(View.VISIBLE);
+                    anonymous.setChecked(isAnon);
+                }
+                else
+                {
+                    anonymous.setVisibility(View.GONE);
+                    anonymous.setChecked(true);
+                    findViewById(R.id.divider).setVisibility(View.GONE);
+                }
 
             } catch (JSONException e) {
                 Toast.makeText(getApplicationContext(), "Something happened!Please try again", Toast.LENGTH_SHORT).show();
@@ -120,7 +135,7 @@ public class EditPostEntryActivity extends BasePostActivity {
             try {
 
                 _currentPost.put("postBody", postBody);
-                _currentPost.put("diaryEntry", diaryEntry.isChecked());
+                _currentPost.put("anonymous", anonymous.isChecked());
                 _currentPost.put("postTitle", postTitle);
                 Log.i(LOG_NAME, post.toString());
 

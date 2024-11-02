@@ -36,6 +36,7 @@
 		"diaryEntry": false,
 		"anonymous": true
 	};
+
 	const postPost = async () => {
 		loading.value = true;
 		try {
@@ -54,14 +55,31 @@
 			} = await sendPostRequest.response;
 			const response = await body.json();
 			console.log("POST call succeeded", response);
+			exitCreatePost();
 			// Reset form fields after submission
 		} catch (e) {
 			console.log("POST call failed", e);
+
+			if(e.response.body == "\"Cannot make more than one diary entry a day\"") {
+				alert("Woah there! You can't make more than one diary entry per day :(");
+			}
 		}
 		loading.value = false;
 	};
 
-
+	function exitCreatePost() {
+		if(newPost.diaryEntry) {
+			// go to calendar view if user created a diary entry
+			router.push({
+				name: 'calendar'
+			});
+		} else {
+			// go to profile if user created a public post
+			router.push({
+				name: 'profile'
+			});
+		}
+	}
 
 	const createPost = async (event) => {
 		//check validation
@@ -77,14 +95,11 @@
 		newPost.diaryEntry = diaryEntryIsChecked.value;
 		newPost.anonymous = anonIsChecked.value;
 		newPost.uid = uid.value;
+		resetToggles();
 
 		await postPost();
 
 		createButton.disabled = false;
-		router.push({
-			name: 'profile'
-		});
-
 	}
 
 	function discardPost(event) {
@@ -126,12 +141,15 @@
 		}
 	}
 
-	function toggleAnonymous() {
-		anonIsChecked.value = !anonIsChecked.value;
+	function resetToggles() {
+		diaryEntryIsChecked.value = false;
+		document.getElementById("anonymous").hidden = true;
+		document.getElementById("anonymousText").hidden = true;
+		anonIsChecked.value = true;
 	}
 
-	function checkDiaryEntryLimit() {
-		// check if a diary entry has been made by this user that day already
+	function toggleAnonymous() {
+		anonIsChecked.value = !anonIsChecked.value;
 	}
 </script>
 

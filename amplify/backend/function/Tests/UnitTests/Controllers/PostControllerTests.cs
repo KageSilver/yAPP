@@ -120,6 +120,94 @@ public class PostControllerTests
         Assert.Equal(post.DiaryEntry, returnedPost.DiaryEntry);
         Assert.Equal(post.Anonymous, returnedPost.Anonymous);
     }
+
+    [Fact]
+    public async Task CreatePost_FirstDiaryPost_ReturnsPost()
+    {
+        // Arrange 
+        var request = new NewPost 
+        { 
+            UID = "user1@example.com", 
+            PostTitle = "title", 
+            PostBody = "body", 
+            DiaryEntry = true, 
+            Anonymous = true 
+        };
+        var poster = new User {UserName = "user1@example.com" };
+        var post = new Post 
+        { 
+            UID = request.UID, 
+            PostTitle = request.PostTitle, 
+            PostBody = request.PostBody, 
+            Upvotes = 0, 
+            Downvotes = 0, 
+            DiaryEntry = request.DiaryEntry, 
+            Anonymous = request.Anonymous 
+        };
+
+        // Mock GetUser to return the poster
+        _mockCognitoActions.Setup(c => c.GetUserById(request.UID)).ReturnsAsync(poster);
+        // Mock GetDiariesByUser to return an empty list indicating they haven't made a post that day yet
+        _mockPostActions.Setup(p => p.GetDiariesByUser(request.UID, It.IsAny<DateTime>())).ReturnsAsync(new List<Post>());
+        // Mock CreatePost to return a new Post object
+        _mockPostActions.Setup(p => p.CreatePost(It.IsAny<Post>())).ReturnsAsync(new OkObjectResult(post));
+
+        // Act
+        var result = await _postController.CreatePost(request);
+
+        // Assert
+        var returnedPost = result.Value;
+        // cannot assert PID being equal since PID is randomly generated
+        Assert.Equal(post.UID, returnedPost.UID);
+        Assert.Equal(post.PostTitle, returnedPost.PostTitle);
+        Assert.Equal(post.PostBody, returnedPost.PostBody);
+        Assert.Equal(post.Upvotes, returnedPost.Upvotes);
+        Assert.Equal(post.Downvotes, returnedPost.Downvotes);
+        Assert.Equal(post.DiaryEntry, returnedPost.DiaryEntry);
+        Assert.Equal(post.Anonymous, returnedPost.Anonymous);
+    }
+
+    [Fact]
+    public async Task CreatePost_SecondDiaryPost_ReturnsBadRequest()
+    {
+        // Arrange 
+        var request = new NewPost 
+        { 
+            UID = "user1@example.com", 
+            PostTitle = "title", 
+            PostBody = "body", 
+            DiaryEntry = true, 
+            Anonymous = true 
+        };
+        var poster = new User {UserName = "user1@example.com" };
+        var post = new Post 
+        { 
+            UID = request.UID, 
+            PostTitle = request.PostTitle, 
+            PostBody = request.PostBody, 
+            Upvotes = 0, 
+            Downvotes = 0, 
+            DiaryEntry = request.DiaryEntry, 
+            Anonymous = request.Anonymous 
+        };
+
+        var list = new List<Post>();
+        list.Add(post);
+        
+        // Mock GetUser to return the poster
+        _mockCognitoActions.Setup(c => c.GetUserById(request.UID)).ReturnsAsync(poster);
+        // Mock GetDiariesByUser to return an empty list indicating they haven't made a post that day yet
+        _mockPostActions.Setup(p => p.GetDiariesByUser(request.UID, It.IsAny<DateTime>())).ReturnsAsync(list);
+        // Mock CreatePost to return a new Post object
+        _mockPostActions.Setup(p => p.CreatePost(It.IsAny<Post>())).ReturnsAsync(new OkObjectResult(post));
+
+        // Act
+        var result = await _postController.CreatePost(request);
+
+        // Assert
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+        Assert.Equal("Cannot make more than one diary entry a day", badRequestResult.Value);
+    }
     
     #endregion
 
