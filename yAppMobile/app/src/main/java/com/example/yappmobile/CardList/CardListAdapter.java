@@ -48,7 +48,7 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             case "FRIEND_REQUEST":
             {
                 View view = inflater.inflate(R.layout.card_friend_request, parent, false);
-                return new FriendRequestViewHolder(view);
+                return new FriendRequestViewHolder(view, (IListRequestCardInteractions) itemInteractions);
             }
             case "CURRENT_FRIEND":
             {
@@ -111,7 +111,7 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public TextView sender;
         public Button acceptButton, declineButton;
 
-        public FriendRequestViewHolder(View itemView)
+        public FriendRequestViewHolder(View itemView, IListRequestCardInteractions requestCardInteractions)
         {
             super(itemView);
             sender = itemView.findViewById(R.id.friend_username);
@@ -123,7 +123,7 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 @Override
                 public void onClick(View v)
                 {
-                    // TODO: handle the api call here perhaps?
+                    requestCardInteractions.onAcceptClick(getAdapterPosition());
                 }
             });
 
@@ -132,7 +132,7 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 @Override
                 public void onClick(View v)
                 {
-                    // TODO: handle the api call here perhaps?
+                    requestCardInteractions.onDeclineClick(getAdapterPosition());
                 }
             });
         }
@@ -141,8 +141,24 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         {
             try
             {
-                // TODO: refine this, ensure not to render anything weird...
-                sender.setText(card.get("FromUserName").toString());
+                String personA = card.get("FromUserName").toString();
+                String personB = card.get("ToUserName").toString();
+                Amplify.Auth.getCurrentUser(result -> {
+                    if (personA.equals(result.getUsername()))
+                    {
+                        // If the current user is the sender, only view the request as "pending"
+                        // And prevent them from accepting or declining the request
+                        sender.setText(personB + ": pending");
+                        acceptButton.setVisibility(View.GONE);
+                        declineButton.setVisibility(View.GONE);
+                    }
+                    else
+                    {
+                        sender.setText(personA);
+                    }
+                }, error -> {
+                    Log.e("CardListAdapter", "Error populating Friend card", error);
+                });
             }
             catch (JSONException jsonException)
             {
@@ -185,7 +201,6 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         {
             try
             {
-                // TODO: refine this. could probably do some logic in the card list helper
                 String personA = card.get("FromUserName").toString();
                 String personB = card.get("ToUserName").toString();
                 Amplify.Auth.getCurrentUser(result -> {

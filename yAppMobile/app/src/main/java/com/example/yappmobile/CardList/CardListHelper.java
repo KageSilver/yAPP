@@ -77,8 +77,10 @@ public class CardListHelper extends AppCompatActivity
             // Convert API response into a list of CardItems
             cardItemList = handleData(jsonData);
 
-            if ( myPosts )
+            if (myPosts)
+            {
                 sortPosts();
+            }
             populateCard();
         }).exceptionally(throwable ->
         {
@@ -116,7 +118,8 @@ public class CardListHelper extends AppCompatActivity
         });
     }
 
-    private String truncateToMS(String date) {
+    private String truncateToMS(String date)
+    {
         if (date.length() > 20)
         {
             // Replace the +Z
@@ -320,7 +323,7 @@ public class CardListHelper extends AppCompatActivity
         String receiver = null;
         try
         {
-            if(cardType.equals("CURRENT_FRIEND"))
+            if(cardType.equals("CURRENT_FRIEND") || cardType.equals("FRIEND_REQUEST"))
             {
                 sender = cardItemList.get(position).get("FromUserName").toString();
                 receiver = cardItemList.get(position).get("ToUserName").toString();

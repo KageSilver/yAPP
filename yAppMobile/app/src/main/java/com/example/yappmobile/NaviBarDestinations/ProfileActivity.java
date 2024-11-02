@@ -55,8 +55,10 @@ public class ProfileActivity extends AppCompatActivity
         });
 
         TextView usernameText = findViewById(R.id.profile_username_text);
+        TextView uuidText = findViewById(R.id.profile_uuid_text);
         Amplify.Auth.getCurrentUser(result -> {
             usernameText.setText(result.getUsername());
+            uuidText.setText(result.getUserId());
         }, error -> {
             Log.e("Auth", "Error occurred when getting current user. Redirecting to authenticator");
             Intent intent = new Intent(ProfileActivity.this, AuthenticatorActivity.class);
