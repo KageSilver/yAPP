@@ -18,7 +18,6 @@ using Xunit;
 using yAppLambda;
 using Newtonsoft.Json;
 using System.Net;
-using Moq;
 using yAppLambda.Models;
 
 namespace Tests.IntegrationTests;
@@ -31,6 +30,7 @@ public class PostControllerIntegrationTests
 
     //we must use simulator email to test the user without using email quota
     private const string TestUserEmail = "bounce4@simulator.amazonses.com";
+    private const string TestUserEmail2 = "bounce3@simulator.amazonses.com";
     private static string _testUserId = ""; // this will be updated in the first test when the test user is created
 
     private ICognitoActions _cognitoActions;
@@ -503,7 +503,8 @@ public class PostControllerIntegrationTests
         var newPost = JsonConvert.DeserializeObject<Post>(responseString1);
 
         // Act
-        var response2 = await _client.GetAsync($"/api/posts/getDiariesByUser?uid={_testUserId}&current={DateTime.Now}");
+        var date = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffK");
+        var response2 = await _client.GetAsync($"/api/posts/getDiariesByUser?uid={_testUserId}&current={date}");
         var responseString2 = await response2.Content.ReadAsStringAsync();
         var postList = JsonConvert.DeserializeObject<List<Post>>(responseString2);
 
@@ -542,17 +543,52 @@ public class PostControllerIntegrationTests
     {
         // Uses the test user set up in CreatePost_ValidRequest_ReturnsPost()
 
+        // Creating test user for friendship setup
+        await _cognitoActions.CreateUser(TestUserEmail2);
+        await Task.Delay(TimeSpan.FromSeconds(5)); // make sure the user is created
+
+        var responseId = await _client.GetAsync($"/api/users/getUserByName?username={TestUserEmail2}");
+        Assert.Equal(HttpStatusCode.OK, responseId.StatusCode);
+        var responseIdString = await responseId.Content.ReadAsStringAsync();
+        var user = JsonConvert.DeserializeObject<User>(responseIdString);
+        string _testUserId2 = user.Id;
+
+        // Arrange
+        var friendRequest = new FriendRequest
+        {
+            FromUserName = TestUserEmail2,
+            ToUserId = TestUserEmail
+        };
+
+        var content = new StringContent(JsonConvert.SerializeObject(friendRequest), System.Text.Encoding.UTF8,
+            "application/json");
+        await _client.PostAsync("/api/friends/friendRequest", content);
+        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+
+        friendRequest = new FriendRequest
+        {
+            FromUserName = TestUserEmail2,
+            ToUserName = TestUserEmail,
+            Status = 1 // Accepted
+        };
+
+        content = new StringContent(JsonConvert.SerializeObject(friendRequest), Encoding.UTF8, "application/json");
+
+        // Act
+        await _client.PutAsync("/api/friends/updateFriendRequest", content);
+        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+
         // Arrange
         var request = new NewPost
         {
-            UID = _testUserId,
+            UID = _testUserId2,
             PostTitle = "GetDiariesByFriends_ShouldReturnPosts_WhenSuccessful()",
             PostBody = "body",
             DiaryEntry = true,
             Anonymous = true
         };
         
-        var content = new StringContent(JsonConvert.SerializeObject(request), System.Text.Encoding.UTF8,
+        content = new StringContent(JsonConvert.SerializeObject(request), System.Text.Encoding.UTF8,
             "application/json");
 
         // Creates a new post to query
@@ -562,7 +598,8 @@ public class PostControllerIntegrationTests
         var newPost = JsonConvert.DeserializeObject<Post>(responseString1);
 
         // Act
-        var response2 = await _client.GetAsync($"/api/posts/getDiariesByFriends?uid={_testUserId}&current={DateTime.Now}");
+        var date = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffK");
+        var response2 = await _client.GetAsync($"/api/posts/getDiariesByFriends?uid={_testUserId}&current={date}");
         var responseString2 = await response2.Content.ReadAsStringAsync();
         var postList = JsonConvert.DeserializeObject<List<Post>>(responseString2);
 
@@ -579,6 +616,7 @@ public class PostControllerIntegrationTests
 
         // Clean up
         await _cognitoActions.DeleteUser(TestUserEmail);
+        await _cognitoActions.DeleteUser(TestUserEmail2);
         await _postActions.DeletePost(newPost.PID);
     }
 
