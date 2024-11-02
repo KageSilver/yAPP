@@ -148,8 +148,10 @@ public class CardListHelper extends AppCompatActivity
             // get usernames to appear on posts
             getUsernamesForDiaries(friends, uid);
             populateCard();
-            // Make loading spinner visible while we populate our CardItemAdapter
-            loadingSpinner.setVisibility(View.VISIBLE);
+            runOnUiThread(() -> {
+                // Make loading spinner visible while we populate our CardItemAdapter
+                loadingSpinner.setVisibility(View.VISIBLE);
+            });
         }).exceptionally(throwable ->
         {
             Log.e("API", "Error fetching data", throwable);
@@ -211,7 +213,7 @@ public class CardListHelper extends AppCompatActivity
     public void clearItems()
     {
         // clears items in the recycler view for cleaner transitions between calendar dates
-        cardItemList.clear();
+        cardItemList = new ArrayList<>();
         adapter.updateList(cardItemList);
     }
 
