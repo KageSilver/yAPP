@@ -61,7 +61,7 @@
 			console.log("POST call failed", e);
 
 			if(e.response.body == "\"Cannot make more than one diary entry a day\"") {
-				alert("Woah there! You cannot make more than one diary entry per day :(");
+				alert("Woah there! You can't make more than one diary entry per day :(");
 			}
 		}
 		loading.value = false;
