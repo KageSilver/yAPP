@@ -26,6 +26,7 @@ public abstract class BasePostActivity extends AppCompatActivity {
     protected AlertDialog successDialog;
     protected AlertDialog failureDialog;
     protected AlertDialog discardDialog;
+    protected AlertDialog diaryLimitDialog;
 
     protected Button actionButton;
 
