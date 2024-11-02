@@ -595,7 +595,7 @@ public class PostControllerIntegrationTests
 
         // Creates a new post to query
         var response1 = await _client.PostAsync("/api/posts/createPost", content);
-        await Task.Delay(TimeSpan.FromSeconds(10)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
         var responseString1 = await response1.Content.ReadAsStringAsync();
         var newPost = JsonConvert.DeserializeObject<Post>(responseString1);
 
