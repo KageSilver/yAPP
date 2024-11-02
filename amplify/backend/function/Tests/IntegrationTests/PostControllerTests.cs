@@ -232,11 +232,11 @@ public class PostControllerIntegrationTests
 
         // Assert
         Assert.Equal(System.Net.HttpStatusCode.BadRequest, response2.StatusCode);
+        Assert.Equal("\"Cannot make more than one diary entry a day\"", response2.Content.ReadAsStringAsync().Result.ToString());
 
         // Clean up
         await _postActions.DeletePost(post.PID);
         // Test user is deleted in GetPostsByUser_ShouldReturnPosts_WhenSuccessful()
-        
     }
     
     #endregion
