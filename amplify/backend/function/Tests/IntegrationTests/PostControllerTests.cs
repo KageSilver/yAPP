@@ -190,7 +190,7 @@ public class PostControllerIntegrationTests
 
         // Clean up
         await _postActions.DeletePost(post.PID);
-        // Test user is deleted in GetPostsByUser_ShouldReturnPosts_WhenSuccessful()
+        // Test user is deleted in GetDiariesByFriends_ShouldReturnPosts_WhenSuccessful()
     }
     
     [Fact, Order(5)]
@@ -236,7 +236,7 @@ public class PostControllerIntegrationTests
 
         // Clean up
         await _postActions.DeletePost(post.PID);
-        // Test user is deleted in GetPostsByUser_ShouldReturnPosts_WhenSuccessful()
+        // Test user is deleted in GetDiariesByFriends_ShouldReturnPosts_WhenSuccessful()
     }
     
     #endregion
@@ -557,7 +557,7 @@ public class PostControllerIntegrationTests
 
     #region GetDiariesByUser Tests
 
-    [Fact, Order(16)]
+    [Fact, Order(18)]
     public async Task GetDiariesByUser_ShouldReturnPosts_WhenSuccessful()
     {
         // Uses the test user set up in CreatePost_ValidRequest_ReturnsPost()
@@ -603,7 +603,7 @@ public class PostControllerIntegrationTests
         // Test user is deleted in GetDiariesByFriends_ShouldReturnPosts_WhenSuccessful()
     }
 
-    [Fact, Order(17)]
+    [Fact, Order(19)]
     public async Task GetDiariesByUser_ShouldReturnBadRequest_WithInvalidUID()
     {
         // Act
@@ -617,7 +617,7 @@ public class PostControllerIntegrationTests
 
     #region GetDiariesByFriends Tests
 
-    [Fact, Order(18)]
+    [Fact, Order(20)]
     public async Task GetDiariesByFriends_ShouldReturnPosts_WhenSuccessful()
     {
         // Uses the test user set up in CreatePost_ValidRequest_ReturnsPost()
@@ -701,7 +701,7 @@ public class PostControllerIntegrationTests
         await _postActions.DeletePost(newPost.PID);
     }
 
-    [Fact, Order(19)]
+    [Fact, Order(21)]
     public async Task GetDiariesByFriends_ShouldReturnBadRequest_WithInvalidUID()
     {
         // Act
