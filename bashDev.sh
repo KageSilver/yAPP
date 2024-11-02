@@ -38,6 +38,12 @@ amplify init \
 
 amplify status
 
+echo "changing path to tests..."
+cd amplify/backend/function/Tests
+echo "running tests..."
+dotnet test Tests.csproj
+
+
 echo "Pushing..."
 amplify push --yes --debug
 
