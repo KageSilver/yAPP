@@ -63,12 +63,14 @@
 		<!-- Button positioned at the top-right corner -->
 		<button
 			class="hover:bg-dark-pink-800 absolute right-2 top-0 mr-16 mt-2 rounded-lg px-4 py-2 font-bold text-white"
-			@click="router.push('/profile/friendRequests')">
+			@click="router.push('/profile/friendRequests')"
+		>
 			<span class="material-icons">group_add</span>
 			<!-- Notification Badge -->
 			<span
 				class="absolute -right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-dark-pink text-xs font-bold text-white"
-				v-if="counts">
+				v-if="counts"
+			>
 				{{ counts }}
 			</span>
 		</button>
@@ -78,16 +80,13 @@
 		<h5 class="mb-2 text-sm text-purple">UUID: {{ userId }}</h5>
 	</div>
 	<div class="sm:hidden">
-		<label
-			for="tabs"
-			class="sr-only"
-			>Select tab</label
-		>
+		<label for="tabs" class="sr-only">Select tab</label>
 		<select
 			id="tabs"
 			v-model="selectedTab"
 			@change="navigateTo($event)"
-			class="block w-full border-none bg-white p-2.5 text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500">
+			class="block w-full border-none bg-white p-2.5 text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500"
+		>
 			<option value="/profile/myPosts">My Posts</option>
 			<option value="/profile/friends">My Friends</option>
 			<option value="/profile/awards">My Awards</option>
@@ -97,14 +96,16 @@
 		class="hidden text-center text-sm font-medium text-gray-900 sm:flex"
 		id="fullWidthTab"
 		data-tabs-toggle="#fullWidthTabContent"
-		role="tablist">
+		role="tablist"
+	>
 		<li class="w-full">
 			<button
 				@click="router.push('/profile/myPosts')"
 				:class="[
 					'inline-block w-full bg-white p-4 hover:bg-dark-purple hover:text-white focus:outline-none',
 					isActive('/myPosts') ? 'text-light-pink' : '',
-				]">
+				]"
+			>
 				My Posts
 			</button>
 		</li>
@@ -114,7 +115,8 @@
 				:class="[
 					'inline-block w-full bg-white p-4 hover:bg-dark-purple hover:text-white focus:outline-none',
 					isActive('/friends') ? 'text-light-pink' : '',
-				]">
+				]"
+			>
 				My Friends
 			</button>
 		</li>
@@ -124,7 +126,8 @@
 				:class="[
 					'inline-block w-full bg-white p-4 hover:bg-dark-purple hover:text-white focus:outline-none',
 					isActive('/awards') ? 'text-light-pink' : '',
-				]">
+				]"
+			>
 				My Awards
 			</button>
 		</li>

@@ -1,20 +1,18 @@
 <template>
 	<div
-		class="fixed left-0 top-0 z-50 h-[8rem] w-full bg-gradient-to-t text-white shadow-top">
+		class="fixed left-0 top-0 z-50 h-[8rem] w-full bg-gradient-to-t text-white shadow-top"
+	>
 		<div
-			class="mx-auto flex h-full max-w-7xl items-center justify-between px-2 py-4 sm:px-2 lg:px-2">
+			class="mx-auto flex h-full max-w-7xl items-center justify-between px-2 py-4 sm:px-2 lg:px-2"
+		>
 			<div class="mr-4 shrink-0">
-				<a
-					href="/home"
-					class="flex items-center">
+				<a href="/home" class="flex items-center">
 					<img
 						src="../assets/yAPP-icon-light.svg"
 						alt="yAPP Logo"
-						class="inline-block h-10 md:h-[74px]" />
-					<span 
-						class="ml-2 text-[20px] md:text-[48px]">
-						yAPP
-					</span>
+						class="inline-block h-10 md:h-[74px]"
+					/>
+					<span class="ml-2 text-[20px] md:text-[48px]"> yAPP </span>
 				</a>
 			</div>
 
