@@ -144,20 +144,15 @@
 </script>
 
 <template>
-	<LoadingScreen
-		v-if="loading"
-		class="" />
-	<div
-		v-else
-		class="backBtnDiv">
+	<LoadingScreen v-if="loading" class="" />
+	<div v-else class="backBtnDiv">
 		<BackBtnHeader
 			header="Create a new post!"
-			subheader="Yapp your heart out." />
+			subheader="Yapp your heart out."
+		/>
 
 		<div class="mt-3 w-full md:mx-6 md:px-16">
-			<form
-				class="post-heading rounded-lg bg-white p-8"
-				id="post">
+			<form class="post-heading rounded-lg bg-white p-8" id="post">
 				<div class="mb-4 rounded-lg border-2 border-gray-300 p-8">
 					<div class="float-root mb-4">
 						<label class="float-left block text-lg font-semibold text-gray-700"
@@ -169,13 +164,16 @@
 								<input
 									type="checkbox"
 									class="sr-only"
-									@change="toggleDiaryEntry" />
+									@change="toggleDiaryEntry"
+								/>
 								<div
 									:class="{ '!bg-[#A55678]': diaryEntryIsChecked }"
-									class="box block h-8 w-14 rounded-full bg-[#9E9E9E]"></div>
+									class="box block h-8 w-14 rounded-full bg-[#9E9E9E]"
+								></div>
 								<div
 									:class="{ 'translate-x-full': diaryEntryIsChecked }"
-									class="dot absolute left-1 top-1 h-6 w-6 rounded-full bg-white transition"></div>
+									class="dot absolute left-1 top-1 h-6 w-6 rounded-full bg-white transition"
+								></div>
 							</div>
 						</label>
 					</div>
@@ -186,10 +184,7 @@
 						>
 					</div>
 
-					<div
-						hidden
-						id="anonymous"
-						class="float-root mb-4">
+					<div hidden id="anonymous" class="float-root mb-4">
 						<label class="float-left block text-lg font-semibold text-gray-700"
 							>Anonymous?</label
 						>
@@ -199,20 +194,21 @@
 								<input
 									type="checkbox"
 									class="sr-only"
-									@change="toggleAnonymous" />
+									@change="toggleAnonymous"
+								/>
 								<div
 									:class="{ '!bg-[#A55678]': anonIsChecked }"
-									class="box block h-8 w-14 rounded-full bg-[#9E9E9E]"></div>
+									class="box block h-8 w-14 rounded-full bg-[#9E9E9E]"
+								></div>
 								<div
 									:class="{ 'translate-x-full': anonIsChecked }"
-									class="dot absolute left-1 top-1 h-6 w-6 rounded-full bg-white transition"></div>
+									class="dot absolute left-1 top-1 h-6 w-6 rounded-full bg-white transition"
+								></div>
 							</div>
 						</label>
 					</div>
 
-					<div
-						hidden
-						id="anonymousText">
+					<div hidden id="anonymousText">
 						<label class="mb-2 mt-10 block text-gray-700"
 							>Anonymous diary posts will not show your username to your
 							friends</label
@@ -221,42 +217,38 @@
 				</div>
 
 				<div class="form-group mb-4 w-full">
-					<label
-						for="title"
-						class="mb-2 block text-gray-700"
-						>Title:</label
-					>
+					<label for="title" class="mb-2 block text-gray-700">Title:</label>
 					<input
 						type="text"
 						id="title"
 						required
 						placeholder="Insert your title here."
-						class="input" />
+						class="input"
+					/>
 				</div>
 				<div class="form-group mb-4 w-full">
-					<label
-						for="content"
-						class="mb-2 block text-gray-700"
-						>Content:</label
-					>
+					<label for="content" class="mb-2 block text-gray-700">Content:</label>
 					<textarea
 						id="content"
 						required
 						placeholder="Insert the most heinous, confounding, baffling tea you've ever heard."
-						class="input"></textarea>
+						class="input"
+					></textarea>
 				</div>
 				<div class="flex w-full flex-col space-y-2">
 					<button
 						title="Create Post"
 						id="create-button"
 						class="w-full rounded-xl bg-pink-purple px-5 py-3 text-white"
-						@click="createPost">
+						@click="createPost"
+					>
 						Create Post
 					</button>
 					<button
 						title="Discard Post"
 						class="w-full rounded-xl border border-gray-300 bg-white px-5 py-3 text-dark"
-						@click="discardPost">
+						@click="discardPost"
+					>
 						Discard
 					</button>
 				</div>

@@ -20,7 +20,8 @@
 		<div class="flex flex-1 flex-col">
 			<TopNav />
 			<main
-				:class="`flex min-h-screen flex-1 flex-col overflow-y-auto ${currentPath.value ? 'justify-center py-[22rem]' : ''}`">
+				:class="`flex min-h-screen flex-1 flex-col overflow-y-auto ${currentPath.value ? 'justify-center py-[22rem]' : ''}`"
+			>
 				<router-view></router-view>
 			</main>
 		</div>

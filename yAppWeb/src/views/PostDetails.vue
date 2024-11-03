@@ -401,13 +401,13 @@
 	<div
 		v-else
 		class="mb-5 flex min-h-screen flex-row items-start justify-center gap-4 px-4 pt-[10rem]"
-		id="postDetails">
-		<div
-			v-if="currentPost && !isEditing"
-			class="flex w-full justify-center">
+		id="postDetails"
+	>
+		<div v-if="currentPost && !isEditing" class="flex w-full justify-center">
 			<BackBtn class="mt-2 self-start" />
 			<div
-				class="m-2 max-w-4xl flex-1 rounded-lg border border-gray-300 bg-gray-100 p-5 shadow transition-shadow hover:shadow-md">
+				class="m-2 max-w-4xl flex-1 rounded-lg border border-gray-300 bg-gray-100 p-5 shadow transition-shadow hover:shadow-md"
+			>
 				<div class="relative mb-4">
 					<!-- Post Title and Created At -->
 					<h3 class="break-words text-lg font-semibold">
@@ -420,7 +420,8 @@
 					<DotMenu
 						v-if="currentPost.uid == userId"
 						@edit="editPost"
-						@openDeleteModal="openDeleteModal" />
+						@openDeleteModal="openDeleteModal"
+					/>
 				</div>
 
 				<!-- Post Body -->
@@ -439,55 +440,51 @@
                     </button> -->
 					<button
 						@click="reply()"
-						class="flex items-center space-x-2 rounded-xl p-2 hover:bg-light-pink hover:text-white">
-						<img
-							src="../assets/post/reply.svg"
-							alt="Reply"
-							class="h-6 w-6" />
+						class="flex items-center space-x-2 rounded-xl p-2 hover:bg-light-pink hover:text-white"
+					>
+						<img src="../assets/post/reply.svg" alt="Reply" class="h-6 w-6" />
 						<span>Reply</span>
 					</button>
 				</div>
 				<hr />
-				<div
-					class="relative mb-4 mt-5"
-					v-if="isAddingComment">
+				<div class="relative mb-4 mt-5" v-if="isAddingComment">
 					<div class="px-2">
 						<textarea
 							type="text"
 							class="input"
 							placeholder="Add a comment"
-							id="comment" />
+							id="comment"
+						/>
 					</div>
 					<div class="flex justify-end p-2">
 						<button
 							class="mr-2 rounded-lg bg-light-pink p-2 text-white"
 							id="cancelAddComment"
-							@click="cancelReply()">
+							@click="cancelReply()"
+						>
 							Cancel
 						</button>
 						<button
 							class="rounded-lg bg-dark-pink p-2 text-white"
 							id="createAddComment"
-							@click="createComment">
+							@click="createComment"
+						>
 							Send
 						</button>
 					</div>
 				</div>
 
 				<!--Comment section-->
-				<div
-					v-for="comment in comments"
-					:key="comment.cid"
-					class="max flex-1">
+				<div v-for="comment in comments" :key="comment.cid" class="max flex-1">
 					<div
-						class="m-2 max-w-4xl flex-1 rounded-lg border border-gray-300 bg-gray-100 p-5 shadow transition-shadow hover:shadow-md">
-						<div
-							class="relative mb-4"
-							:id="`comment-${comment.cid}`">
+						class="m-2 max-w-4xl flex-1 rounded-lg border border-gray-300 bg-gray-100 p-5 shadow transition-shadow hover:shadow-md"
+					>
+						<div class="relative mb-4" :id="`comment-${comment.cid}`">
 							<p
 								class="break-words text-sm text-gray-600"
 								:id="`commentBody-${comment.cid}`"
-								v-if="!isEditingComment(comment) || comment.uid != userId">
+								v-if="!isEditingComment(comment) || comment.uid != userId"
+							>
 								{{ comment.commentBody }}
 							</p>
 							<p
@@ -496,7 +493,8 @@
 								v-if="
 									comment.updatedAt == comment.createdAt &&
 									!isEditingComment(comment)
-								">
+								"
+							>
 								<strong>Created At:</strong>
 								{{ new Date(comment.createdAt).toLocaleString() }}
 							</p>
@@ -507,7 +505,8 @@
 								v-if="
 									comment.updatedAt != comment.createdAt &&
 									!isEditingComment(comment)
-								">
+								"
+							>
 								<strong>Updated At:</strong>
 								{{ new Date(comment.updatedAt).toLocaleString() }}
 							</p>
@@ -523,21 +522,25 @@
 								v-if="!isEditingComment(comment) && comment.uid == userId"
 								:id="`commentDot-${comment.cid}`"
 								@edit="editComment(comment)"
-								@openDeleteModal="openDeleteCommentModal(comment)" />
+								@openDeleteModal="openDeleteCommentModal(comment)"
+							/>
 						</div>
 						<div
 							class="flex justify-end"
-							v-if="isEditingComment(comment) && comment.uid == userId">
+							v-if="isEditingComment(comment) && comment.uid == userId"
+						>
 							<button
 								class="mr-2 rounded-lg bg-light-pink p-2 text-white"
 								:id="`cancelComment-${comment.cid}`"
-								@click="cancelEditComment(comment)">
+								@click="cancelEditComment(comment)"
+							>
 								Cancel
 							</button>
 							<button
 								class="rounded-lg bg-dark-pink p-2 text-white"
 								@click="updateComment(comment)"
-								:id="`updateComment-${comment.cid}`">
+								:id="`updateComment-${comment.cid}`"
+							>
 								Update Comment
 							</button>
 						</div>
@@ -548,10 +551,12 @@
 
 		<div
 			v-if="currentPost && isEditing"
-			class="m-2 max-w-4xl flex-1 rounded-lg border border-gray-300 bg-gray-100 p-5 shadow transition-shadow hover:shadow-md">
+			class="m-2 max-w-4xl flex-1 rounded-lg border border-gray-300 bg-gray-100 p-5 shadow transition-shadow hover:shadow-md"
+		>
 			<div
 				v-if="currentPost.diaryEntry"
-				class="mb-4 rounded-lg border-2 border-gray-300 p-8">
+				class="mb-4 rounded-lg border-2 border-gray-300 p-8"
+			>
 				<div class="float-root mb-6">
 					<label class="float-left block text-lg font-semibold text-gray-700"
 						>Anonymous?</label
@@ -562,43 +567,40 @@
 							<input
 								type="checkbox"
 								class="sr-only"
-								@change="toggleAnonymous" />
+								@change="toggleAnonymous"
+							/>
 							<div
 								:class="{ '!bg-[#A55678]': anonIsChecked }"
-								class="box block h-8 w-14 rounded-full bg-[#9E9E9E]"></div>
+								class="box block h-8 w-14 rounded-full bg-[#9E9E9E]"
+							></div>
 							<div
 								:class="{ 'translate-x-full': anonIsChecked }"
-								class="dot absolute left-1 top-1 h-6 w-6 rounded-full bg-white transition"></div>
+								class="dot absolute left-1 top-1 h-6 w-6 rounded-full bg-white transition"
+							></div>
 						</div>
 					</label>
 				</div>
 			</div>
 
 			<div class="form-group mb-4 w-full">
-				<label
-					for="title"
-					class="mb-2 block text-gray-700"
-					>Title:</label
-				>
+				<label for="title" class="mb-2 block text-gray-700">Title:</label>
 				<input
 					type="text"
 					id="title"
 					required
 					:value="currentPost.postTitle"
-					class="input" />
+					class="input"
+				/>
 			</div>
 
 			<div class="form-group mb-4 w-full">
-				<label
-					for="content"
-					class="mb-2 block text-gray-700"
-					>Content:</label
-				>
+				<label for="content" class="mb-2 block text-gray-700">Content:</label>
 				<textarea
 					id="content"
 					required
 					:value="currentPost.postBody"
-					class="input"></textarea>
+					class="input"
+				></textarea>
 			</div>
 
 			<div class="flex w-full flex-col space-y-2">
@@ -607,13 +609,15 @@
 					id="updatePostButton"
 					class="w-full rounded-xl bg-pink-purple px-5 py-3 text-white"
 					type="submit"
-					@click="updatePost">
+					@click="updatePost"
+				>
 					Update Post
 				</button>
 				<button
 					title="Discard Post"
 					class="w-full rounded-xl border border-gray-300 bg-white px-5 py-3 text-dark"
-					@click="openDiscardModal">
+					@click="openDiscardModal"
+				>
 					Discard
 				</button>
 			</div>
@@ -624,23 +628,27 @@
 			:close="closeDeleteModal"
 			:confirm="deletePost"
 			header="Woah there!"
-			message="Are you sure you want to delete this post?" />
+			message="Are you sure you want to delete this post?"
+		/>
 		<ConfirmationModal
 			:showModal="isDiscardingUpdate"
 			:close="closeDiscardModal"
 			:confirm="confirmDiscard"
 			header="Woah there!"
-			message="Are you sure you want to discard your update?" />
+			message="Are you sure you want to discard your update?"
+		/>
 		<ConfirmationModal
 			:showModal="isDeletingComment"
 			:close="closeDeleteCommentModal"
 			:confirm="confirmDeleteComment"
 			header="Woah there!"
-			:message="`Are you sure you want to delete this '${commentMsg}'?`" />
+			:message="`Are you sure you want to delete this '${commentMsg}'?`"
+		/>
 		<Alert
 			:showModal="showAlert"
 			:header="alertMsg.header"
 			:message="alertMsg.message"
-			:close="closeAlert" />
+			:close="closeAlert"
+		/>
 	</div>
 </template>

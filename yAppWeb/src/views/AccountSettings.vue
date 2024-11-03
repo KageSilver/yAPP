@@ -52,38 +52,24 @@
 		<BackBtnHeader
 			header="Account Settings"
 			subheader="Want to change your password?"
-			:backBtn="true" />
+			:backBtn="true"
+		/>
 		<br /><br />
 		<div class="mt-3 w-full md:mx-6 md:px-16">
 			<div class="post-heading rounded-lg bg-white p-8">
 				<div class="form-group mb-4 w-full">
-					<label
-						for="title"
-						class="mb-5 font-bold"
-						>Old Password:</label
-					>
-					<input
-						required
-						id="oldPassword"
-						type="password"
-						class="input" />
+					<label for="title" class="mb-5 font-bold">Old Password:</label>
+					<input required id="oldPassword" type="password" class="input" />
 				</div>
 				<div class="form-group mb-4 w-full">
-					<label
-						for="title"
-						class="mb-5 font-bold"
-						>New Password:</label
-					>
-					<input
-						required
-						id="newPassword"
-						type="password"
-						class="input" />
+					<label for="title" class="mb-5 font-bold">New Password:</label>
+					<input required id="newPassword" type="password" class="input" />
 				</div>
 				<br />
 				<button
 					class="w-full rounded-xl bg-pink-purple px-5 py-3 text-white"
-					@click="onSubmit">
+					@click="onSubmit"
+				>
 					Submit Changes
 				</button>
 			</div>

@@ -66,34 +66,34 @@
 
 <template>
 	<div class="relative w-full items-center justify-center pl-8 pt-[8rem]">
-		<div
-			v-if="loading"
-			class="flex items-center justify-center">
+		<div v-if="loading" class="flex items-center justify-center">
 			<div
-				class="spinner h-10 w-10 animate-spin rounded-full border-4 border-t-transparent"></div>
+				class="spinner h-10 w-10 animate-spin rounded-full border-4 border-t-transparent"
+			></div>
 		</div>
-		<div
-			v-else
-			class="flex w-full flex-col items-center">
+		<div v-else class="flex w-full flex-col items-center">
 			<div
 				class="card m-2 w-full max-w-4xl cursor-pointer rounded-lg border border-gray-300 bg-gray-100 p-5 shadow transition-shadow hover:shadow-md"
 				v-for="post in jsonData"
 				:key="post.pid"
-				@click="clickPost(post.pid)">
+				@click="clickPost(post.pid)"
+			>
 				<PostCard :post="post" />
 			</div>
 			<button
 				id="pageBackwards"
 				class="add-margin self-center rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-600"
 				type="button"
-				@click="pageBackwards()">
+				@click="pageBackwards()"
+			>
 				Go back
 			</button>
 			<button
 				id="pageForwards"
 				class="self-center rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-600"
 				type="button"
-				@click="pageForwards()">
+				@click="pageForwards()"
+			>
 				Load more!
 			</button>
 		</div>

@@ -87,32 +87,27 @@
 <template>
 	<LoadingScreen v-if="loading" />
 
-	<div
-		v-else
-		class="backBtnDiv">
+	<div v-else class="backBtnDiv">
 		<BackBtnHeader
 			header="Add a new Friend!"
 			:subheader="subheader"
-			:backBtn="true" />
+			:backBtn="true"
+		/>
 		<br /><br />
 		<div class="mt-3 w-full md:mx-6 md:px-16">
 			<div class="rounded-xl bg-white p-5">
 				<div class="mb-4 flex flex-col">
-					<label
-						for="to-username"
-						class="mb-5 font-bold"
+					<label for="to-username" class="mb-5 font-bold"
 						>Enter their UUID:</label
 					>
-					<input
-						class="input"
-						id="to-username"
-						type="text" />
+					<input class="input" id="to-username" type="text" />
 				</div>
 				<div class="flex justify-end">
 					<button
 						class="rounded rounded-lg bg-dark px-4 py-2 font-bold text-white transition-colors hover:bg-white hover:text-dark"
 						@click="onSubmit"
-						id="request-button">
+						id="request-button"
+					>
 						Send Request
 					</button>
 				</div>
@@ -123,6 +118,7 @@
 			:showModal="showAlert"
 			:header="alertMsg.header"
 			:message="alertMsg.message"
-			:close="closeAlert" />
+			:close="closeAlert"
+		/>
 	</div>
 </template>
