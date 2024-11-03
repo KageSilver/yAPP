@@ -77,4 +77,5 @@ As for our code and remaining feature issues we plan on implementing, we are con
 - Qiwen:
     Stuff here with commit.
 - Tara:
-    I did things.
+    - I'd say that the code I'm most proud of would be some of the mobile frontend code I did for Sprint 1. This piece of code includes making an API call through Amplify within Android Studio. The reason why I'm proud of this piece is because it took a lot of research and a lot of debugging to figure out how to get it to work well. This addition allowed for the others on my team to reuse this code fragment for their own endpoint interactions for other frontend work.
+    - Here is the [link to the commit](https://github.com/KageSilver/yAPP/commit/e56907e2eb8d5947cdef8dc9e143b5a36744095b).
