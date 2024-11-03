@@ -1,31 +1,27 @@
 <script setup lang>
-	import { Authenticator, translations } from "@aws-amplify/ui-vue";
-	import { I18n } from "aws-amplify/utils";
-	import { useRouter } from 'vue-router'; // Import useRouter		
+	import { Authenticator } from "@aws-amplify/ui-vue";
 	import { getCurrentUser } from 'aws-amplify/auth';
-	import { watchEffect ,watch ,onMounted,ref} from 'vue';
-	import "@aws-amplify/ui-vue/styles.css";
 	import { Hub } from "aws-amplify/utils";
+	import { ref } from 'vue';
+	import { useRouter } from 'vue-router'; 	
+	import "@aws-amplify/ui-vue/styles.css";
 
 	const router = useRouter();
+	const currentUser = ref(null);
+	const services = ['SignIn', 'SignUp', 'ForgotPassword']; // Services to be federated
 
-const currentUser = ref(null);
+	Hub.listen("auth", async data => {
+		const { payload } = data;
+		
+		if (payload.event === "signedIn") {
+			currentUser.value = await getCurrentUser();
+			router.push('/home');
+		}
 
-Hub.listen("auth", async data => {
-	const { payload } = data;
-	if (payload.event === "signedIn") {
-		currentUser.value = await getCurrentUser();
-		router.push('/home');
-	}
-	if (payload.event === "signedOut") {
-		currentUser.value = null;
-	}
-});
-	// Services to be federated
-
-const services = ['SignIn', 'SignUp', 'ForgotPassword'];
-	
-
+		if (payload.event === "signedOut") {
+			currentUser.value = null;
+		}
+	});
 </script>
 
 <template>
@@ -37,7 +33,9 @@ const services = ['SignIn', 'SignUp', 'ForgotPassword'];
 					<img class="amplify-image" alt="yAPP logo" src="../assets/yAPP-icon-light.svg"
 						style="width:1000px; height:200px; justify-self: center; opacity:90%" />
 				</div>
-				<h1 class="text-center text-white text-[3rem]">yAPP</h1>
+				<div style="padding-bottom: var(--amplify-space-large);">
+					<h1 class="text-center text-white text-[3rem]">yAPP</h1>
+				</div>
 			</template>
 
 			<!-- FOOTER -->

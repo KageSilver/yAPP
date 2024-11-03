@@ -1,19 +1,11 @@
 <script setup>
-    import {
-    get,
-    put
-} from 'aws-amplify/api';
-import {
-    getCurrentUser
-} from 'aws-amplify/auth';
-import {
-    onMounted,
-    ref
-} from 'vue';
-import Alert from '../components/Alert.vue';
-import BackBtnHeader from '../components/BackBtnHeader.vue';
-import ConfirmationModal from '../components/ConfirmationModal.vue';
-import LoadingScreen from '../components/LoadingScreen.vue';
+    import { get, put } from 'aws-amplify/api';
+    import { getCurrentUser } from 'aws-amplify/auth';
+    import { onMounted, ref } from 'vue';
+    import Alert from '../components/Alert.vue';
+    import BackBtnHeader from '../components/BackBtnHeader.vue';
+    import ConfirmationModal from '../components/ConfirmationModal.vue';
+    import LoadingScreen from '../components/LoadingScreen.vue';
 
     const username = ref('');
     const jsonData = ref([]);
@@ -22,6 +14,7 @@ import LoadingScreen from '../components/LoadingScreen.vue';
         header: '',
         message: ''
     });
+
     const showAlert = ref(false);
     const showModal = ref(false);
     const message = ref('');
@@ -39,7 +32,6 @@ import LoadingScreen from '../components/LoadingScreen.vue';
         showAlert.value = false;
     };
     const confirmDecline = async () => {
-
         await declineRequest(currentFriendship.value);
         showModal.value = false;
         // Update the view of pending requests
@@ -47,8 +39,6 @@ import LoadingScreen from '../components/LoadingScreen.vue';
 
         currentFriendship.value = null;
     };
-
-
 
     // Get list of friends as JSON 
     onMounted(async () => {
@@ -80,6 +70,7 @@ import LoadingScreen from '../components/LoadingScreen.vue';
         await acceptRequest(request);
         await getRequests();
     };
+    
     const acceptRequest = async (request) => {
         loading.value = true;
         try {
@@ -114,10 +105,9 @@ import LoadingScreen from '../components/LoadingScreen.vue';
         loading.value = false;
     }
 
-   
     // Decline toUser's friend request to authenticated user
     const declineRequest = async (request) => {
-        //close modal
+        // Close modal
         showModal.value = false;
         loading.value = true;
         try {
@@ -141,6 +131,7 @@ import LoadingScreen from '../components/LoadingScreen.vue';
             alertMsg.value.header = "Yipee!",
             alertMsg.value.message = `Declined ${request.FromUserName}'s friend request!`;
             showAlert.value = true;
+
         } catch (err) {
             alertMsg.value.header = "Error!",
                 alertMsg.value.message = `Please try again!`;
@@ -157,13 +148,13 @@ import LoadingScreen from '../components/LoadingScreen.vue';
     <div v-else class="backBtnDiv">
         <BackBtnHeader header="My Requests" subheader="Here are your pending friend requests!" :backBtn="true"
             url="/profile/addFriends" btnText="Add a new Friend!" />
-        <!-- Show this message if the friend list is empty -->
+
+        <!-- Show this message if the request list is empty -->
         <div v-if="jsonData.length == 0">
-            <h4 class="text-white text-center">Wow... you have no friends!</h4>
+            <h4 class="text-white text-center">Wow... you have no friend requests!</h4>
         </div>
 
         <div v-else class="flex-box pl-32 py-4">
-
             <div v-for="request in jsonData">
                 <div class="request p-5 bg-deep-dark text-white" v-if="request.FromUserName !== username">
                     <h4>{{ request.FromUserName }}</h4>

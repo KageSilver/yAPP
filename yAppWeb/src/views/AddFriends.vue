@@ -1,27 +1,11 @@
 <script setup>
-    import {
-        get,
-        post
-    } from 'aws-amplify/api';
-    import {
-        useAuthenticator
-    } from '@aws-amplify/ui-vue';
-    import {
-        useRouter
-    } from 'vue-router';
-    import BackBtn from '../components/BackBtn.vue';
-    import {
-        getCurrentUser
-    } from 'aws-amplify/auth';
-    import {
-        onMounted
-    } from 'vue';
-    import {
-        ref
-    } from 'vue';
+    import { getCurrentUser } from 'aws-amplify/auth';
+    import { onMounted } from 'vue';
+    import { post } from 'aws-amplify/api';
+    import { ref } from 'vue';
+    import Alert from '../components/Alert.vue';
     import BackBtnHeader from '../components/BackBtnHeader.vue';
     import LoadingScreen from '../components/LoadingScreen.vue';
-    import Alert from '../components/Alert.vue';
 
     const userId = ref('');
     const username = ref('');
@@ -37,39 +21,39 @@
         const user = await getCurrentUser();
         username.value = user.username;
         userId.value = user.userId;
-        subheader.value = "You uuid: " + userId.value;
-
+        subheader.value = "Your uuid: " + userId.value;
     });
 
-
-    const router = useRouter();
     const closeAlert = () => {
         showAlert.value = false;
     };
 
-
-
-
-
-
     const onSubmit = async () => {
         const sender = username.value;
-        const receiver = document.getElementById("to-username").value;
+        const receiver = document.getElementById("to-username").value.trim();
         var requestButton = document.getElementById("request-button");
 
         if (receiver === '') {
             alert('Enter in their UUID!');
+            resetFields();
+
         } else if (receiver === userId.value || receiver === username.value) {
             alert('You can\’t add yourself as a friend, silly!');
+            resetFields();
+
         } else {
             requestButton.disabled = true;
             await sendFriendRequest(sender, receiver);
             requestButton.disabled = false;
-            document.getElementById("to-username").value = '';
+            resetFields();
         }
     };
 
-const sendFriendRequest = async (fromUser, toUser) => {
+    function resetFields() {
+		document.getElementById("to-username").value = '';
+	}
+
+    const sendFriendRequest = async (fromUser, toUser) => {
         loading.value = true;
         try {
             const newRequest = {
@@ -92,6 +76,7 @@ const sendFriendRequest = async (fromUser, toUser) => {
             alertMsg.value.header = "Yipee!";
             alertMsg.value.message = `Friend request sent to ${toUser}!`;
             showAlert.value = true;
+
         } catch (err) {
             alertMsg.value.header = "Error!";
             alertMsg.value.message = `Please try again!`;
@@ -103,11 +88,11 @@ const sendFriendRequest = async (fromUser, toUser) => {
 </script>
 
 <template>
-
     <LoadingScreen v-if="loading" />
 
     <div v-else class="backBtnDiv">
         <BackBtnHeader header="Add a new Friend!" :subheader="subheader" :backBtn="true" />
+        <br><br>
         <div class="w-full md:px-16 md:mx-6 mt-3">
             <div class="bg-white p-5 rounded-xl">
                 <div class="flex flex-col mb-4">

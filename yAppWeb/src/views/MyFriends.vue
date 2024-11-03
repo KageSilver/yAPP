@@ -1,15 +1,7 @@
 <script setup>
-    import {
-        get,
-        put
-    } from 'aws-amplify/api';
-    import {
-        getCurrentUser
-    } from 'aws-amplify/auth';
-    import {
-        onMounted,
-        ref
-    } from 'vue';
+    import { get, put } from 'aws-amplify/api';
+    import { getCurrentUser } from 'aws-amplify/auth';
+    import { onMounted, ref } from 'vue';
     import ConfirmationModal from '../components/ConfirmationModal.vue';
     import ProfileHeader from '../components/ProfileHeader.vue';
     import LoadingScreen from '../components/LoadingScreen.vue';
@@ -18,8 +10,6 @@
     const jsonData = ref([]);
     const loading = ref(false);
 
-
-
     // Get list of friends as JSON 
     onMounted(async () => {
         const user = await getCurrentUser();
@@ -27,7 +17,7 @@
         getFriends();
     });
 
-    // Get authenticated user's friend requests
+    // Get authenticated user's list of current friends
     const getFriends = async () => {
         loading.value = true;
         try {
@@ -35,9 +25,8 @@
                 apiName: 'yapp',
                 path: `/api/friends/getFriendsByStatus?userName=${username.value}&status=1`
             });
-            const {
-                body
-            } = await restOperation.response;
+
+            const { body } = await restOperation.response;
             jsonData.value = await body.json();
 
         } catch (error) {
@@ -54,23 +43,26 @@
     const openModal = (friendship) => {
         showModal.value = true;
         currentFriendship.value = friendship;
+
         if (friendship.FromUserName === username.value) {
             currentFriend.value = friendship.ToUserName;
+
         } else {
             currentFriend.value = friendship.FromUserName;
         }
-        message.value = `Are you sure you want to unfollow ${currentFriend.value}?`;
 
+        message.value = `Are you sure you want to unfollow ${currentFriend.value}?`;
     };
+
     const closeModal = () => {
         showModal.value = false;
     };
-    const confirmUnfollow = () => {
-        unfollowFriend(currentFriendship.value);
+    
+    const confirmUnfollow = async () => {
+        await unfollowFriend(currentFriendship.value); // Wait for unfollowing friend to be fully proccessed 
         closeModal();
-        getFriends(); // Update the list of friends
+        await getFriends(); // Update the current list of friends
     };
-
 
     // Unfollow sent friend
     const unfollowFriend = async (friendship) => {
@@ -118,8 +110,7 @@
                     <h4 v-if="friendship.ToUserName !== username">{{ friendship.ToUserName }}</h4>
                     <h4 v-else>{{ friendship.FromUserName }}</h4>
                     <div class="request-actions">
-                        <button class="bg-light-pink text-white p-4 font-bold rounded-lg"
-                            @click="openModal(friendship)">
+                        <button class="bg-light-pink text-white p-4 font-bold rounded-lg" @click="openModal(friendship)">
                             Unfollow
                         </button>
                     </div>
