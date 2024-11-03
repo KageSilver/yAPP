@@ -45,9 +45,9 @@ pipeline {
         def title = null // filled in later
         AWS_SDK_LOAD_CONFIG = "1"
         AWS_PROFILE = "default"
-        IMAGE_NAME = 'my-docker-image-main' // Replace with your image name
+        IMAGE_NAME = 'my-docker-image' // Replace with your image name
         //DOCKER_REGISTRY = 'my-registry' // Optional: if you are using a private registry
-        ACCESS_KEY_ID ="AAKIA23WHT5F5J2CZOKNS"
+        ACCESS_KEY_ID ="AKIA23WHT5F5J2CZOKNS"
         SECRET_ACCESS_KEY ="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"
         AWS_DEFAULT_REGION = "us-east-2"
     }
