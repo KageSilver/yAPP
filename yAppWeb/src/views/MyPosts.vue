@@ -50,10 +50,15 @@
 <template>
 	<ProfileHeader />
 	<LoadingScreen v-if="loading" />
-	<div
-		v-else
+
+	<div v-else
 		class="mx-auto flex w-full flex-col items-center">
-		<div
+
+		<div v-if="jsonData.length === 0">
+			<h4 class="text-center text-white">Wow... you have no posts!</h4>
+		</div>
+
+		<div v-else
 			class="card m-2 w-full max-w-4xl cursor-pointer rounded-lg border border-gray-300 bg-gray-100 p-5 shadow transition-shadow hover:shadow-md"
 			v-for="post in jsonData"
 			:key="post.pid"
