@@ -160,9 +160,7 @@
     - { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true }
  - Status codes:
     - 200 OK
-    - 400 Bad Request:
-      - uid is required
-      - valid date is required
+    - 400 Bad Request: uid and valid datetime is required
 
 ### GetDiariesByFriends
  - Gets diary entry posts from all friends of a specified user
@@ -173,9 +171,7 @@
     - [ { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true } ]
  - Status codes:
     - 200 OK
-    - 400 Bad Request:
-      - uid is required
-      - valid date is required
+    - 400 Bad Request: uid and valid datetime is required
 
 ### CreatePost
  - Creates a new post.
@@ -214,7 +210,7 @@
 
 ### GetUserById
  - Retrieves a user by their unique identifier.
- - GET: api/cognito/getUserById?id={id}
+ - GET: api/users/getUserById?id={id}
     - id: The unique identifier of the user
  - Response: returns the user object with the specified id
     - { "userName": "string", "nickName": "string", "id": "string", "name": "string", "email": "string", "Attributes": { "additionalProp1": "string", "additionalProp2": "string", "additionalProp3": "string" } }
@@ -225,7 +221,7 @@
 
 ### GetUserByName
  - Retrieves a user by their username.
- - GET: api/cognito/getUserByName?userName={username}
+ - GET: api/users/getUserByName?userName={username}
     - userName: The username of the user to retrieve
  - Response: returns the user object with the specified username
     - { "userName": "string", "nickName": "string", "id": "string", "name": "string", "email": "string", "Attributes": { "additionalProp1": "string", "additionalProp2": "string", "additionalProp3": "string" } }

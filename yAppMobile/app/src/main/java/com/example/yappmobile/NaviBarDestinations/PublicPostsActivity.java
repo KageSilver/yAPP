@@ -11,7 +11,6 @@ import android.widget.ProgressBar;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,7 +25,6 @@ import com.example.yappmobile.PostEntryActivity;
 import com.example.yappmobile.R;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.ArrayList;
@@ -121,7 +119,6 @@ public class PublicPostsActivity extends AppCompatActivity implements IListCardI
             loadMore.setVisibility(View.VISIBLE);
             currentDatePosition--;
             String since = dates.get(currentDatePosition);
-            dates.remove(currentDatePosition);
             refreshPosts(since);
         }
         else

@@ -3,31 +3,89 @@
     import { getCurrentUser } from 'aws-amplify/auth';
     import { onMounted, ref } from 'vue';
     import { useRouter } from 'vue-router';
+    import LoadingScreen from '../components/LoadingScreen.vue';
 
     const router = useRouter(); // Use router hook
     const uid = ref('');
+    const username = ref('');
     const userDiaries = ref([]);
-    const userDiariesDate = ref([]);
-    const loading = false;
+    const friendDiaries = ref([]);
+    const loading = ref(false);
 
     var today = new Date();
     var selectedDate = today;
+    var friends = new Array();
+    var friendUsernames = new Array();
+    var friendDiariesArr = new Array();
 
-    // Retrieve the necessary data and function from the helper
     onMounted(async () => {
-        resetCalendar();
+        loading.value = true;
+        setCalendar();
         const user = await getCurrentUser();
         uid.value = user.userId;
-        await getMyDiaryEntries(uid);
-        getSelectDateDiaries();
+        username.value = user.username;
+        await getFriendsByStatus(username);
+        await getFriendUIDs(username);
+        await getUserDiaries(uid);
+        await getFriendDiaries(uid);
     });
 
-    async function getMyDiaryEntries(uid) {
+    // get list of accepted friends for their usernames
+    async function getFriendsByStatus(username) {
         try {
-            console.log(uid);
             const restOperation = get({
                 apiName: 'yapp',
-                path: `/api/posts/getPostsByUser?uid=${uid.value}&diaryEntry=${true}`
+                path: `/api/friends/getFriendsByStatus?userName=${username.value}&status=1`
+            });
+            const { body } = await restOperation.response;
+            const response = await ((await body.blob()).arrayBuffer());
+            const decoder = new TextDecoder('utf-8'); // Use TextDecoder to decode the ArrayBuffer to a string
+            const decodedText = decoder.decode(response);
+            friends = JSON.parse(decodedText); // Update with parsed JSON
+        } catch (error) {
+            console.log('GET call failed', error);
+        }
+    }
+
+    // get uids for all friends to attach their username to non-anonymous diary entries
+    async function getFriendUIDs(username) {
+        for(let i = 0; i < friends.length; i++) {
+            var friendUsername;
+
+            if(friends[i].FromUserName == username.value) {
+                friendUsername = friends[i].ToUserName;
+            } else {
+                friendUsername = friends[i].FromUserName;
+            }
+
+            try {
+                const restOperation = get({
+                    apiName: 'yapp',
+                    path: `/api/users/getUserByName?userName=${friendUsername}`
+                });
+
+                const { body } = await restOperation.response;
+                const response = await ((await body.blob()).arrayBuffer());
+                const decoder = new TextDecoder('utf-8'); // Use TextDecoder to decode the ArrayBuffer to a string
+                const decodedText = decoder.decode(response);
+                var thisFriend = JSON.parse(decodedText); // Update with parsed JSON
+
+                var friendInfo = { "userName": friendUsername, "uid": thisFriend.id };
+                friendUsernames.push(friendInfo);
+
+            } catch (error) {
+                console.log('GET call failed', error);
+            }
+        }
+    }
+
+    // gets diaries from the current user by date
+    async function getUserDiaries(uid) {
+        loading.value = true;
+        try {
+            const restOperation = get({
+                apiName: 'yapp',
+                path: `/api/posts/getDiariesByUser?uid=${uid.value}&current=${selectedDate.toJSON()}`
             });
             const { body } = await restOperation.response;
             const response = await ((await body.blob()).arrayBuffer());
@@ -39,17 +97,46 @@
         }
     }
 
-    function getSelectDateDiaries() {
-        console.log(JSON.stringify(userDiaries.value, null, 2));
+    // gets diaries from the current user's friends by date
+    async function getFriendDiaries(uid) {
+        try {
+            const restOperation = get({
+                apiName: 'yapp',
+                path: `/api/posts/getDiariesByFriends?uid=${uid.value}&current=${selectedDate.toJSON()}`
+            });
+            const { body } = await restOperation.response;
+            const response = await ((await body.blob()).arrayBuffer());
+            const decoder = new TextDecoder('utf-8'); // Use TextDecoder to decode the ArrayBuffer to a string
+            const decodedText = decoder.decode(response);
+            friendDiariesArr = JSON.parse(decodedText); // Update with parsed JSON
 
-        userDiariesDate.value = userDiaries.value.filter(
-            function(post){ 
-                return new Date(post.createdAt).toLocaleDateString() == selectedDate.toLocaleDateString() 
-            } 
-        );
+            getUsernamesForPosts();
+        } catch (e) {
+            console.log('GET call failed', e);
+        }
+        loading.value = false;
     }
 
-    function resetCalendar() {
+    // attaches usernames to friends diary posts if non-anonymous
+    function getUsernamesForPosts() {
+        for(let i = 0; i < friendDiariesArr.length; i++) {
+            if(friendDiariesArr[i].anonymous) {
+                friendDiariesArr[i].username = "Anonymous";
+            } else {
+                var match = friendUsernames.filter(
+                    function(friend) {
+                        return friend.uid == friendDiariesArr[i].uid;
+                    }
+                );
+                friendDiariesArr[i].username = match[0].userName;
+            }
+        }
+
+        friendDiaries.value = friendDiariesArr;
+    }
+
+    // sets the layout of the calendar
+    function setCalendar() {
         var daysInMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0).getDate();
         var blankDays = new Date(selectedDate.getFullYear(), selectedDate.getMonth()).getDay();
 
@@ -57,9 +144,16 @@
         changeDateHeader();
         moveFirstDay(blankDays);
         adjustDaysInMonth(daysInMonth);
-        getSelectDateDiaries();
     }
 
+    // resets the calendar for changing the month
+    async function reset() {
+        setCalendar();
+        await getUserDiaries(uid);
+        await getFriendDiaries(uid);
+    }
+
+    // adjusts where the first day of the month is located
     function moveFirstDay(blankDays) {
         for(var i = 0; i < 6; i++){
             var string = "blank" + i;
@@ -73,6 +167,7 @@
         }
     }
 
+    // adjusts the number of days displayed in the month
     function adjustDaysInMonth(daysInMonth) {
         if(daysInMonth == 28) {
             document.getElementById("29").style.display = 'none';
@@ -91,11 +186,13 @@
         }
     }
 
+    // sets the month displayed above the calendar based on the selected date/month
     function resetMonthPicker() {
         var monthPicker = document.getElementById("monthPicker");
         monthPicker.innerHTML = selectedDate.toLocaleString('default', { month: 'long' }) + " " + selectedDate.getFullYear();
     }
 
+    // moves the calendar to the previous month
     function prevMonth() {
         if(selectedDate.getMonth() == 1){
             // go to dec prev year
@@ -105,9 +202,10 @@
             selectedDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth()-1, 1);
         }
 
-        resetCalendar();
+        reset();
     }
 
+    // moves the calendar to the next month
     function nextMonth() {
         if(selectedDate.getMonth() == 11){
             // go to jan next year
@@ -117,19 +215,27 @@
             selectedDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth()+1, 1);
         }
 
-        resetCalendar();
+        reset();
     }
 
-    function changeSelectedDate(date) {
+    // changes the date selected on the calendar and fetches diaries from that date
+    async function changeSelectedDate(date) {
+        userDiaries.value = null;
+        friendDiaries.value = null;
+
         selectedDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), date);
         changeDateHeader();
-        getSelectDateDiaries();
+       
+        await getUserDiaries(uid);
+        await getFriendDiaries(uid);
     }
 
+    // changes the header that displayed the current selected date
     function changeDateHeader() {
         document.getElementById("date").innerHTML = selectedDate.toDateString();
     }
 
+    // collapses the calendar
     function collapseCalendar() {
         if(calendar.style.display == 'none') {
             document.getElementById("calendar").style.display = 'block';
@@ -294,13 +400,35 @@
         
         <hr class="w-full h-0.1 mx-auto mt-4 mb-8 bg-white">
 
+        <LoadingScreen v-if="loading" />
+
         <div class="flex flex-col items-center w-full mx-auto">
             <div class="card bg-gray-300 border border-gray-500 rounded-lg p-5 shadow transition-shadow hover:shadow-md cursor-pointer w-full max-w-4xl m-2"
-                v-for="post in userDiariesDate" :key="post.pid" @click="clickPost(post.pid)">
+                v-for="post in userDiaries" :key="post.pid" @click="clickPost(post.pid)">
                 <div class="card-header mb-2">
                     <h3 class="text-lg font-semibold truncate">{{ post.postTitle }}</h3>
                     <p class="text-sm text-gray-600 overflow-hidden overflow-ellipsis whitespace-nowrap">
                         <strong>Posted By:</strong> You 
+                    </p>
+                    <p class="text-sm text-gray-600 overflow-hidden overflow-ellipsis whitespace-nowrap">
+                        <strong>Created At:</strong> {{ new Date(post.createdAt).toLocaleString() }}
+                    </p>
+                </div>
+                <div class="card-body">
+                    <p class="text-gray-700 overflow-hidden text-ellipsis whitespace-nowrap">
+                        {{ post.postBody }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col items-center w-full mx-auto">
+            <div class="card bg-gray-100 border border-gray-500 rounded-lg p-5 shadow transition-shadow hover:shadow-md cursor-pointer w-full max-w-4xl m-2"
+                v-for="post in friendDiaries" :key="post.pid" @click="clickPost(post.pid)">
+                <div class="card-header mb-2">
+                    <h3 class="text-lg font-semibold truncate">{{ post.postTitle }}</h3>
+                    <p class="text-sm text-gray-600 overflow-hidden overflow-ellipsis whitespace-nowrap">
+                        <strong>Posted By:</strong> {{  post.username }}
                     </p>
                     <p class="text-sm text-gray-600 overflow-hidden overflow-ellipsis whitespace-nowrap">
                         <strong>Created At:</strong> {{ new Date(post.createdAt).toLocaleString() }}

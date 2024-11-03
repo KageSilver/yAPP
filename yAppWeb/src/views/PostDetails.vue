@@ -43,6 +43,7 @@ import {
     const isEditing = ref(false); // Controls the visibility of the edit form
     const isDeleting = ref(false); // Controls the visibility of the delete confirmation modal
     const isDiscardingUpdate = ref(false); // Controls the visibility of the discard confirmation modal
+	const anonIsChecked = ref(true);
 
     // Comment management states
     const isAddingComment = ref(false); // Controls the visibility of the add comment form
@@ -59,6 +60,13 @@ import {
     const editPost = () => {
         isEditing.value = true;
         isDiscardingUpdate.value = false;
+
+        console.log(currentPost.value);
+
+        if(currentPost.value.diaryEntry) {
+            document.getElementById("anonymous").hidden = false;
+            anonIsChecked.value = currentPost.value.anonymous;
+        }
     };
 
     // Opens the delete post modal
@@ -234,6 +242,7 @@ import {
         updatedPost.value = currentPost.value;
         updatedPost.value.postTitle = title;
         updatedPost.value.postBody = content;
+        updatedPost.value.anonymous = anonIsChecked.value;
         try {
             const putRequest = put({
                 apiName: 'yapp',
@@ -412,6 +421,10 @@ import {
         alertMsg.value.message = message;
         showAlert.value = true;
     };
+    
+    function toggleAnonymous() {
+		anonIsChecked.value = !anonIsChecked.value;
+	}
 </script>
 
 <template>
@@ -507,14 +520,33 @@ import {
 
     <div v-if="currentPost&&isEditing"
         class="flex-1 max-w-4xl bg-gray-100 border border-gray-300 rounded-lg shadow transition-shadow hover:shadow-md p-5 m-2">
+        
+		<div v-if="currentPost.diaryEntry" class="border-2 border-gray-300 p-8 rounded-lg mb-4">
+            <div class="mb-6 float-root"> 
+                <label class="float-left block text-gray-700 text-lg font-semibold">Anonymous?</label>
+
+                <label class="float-right cursor-pointer select-none items-center">
+                    <div class="relative ml-2 mr-2">
+                        <input type="checkbox" class="sr-only" @change="toggleAnonymous" />
+                        <div :class="{ '!bg-[#A55678]': anonIsChecked }"
+                            class="block h-8 rounded-full box bg-[#9E9E9E] w-14"></div>
+                        <div :class="{ 'translate-x-full': anonIsChecked }"
+                            class="dot absolute left-1 top-1 h-6 w-6 rounded-full bg-white transition"></div>
+                    </div>
+                </label>
+            </div>
+        </div>
+
         <div class="form-group w-full mb-4">
             <label for="title" class="block mb-2 text-gray-700">Title:</label>
             <input type="text" id="title" required :value="currentPost.postTitle" class="input">
         </div>
+
         <div class="form-group w-full mb-4">
             <label for="content" class="block mb-2 text-gray-700">Content:</label>
             <textarea id="content" required :value="currentPost.postBody" class="input"></textarea>
         </div>
+
         <div class="flex flex-col space-y-2 w-full">
             <button title="Update Post" id="updatePostButton"
                 class="bg-pink-purple text-white px-5 py-3 rounded-xl w-full" type="submit" @click="updatePost">
@@ -525,7 +557,6 @@ import {
                 Discard
             </button>
         </div>
-
     </div>
 
 

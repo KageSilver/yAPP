@@ -310,6 +310,7 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 postTitle.setText(card.get("postTitle").toString());
                 postDate.setText(card.get("createdAt").toString());
                 postBody.setText(card.get("postBody").toString());
+                postAuthor.setText(card.get("username").toString());
             }
             catch (JSONException jsonException)
             {

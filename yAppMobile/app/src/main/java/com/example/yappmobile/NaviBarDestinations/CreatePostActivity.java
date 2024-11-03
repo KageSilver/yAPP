@@ -12,6 +12,7 @@ import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.AuthenticatorActivity;
 import com.example.yappmobile.BasePostActivity;
+import com.example.yappmobile.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,13 +21,22 @@ import java.util.concurrent.CompletableFuture;
 
 public class CreatePostActivity extends BasePostActivity
 {
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initializeSuccessDialog();
+        initializeDiaryLimitDialog();
         initializeFailureDialog();
         initializeDiscardDialog();
         initializeNewPost();
+
+        // set up toggles
+        diaryEntry.setVisibility(View.VISIBLE);
+        diaryEntry.setChecked(false);
+        anonymous.setVisibility(View.GONE);
+        anonymous.setChecked(true);
+        findViewById(R.id.divider).setVisibility(View.VISIBLE);
 
         discardButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,6 +58,7 @@ public class CreatePostActivity extends BasePostActivity
             @Override
             public void onClick(View v) {
                 createPost();
+                actionButton.setEnabled(false);
             }
         });
 
@@ -62,8 +73,25 @@ public class CreatePostActivity extends BasePostActivity
                 .addHeader("Content-Type", "application/json")
                 .build();
         Amplify.API.post(options,
-                response -> Log.i("API", "POST response: " + response.getData().asString()),
-                error -> Log.e("API", "POST request failed", error));
+                response -> {
+                    Log.i("API", "POST response: " + response.getData().asString());
+                    runOnUiThread(() -> {
+                        if(response.getData().asString().equals("\"Cannot make more than one diary entry a day\""))
+                        {
+                            System.out.println("diary limit dialog");
+                            diaryLimitDialog.show();
+                        }
+                        else
+                        {
+                            System.out.println("success dialog");
+                            successDialog.show();
+                        }
+                        actionButton.setEnabled(true);
+                    });
+                },
+                error -> {
+                    Log.e("API", "POST request failed", error);
+                });
     }
 
     private void createPost()
@@ -102,7 +130,6 @@ public class CreatePostActivity extends BasePostActivity
                     {
                         String stringPost = post.toString();
                         sendPost(stringPost);
-                        successDialog.show();
                     }
                     catch (Exception e)
                     {
@@ -140,6 +167,21 @@ public class CreatePostActivity extends BasePostActivity
             {
                 Intent intent = new Intent(CreatePostActivity.this, PublicPostsActivity.class);
                 startActivity(intent);
+            }
+        });
+    }
+
+    public void initializeDiaryLimitDialog()
+    {
+        // Create post alert dialog
+        diaryLimitDialog = new AlertDialog.Builder(this).create();
+        diaryLimitDialog.setTitle("You can't make more than one diary entry per day :(");
+        diaryLimitDialog.setButton(AlertDialog.BUTTON_POSITIVE,
+                "Aw man...", new DialogInterface.OnClickListener()
+        {
+            public void onClick(DialogInterface dialog, int id)
+            {
+                diaryLimitDialog.dismiss();
             }
         });
     }
