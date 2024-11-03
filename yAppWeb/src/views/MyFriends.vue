@@ -57,9 +57,11 @@
 	};
 
 	const confirmUnfollow = async () => {
-		await unfollowFriend(currentFriendship.value); // Wait for unfollowing friend to be fully proccessed
+		// Wait for unfollowing friend to be fully proccessed
+		await unfollowFriend(currentFriendship.value); 
 		closeModal();
-		await getFriends(); // Update the current list of friends
+		// Update the current list of friends
+		await getFriends(); 
 	};
 
 	// Unfollow sent friend

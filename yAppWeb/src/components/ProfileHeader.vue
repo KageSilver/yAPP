@@ -58,7 +58,7 @@
 <template>
 	<div class="relative mt-[8rem] w-full bg-light-pink pl-8 pt-[8rem]">
 		<h5 class="mb-2 text-3xl font-bold text-white">
-			Welcome back, {{ username }}
+			Welcome back, {{ username }}!
 		</h5>
 		<!-- Button positioned at the top-right corner -->
 		<button
