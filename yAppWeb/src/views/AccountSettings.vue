@@ -1,9 +1,12 @@
 <script setup>
 	import { updatePassword } from 'aws-amplify/auth';
+	import { useRouter } from 'vue-router';
 	import BackBtnHeader from '../components/BackBtnHeader.vue';
 
 	// Reference to changing password via auth
 	// https://docs.amplify.aws/gen1/javascript/prev/build-a-backend/auth/manage-passwords/
+
+	const router = useRouter();
 
 	function onSubmit() {
 		const oldPassword = document.getElementById("oldPassword").value.trim();
