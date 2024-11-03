@@ -74,8 +74,8 @@
 
 	const createPost = async event => {
 		//check validation
-		newPost.postTitle = document.getElementById("title").value;
-		newPost.postBody = document.getElementById("content").value;
+		newPost.postTitle = document.getElementById("title").value.trim();
+		newPost.postBody = document.getElementById("content").value.trim();
 		if (newPost.postTitle === "" || newPost.postBody === "") {
 			alert("Please fill out all fields!");
 			return;
