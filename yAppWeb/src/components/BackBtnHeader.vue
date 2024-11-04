@@ -1,25 +1,32 @@
 <script setup>
-    import BackBtn from './BackBtn.vue';
-    const props = defineProps({
-        header: String,
-        subheader: String,
-        backBtn: Boolean,
-        url: String,
-        btnText: String
-    });
+	import BackBtn from "./BackBtn.vue";
+	const props = defineProps({
+		header: String,
+		subheader: String,
+		backBtn: Boolean,
+		url: String,
+		btnText: String,
+	});
 </script>
 <template>
-    <div class="flex flex-col w-full pl-16">
-        <div class="flex items-center justify-between mb-0">
-            <div class="flex items-center">
-                <BackBtn v-if="backBtn"/>
-                <h1 class="text-white text-4xl font-bold ml-8 mb-0">{{ header }}</h1>
-            </div>
-            <a class="text-white bg-deep-dark hover:bg-purple font-bold py-2 px-4 rounded text-2xl " v-if="btnText" :href="url">
-                {{btnText}}
-            </a>
-        </div>
-        <p :class="`text-white text-sm font-bold m-0  mt-2 ${backBtn ? 'ml-20' : 'ml-8'}`">{{ subheader }}</p>
-    </div>
-
+	<div class="flex w-full flex-col pl-16">
+		<div class="mb-0 flex items-center justify-between">
+			<div class="flex items-center">
+				<BackBtn v-if="backBtn" />
+				<h1 class="mb-0 ml-8 text-4xl font-bold text-white">{{ header }}</h1>
+			</div>
+			<a
+				class="rounded bg-deep-dark px-4 py-2 text-2xl font-bold text-white hover:bg-purple"
+				v-if="btnText"
+				:href="url"
+			>
+				{{ btnText }}
+			</a>
+		</div>
+		<p
+			:class="`m-0 mt-2 text-sm font-bold text-white ${backBtn ? 'ml-20' : 'ml-8'}`"
+		>
+			{{ subheader }}
+		</p>
+	</div>
 </template>
