@@ -8,7 +8,7 @@
     - Here are the results of regression testing:
 
 ## Testing Slowdown
-We have been able to keep all of our unit tests and our integration tests in our test plan as we haven't experienced any significant slowdown. We have simply added on to our test plan from Sprint 1 rather than creating an entirely new test plan for Sprint 2. All of our tests can be run under a minute in our local deployments and are then run automatically by our CI/CD pipeline. Due to how quickly it can run and the necessity of our tests, we decided not to change our test plan for the different releases.
+We have been able to keep all of the unit and integration tests in our test plan as we haven't experienced any significant slowdown. We have simply added on to our test plan from Sprint 1 rather than creating an entirely new version for Sprint 2. All of our tests can be run under a minute in our local deployments and are then run automatically by our CI/CD pipeline. Due the speed and necessity of our tests, we decided not to change our test plan for the different releases.
 
 ## Not Testing
 Here is our current system diagram:
@@ -56,16 +56,16 @@ You can find the full coverage report [here](./Reports/CoverageReport.json).
 
 ## Profiler
 - Slowest Endpoint:
-    - The slowest endpoint appeared to be the "GetDirariesByFriends" endpoint. This is likely due to the fact that it makes calls to our other APIs and waits for the responses from them.
+    - The slowest endpoint appeared to be the "GetDirariesByFriends" endpoint. This is likely due to the fact that it sends API calls for each of the user's friends and has to wait for its response every time. 
 
 - Is it fixable:
-    - This could probably be fixed by reducing the amount of time that we spend waiting for a response, however, since we're only using the free tier for AWS, we are unable to use the fastest tier and expect our API calls to require more time to load.
+    - This could probably be fixed by reducing the amount of time that we spend waiting for a response. However, since we're only using the free tier for AWS, we are unable to use the fastest tier and expect our API calls to require more time to load.
 
 - Profiler output:
     - [Here is the output](./Reports/yAppLambda%20-%20[2024-11-03%2014-57-17].dtt).
 
 ## Last Dash
-The main issue that we can see running into for the next sprint is storage issues for our CI/CD. We have already been running into these problems and know that we can come across it in the upcoming sprint as it is soemthing that is out of our control.
+Sprint 2 involved many tears induced via storage constraints for our CI/CD pipeline, and we definitely would not be surprised if we face this problem again in the upcoming sprint, as it is something that is out of our control.
 
 As for our code and remaining feature issues we plan on implementing, we are confident that we can complete the work in the allotted time as the majority of the framework has already been built, and we plan on improving our code should we come across any problems once we complete these issues.
 
