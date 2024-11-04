@@ -80,7 +80,7 @@ pipeline {
                     echo "Update lambda settings"
    
                     def jsonData = [
-                        Environment: "dev",
+                        Environment: "main",
                         AwsRegion: "us-east-2",
                         UserPoolId: "${pool_id}",
                         FriendshipTableName: "Friendship-${amplify_env}",
