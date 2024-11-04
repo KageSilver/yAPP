@@ -8,8 +8,9 @@ As of Sprint 2, our regression tests are executed inside a docker container, whi
 
 We ultimately decided that partitioning the test suite was unnecessary for our case, as it ensures the baseline "sanity" of our system with minimal time costs. In other words, these tests are fast and are vital to checking the application's core functionality. Here are the latest results of regression testing:
 
-(insert snapshot of execution)
-(insert results of regression testing)
+![Regression Testing Execution + Output](./Images/image.png)
+
+**NOTE**: Group 4 was only expected to complete the CI portion of the pipeline, as stated by their product owner. Thus, the pipeline's test portion was not included in this report. 
 
 ## Testing Slowdown
 We have been able to keep all of the unit and integration tests in our test plan as we haven't experienced any significant slowdown. We have simply added on to our test plan from Sprint 1 rather than creating an entirely new version for Sprint 2. All of our tests can be run under a minute in our local deployments and are then run automatically by our CI/CD pipeline. Due the speed and necessity of our tests, we decided not to change our test plan for the different releases.
