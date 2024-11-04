@@ -28,7 +28,7 @@
           "header": [],
           "body": {
             "mode": "raw",
-            "raw": "{\n\t\"userName\": \"\",\n\t\"postTitle\": \"\",\n\t\"postBody\": \"\",\n\t\"diaryEntry\": false,\n\t\"anonymous\": true\n}",
+            "raw": "{\n\t\"uid\": \"\",\n\t\"postTitle\": \"\",\n\t\"postBody\": \"\",\n\t\"diaryEntry\": false,\n\t\"anonymous\": true\n}",
             "options": {
               "raw": {
                 "language": "json"
@@ -96,16 +96,90 @@
           "method": "GET",
           "header": [],
           "url": {
-            "raw": "{{base_url}}/api/posts/getPostsByUser?userName=${userName}&diaryEntry=${diaryEntry}",
+            "raw": "{{base_url}}/api/posts/getPostsByUser?uid=${uid}&diaryEntry=${diaryEntry}",
             "host": ["{{base_url}}"],
             "path": ["api", "posts", "getPostsByUser"],
             "query": [
               {
-                "key": "userName",
+                "key": "uid",
                 "value": ""
               },
               {
                 "key": "diaryEntry",
+                "value": ""
+              }
+            ]
+          },
+          "description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on.\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+        },
+        "response": []
+      },
+      {
+        "name": "GetDiariesByUser",
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test(\"Status code is 200\", function () {",
+                "    pm.response.to.have.status(200);",
+                "});"
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ],
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{base_url}}/api/posts/getDiariesByUser?uid=${uid}&current=${current}",
+            "host": ["{{base_url}}"],
+            "path": ["api", "posts", "getDiariesByUser"],
+            "query": [
+              {
+                "key": "uid",
+                "value": ""
+              },
+              {
+                "key": "current",
+                "value": ""
+              }
+            ]
+          },
+          "description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on.\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+        },
+        "response": []
+      },
+      {
+        "name": "GetDiariesByFriends",
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test(\"Status code is 200\", function () {",
+                "    pm.response.to.have.status(200);",
+                "});"
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ],
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "{{base_url}}/api/posts/getDiariesByFriends?uid=${uid}&current=${current}",
+            "host": ["{{base_url}}"],
+            "path": ["api", "posts", "getDiariesByFriends"],
+            "query": [
+              {
+                "key": "uid",
+                "value": ""
+              },
+              {
+                "key": "current",
                 "value": ""
               }
             ]
@@ -134,7 +208,7 @@
           "method": "DELETE",
           "header": [],
           "url": {
-            "raw": "{{base_url}}/deletePost?pid=${pid}",
+            "raw": "{{base_url}}/api/posts/deletePost?pid=${pid}",
             "host": ["{{base_url}}"],
             "path": ["api", "posts", "deletePost"],
             "query": [
@@ -169,7 +243,7 @@
           "header": [],
           "body": {
             "mode": "raw",
-            "raw": "{\n\t\"pid\": \"\",\n\t\"createdAt\": \"\",\n\t\"userName\": \"\",\n\t\"postTitle\": \"\",\n\t\"postBody\": \"\",\n\t\"upvotes\": 0,\n\t\"downvotes\": 0,\n\t\"diaryEntry\": false,\n\t\"anonymous\": true\n}",
+            "raw": "{\n\t\"pid\": \"\",\n\t\"createdAt\": \"\",\n\t\"updatedAt\": \"\",\n\t\"uid\": \"\",\n\t\"postTitle\": \"\",\n\t\"postBody\": \"\",\n\t\"upvotes\": 0,\n\t\"downvotes\": 0,\n\t\"diaryEntry\": false,\n\t\"anonymous\": true\n}",
             "options": {
               "raw": {
                 "language": "json"

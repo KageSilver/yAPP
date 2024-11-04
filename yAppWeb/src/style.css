@@ -1,66 +1,11 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.90);
-  
-  background: linear-gradient(180deg, rgb(86, 24, 74) 20%, rgb(60, 16, 61) 60%, rgb(36, 6, 37) 100%);
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.backBtnDiv {
+  @apply pt-[10rem] md:px-16 md:pr-32;
 }
 
-body {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 5px;
-  border: solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  cursor: pointer;
-}
-
-.card {
-  padding: 2em;
-}
-
-#app {
-  place-items: center;
-  margin: 0 auto;
-  padding: 2rem;
-  min-height: 80%;
-  min-width: 80%;
-}
-
-.amplify-field-group :not(:first-child) .amplify-input {
-  border-start-start-radius: 5px;
-  border-end-start-radius: 5px;
-}
-
-.primary-button {
-  background-color: var(--amplify-colors-neutral-10);
-  color: var(--amplify-colors-purple-100);
-  font-weight: bold;
-  float: left;
-}
-.primary-button:hover {
-  background-color: var(--amplify-colors-neutral-40);
-  color: var(--amplify-colors-purple-80);
+.input{
+    @apply w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500;
 }

@@ -1,37 +1,44 @@
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
-using Amazon.DynamoDBv2.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using yAppLambda.Common;
+using yAppLambda.Enum;
 using yAppLambda.Models;
 
 namespace yAppLambda.DynamoDB;
 
 public class PostActions : IPostActions
 {
-    //This is the default table name for the post table
-    private const string PostTableName = "Post-test";
+    // This is the default table name for the post table
+    private const string PostTableName = "Post-test"; 
+    private readonly string _postTable;
     private readonly IAppSettings _appSettings;
     private readonly IDynamoDBContext _dynamoDbContext;
-    private readonly string _postTable;
     private readonly DynamoDBOperationConfig _config;
+    private readonly ICommentActions _commentActions;
+    private readonly IFriendshipActions _friendshipActions;
 
     public PostActions(IAppSettings appSettings, IDynamoDBContext dynamoDbContext)
     {
         _appSettings = appSettings;
         _dynamoDbContext = dynamoDbContext;
-
+        
         _postTable = string.IsNullOrEmpty(_appSettings.PostTableName)
             ? PostTableName
             : _appSettings.PostTableName;
+        
         _config = new DynamoDBOperationConfig
         {
             OverrideTableName = _postTable
         };
+        
+        _commentActions = new CommentActions(appSettings, dynamoDbContext);
+        _friendshipActions = new FriendshipActions(appSettings, dynamoDbContext);
     }
     
     /// <summary>
-    /// Creates a post
+    /// Creates a new post
     /// </summary>
     /// <param name="post">The post object that contains information on the post.</param>
     /// <returns>An ActionResult containing the created Post object or an error status.</returns>
@@ -40,14 +47,15 @@ public class PostActions : IPostActions
         try
         {
             // update the current time
-            post.CreatedAt = DateTime.Now;
-            // gets a unique ID for the post
+            var now = DateTime.Now;
+            post.CreatedAt = now;
+            post.UpdatedAt = now;
+            
+            // Gets a unique ID for the post
             post.PID = Guid.NewGuid().ToString();
 
             await _dynamoDbContext.SaveAsync(post, _config);
-
             return new OkObjectResult(post);
-
         }
         catch (Exception e)
         {
@@ -66,12 +74,6 @@ public class PostActions : IPostActions
         try
         {
             var post = await _dynamoDbContext.LoadAsync<Post>(pid, _config);
-
-            if(post.Anonymous)
-            {
-                post.UserName = "Anonymous";
-            }
-            
             return post;
         }
         catch (Exception e)
@@ -82,29 +84,189 @@ public class PostActions : IPostActions
     }
 
     /// <summary>
-    /// Gets all public posts from a user
+    /// Gets the user's public posts or diary entries
     /// </summary>
-    /// <param name="userName">The username used to find all posts created by a user.</param>
+    /// <param name="uid">The author of the posts to be fetched.</param>
     /// <param name="diaryEntry">If the query is for public posts or diary entries.</param>
     /// <returns>A list of posts created by a user, either public posts or diary entries.</returns>
-    public async Task<List<Post>> GetPostsByUser(string userName, bool diaryEntry)
+    public async Task<List<Post>> GetPostsByUser(string uid, bool diaryEntry)
     {
         try
         {
+            // Scan for posts where the poster's uid is 'uid' and 'diaryEntry' is equal to the input
             List<ScanCondition> scanConditions = new List<ScanCondition>
             {
-                new ScanCondition("UserName", ScanOperator.Equal, userName),
+                new ScanCondition("UID", ScanOperator.Equal, uid),
                 new ScanCondition("DiaryEntry", ScanOperator.Equal, diaryEntry)
             };
-
-            // query posts where the poster's username is 'userName' and 'diaryEntry' is equal to the input
+            
             var posts = await _dynamoDbContext.ScanAsync<Post>(scanConditions, _config).GetRemainingAsync();
-
             return posts;
         }
         catch (Exception e)
         {
             Console.WriteLine("Failed to get posts: " + e.Message);
+            return new List<Post>();
+        }
+    }
+
+    /// <summary>
+    /// Gets the diary entries made by a user within a specific day
+    /// </summary>
+    /// <param name="uid">The author of the diary entry.</param>
+    /// <param name="current">The current day to query.</param>
+    /// <returns>The diary entry made by a user on the specified day.</returns>
+    public async Task<List<Post>> GetDiariesByUser(string uid, DateTime current)
+    {
+        try
+        {
+            // convert input time to local time to calculate the start and end of the input date
+            current = current.ToLocalTime();
+            var startOfDay = current.Date; // 12 AM
+            var endOfDay = current.Date.AddDays(1).AddSeconds(-1); // 11:59 PM
+
+            // convert start and end time to GMT for query to work properly against times in the database stored in GMT
+            startOfDay = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(startOfDay, "GMT");
+            endOfDay = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(endOfDay, "GMT");
+            
+            // Query for diary entries made within start and end dates to narrow down posts to filter out 
+            var expressionAttributeValues = new Dictionary<string, DynamoDBEntry>
+            {
+                {":diaryEntry", true},
+                {":start", startOfDay.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")},
+                {":end", endOfDay.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")}
+            };
+
+            var query = new QueryOperationConfig
+            {
+                IndexName = "CreatedAtIndex",  
+                KeyExpression = new Expression
+                {
+                    ExpressionStatement = "DiaryEntry = :diaryEntry AND CreatedAt BETWEEN :start AND :end",
+                    ExpressionAttributeValues = expressionAttributeValues
+                },
+                AttributesToGet = new List<string>
+                {
+                    "PID" 
+                },
+                Select = SelectValues.SpecificAttributes,
+                BackwardSearch = true
+            };
+
+            var result = await _dynamoDbContext.FromQueryAsync<Post>(query, _config).GetNextSetAsync();
+            
+            var posts = new List<Post>();
+            
+            foreach(Post post in result)
+            {
+                var thisPost = GetPostById(post.PID).Result;
+                if (thisPost.UID == uid)
+                {
+                    posts.Add(thisPost);
+                }
+            }
+
+            return posts;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to retrieve diary entry: " + e.Message);
+            return new List<Post>();       
+        }
+    }
+
+    /// <summary>
+    /// Gets the diary entries made by the user's friends within a specific day
+    /// </summary>
+    /// <param name="_cognitoActions">An instance of CognitoActions to query user information.</param>
+    /// <param name="uid">The user whose friends will be searched for.</param>
+    /// <param name="current">The current day to query.</param>
+    /// <returns>A list of diary entries made by the user's friends on the specified day</returns>
+    public async Task<List<Post>> GetDiariesByFriends(ICognitoActions _cognitoActions, string uid, DateTime current)
+    {
+        try
+        {
+            // Get all the user's friends
+            var username = _cognitoActions.GetUserById(uid).Result.UserName;
+            var friends = _friendshipActions.GetAllFriends(username, FriendshipStatus.Accepted).Result;
+            
+            // Get the posts written by the user's friends
+            var posts = new List<Post>();
+            foreach (Friendship friendship in friends)
+            {
+                var thisUid = username == friendship.FromUserName 
+                    ? _cognitoActions.GetUser(friendship.ToUserName).Result.Id 
+                    : _cognitoActions.GetUser(friendship.FromUserName).Result.Id;
+
+                var result = GetDiariesByUser(thisUid, current).Result;
+                if (result.Count() > 0)
+                {
+                    var friendsPosts = GetDiariesByUser(thisUid, current).Result;
+                    foreach (Post post in friendsPosts)
+                    {
+                        posts.Add(post);
+                    }
+                    
+                }
+            }
+            return posts;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to retrieve diary entry: " + e.Message);
+            return new List<Post>();
+        }
+    }
+        
+    /// <summary>
+    /// Gets all recent posts
+    /// </summary>
+    /// <param name="since">Returns posts made after this time.</param>
+    /// <param name="maxResults">The maximum number of results to retrieve.</param>
+    /// <returns>A list of recent posts.</returns>
+    public async Task<List<Post>> GetRecentPosts(DateTime since, int maxResults)
+    {
+        try
+        {
+            var expressionAttributeValues = new Dictionary<string, DynamoDBEntry>();
+            expressionAttributeValues.Add(":diaryEntry", false);
+            
+            var time = new TimeSpan(0, 0, 0, 1);
+            since.Subtract(time);
+            expressionAttributeValues.Add(":since", since.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
+            
+            var query = new QueryOperationConfig()
+            {
+                IndexName = "CreatedAtIndex",
+                KeyExpression = new Expression
+                {
+                    ExpressionStatement = "DiaryEntry = :diaryEntry AND CreatedAt < :since",
+                    ExpressionAttributeValues = expressionAttributeValues
+                },
+                Limit = maxResults,
+                AttributesToGet = new List<string>
+                {
+                    "PID"
+                },
+                Select = SelectValues.SpecificAttributes,
+                BackwardSearch = true
+            };
+
+            var result = await _dynamoDbContext.FromQueryAsync<Post>(query, _config).GetNextSetAsync();
+            
+            var posts = new List<Post>();
+            
+            foreach(Post post in result)
+            {
+                var thisPost = GetPostById(post.PID).Result;
+                posts.Add(thisPost);
+            }
+
+            return posts;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to get recent posts: " + e.Message);
             return new List<Post>();
         }
     }
@@ -123,11 +285,12 @@ public class PostActions : IPostActions
 
             if (post.Result == null)
             {
-                Console.WriteLine("Failed to retrieve post");
+                Console.WriteLine("Failed to retrieve post to be deleted");
                 return false;
             }
 
             // Delete the post from the database
+            await _commentActions.DeleteComments(pid);
             await _dynamoDbContext.DeleteAsync(post.Result, _config);
 
             return true;
@@ -148,6 +311,7 @@ public class PostActions : IPostActions
     {
         try
         {
+            updatedPost.UpdatedAt = DateTime.Now; // Set updated time to current time
             await _dynamoDbContext.SaveAsync(updatedPost, _config);
             return new OkObjectResult(updatedPost);
         }
@@ -155,57 +319,6 @@ public class PostActions : IPostActions
         {
             Console.WriteLine("Failed to update post: " + e.Message);
             return new StatusCodeResult(statusCode: StatusCodes.Status500InternalServerError);
-        }
-    }
-    
-    /// <summary>
-    /// Gets all recent posts
-    /// </summary>
-    /// <param name="since">Returns posts made after this time.</param>
-    /// <param name="maxResults">The maximum number of results to retrieve.</param>
-    /// <returns>A list of recent posts.</returns>
-    public async Task<List<Post>> GetRecentPosts(DateTime since, int maxResults)
-    {
-        try
-        {
-            var expressionAttributeValues = new Dictionary<string, DynamoDBEntry>();
-            expressionAttributeValues.Add(":diaryEntry", false);
-            expressionAttributeValues.Add(":since", since.ToString());
-            
-            var query = new QueryOperationConfig()
-            {
-                IndexName = "CreatedAtIndex",
-                KeyExpression = new Expression
-                {
-                    ExpressionStatement = "DiaryEntry = :diaryEntry AND CreatedAt > :since",
-                    ExpressionAttributeValues = expressionAttributeValues
-                },
-                Limit = maxResults,
-                AttributesToGet = new List<string>
-                {
-                    "PID"
-                },
-                Select = SelectValues.SpecificAttributes,
-                BackwardSearch = true
-            };
-
-            var result = await _dynamoDbContext.FromQueryAsync<Post>(query, _config).GetNextSetAsync();
-            
-            var posts = new List<Post>();
-            
-            foreach(Post post in result)
-            {
-                var thisPost = GetPostById(post.PID).Result;
-                thisPost.UserName = "Anonymous";
-                posts.Add(thisPost);
-            }
-
-            return posts;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Failed to get recent posts: " + e.Message);
-            return new List<Post>();
         }
     }
 }

@@ -57,7 +57,7 @@
     - GET: api/cognito/getUserByName?userName={username}
     - POST: api/users/updateUser
 #### Acceptance tests
- - For each of the following user stories that belong to this feature, write one manual acceptance test for the website and one automated acceptance test for the android app:
+ - For each of the following user stories that belong to this feature, write two manual acceptance tests, one for the website and one for the mobile app:
     - As a new user, I want to create a Yapp account.
     - As a Yapper, I want to log in to my account.
     - As a Yapper, I want to change my account details to my liking.
@@ -88,10 +88,59 @@
     - GET: api/posts/getPostsByUser?userName={userName}&diaryEntry={diaryEntry}
     - GET: api/posts/getRecentPosts?since={since}&maxResults={maxResults}
 #### Acceptance tests
- - For each of the following user stories that belong to this feature, write one manual acceptance test for the website and one automated acceptance test for the android app:
+ - For each of the following user stories that belong to this feature, write two manual acceptance tests, one for the website and one for the mobile app:
     - As a Yapper, I want to anonymously ask questions to the general public so I can get multiple opinions.
     - As a Yapper, I want to be able to view other public posts.
     - As a Yapper, I want to be able to see all the anonymous posts I’ve made to the Yapper community.
+
+### Interactions with Posts
+#### Unit tests
+ - Test average cases and expected exceptions for CommentActions with unit tests for the following methods:
+    - CreateComment()
+    - GetCommentById()
+    - GetCommentsByUid()
+    - GetCommentsByPid()
+    - DeleteComment()
+    - DeleteComments()
+    - UpdateComment()
+ - Test average cases and expected exceptions for CommentController with unit tests for the following methods:
+    - CreateComment()
+    - GetCommentById()
+    - GetCommentsByUid()
+    - GetCommentsByPid()
+    - DeleteComment()
+    - UpdateComment()
+#### Integration tests
+ - Test average cases and some expected exceptions for CommentController with integration tests for api endpoints:
+    - GET: api/comments/getPostByCid?cid={cid}
+    - GET: api/comments/getCommentById?cid={cid}
+    - GET: api/comments/getCommentsByUser?uid={uid}
+    - GET: api/comments/getCommentsByPid?pid={pid}
+    - POST: api/comments/createComment
+    - PUT: api/comments/updateComment
+    - DELETE: api/comments/deleteComment?cid={cid}
+#### Acceptance tests
+ - For each of the following user stories that belong to this feature, write two manual acceptance tests, one for the website and one for the mobile app:
+    - As a Yapper, I want to be able to reply to other public posts.
+    - As a Yapper, I want to be able to edit and delete posts and comments I make.
+
+### Personal Calendar
+#### Unit tests
+ - Test average cases and expected exceptions for PostActions with unit tests for the following methods:
+    - GetDiariesByUser()
+    - GetDiariesByFriends()
+ - Test average cases and expected exceptions for PostController with unit tests for the following methods:
+    - GetDiariesByUser()
+    - GetDiariesByFriends()
+#### Integration tests
+ - Test average cases and some expected exceptions for CommentController with integration tests for api endpoints:
+    - GET: api/posts/getDiariesByUser?uid={uid}&current={current}
+    - GET: api/posts/getDiariesByFriends?uid={uid}&current={current}
+#### Acceptance tests
+ - For each of the following user stories that belong to this feature, write two manual acceptance tests, one for the website and one for the mobile app:
+    - As a Yapper, I want to publish one friends-only post per day to update/ask my friends indirectly. Each post can either be anonymous or tied to my account based on my preference.
+    - As a Yapper, I want to be able to view my diary entries through a personal calendar for easier access and tracking.
+    - As a Yapper, I want to be able to see my friends’ diary entries anonymously through the calendar view.
 
 ## Regression Tests
  - Nothing here...yet.

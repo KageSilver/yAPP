@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.yappmobile"
-        minSdk = 34
+        minSdk = 24
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -27,6 +27,7 @@ android {
         }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -34,7 +35,7 @@ android {
         jvmTarget = "1.8"
     }
     buildFeatures {
-        viewBinding = true
+        viewBinding = false
     }
 }
 
@@ -46,15 +47,15 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.navigation:navigation-fragment-ktx:2.6.0")
     implementation("androidx.navigation:navigation-ui-ktx:2.6.0")
+
     // Amplify core dependency
-    implementation("com.amplifyframework:core:2.19.1")
-    implementation("com.amplifyframework:aws-api:1.38.8")
-    implementation("com.amplifyframework:aws-auth-cognito:1.38.8")
-    // Support for Java 8 features
+    implementation("com.amplifyframework:aws-core:2.19.1")
+    implementation("com.amplifyframework:aws-api:2.19.1")
+    implementation("com.amplifyframework:aws-api-appsync:2.19.1")
+    implementation("com.amplifyframework:aws-auth-cognito:2.19.1")
+    implementation("com.amplifyframework.ui:authenticator:1.2.3")
+
+    implementation ("androidx.browser:browser:1.5.0")
+
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-    androidTestImplementation("androidx.test:rules:1.4.0")
-    androidTestImplementation("androidx.test:runner:1.4.0")
 }

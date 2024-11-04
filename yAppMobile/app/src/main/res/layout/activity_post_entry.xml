@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@drawable/gradient_background_2"
+    android:layout_height="match_parent">
+
+    <!-- Scrollable area for the post and comments -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottomBar"
+        android:fillViewport="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Toolbar with Back Button and Three-dot Menu -->
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/pink"
+                android:elevation="4dp"
+                android:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <!-- Back Button aligned to the left (start) -->
+                    <ImageButton
+                        android:id="@+id/backButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="4dp"
+                        android:adjustViewBounds="true"
+                        android:background="#00000000"
+                        android:contentDescription="back button"
+                        android:padding="14dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/baseline_arrow_back_24"
+                        app:tint="@android:color/white" />
+
+                    <!-- Three-dot menu aligned to the right (end) -->
+                    <ImageButton
+                        android:id="@+id/menuButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="4dp"
+                        android:adjustViewBounds="true"
+                        android:background="#00000000"
+                        android:contentDescription="menu"
+                        android:padding="14dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_more"
+                        app:tint="@android:color/white" />
+                </RelativeLayout>
+            </androidx.appcompat.widget.Toolbar>
+
+            <!-- Post CardView -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/post_card"
+                android:layout_below="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Post Title -->
+                    <TextView
+                        android:id="@+id/post_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                        android:textColor="@color/black"
+                        android:text="Post Title Content" />
+
+                    <TextView
+                        android:id="@+id/post_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="monospace"
+                        android:textColor="@color/discard"
+                        android:textSize="16sp"
+                        android:text="Post body content goes here." />
+
+                    <!-- Post Body -->
+                    <TextView
+                        android:id="@+id/post_body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="monospace"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:text="Post body content goes here." />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </RelativeLayout>
+    </ScrollView>
+
+    <!-- Bottom Navigation Bar with Reply Button -->
+    <RelativeLayout
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/pink">
+
+<!--        <ImageButton-->
+<!--            android:id="@+id/upvoteButton"-->
+<!--            android:layout_width="48dp"-->
+<!--            android:layout_height="48dp"-->
+<!--            android:layout_alignParentStart="true"-->
+<!--            android:layout_centerVertical="true"-->
+<!--            android:background="@null"-->
+<!--            android:contentDescription="Upvote"-->
+<!--            android:padding="8dp"-->
+<!--            android:src="@drawable/ic_up"-->
+<!--            app:tint="@color/white" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/upvoteText"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_centerVertical="true"-->
+<!--            android:layout_marginStart="2dp"-->
+<!--            android:layout_toEndOf="@id/upvoteButton"-->
+<!--            android:padding="8dp"-->
+<!--            android:text="1202"-->
+<!--            android:textColor="@android:color/white"-->
+<!--            android:textSize="14sp"-->
+<!--            android:textStyle="bold" />-->
+
+<!--        <ImageButton-->
+<!--            android:id="@+id/downvoteButton"-->
+<!--            android:layout_width="48dp"-->
+<!--            android:layout_height="48dp"-->
+<!--            android:layout_centerVertical="true"-->
+<!--            android:layout_marginStart="80dp"-->
+<!--            android:background="@null"-->
+<!--            android:contentDescription="Downvote"-->
+<!--            android:padding="8dp"-->
+<!--            android:src="@drawable/ic_down"-->
+<!--            app:tint="@color/white" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/downvoteText"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_centerVertical="true"-->
+<!--            android:layout_marginStart="0dp"-->
+<!--            android:layout_toEndOf="@id/downvoteButton"-->
+<!--            android:padding="8dp"-->
+<!--            android:text="100"-->
+<!--            android:textColor="@android:color/white"-->
+<!--            android:textSize="14sp"-->
+<!--            android:textStyle="bold" />-->
+
+        <!-- Reply Button aligned to the right end -->
+        <ImageButton
+            android:id="@+id/replyButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:background="@null"
+            android:contentDescription="Reply"
+            android:padding="8dp"
+            android:src="@drawable/ic_reply"
+            app:tint="@color/white" />
+    </RelativeLayout>
+
+</RelativeLayout>
+
+

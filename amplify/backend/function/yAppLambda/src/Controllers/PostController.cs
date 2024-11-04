@@ -1,3 +1,4 @@
+using System.Globalization;
 using Amazon.DynamoDBv2.DataModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,7 @@ using yAppLambda.Models;
 namespace yAppLambda.Controllers;
 
 /// <summary>
-/// The 'PostController" class is an API controller in the 'yAppLamba project. 
+/// The "PostController" class is an API controller in the yAppLambda project. 
 /// It is responsible for handling HTTP requests related to post operations.
 /// </summary>
 [ApiController]
@@ -20,15 +21,16 @@ public class PostController : ControllerBase
     private readonly ICognitoActions _cognitoActions;
     private readonly IPostActions _postActions;
 
-    public PostController(IAppSettings appSettings, ICognitoActions cognitoActions, IDynamoDBContext dbContext, IPostActions postActions)
+    public PostController(IAppSettings appSettings, ICognitoActions cognitoActions, 
+                          IDynamoDBContext dbContext, IPostActions postActions)
     {
         _appSettings = appSettings;
         _cognitoActions = cognitoActions;
         _dbContext = dbContext;
         _postActions = postActions;
     }
-
-    // POST: api/posts/createPost with body { "userName": "username", "postTitle": "title", "postBody": "body", "diaryEntry": false, "anonymous": false }
+    
+    // POST: api/posts/createPost with body { "uid": "uid", "postTitle": "title", "postBody": "body", "diaryEntry": false, "anonymous": false }
     /// <summary>
     /// Creates a new post.
     /// </summary>
@@ -41,40 +43,39 @@ public class PostController : ControllerBase
     {
         ActionResult<Post> result;
 
-        if(request == null || string.IsNullOrEmpty(request.PostBody) || string.IsNullOrEmpty(request.PostTitle) || string.IsNullOrEmpty(request.UserName))
+        if(request == null || string.IsNullOrEmpty(request.PostBody) || string.IsNullOrEmpty(request.PostTitle) || string.IsNullOrEmpty(request.UID))
         {
-            result = BadRequest("request body is required and must contain poster's username, post title and post body");
-        }
-        else
-        {
-            Console.WriteLine("Post request from: " + request.UserName + " and title: " + request.PostTitle);
-
-            var poster = await _cognitoActions.GetUser(request.UserName);
-
-            if(poster == null)
-            {
-                result = NotFound("Post creator not found");
-            }
-            else
-            {
-                var post = new Post
-                {
-                    UserName = request.UserName,
-                    PostTitle = request.PostTitle,
-                    PostBody = request.PostBody,
-                    DiaryEntry = request.DiaryEntry,
-                    Anonymous = request.Anonymous,
-                    Upvotes = 0,
-                    Downvotes = 0
-                };
-
-                var createResult = await _postActions.CreatePost(post);
-                result = createResult.Result is OkObjectResult
-                    ? (ActionResult<Post>)post
-                    : BadRequest("Failed to create post");
-            }
+            return BadRequest("request body is required and must contain poster's uid, post title and post body");
         }
 
+        var poster = await _cognitoActions.GetUserById(request.UID);
+
+        if(poster == null)
+        {
+            return NotFound("Post creator not found");
+        }
+
+        if (request.DiaryEntry && GetDiariesByUser(request.UID, DateTime.Now).Result.Value.Count > 0)
+        {
+            return BadRequest("Cannot make more than one diary entry a day");
+        }
+
+        var post = new Post
+        {
+            UID = request.UID,
+            PostTitle = request.PostTitle,
+            PostBody = request.PostBody,
+            DiaryEntry = request.DiaryEntry,
+            Anonymous = request.Anonymous,
+            Upvotes = 0,
+            Downvotes = 0
+        };
+
+        var createResult = await _postActions.CreatePost(post);
+        result = createResult.Result is OkObjectResult
+            ? (ActionResult<Post>)post
+            : BadRequest("Failed to create post");
+        
         return result;
     }
 
@@ -104,28 +105,70 @@ public class PostController : ControllerBase
         return post;
     }
 
-    // GET: api/posts/getPostsByUser?userName={userName}&diaryEntry={diaryEntry}
+    // GET: api/posts/getPostsByUser?uid={uid}&diaryEntry={diaryEntry}
     /// <summary>
     /// Retrieves all posts from a user, either all public posts or all diary entries.
     /// </summary>
-    /// <param name="userName">The username used to find all posts created by a user.</param>
+    /// <param name="uid">The uid used to find all posts created by a user.</param>
     /// <param name="diaryEntry">If the query is for public posts or diary entries.</param>
     /// <returns>A list of posts created by a user, either public posts or diary entries.</returns>
     [HttpGet("getPostsByUser")]
     [ProducesResponseType(typeof(List<Post>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<List<Post>>> GetPostsByUser(string userName, bool diaryEntry)
+    public async Task<ActionResult<List<Post>>> GetPostsByUser(string uid, bool diaryEntry)
     {
-        if(string.IsNullOrEmpty(userName))
+        if(string.IsNullOrEmpty(uid))
         {
-            return BadRequest("username is required");
+            return BadRequest("uid is required");
         }
 
-        var posts = await _postActions.GetPostsByUser(userName, diaryEntry);
+        var posts = await _postActions.GetPostsByUser(uid, diaryEntry);
 
         return posts;
     }
-
+    
+    // GET: api/posts/getDiariesByUser?uid={uid}&current={current}
+    /// <summary>
+    /// Gets the diary entries made by a user within a specific day
+    /// </summary>
+    /// <param name="uid">The author of the diary entry.</param>
+    /// <param name="current">The current day to query.</param>
+    /// <returns>The diary entry made by a user on the specified day.</returns>
+    [HttpGet("getDiariesByUser")]
+    [ProducesResponseType(typeof(List<Post>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<List<Post>>> GetDiariesByUser (string uid, DateTime current)
+    {
+        if (string.IsNullOrEmpty(uid) || !DateTime.TryParse(current.ToString(), out current))
+        {
+            return BadRequest("uid and valid datetime is required");
+        }
+        
+        var posts = await _postActions.GetDiariesByUser(uid, current);
+        return posts;
+    }
+    
+    // GET: api/posts/getDiariesByFriends?uid={uid}&current={current}
+    /// <summary>
+    /// Gets the diary entries made by the user's friends within a specific day
+    /// </summary>
+    /// <param name="uid">The user whose friends will be searched for.</param>
+    /// <param name="current">The current day to query.</param>
+    /// <returns>A list of diary entries made by the user's friends on the specified day</returns>
+    [HttpGet("getDiariesByFriends")]
+    [ProducesResponseType(typeof(List<Post>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<List<Post>>> GetDiariesByFriends(string uid, DateTime current)
+    {
+        if (string.IsNullOrEmpty(uid) || !DateTime.TryParse(current.ToString(), out current))
+        {
+            return BadRequest("uid and valid datetime is required");
+        }
+        
+        var posts = await _postActions.GetDiariesByFriends(_cognitoActions, uid, current);
+        return posts;
+    }
+    
     // GET: api/posts/getRecentPosts?since={since}&maxResults={maxResults}
     /// <summary>
     /// Gets recent posts from before a specified time.
@@ -169,7 +212,7 @@ public class PostController : ControllerBase
         return deleted;
     }
 
-    // PUT: api/posts/updatePost with body { "pid": "pid", "createdAt": "createdAt", "userName": "username", "postTitle": "title", "postBody": "body", "upvotes": "upvotes", "downvotes": "downvotes", "diaryEntry": false, "anonymous": false }
+    // PUT: api/posts/updatePost with body { "pid": "pid", "createdAt": "createdAt", "updatedAt": "updatedAt", "uid": "uid", "postTitle": "title", "postBody": "body", "upvotes": "upvotes", "downvotes": "downvotes", "diaryEntry": false, "anonymous": false }    
     /// <summary>
     /// Edits an already existing post.
     /// </summary>
@@ -180,9 +223,9 @@ public class PostController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Post>> UpdatePost([FromBody] Post request)
     {
-        if(request == null || string.IsNullOrEmpty(request.UserName) || string.IsNullOrEmpty(request.PostBody) || string.IsNullOrEmpty(request.PostTitle))
+        if(request == null || string.IsNullOrEmpty(request.UID) || string.IsNullOrEmpty(request.PostBody) || string.IsNullOrEmpty(request.PostTitle))
         {
-            return BadRequest("request body is required and must contain username, post title, post body");
+            return BadRequest("request body is required and must contain uid, post title, post body");
         }
 
         var post = await _postActions.UpdatePost(request);
