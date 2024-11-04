@@ -73,9 +73,13 @@ As for our code and remaining feature issues we plan on implementing, we are con
 - Cynthia:
     Stuff here with commit.
 - Kelly:
-    Stuff here with commit.
+    - I think my best work on the project has been the design prototypes and mobile UI refactoring. I created the layout plans for both frontends and did a huge overhaul of our mobile app in Sprint 2. Juggling all of these responsibilities while trying to complete my other dev tasks was definitely rough, but seeing everyone's reactions to the final product made me so happy. I'm super proud of my group and our project, and I wanted to try my best to come up with a design the captured just how awesome both are.
+    - Here is a [link to the  design plans](https://www.figma.com/design/PH7j5a65cGKczLGycxOng0/yAPP?node-id=1-5756&t=xX75vDgmpQ9P0uug-1).
+    - Here is a [link to the PR containing the mobile refactoring](https://github.com/KageSilver/yAPP/pull/254).
+
 - Qiwen:
     Stuff here with commit.
 - Tara:
     - I'd say that the code I'm most proud of would be some of the mobile frontend code I did for Sprint 1. This piece of code includes making an API call through Amplify within Android Studio. The reason why I'm proud of this piece is because it took a lot of research and a lot of debugging to figure out how to get it to work well. This addition allowed for the others on my team to reuse this code fragment for their own endpoint interactions for other frontend work.
     - Here is the [link to the commit](https://github.com/KageSilver/yAPP/commit/e56907e2eb8d5947cdef8dc9e143b5a36744095b).
+
