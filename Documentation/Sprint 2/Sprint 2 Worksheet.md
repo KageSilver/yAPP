@@ -1,11 +1,15 @@
 # yAPP // Sprint 2 Worksheet
 
 ## Regression Testing
-1. We run our regression testing by ...
-2. Here are the various links for regression testing.
-    - [Here](.) is the regression testing script.
-    - Here is the last snapshot of the execution:
-    - Here are the results of regression testing:
+
+As of Sprint 2, our regression tests are executed inside a docker container, which triggers all of our unit and integration tests through the following command:
+
+`sh(script: "docker run ${IMAGE_NAME} dotnet test ${SOLUTION}")`
+
+We ultimately decided that partitioning the test suite was unnecessary for our case, as it ensures the baseline "sanity" of our system with minimal time costs. In other words, these tests are fast and are vital to checking the application's core functionality. Here are the latest results of regression testing:
+
+(insert snapshot of execution)
+(insert results of regression testing)
 
 ## Testing Slowdown
 We have been able to keep all of the unit and integration tests in our test plan as we haven't experienced any significant slowdown. We have simply added on to our test plan from Sprint 1 rather than creating an entirely new version for Sprint 2. All of our tests can be run under a minute in our local deployments and are then run automatically by our CI/CD pipeline. Due the speed and necessity of our tests, we decided not to change our test plan for the different releases.
