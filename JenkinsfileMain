@@ -80,7 +80,7 @@ pipeline {
                     echo "Update lambda settings"
    
                     def jsonData = [
-                        Environment: "dev",
+                        Environment: "main",
                         AwsRegion: "us-east-2",
                         UserPoolId: "${pool_id}",
                         FriendshipTableName: "Friendship-${amplify_env}",
@@ -134,15 +134,6 @@ pipeline {
             }
         }
 
-        stage('Invalidate Cloudfront cache') {
-            steps {
-                script {
-                    echo 'Invalidate Cloudfront cache (Not implemented)'
-                    //sh(script: "docker run ${IMAGE_NAME} aws cloudfront create-invalidation --distribution-id ${cloudfront_id} --paths \"/*\" ")
-                    
-                }
-            }
-        }
     }
     post {
         always {
