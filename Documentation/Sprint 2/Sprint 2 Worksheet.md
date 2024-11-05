@@ -83,7 +83,9 @@ As for our code and remaining feature issues we plan on implementing, we are con
     - Here is a [link to the PR containing the mobile refactoring](https://github.com/KageSilver/yAPP/pull/254).
 
 - Qiwen:
-    Stuff here with commit.
+    - My key contributions to this project include building the entire project architecture, which encompasses the backend and web frontend, and successfully connecting the Android app to the backend despite limited information and documentation. I also learned how to create Docker containers and set up a complete Jenkins pipeline for the project.
+    - Here is a [link the the commit for docker](https://github.com/KageSilver/yAPP/pull/272/commits)
+    - Here is a [link to refactor the web frontend](https://github.com/KageSilver/yAPP/pull/246/commits)
 - Tara:
     - I'd say that the code I'm most proud of would be some of the mobile frontend code I did for Sprint 1. This piece of code includes making an API call through Amplify within Android Studio. The reason why I'm proud of this piece is because it took a lot of research and a lot of debugging to figure out how to get it to work well. This addition allowed for the others on my team to reuse this code fragment for their own endpoint interactions for other frontend work.
     - Here is the [link to the commit](https://github.com/KageSilver/yAPP/commit/e56907e2eb8d5947cdef8dc9e143b5a36744095b).
