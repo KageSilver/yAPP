@@ -53,4 +53,25 @@ public class AwardController : ControllerBase
 
         return award;
     }
+
+    // GET: api/awards/getAwardsByUser?uid={uid}
+    /// <summary>
+    /// Gets all awards from a user
+    /// </summary>
+    /// <param name="uid">The user who earned the awards being fetched.</param>
+    /// <returns>A list of awards earned by the user.</returns>
+    [HttpGet("getAwardsByUser")]
+    [ProducesResponseType(typeof(List<Award>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<List<Award>>> GetAwardsByUser(string uid)
+    {
+        if(string.IsNullOrEmpty(uid))
+        {
+            return BadRequest("uid is required");
+        }
+
+        var awards = await _awardActions.GetAwardsByUser(uid);
+
+        return awards;
+    }
 }
