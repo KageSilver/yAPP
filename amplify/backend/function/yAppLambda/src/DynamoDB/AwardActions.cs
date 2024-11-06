@@ -22,7 +22,7 @@ public class AwardActions : IAwardActions
         _appSettings = appSettings;
         _dynamoDbContext = dynamoDbContext;
         
-        _awardTable = string.IsNullOrEmpty(_appSettings.PostTableName)
+        _awardTable = string.IsNullOrEmpty(_appSettings.AwardTableName)
             ? AwardTableName
             : _appSettings.AwardTableName;
         
@@ -53,6 +53,36 @@ public class AwardActions : IAwardActions
         {
             Console.WriteLine("Failed to create award: " + e.Message);
             return new StatusCodeResult(statusCode: StatusCodes.Status500InternalServerError);
+        }
+    }
+        
+    /// <summary>
+    /// Deletes an award from the database by an award id
+    /// </summary>
+    /// <param name="aid">The id of the award to be deleted.</param>
+    /// <returns>A boolean indicating whether the deletion was successful.</returns>
+    public async Task<bool> DeleteAward(string aid)
+    {
+        try
+        {
+            // Load the award record to check if it exists
+            var award = GetAwardById(aid);
+
+            if (award.Result == null)
+            {
+                Console.WriteLine("Failed to retrieve award to be deleted");
+                return false;
+            }
+
+            // Delete the award from the database
+            await _dynamoDbContext.DeleteAsync(award.Result, _config);
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to delete award: " + e.Message);
+            return false;
         }
     }
 }
