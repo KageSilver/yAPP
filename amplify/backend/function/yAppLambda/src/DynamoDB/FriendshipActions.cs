@@ -168,6 +168,12 @@ public class FriendshipActions: IFriendshipActions
             // Load the friendship record to check if it exists
             var friendship = GetFriendship(fromUserName, toUserName).Result.Value;
 
+            if (friendship == null)
+            {
+                Console.WriteLine("Failed to retrieve friendship to be deleted");
+                return false;
+            }
+            
             // Delete the friendship record
             await _dynamoDbContext.DeleteAsync(friendship, _config);
 

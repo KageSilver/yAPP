@@ -223,6 +223,7 @@ public class PostController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Post>> UpdatePost([FromBody] Post request)
     {
+        
         if(request == null || string.IsNullOrEmpty(request.UID) || string.IsNullOrEmpty(request.PostBody) || string.IsNullOrEmpty(request.PostTitle))
         {
             return BadRequest("request body is required and must contain uid, post title, post body");
