@@ -19,6 +19,13 @@ public interface IAwardActions
     /// <param name="aid">The id to find an award.</param>
     /// <returns>An ActionResult containing the Award object if found, or a NotFound result otherwise.</returns>
     Task<Award> GetAwardById(string aid);
+
+    /// <summary>
+    /// Gets all awards from a user
+    /// </summary>
+    /// <param name="uid">The user who earned the awards being fetched.</param>
+    /// <returns>A list of awards earned by the user.</returns>
+    Task<List<Award>> GetAwardsByUser(string uid);
     
     /// <summary>
     /// Deletes an award from the database by an award id

@@ -74,6 +74,31 @@ public class AwardActions : IAwardActions
             return null;
         }
     }
+    
+    /// <summary>
+    /// Gets all awards from a user
+    /// </summary>
+    /// <param name="uid">The user who earned the awards being fetched.</param>
+    /// <returns>A list of awards earned by the user.</returns>
+    public async Task<List<Award>> GetAwardsByUser(string uid)
+    {
+        try
+        {
+            // Scan for awards where the award earner's uid is 'uid'
+            List<ScanCondition> scanConditions = new List<ScanCondition>
+            {
+                new ScanCondition("UID", ScanOperator.Equal, uid)
+            };
+            
+            var awards = await _dynamoDbContext.ScanAsync<Award>(scanConditions, _config).GetRemainingAsync();
+            return awards;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to get awards: " + e.Message);
+            return new List<Award>();
+        }
+    }
         
     /// <summary>
     /// Deletes an award from the database by an award id
