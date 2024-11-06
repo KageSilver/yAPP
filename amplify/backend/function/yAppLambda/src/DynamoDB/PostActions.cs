@@ -84,10 +84,10 @@ public class PostActions : IPostActions
     }
 
     /// <summary>
-    /// Gets the user's public posts or diary entries
+    /// Gets all public posts from a user
     /// </summary>
     /// <param name="uid">The author of the posts to be fetched.</param>
-    /// <returns>A list of posts created by a user, either public posts or diary entries.</returns>
+    /// <returns>A list of public posts created by a user.</returns>
     public async Task<List<Post>> GetPostsByUser(string uid)
     {
         try
