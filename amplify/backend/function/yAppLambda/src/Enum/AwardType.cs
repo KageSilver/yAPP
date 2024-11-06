@@ -5,6 +5,7 @@ namespace yAppLambda.Enum;
 /// </summary>
 public enum AwardTypes
 {
+    All = -1,
     Upvotes = 0,
     Downvotes = 1,
     Comments = 2
