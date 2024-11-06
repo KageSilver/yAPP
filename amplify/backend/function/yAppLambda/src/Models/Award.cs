@@ -13,6 +13,9 @@ public class Award
     [JsonPropertyName("pid")]
     public string PID { get; set; }
 
+    [JsonPropertyName("uid")]
+    public string UID { get; set; }
+
     [JsonPropertyName("createdAt")]
     public DateTime CreatedAt { get; set; }
 
