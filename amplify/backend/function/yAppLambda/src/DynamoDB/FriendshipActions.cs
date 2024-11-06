@@ -71,7 +71,6 @@ public class FriendshipActions: IFriendshipActions
             else
             {
                 // If the friendship is pending, we need to update the created time
-                // since the request user would send a new request
                 friendship.CreatedAt = DateTime.Now;
             }
 
@@ -102,8 +101,7 @@ public class FriendshipActions: IFriendshipActions
             var filteredFriendshipsFrom = friendshipsFrom.ToList();
             List<ScanCondition> scanConditions;
 
-            if (friendshipStatus == FriendshipStatus.Accepted ||
-                friendshipStatus == FriendshipStatus.Pending)
+            if (friendshipStatus == FriendshipStatus.Accepted || friendshipStatus == FriendshipStatus.Pending)
             {
                 // Only get friendships where the user is `FromUserName` with the specified status
                 filteredFriendshipsFrom = friendshipsFrom.Where(f => f.Status == friendshipStatus).ToList();
