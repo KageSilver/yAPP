@@ -24,9 +24,8 @@ public interface IPostActions
     /// Gets the user's public posts or diary entries
     /// </summary>
     /// <param name="uid">The author of the posts to be fetched.</param>
-    /// <param name="diaryEntry">If the query is for public posts or diary entries.</param>
     /// <returns>A list of posts created by a user, either public posts or diary entries.</returns>
-    Task<List<Post>> GetPostsByUser(string uid, bool diaryEntry);
+    Task<List<Post>> GetPostsByUser(string uid);
 
     /// <summary>
     /// Gets the diary entries made by a user within a specific day
