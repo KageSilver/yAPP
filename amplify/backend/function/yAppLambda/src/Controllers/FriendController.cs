@@ -23,7 +23,7 @@ public class FriendController : ControllerBase
     private readonly IFriendshipActions _friendshipActions;
     private readonly IFriendshipStatusActions _friendshipStatusActions;
 
-    public FriendController(IAppSettings appSettings, ICognitoActions cognitoActions, IDynamoDBContext dbContext, 
+    public FriendController(IAppSettings appSettings, ICognitoActions cognitoActions, IDynamoDBContext dbContext,
                             IFriendshipActions friendshipActions, IFriendshipStatusActions friendshipStatusActions)
     {
         _appSettings = appSettings;
@@ -32,8 +32,8 @@ public class FriendController : ControllerBase
         _friendshipActions = friendshipActions;
         _friendshipStatusActions = friendshipStatusActions;
     }
-    
-    // POST: api/friends/friendRequest with body { "fromUserName": "username", "toUserId": "id" }
+
+    // POST: api/friends/friendRequest with body { "fromUserName": "fromUsername", "ToUserName": "toUsername" }
     /// <summary>
     /// Sends a friend request from one user to another.
     /// </summary>
@@ -46,14 +46,13 @@ public class FriendController : ControllerBase
     {
         ActionResult<Friendship> result;
 
-        if (request == null || string.IsNullOrEmpty(request.FromUserName) || string.IsNullOrEmpty(request.ToUserId))
+        if (request == null || string.IsNullOrEmpty(request.FromUserName) || string.IsNullOrEmpty(request.ToUserName))
         {
-            result = BadRequest("Request body is required and must contain username and friend's id");
+            result = BadRequest("Request body is required and must contain the sender AND receiver's usernames");
         }
         else
         {
-            Console.WriteLine("Friend request from: " + request.FromUserName + " to: " + request.ToUserId);
-            var friend = await _cognitoActions.GetUserById(request.ToUserId);
+            Console.WriteLine("Friend request from: " + request.FromUserName + " to: " + request.ToUserName);
             if (friend == null)
             {
                 result = NotFound("Friend not found");
@@ -61,8 +60,8 @@ public class FriendController : ControllerBase
             else
             {
                 // Get friendships AB and BA
-                var existingFriendship = await _friendshipActions.GetFriendship(request.FromUserName, friend.UserName); 
-                var existingReversedFriendship = await _friendshipActions.GetFriendship(friend.UserName, request.FromUserName); 
+                var existingFriendship = await _friendshipActions.GetFriendship(request.FromUserName, request.ToUserName);
+                var existingReversedFriendship = await _friendshipActions.GetFriendship(request.ToUserName, request.FromUserName);
 
                 bool noAB = existingFriendship == null || existingFriendship.Value == null;
                 bool noBA = existingReversedFriendship == null || existingReversedFriendship.Value == null;
@@ -70,15 +69,17 @@ public class FriendController : ControllerBase
                 // If both friendships AB or BA does not exist, create a new one
                 if (noAB && noBA)
                 {
-                    // Create new friendship AB 
+                    // Create new friendship AB
                     var friendship = new Friendship
                     {
                         FromUserName = request.FromUserName,
-                        ToUserName = friend.UserName,
+                        ToUserName = request.ToUserName,
                         Status = FriendshipStatus.Pending
                     };
+
                     var createResult = await _friendshipActions
                         .CreateFriendship(friendship);
+
                     result = createResult.Result is OkObjectResult
                         ? (ActionResult<Friendship>)friendship
                         : BadRequest("Failed to create friendship");
@@ -87,19 +88,23 @@ public class FriendController : ControllerBase
                 {
                     // Update existing AB friendship
                     existingFriendship.Value.Status = FriendshipStatus.Pending;
+
                     var updateResult = await _friendshipActions
                         .UpdateFriendshipStatus(existingFriendship.Value);
+
                     result = updateResult.Result is OkObjectResult
                         ? (ActionResult<Friendship>)existingFriendship.Value
                         : BadRequest("Failed to create friendship");
-                    
+
                 }
                 else // If AB friendship doesn't exist, BA friendship does
                 {
                     // Update existing BA friendship
                     existingReversedFriendship.Value.Status = FriendshipStatus.Pending;
+
                     var updateResult = await _friendshipActions
                         .UpdateFriendshipStatus(existingReversedFriendship.Value);
+
                     result = updateResult.Result is OkObjectResult
                         ? (ActionResult<Friendship>)existingReversedFriendship.Value
                         : BadRequest("Failed to create friendship");
@@ -120,7 +125,7 @@ public class FriendController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Friendship>> UpdateFriendRequest([FromBody] FriendRequest request)
     {
-        if (request == null || string.IsNullOrEmpty(request.FromUserName) || string.IsNullOrEmpty(request.FromUserName))
+        if (request == null || string.IsNullOrEmpty(request.FromUserName) || string.IsNullOrEmpty(request.ToUserName))
         {
             return BadRequest("Request body is required and must contain username and friend's username");
         }
@@ -131,17 +136,18 @@ public class FriendController : ControllerBase
         var status = _friendshipStatusActions.GetFriendshipStatus(request.Status);
 
         // Retrieve the friendship object described in the request
-        var friendship = await _friendshipActions
-            .GetFriendship(request.FromUserName, request.ToUserName);
+        var friendship = await _friendshipActions.GetFriendship(request.FromUserName, request.ToUserName);
 
         // If the friendship actually exists...
         if (friendship != null)
         {
-            // Update the status of the friendship. There are 3 statuses: Pending, Accepted, Declined
+            // Update the status of the friendship. There are 2 statuses: Pending and Accepted.
             if (friendship.Value != null && status != FriendshipStatus.All)
             {
                 friendship.Value.Status = _friendshipStatusActions.GetFriendshipStatus(request.Status);
+
                 var updateResult = await _friendshipActions.UpdateFriendshipStatus(friendship.Value);
+                
                 result = updateResult.Result is OkObjectResult
                     ? (ActionResult<Friendship>)friendship.Value
                     : BadRequest("Failed to update friendship status");
@@ -157,7 +163,7 @@ public class FriendController : ControllerBase
         }
         return result;
     }
-    
+
     // GET: api/friends/getFriendsByStatus?userName={username}&status={status}
     /// <summary>
     /// Retrieves all friends of a user filtered by a specified status.
@@ -180,7 +186,7 @@ public class FriendController : ControllerBase
 
         // Get all the friendships of the status
         var friendships = await _friendshipActions.GetAllFriends(userName, friendshipStatus);
-        
+
         return friendships;
     }
 }

@@ -55,7 +55,7 @@ public class FriendshipActions: IFriendshipActions
     }
 
     /// <summary>
-    /// To accept/decline a friendship, we need to update the status of the friendship to "Accepted"/"Declined"
+    /// To accept/decline a friendship, we need to update the status of the friendship to "Accepted"
     /// </summary>
     /// <param name="friendship">The friendship object containing updated details.</param>
     /// <returns>An ActionResult containing the updated Friendship object or an error status.</returns>
@@ -63,18 +63,18 @@ public class FriendshipActions: IFriendshipActions
     {
         try
         {
-            // If the friendship is accepted or declined, we need to update the value for `UpdatedAt`
-            if (friendship.Status == FriendshipStatus.Accepted || friendship.Status == FriendshipStatus.Declined)
+            // If the friendship is accepted, we need to update the value for `UpdatedAt`
+            if (friendship.Status == FriendshipStatus.Accepted)
             {
                 friendship.UpdatedAt = DateTime.Now;
             }
-            else if (friendship.Status == FriendshipStatus.Pending)
+            else
             {
                 // If the friendship is pending, we need to update the created time
                 // since the request user would send a new request
                 friendship.CreatedAt = DateTime.Now;
             }
-          
+
             // Update the friendship status
             await _dynamoDbContext.SaveAsync(friendship, _config);
             return new OkObjectResult(friendship);
@@ -97,15 +97,13 @@ public class FriendshipActions: IFriendshipActions
         try
         {
             // Query friendships where the user is the `FromUserName`
-            var friendshipsFrom = await _dynamoDbContext.QueryAsync<Friendship>
-                (userName, _config).GetRemainingAsync();
+            var friendshipsFrom = await _dynamoDbContext.QueryAsync<Friendship>(userName, _config).GetRemainingAsync();
 
             var filteredFriendshipsFrom = friendshipsFrom.ToList();
             List<ScanCondition> scanConditions;
 
-            if (friendshipStatus == FriendshipStatus.Accepted || 
-                friendshipStatus == FriendshipStatus.Pending ||
-                friendshipStatus == FriendshipStatus.Declined)
+            if (friendshipStatus == FriendshipStatus.Accepted ||
+                friendshipStatus == FriendshipStatus.Pending)
             {
                 // Only get friendships where the user is `FromUserName` with the specified status
                 filteredFriendshipsFrom = friendshipsFrom.Where(f => f.Status == friendshipStatus).ToList();
@@ -126,8 +124,7 @@ public class FriendshipActions: IFriendshipActions
             }
 
             // Query friendships where the user is the `ToUserName` with the specified status
-            var friendshipsTo = await _dynamoDbContext.ScanAsync<Friendship>
-                (scanConditions, _config).GetRemainingAsync();
+            var friendshipsTo = await _dynamoDbContext.ScanAsync<Friendship>(scanConditions, _config).GetRemainingAsync();
 
             // Combine the filtered results and return it
             var allFilteredFriendships = filteredFriendshipsFrom.Concat(friendshipsTo).ToList();
@@ -150,8 +147,7 @@ public class FriendshipActions: IFriendshipActions
     {
         try
         {
-            var friendship = await _dynamoDbContext.LoadAsync<Friendship>
-                (fromUserName, toUserName, _config);
+            var friendship = await _dynamoDbContext.LoadAsync<Friendship>(fromUserName, toUserName, _config);
             return friendship;
         }
         catch (Exception e)
@@ -160,7 +156,7 @@ public class FriendshipActions: IFriendshipActions
             return null;
         }
     }
-    
+
     /// <summary>
     /// Deletes a friendship between two users.
     /// </summary>
@@ -176,8 +172,8 @@ public class FriendshipActions: IFriendshipActions
 
             // Delete the friendship record
             await _dynamoDbContext.DeleteAsync(friendship, _config);
-        
-            return true; 
+
+            return true;
         }
         catch (Exception e)
         {
