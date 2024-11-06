@@ -76,12 +76,12 @@ As for our code and remaining feature issues we plan on implementing, we are con
 
 ## Show Off
 - Cynthia:
-    Stuff here with commit.
+    - In my opinion, the best work I've done on the project so far has been the API endpoints for retrieving and manipulating data about posts made in our application. Specifically, I am most proud of the getRecentPosts endpoint, which involved using a QueryOperationConfig for querying a DynamoDB table (a NoSQL type database). This is because the documentation on this kind of query is very limited, so it took a lot of trial and error to figure out how to use it properly. This query also involved comparing DateTime objects between input from the endpoint and existing values in the database, which increased the complexity.
+    - Here is a [link to the commit](https://github.com/KageSilver/yAPP/pull/104/commits/00d0682d499bf29ce54590b0974365e977786bf4) where I implemented this query.
 - Kelly:
     - I think my best work on the project has been the design prototypes and mobile UI refactoring. I created the layout plans for both frontends and did a huge overhaul of our mobile app in Sprint 2. Juggling all of these responsibilities while trying to complete my other dev tasks was definitely rough, but seeing everyone's reactions to the final product made me so happy. I'm super proud of my group and our project, and I wanted to try my best to come up with a design the captured just how awesome both are.
     - Here is a [link to the  design plans](https://www.figma.com/design/PH7j5a65cGKczLGycxOng0/yAPP?node-id=1-5756&t=xX75vDgmpQ9P0uug-1).
     - Here is a [link to the PR containing the mobile refactoring](https://github.com/KageSilver/yAPP/pull/254).
-
 - Qiwen:
     - My key contributions to this project include building the entire project architecture, which encompasses the backend and web frontend, and successfully connecting the Android app to the backend despite limited information and documentation. I also learned how to create Docker containers and set up a complete Jenkins pipeline for the project.
     - Here is a [link the the commit for docker](https://github.com/KageSilver/yAPP/pull/272/commits)
