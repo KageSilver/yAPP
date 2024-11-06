@@ -190,6 +190,29 @@ public class FriendController : ControllerBase
         return friendships;
     }
 
+    // GET: api/friends/getFriendsByStatus?userName={username}&status={status}
+    /// <summary>
+    /// Retrieves all friends of a user filtered by a specified status.
+    /// </summary>
+    /// <param name="userName">The username of the user whose friends are to be retrieved.</param>
+    /// <param name="status">The status of the friendships to filter by (-1:All requests, 0: Pending, 1: Accepted).</param>
+    /// <returns>An ActionResult containing a list of Friendship objects if the retrieval is successful, or an error message if it fails.</returns>
+    [HttpGet("getFriendship")]
+    [ProducesResponseType(typeof(List<Friendship>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<List<Friendship>>> GetFriendship(string fromUserName, string toUserName)
+    {
+        if (string.IsNullOrEmpty(fromUserName) || string.IsNullOrEmpty(toUserName))
+        {
+            return BadRequest("Usernames are required");
+        }
+
+        // Get friendship object between sender and receiver
+        var friend = await _friendshipActions.GetFriendship(fromUserName, toUserName);
+
+        return friend;
+    }
+
     // DELETE: api/friends/deleteFriendship?fromUsername={username}&toUsername={username}
     /// <summary>
     /// Deletes a post from the database by a post id.
@@ -199,7 +222,7 @@ public class FriendController : ControllerBase
     [HttpDelete("deleteFriendship")]
     [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<bool>> DeletePost(string fromUserName, string toUserName)
+    public async Task<ActionResult<bool>> DeleteFriendship(string fromUserName, string toUserName)
     {
         if(string.IsNullOrEmpty(fromUserName) || string.IsNullOrEmpty(toUserName))
         {

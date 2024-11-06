@@ -64,9 +64,9 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{base_url}}/api/friends/getFriend?fromUserName=${fromUserName}&toUserName=${toUserName}",
+          "raw": "{{base_url}}/api/friends/getFriendship?fromUserName=${fromUserName}&toUserName=${toUserName}",
           "host": ["{{base_url}}"],
-          "path": ["api", "friends", "getFriend"],
+          "path": ["api", "friends", "getFriendship"],
           "query": [
             {
               "key": "fromUserName",
@@ -162,7 +162,7 @@
     },
 
     {
-      "name": "DeleteFriends",
+      "name": "DeleteFriendship",
       "event": [
         {
           "listen": "test",
