@@ -105,24 +105,23 @@ public class PostController : ControllerBase
         return post;
     }
 
-    // GET: api/posts/getPostsByUser?uid={uid}&diaryEntry={diaryEntry}
+    // GET: api/posts/getPostsByUser?uid={uid}
     /// <summary>
-    /// Retrieves all posts from a user, either all public posts or all diary entries.
+    /// Gets all public posts from a user
     /// </summary>
     /// <param name="uid">The uid used to find all posts created by a user.</param>
-    /// <param name="diaryEntry">If the query is for public posts or diary entries.</param>
-    /// <returns>A list of posts created by a user, either public posts or diary entries.</returns>
+    /// <returns>A list of public posts created by a user.</returns>
     [HttpGet("getPostsByUser")]
     [ProducesResponseType(typeof(List<Post>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<List<Post>>> GetPostsByUser(string uid, bool diaryEntry)
+    public async Task<ActionResult<List<Post>>> GetPostsByUser(string uid)
     {
         if(string.IsNullOrEmpty(uid))
         {
             return BadRequest("uid is required");
         }
 
-        var posts = await _postActions.GetPostsByUser(uid, diaryEntry);
+        var posts = await _postActions.GetPostsByUser(uid);
 
         return posts;
     }
