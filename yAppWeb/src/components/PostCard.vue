@@ -32,8 +32,7 @@
 		<div class="card-header relative mb-2">
 			<h3 class="truncate text-lg font-semibold">{{ props.post.postTitle }}</h3>
 			<p
-				class="overflow-hidden overflow-ellipsis whitespace-nowrap text-sm text-gray-600"
-			>
+				class="overflow-hidden overflow-ellipsis whitespace-nowrap text-sm text-gray-600">
 				<strong>Created At:</strong>
 				{{ new Date(props.post.createdAt).toLocaleString() }}
 			</p>
@@ -42,25 +41,21 @@
 
 			<div
 				class="absolute right-0 top-0"
-				v-if="currentUser == props.post.userName"
-			>
+				v-if="currentUser == props.post.userName">
 				<button
 					class="text-gray-600 hover:text-gray-900 focus:outline-none"
-					@click="toggleMenu"
-				>
+					@click="toggleMenu">
 					<svg
 						class="h-6 w-6"
 						fill="none"
 						stroke="currentColor"
 						viewBox="0 0 24 24"
-						xmlns="http://www.w3.org/2000/svg"
-					>
+						xmlns="http://www.w3.org/2000/svg">
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
 							stroke-width="2"
-							d="M12 6v.01M12 12v.01M12 18v.01"
-						></path>
+							d="M12 6v.01M12 12v.01M12 18v.01"></path>
 					</svg>
 				</button>
 			</div>
