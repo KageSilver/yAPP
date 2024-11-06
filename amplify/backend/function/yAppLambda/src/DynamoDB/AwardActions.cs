@@ -99,6 +99,54 @@ public class AwardActions : IAwardActions
             return new List<Award>();
         }
     }
+    
+    /// <summary>
+    /// Gets all awards from a post
+    /// </summary>
+    /// <param name="pid">The post on which the awards were earned.</param>
+    /// <returns>A list of awards earned on the post.</returns>
+    public async Task<List<Award>> GetAwardsByPost(string pid)
+    {
+        try
+        {
+            var expressionAttributeValues = new Dictionary<string, DynamoDBEntry>();
+            expressionAttributeValues.Add(":pid", false);
+
+            var query = new QueryOperationConfig()
+            {
+                IndexName = "PIDIndex",
+                KeyExpression = new Expression
+                {
+                    ExpressionStatement = "PID = :pid",
+                    ExpressionAttributeValues = expressionAttributeValues
+                },
+                Limit = maxResults,
+                AttributesToGet = new List<string>
+                {
+                    "CID"
+                },
+                Select = SelectValues.SpecificAttributes,
+                BackwardSearch = true
+            };
+
+            var result = await _dynamoDbContext.FromQueryAsync<Award>(query, _config).GetNextSetAsync();
+            
+            var awards = new List<Award>();
+            
+            foreach(Award award in result)
+            {
+                var thisAward = GetAwardById(award.AID).Result;
+                awards.Add(thisAward);
+            }
+
+            return awards;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to get awards: " + e.Message);
+            return new List<Award>();
+        }
+    }
         
     /// <summary>
     /// Deletes an award from the database by an award id

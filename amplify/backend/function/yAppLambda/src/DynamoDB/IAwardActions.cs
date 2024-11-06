@@ -28,6 +28,13 @@ public interface IAwardActions
     Task<List<Award>> GetAwardsByUser(string uid);
     
     /// <summary>
+    /// Gets all awards from a post
+    /// </summary>
+    /// <param name="pid">The post on which the awards were earned.</param>
+    /// <returns>A list of awards earned on the post.</returns>
+    Task<List<Award>> GetAwardsByPost(string pid);
+    
+    /// <summary>
     /// Deletes an award from the database by an award id
     /// </summary>
     /// <param name="aid">The id of the award to be deleted.</param>
