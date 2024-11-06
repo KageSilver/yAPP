@@ -27,4 +27,30 @@ public class AwardController : ControllerBase
         _dbContext = dbContext;
         _awardActions = awardActions;
     }
+
+    // GET: api/awards/getAwardById?aid={aid}
+    /// <summary>
+    /// Retrieves an award by a unique identifier.
+    /// </summary>
+    /// <param name="aid">The unique identifier for an award.</param>
+    /// <returns>An ActionResult containing the Award object if found, or a NotFound result otherwise</returns>
+    [HttpGet("getAwardById")]
+    [ProducesResponseType(typeof(Award), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<Award>> GetAwardById(string aid)
+    {
+        if(string.IsNullOrEmpty(aid))
+        {
+            return BadRequest("Award ID is required");
+        }
+
+        var award = await _awardActions.GetAwardById(pid);
+
+        if(award == null)
+        {
+            return NotFound("Award does not exist");
+        }
+
+        return award;
+    }
 }
