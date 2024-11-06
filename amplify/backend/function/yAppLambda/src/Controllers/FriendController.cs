@@ -53,6 +53,7 @@ public class FriendController : ControllerBase
         else
         {
             Console.WriteLine("Friend request from: " + request.FromUserName + " to: " + request.ToUserName);
+            var friend = await _cognitoActions.GetUser(request.ToUserName);
             if (friend == null)
             {
                 result = NotFound("Friend not found");
@@ -198,9 +199,9 @@ public class FriendController : ControllerBase
     /// <param name="status">The status of the friendships to filter by (-1:All requests, 0: Pending, 1: Accepted).</param>
     /// <returns>An ActionResult containing a list of Friendship objects if the retrieval is successful, or an error message if it fails.</returns>
     [HttpGet("getFriendship")]
-    [ProducesResponseType(typeof(List<Friendship>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Friendship), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<List<Friendship>>> GetFriendship(string fromUserName, string toUserName)
+    public async Task<ActionResult<Friendship>> GetFriendship(string fromUserName, string toUserName)
     {
         if (string.IsNullOrEmpty(fromUserName) || string.IsNullOrEmpty(toUserName))
         {
@@ -229,7 +230,7 @@ public class FriendController : ControllerBase
             return BadRequest("The usernames of the sender and receiver are required");
         }
 
-        var deleted = await _postActions.DeleteFriendship(fromUserName, toUserName);
+        var deleted = await _friendshipActions.DeleteFriendship(fromUserName, toUserName);
 
         return deleted;
     }

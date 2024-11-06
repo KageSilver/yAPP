@@ -132,8 +132,7 @@ public class Startup
             {
                 context.Response.Headers["Access-Control-Allow-Origin"] = "*";
                 context.Response.Headers["Access-Control-Allow-Headers"] = "GET, OPTIONS, POST, PUT, DELETE";
-                context.Response.Headers["Access-Control-Allow-Headers"] =
-                    "Origin, X-Requested-With, Content-Type, Accept, Authorization";
+                context.Response.Headers["Access-Control-Allow-Headers"] = "Origin, X-Requested-With, Content-Type, Accept, Authorization";
                 context.Response.Headers["Access-Control-Allow-Credentials"] = "true";
                 context.Response.Headers["Content-Type"] = "application/json";
 

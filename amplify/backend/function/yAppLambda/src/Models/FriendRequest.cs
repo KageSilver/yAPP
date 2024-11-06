@@ -10,9 +10,6 @@ public class FriendRequest
     [JsonPropertyName("fromUserName")]
     public string FromUserName { get; set; } 
     
-    [JsonPropertyName("toUserId")]
-    public string ToUserId { get; set; } 
-    
     [JsonPropertyName("toUserName")]
     public string ToUserName { get; set; }
     
