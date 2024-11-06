@@ -18,6 +18,7 @@ public class PostActions : IPostActions
     private readonly DynamoDBOperationConfig _config;
     private readonly ICommentActions _commentActions;
     private readonly IFriendshipActions _friendshipActions;
+    private readonly IAwardActions _awardActions;
 
     public PostActions(IAppSettings appSettings, IDynamoDBContext dynamoDbContext)
     {
@@ -35,6 +36,7 @@ public class PostActions : IPostActions
         
         _commentActions = new CommentActions(appSettings, dynamoDbContext);
         _friendshipActions = new FriendshipActions(appSettings, dynamoDbContext);
+        _awardActions = new AwardActions(appSettings, dynamoDbContext);
     }
     
     /// <summary>
@@ -290,6 +292,7 @@ public class PostActions : IPostActions
 
             // Delete the post from the database
             await _commentActions.DeleteComments(pid);
+            await _awardActions.DeleteAwardsByPost(pid);
             await _dynamoDbContext.DeleteAsync(post.Result, _config);
 
             return true;
