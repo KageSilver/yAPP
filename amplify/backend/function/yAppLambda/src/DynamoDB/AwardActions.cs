@@ -55,6 +55,25 @@ public class AwardActions : IAwardActions
             return new StatusCodeResult(statusCode: StatusCodes.Status500InternalServerError);
         }
     }
+    
+    /// <summary>
+    /// Gets an award by the award ID
+    /// </summary>
+    /// <param name="aid">The id to find an award.</param>
+    /// <returns>An ActionResult containing the Award object if found, or a NotFound result otherwise.</returns>
+    public async Task<Award> GetAwardById(string aid)
+    {
+        try
+        {
+            var award = await _dynamoDbContext.LoadAsync<Award>(aid, _config);
+            return award;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to get award: " + e.Message);
+            return null;
+        }
+    }
         
     /// <summary>
     /// Deletes an award from the database by an award id
