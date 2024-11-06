@@ -147,6 +147,37 @@ public class AwardActions : IAwardActions
             return new List<Award>();
         }
     }
+    
+    /// <summary>
+    /// Deletes all awards earned on a specific post
+    /// </summary>
+    /// <param name="pid">The post on which the awards were earned to be deleted.</param>
+    /// <returns>A boolean indicating whether the deletion was successful.</returns>
+    public async Task<bool> DeleteAwardsByPost(string pid)
+    {
+        try
+        {
+            var awards = await GetAwardsByPost(pid);
+
+            if(awards.Count > 0)
+            {
+                foreach(Award award in awards)
+                {
+                    if(!await DeleteAward(award.AID))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to delete awards: " + e.Message);
+            return false;
+        }
+    }
         
     /// <summary>
     /// Deletes an award from the database by an award id

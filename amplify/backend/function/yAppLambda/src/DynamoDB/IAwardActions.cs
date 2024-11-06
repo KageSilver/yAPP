@@ -35,6 +35,13 @@ public interface IAwardActions
     Task<List<Award>> GetAwardsByPost(string pid);
     
     /// <summary>
+    /// Deletes all awards earned on a specific post
+    /// </summary>
+    /// <param name="pid">The post on which the awards were earned to be deleted.</param>
+    /// <returns>A boolean indicating whether the deletion was successful.</returns>
+    Task<bool> DeleteAwardsByPost(string pid);
+    
+    /// <summary>
     /// Deletes an award from the database by an award id
     /// </summary>
     /// <param name="aid">The id of the award to be deleted.</param>
