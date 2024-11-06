@@ -74,4 +74,25 @@ public class AwardController : ControllerBase
 
         return awards;
     }
+
+    // GET: api/awards/getAwardsByPost?pid={pid}
+    /// <summary>
+    /// Gets all awards from a post
+    /// </summary>
+    /// <param name="pid">The post on which the awards were earned.</param>
+    /// <returns>A list of awards earned on the post.</returns>
+    [HttpGet("getAwardsByPost")]
+    [ProducesResponseType(typeof(List<Award>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<List<Award>>> GetAwardsByPost(string pid)
+    {
+        if(string.IsNullOrEmpty(pid))
+        {
+            return BadRequest("pid is required");
+        }
+
+        var awards = await _awardActions.GetAwardsByPost(pid);
+
+        return awards;
+    }
 }
