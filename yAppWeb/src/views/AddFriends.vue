@@ -19,9 +19,8 @@
 
 	onMounted(async () => {
 		const user = await getCurrentUser();
-		username.value = user.username;
 		userId.value = user.userId;
-		subheader.value = "Your uuid: " + userId.value;
+		username.value = user.username;
 	});
 
 	const closeAlert = () => {
@@ -34,9 +33,9 @@
 		var requestButton = document.getElementById("request-button");
 
 		if (receiver === "") {
-			alert("Enter in their UUID!");
+			alert("Enter in their username!");
 			resetFields();
-		} else if (receiver === userId.value || receiver === username.value) {
+		} else if (receiver === username.value || receiver === userId.value) {
 			alert("You can\’t add yourself as a friend, silly!");
 			resetFields();
 		} else {
@@ -56,7 +55,7 @@
 		try {
 			const newRequest = {
 				fromUserName: fromUser,
-				toUserId: toUser,
+				toUserName: toUser,
 			};
 
 			const sendPostRequest = post({
@@ -91,23 +90,21 @@
 		<BackBtnHeader
 			header="Add a new Friend!"
 			:subheader="subheader"
-			:backBtn="true"
-		/>
+			:backBtn="true" />
 		<br /><br />
 		<div class="mt-3 w-full md:mx-6 md:px-16">
 			<div class="rounded-xl bg-white p-5">
 				<div class="mb-4 flex flex-col">
-					<label for="to-username" class="mb-5 font-bold"
-						>Enter their UUID:</label
-					>
+					<label for="to-username" class="mb-5 font-bold">
+						Enter their username:
+					</label>
 					<input class="input" id="to-username" type="text" />
 				</div>
 				<div class="flex justify-end">
 					<button
 						class="rounded rounded-lg bg-dark px-4 py-2 font-bold text-white transition-colors hover:bg-white hover:text-dark"
 						@click="onSubmit"
-						id="request-button"
-					>
+						id="request-button">
 						Send Request
 					</button>
 				</div>
@@ -118,7 +115,6 @@
 			:showModal="showAlert"
 			:header="alertMsg.header"
 			:message="alertMsg.message"
-			:close="closeAlert"
-		/>
+			:close="closeAlert" />
 	</div>
 </template>

@@ -106,8 +106,7 @@
 			<div
 				class="flex-box mt-5 px-16 pr-32"
 				v-for="friendship in jsonData"
-				:key="friendship.ToUserName || friendship.FromUserName"
-			>
+				:key="friendship.ToUserName || friendship.FromUserName">
 				<div class="request bg-deep-dark p-5 text-white">
 					<h4 v-if="friendship.ToUserName !== username">
 						{{ friendship.ToUserName }}
@@ -116,8 +115,7 @@
 					<div class="request-actions">
 						<button
 							class="rounded-lg bg-light-pink p-4 font-bold text-white"
-							@click="openModal(friendship)"
-						>
+							@click="openModal(friendship)">
 							Unfollow
 						</button>
 					</div>
@@ -127,8 +125,7 @@
 					:close="closeModal"
 					:confirm="confirmUnfollow"
 					header="Woah there!"
-					:message="message"
-				/>
+					:message="message" />
 			</div>
 		</div>
 	</div>

@@ -147,8 +147,7 @@
 			subheader="Here are your pending friend requests!"
 			:backBtn="true"
 			url="/profile/addFriends"
-			btnText="Add a new Friend!"
-		/>
+			btnText="Add a new Friend!" />
 
 		<!-- Show this message if the request list is empty -->
 		<div v-if="jsonData.length == 0">
@@ -161,21 +160,18 @@
 			<div v-for="request in jsonData">
 				<div
 					class="request bg-deep-dark p-5 text-white"
-					v-if="request.FromUserName !== username"
-				>
+					v-if="request.FromUserName !== username">
 					<h4>{{ request.FromUserName }}</h4>
 					<div class="request-actions">
 						<button
 							class="rounded-lg bg-light-pink p-4 font-bold text-white"
 							@click="accept(request)"
-							style="margin-right: 10px"
-						>
+							style="margin-right: 10px">
 							Accept
 						</button>
 						<button
 							class="rounded-lg bg-light-pink p-4 font-bold text-white"
-							@click="openModal(request)"
-						>
+							@click="openModal(request)">
 							Decline
 						</button>
 					</div>
@@ -186,14 +182,12 @@
 				:close="closeModal"
 				:confirm="confirmDecline"
 				header="Woah there!"
-				:message="message"
-			/>
+				:message="message" />
 			<Alert
 				:showModal="showAlert"
 				:header="alertMsg.header"
 				:message="alertMsg.message"
-				:close="closeAlert"
-			/>
+				:close="closeAlert" />
 		</div>
 	</div>
 </template>
