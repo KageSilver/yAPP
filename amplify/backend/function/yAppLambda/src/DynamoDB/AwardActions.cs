@@ -110,7 +110,7 @@ public class AwardActions : IAwardActions
         try
         {
             var expressionAttributeValues = new Dictionary<string, DynamoDBEntry>();
-            expressionAttributeValues.Add(":pid", false);
+            expressionAttributeValues.Add(":pid", pid);
 
             var query = new QueryOperationConfig()
             {
@@ -122,7 +122,7 @@ public class AwardActions : IAwardActions
                 },
                 AttributesToGet = new List<string>
                 {
-                    "CID"
+                    "AID"
                 },
                 Select = SelectValues.SpecificAttributes,
                 BackwardSearch = true
