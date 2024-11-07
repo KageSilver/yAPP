@@ -3,7 +3,7 @@ namespace yAppLambda.Enum;
 /// <summary>
 /// Represents the types of awards
 /// </summary>
-public enum AwardTypes
+public enum AwardType
 {
     All = -1,
     Upvotes = 0,

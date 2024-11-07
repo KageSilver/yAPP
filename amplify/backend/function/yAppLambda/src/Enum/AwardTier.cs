@@ -3,7 +3,7 @@ namespace yAppLambda.Enum;
 /// <summary>
 /// Represents the tiers of awards
 /// </summary>
-public enum AwardTiers
+public enum AwardTier
 {
     Tier1 = 10,
     Tier2 = 20,
