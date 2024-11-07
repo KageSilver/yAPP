@@ -120,7 +120,6 @@ public class AwardActions : IAwardActions
                     ExpressionStatement = "PID = :pid",
                     ExpressionAttributeValues = expressionAttributeValues
                 },
-                Limit = maxResults,
                 AttributesToGet = new List<string>
                 {
                     "CID"
