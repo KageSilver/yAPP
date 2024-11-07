@@ -36,7 +36,7 @@ public interface IFriendshipActions
     /// <param name="friendshipStatus">The status of the friendships to be retrieved.</param>
     /// <returns>A Task containing a list of Friendship objects.</returns>
     Task<List<Friendship>> GetAllFriends(string userName, FriendshipStatus friendshipStatus);
-
+    
     /// <summary>
     /// Deletes a friendship between two users.
     /// </summary>

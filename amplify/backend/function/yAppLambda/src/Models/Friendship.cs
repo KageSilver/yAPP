@@ -10,10 +10,10 @@ public class Friendship
     public string FromUserName { get; set; } // Partition Key
 
     public string ToUserName { get; set; } // Sort Key
-
-    public FriendshipStatus Status { get; set; } // e.g. "Pending", "Accepted
-
+    
+    public FriendshipStatus Status { get; set; } // e.g. "Pending", "Accepted", "Declined"
+    
     public DateTime CreatedAt { get; set; } // The time when the friendship was created
-
+    
     public DateTime UpdatedAt { get; set; } // The time when the friendship status was updated
 }

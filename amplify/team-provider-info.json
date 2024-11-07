@@ -50,7 +50,7 @@
       "function": {
         "yAppLambda": {
           "deploymentBucketName": "amplify-yapp-dev-94d82-deployment",
-          "s3Key": "amplify-builds/yAppLambda-393230482b637a626c56-build.zip"
+          "s3Key": "amplify-builds/yAppLambda-69624d73443057574a46-build.zip"
         }
       },
       "api": {

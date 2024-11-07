@@ -173,7 +173,7 @@ public class FriendshipActions: IFriendshipActions
                 Console.WriteLine("Failed to retrieve friendship to be deleted");
                 return false;
             }
-            
+
             // Delete the friendship record
             await _dynamoDbContext.DeleteAsync(friendship, _config);
 
