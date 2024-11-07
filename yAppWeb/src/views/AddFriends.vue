@@ -43,9 +43,11 @@
 			console.log(sender + " " + receiver)
 			await sendFriendRequest(sender, receiver);
 			requestButton.disabled = false;
-			//resetFields();
+			resetFields();
 		}
 	};
+
+
 
 	function resetFields() {
 		document.getElementById("to-username").value = "";

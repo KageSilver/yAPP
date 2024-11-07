@@ -9,8 +9,7 @@
 	import DotMenu from "../components/DotMenu.vue";
 	import LoadingScreen from "../components/LoadingScreen.vue";
 	import { getCurrentTime } from "../composables/helper";
-	
-	// Importing necessary modules
+
 	const route = useRoute();
 	const router = useRouter();
 
@@ -18,8 +17,8 @@
 	const currentPost = ref(null); // Stores the current post details
 
 	// Loading and alert management
-	const loading = ref(false); // Controls the loading state
 	const showAlert = ref(false); // Controls the visibility of the alert
+	const loading = ref(false); // Controls the loading state
 	const alertMsg = ref({
 		header: "",
 		message: "",
@@ -163,10 +162,9 @@
 	});
 
 	const fetchPost = async pid => {
+		//set loading screen
 		loading.value = true;
 		try {
-			//set loading screen
-
 			const restOperation = await get({
 				apiName: "yapp",
 				path: `/api/posts/getPostById?pid=${pid}`,
@@ -174,9 +172,6 @@
 			const { body } = await restOperation.response;
 			const response = await body.json();
 			currentPost.value = response;
-
-			//disable loading screen
-			loading.value = false;
 		} catch (error) {
 			console.log("Failed to load post", error);
 		}
