@@ -30,7 +30,7 @@ public class PostControllerIntegrationTests
 
     //we must use simulator email to test the user without using email quota
     private const string TestUserEmail = "bounce4@simulator.amazonses.com";
-    private const string TestUserEmail2 = "bounce3@simulator.amazonses.com";
+    private const string TestUserEmail2 = "bounce5@simulator.amazonses.com";
     private static string _testUserId = ""; // this will be updated in the first test when the test user is created
 
     private ICognitoActions _cognitoActions;
@@ -196,6 +196,9 @@ public class PostControllerIntegrationTests
     [Fact, Order(5)]
     public async Task CreatePost_SecondDiaryPost_ReturnsBadRequest()
     {
+        // Let deletion of previous diary post to go through
+        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        
         // Arrange
         var newPost1 = new NewPost
         {
@@ -588,6 +591,7 @@ public class PostControllerIntegrationTests
         var postList = JsonConvert.DeserializeObject<List<Post>>(responseString2);
 
         // Assert
+        Console.WriteLine(postList);
         Assert.Equal(1, postList.Count);
         Assert.Equal(newPost.PID, postList.First().PID);
         Assert.Equal(newPost.UID, postList.First().UID);
