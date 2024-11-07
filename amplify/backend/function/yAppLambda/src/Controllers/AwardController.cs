@@ -20,7 +20,7 @@ public class AwardController : ControllerBase
     private readonly ICognitoActions _cognitoActions;
     private readonly IAwardActions _awardActions;
 
-    public CommentController(IAppSettings appSettings, ICognitoActions cognitoActions, IDynamoDBContext dbContext, IAwardActions awardActions)
+    public AwardController(IAppSettings appSettings, ICognitoActions cognitoActions, IDynamoDBContext dbContext, IAwardActions awardActions)
     {
         _appSettings = appSettings;
         _cognitoActions = cognitoActions;
@@ -44,7 +44,7 @@ public class AwardController : ControllerBase
             return BadRequest("Award ID is required");
         }
 
-        var award = await _awardActions.GetAwardById(pid);
+        var award = await _awardActions.GetAwardById(aid);
 
         if(award == null)
         {
