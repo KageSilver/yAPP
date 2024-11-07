@@ -1,10 +1,15 @@
 <script setup>
-	import { get, put } from "aws-amplify/api";
+	import { del, get } from "aws-amplify/api";
 	import { getCurrentUser } from "aws-amplify/auth";
 	import { onMounted, ref } from "vue";
+	import { useRoute, useRouter } from "vue-router";
 	import ConfirmationModal from "../components/ConfirmationModal.vue";
 	import ProfileHeader from "../components/ProfileHeader.vue";
 	import LoadingScreen from "../components/LoadingScreen.vue";
+
+	// Importing necessary modules
+	const route = useRoute();
+	const router = useRouter();
 
 	const username = ref("");
 	const jsonData = ref([]);
@@ -39,7 +44,7 @@
 	const message = ref("");
 	const currentFriendship = ref(null);
 
-	const openModal = friendship => {
+	const openUnfollowFriendModal = friendship => {
 		showModal.value = true;
 		currentFriendship.value = friendship;
 
@@ -60,36 +65,37 @@
 		// Wait for unfollowing friend to be fully proccessed
 		await unfollowFriend(currentFriendship.value);
 		closeModal();
+
 		// Update the current list of friends
 		await getFriends();
 	};
 
-	// Unfollow sent friend
+	// Unfollow the friendship
 	const unfollowFriend = async friendship => {
+		//set loading screen
 		loading.value = true;
 		try {
-			const newRequest = {
-				fromUserName: friendship.FromUserName,
-				toUserName: friendship.ToUserName,
-				status: 2,
-			};
-
-			const sendPutRequest = put({
+			const deleteRequest = del({
 				apiName: "yapp",
-				path: "/api/friends/updateFriendRequest",
-				headers: {
-					"Content-type": "application/json",
-				},
-				options: {
-					body: newRequest,
-				},
+				path: `/api/friends/deleteFriendship?fromUsername=${friendship.FromUserName}&toUsername=${friendship.ToUserName}`,
 			});
-			await sendPutRequest.response;
-		} catch (err) {
-			console.error(err);
+			await deleteRequest.response;
+
+			//set alert
+			alert("Yipee!", "Friendship deleted successfully");
+			//send it back to the previous page
+			loading.value = false;
+
+			router.push({
+				name: "profile",
+			});
+		} catch (e) {
+			console.log("DELETE call failed: ", e);
+			alert("Oops!", "Failed to delete friendship");
 		}
+		//disable loading screen
 		loading.value = false;
-	};
+	}
 </script>
 
 <template>
@@ -115,7 +121,7 @@
 					<div class="request-actions">
 						<button
 							class="rounded-lg bg-light-pink p-4 font-bold text-white"
-							@click="openModal(friendship)">
+							@click="openUnfollowFriendModal(friendship)">
 							Unfollow
 						</button>
 					</div>

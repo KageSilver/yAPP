@@ -9,6 +9,7 @@
 	import DotMenu from "../components/DotMenu.vue";
 	import LoadingScreen from "../components/LoadingScreen.vue";
 	import { getCurrentTime } from "../composables/helper";
+	
 	// Importing necessary modules
 	const route = useRoute();
 	const router = useRouter();
@@ -188,7 +189,6 @@
 		isDeleting.value = false;
 		//set loading screen
 		loading.value = true;
-		console.log(currentPost.value.pid);
 		try {
 			const deleteRequest = del({
 				apiName: "yapp",
