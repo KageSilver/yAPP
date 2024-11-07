@@ -85,7 +85,7 @@ public class FriendControllerTests
 
         // Mock GetUserById to return a valid user
         _mockCognitoActions
-        .Setup(c => c.GetUserById(request.ToUserName))
+        .Setup(c => c.GetUser(request.ToUserName))
         .ReturnsAsync(friend);
 
         // Mock GetFriendship to return null (no existing friendship)

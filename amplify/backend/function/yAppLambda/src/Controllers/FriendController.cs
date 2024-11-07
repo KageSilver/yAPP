@@ -85,10 +85,30 @@ public class FriendController : ControllerBase
                         ? (ActionResult<Friendship>)friendship
                         : BadRequest("Failed to create friendship");
                 }
-                else
+                else if (noBA) // If BA friendship doesn't exist, AB friendship does
                 {
-                    result = BadRequest("Existing friendship with " + request.ToUserName + 
-                                        ". Please unfollow them or accept their request instead");
+                    // Update existing AB friendship
+                    existingFriendship.Value.Status = FriendshipStatus.Pending;
+
+                    var updateResult = await _friendshipActions
+                        .UpdateFriendshipStatus(existingFriendship.Value);
+
+                    result = updateResult.Result is OkObjectResult
+                        ? (ActionResult<Friendship>)existingFriendship.Value
+                        : BadRequest("Failed to create friendship");
+
+                }
+                else // If AB friendship doesn't exist, BA friendship does
+                {
+                    // Update existing BA friendship
+                    existingReversedFriendship.Value.Status = FriendshipStatus.Pending;
+
+                    var updateResult = await _friendshipActions
+                        .UpdateFriendshipStatus(existingReversedFriendship.Value);
+
+                    result = updateResult.Result is OkObjectResult
+                        ? (ActionResult<Friendship>)existingReversedFriendship.Value
+                        : BadRequest("Failed to create friendship");
                 }
             }
         }

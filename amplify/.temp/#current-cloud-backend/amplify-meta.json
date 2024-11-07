@@ -1,0 +1,131 @@
+{
+  "providers": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-yapp-dev-94d82-authRole",
+      "UnauthRoleArn": "arn:aws:iam::746669205882:role/amplify-yapp-dev-94d82-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::746669205882:role/amplify-yapp-dev-94d82-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-yapp-dev-94d82-deployment",
+      "UnauthRoleName": "amplify-yapp-dev-94d82-unauthRole",
+      "StackName": "amplify-yapp-dev-94d82",
+      "StackId": "arn:aws:cloudformation:us-east-2:746669205882:stack/amplify-yapp-dev-94d82/1d880f40-792d-11ef-945f-06ddacbeee33",
+      "AmplifyAppId": "d34oy4u1icq89e",
+      "APIGatewayAuthURL": "https://s3.amazonaws.com/amplify-yapp-dev-94d82-deployment/amplify-cfn-templates/api/APIGatewayAuthStack.json"
+    }
+  },
+  "api": {
+    "yapp": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "yAppLambda"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "API Gateway",
+      "output": {
+        "ApiName": "yapp",
+        "RootUrl": "https://y4cvw78v4d.execute-api.us-east-2.amazonaws.com/dev",
+        "ApiId": "y4cvw78v4d"
+      },
+      "lastPushTimeStamp": "2024-11-04T19:04:22.810Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-yapp-dev-94d82-deployment/amplify-cfn-templates/api/yapp-cloudformation-template.json",
+        "logicalId": "apiyapp"
+      }
+    }
+  },
+  "auth": {
+    "yapp": {
+      "dependsOn": [],
+      "frontendAuthConfig": {
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyMinLength": 8,
+          "passwordPolicyCharacters": []
+        },
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "socialProviders": [],
+        "usernameAttributes": [],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito",
+      "serviceType": "managed",
+      "output": {
+        "UserPoolId": "us-east-2_AoahD29kD",
+        "AppClientIDWeb": "efbavlchbeect06fkvgorbm21",
+        "AppClientID": "138f961hv3umgt9tktjqkjomev",
+        "IdentityPoolId": "us-east-2:6cf1c726-006a-4564-8056-577579cb8b6a",
+        "UserPoolArn": "arn:aws:cognito-idp:us-east-2:746669205882:userpool/us-east-2_AoahD29kD",
+        "IdentityPoolName": "yapp_identitypool_58b70b0c__dev",
+        "UserPoolName": "yapp_userpool_58b70b0c"
+      },
+      "lastPushTimeStamp": "2024-11-04T19:04:22.816Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-yapp-dev-94d82-deployment/amplify-cfn-templates/auth/yapp-cloudformation-template.json",
+        "logicalId": "authyapp"
+      }
+    }
+  },
+  "function": {
+    "yAppLambda": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda",
+      "output": {
+        "LambdaExecutionRoleArn": "arn:aws:iam::746669205882:role/yappLambdaRole76447af6-dev",
+        "Region": "us-east-2",
+        "Arn": "arn:aws:lambda:us-east-2:746669205882:function:yAppLambda-dev",
+        "Name": "yAppLambda-dev",
+        "LambdaExecutionRole": "yappLambdaRole76447af6-dev"
+      },
+      "lastPushTimeStamp": "2024-11-04T19:04:23.463Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-yapp-dev-94d82-deployment/amplify-cfn-templates/function/yAppLambda-cloudformation-template.json",
+        "logicalId": "functionyAppLambda"
+      },
+      "lastBuildTimeStamp": "2024-11-04T19:03:46.037Z",
+      "lastBuildType": "PROD",
+      "lastPackageTimeStamp": "2024-11-04T19:03:48.879Z",
+      "distZipFilename": "yAppLambda-62307a5a546835695070-build.zip",
+      "s3Bucket": {
+        "deploymentBucketName": "amplify-yapp-dev-94d82-deployment",
+        "s3Key": "amplify-builds/yAppLambda-62307a5a546835695070-build.zip"
+      },
+      "lastPushDirHash": "/SBTR/VhtzWy+JI9C6cQhVGnsQY="
+    }
+  },
+  "hosting": {
+    "S3AndCloudFront": {
+      "providerPlugin": "awscloudformation",
+      "service": "S3AndCloudFront",
+      "output": {
+        "CloudFrontSecureURL": "https://dezluqsjxnkgt.cloudfront.net",
+        "S3BucketSecureURL": "https://ypp-20240923182930-hostingbucket-dev.s3.amazonaws.com",
+        "CloudFrontOriginAccessIdentity": "E2RM399JCNN354",
+        "WebsiteURL": "http://ypp-20240923182930-hostingbucket-dev.s3-website.us-east-2.amazonaws.com",
+        "CloudFrontDistributionID": "E31QWRSIU8H00V",
+        "Region": "us-east-2",
+        "HostingBucketName": "ypp-20240923182930-hostingbucket-dev",
+        "CloudFrontDomainName": "dezluqsjxnkgt.cloudfront.net"
+      },
+      "lastPushTimeStamp": "2024-11-04T19:04:22.823Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-yapp-dev-94d82-deployment/amplify-cfn-templates/hosting/template.json",
+        "logicalId": "hostingS3AndCloudFront"
+      }
+    }
+  }
+}
