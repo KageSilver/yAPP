@@ -40,9 +40,10 @@
 			resetFields();
 		} else {
 			requestButton.disabled = true;
+			console.log(sender + " " + receiver)
 			await sendFriendRequest(sender, receiver);
 			requestButton.disabled = false;
-			resetFields();
+			//resetFields();
 		}
 	};
 
@@ -73,6 +74,7 @@
 			alertMsg.value.header = "Yipee!";
 			alertMsg.value.message = `Friend request sent to ${toUser}!`;
 			showAlert.value = true;
+
 		} catch (err) {
 			alertMsg.value.header = "Error!";
 			alertMsg.value.message = `Please try again!`;
@@ -95,7 +97,7 @@
 		<div class="mt-3 w-full md:mx-6 md:px-16">
 			<div class="rounded-xl bg-white p-5">
 				<div class="mb-4 flex flex-col">
-					<label for="to-username" class="mb-5 font-bold">
+					<label for="to-username-label" class="mb-5 font-bold">
 						Enter their username:
 					</label>
 					<input class="input" id="to-username" type="text" />

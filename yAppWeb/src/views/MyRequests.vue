@@ -19,11 +19,13 @@
 	const showModal = ref(false);
 	const message = ref("");
 	const currentFriendship = ref(null);
+
 	const openModal = request => {
 		message.value = `Are you sure you want to decline ${request.FromUserName}'s friend request?`;
 		showModal.value = true;
 		currentFriendship.value = request;
 	};
+
 	const closeModal = () => {
 		showModal.value = false;
 		currentFriendship.value = null;
@@ -34,9 +36,9 @@
 	const confirmDecline = async () => {
 		await declineRequest(currentFriendship.value);
 		showModal.value = false;
+		
 		// Update the view of pending requests
 		await getRequests();
-
 		currentFriendship.value = null;
 	};
 

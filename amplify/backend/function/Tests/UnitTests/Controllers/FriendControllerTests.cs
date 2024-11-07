@@ -45,15 +45,15 @@ public class FriendControllerTests
 
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-        Assert.Equal("Request body is required and must contain username and friend's id", badRequestResult.Value);
+        Assert.Equal("Request body is required and must contain the sender AND receiver's usernames", badRequestResult.Value);
     }
 
     [Fact]
     public async Task SendFriendRequest_ShouldReturnNotFound_WhenFriendIsNotFound()
     {
         // Arrange
-        var request = new FriendRequest { FromUserName = "user1@example.com", ToUserId = "nonexistentId" };
-        _mockCognitoActions.Setup(c => c.GetUserById(request.ToUserId)).ReturnsAsync((User)null);
+        var request = new FriendRequest { FromUserName = "user1@example.com", ToUserName = "nonexistentId" };
+        _mockCognitoActions.Setup(c => c.GetUserById(request.ToUserName)).ReturnsAsync((User)null);
 
         // Act
         var result = await _friendController.SendFriendRequest(request);
@@ -70,7 +70,7 @@ public class FriendControllerTests
         var request = new FriendRequest 
         { 
             FromUserName = "user1@example.com", 
-            ToUserId = "user2Id" 
+            ToUserName = "user2@example.com" 
         };
         var friend = new User 
         { 
@@ -85,12 +85,16 @@ public class FriendControllerTests
 
         // Mock GetUserById to return a valid user
         _mockCognitoActions
-        .Setup(c => c.GetUserById(request.ToUserId))
+        .Setup(c => c.GetUserById(request.ToUserName))
         .ReturnsAsync(friend);
 
         // Mock GetFriendship to return null (no existing friendship)
         _mockFriendshipActions
-        .Setup(f => f.GetFriendship(request.FromUserName, friend.UserName))
+        .Setup(f => f.GetFriendship(request.FromUserName, request.ToUserName))
+        .ReturnsAsync((ActionResult<Friendship>)null);
+        
+        _mockFriendshipActions
+        .Setup(f => f.GetFriendship(request.ToUserName, request.FromUserName))
         .ReturnsAsync((ActionResult<Friendship>)null);
 
         // Mock CreateFriendship to return the newly created friendship
@@ -221,7 +225,7 @@ public class FriendControllerTests
 
         // Assert
         var badRequestResult = result.Result;
-        Assert.IsType<NotFoundObjectResult>(badRequestResult);
+        Assert.IsType<BadRequestObjectResult>(badRequestResult);
     }
     
     [Fact]

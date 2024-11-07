@@ -636,7 +636,7 @@ public class PostControllerIntegrationTests
         var friendRequest = new FriendRequest
         {
             FromUserName = TestUserEmail2,
-            ToUserId = _testUserId
+            ToUserName = _testUserId
         };
 
         var content = new StringContent(JsonConvert.SerializeObject(friendRequest), System.Text.Encoding.UTF8,

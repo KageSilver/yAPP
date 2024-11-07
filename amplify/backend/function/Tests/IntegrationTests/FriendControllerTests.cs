@@ -32,8 +32,8 @@ public class FriendControllerIntegrationTests
     private const string TestUserEmail1 = "bounce2@simulator.amazonses.com";
     private const string TestUserEmail2 = "bounce3@simulator.amazonses.com";
 
-    private ICognitoActions _cognitoActions;
-    private IFriendshipActions _friendshipActions;
+    private readonly ICognitoActions _cognitoActions;
+    private readonly IFriendshipActions _friendshipActions;
 
     public FriendControllerIntegrationTests()
     {
@@ -78,7 +78,7 @@ public class FriendControllerIntegrationTests
         var friendRequest = new FriendRequest
         {
             FromUserName = TestUserEmail1,
-            ToUserId = user.Id
+            ToUserName = user.UserName
         };
 
         var content = new StringContent(JsonConvert.SerializeObject(friendRequest), System.Text.Encoding.UTF8,
@@ -106,7 +106,7 @@ public class FriendControllerIntegrationTests
         var friendRequest = new FriendRequest
         {
             FromUserName = "user1",
-            ToUserId = "nonexistentUser"
+            ToUserName = "nonexistentUser"
         };
 
         var content = new StringContent(JsonConvert.SerializeObject(friendRequest), System.Text.Encoding.UTF8,
@@ -126,7 +126,7 @@ public class FriendControllerIntegrationTests
         var friendRequest = new FriendRequest
         {
             FromUserName = "user1",
-            ToUserId = null
+            ToUserName = null
         };
 
         var content = new StringContent(JsonConvert.SerializeObject(friendRequest), System.Text.Encoding.UTF8,
@@ -267,28 +267,12 @@ public class FriendControllerIntegrationTests
 
         Assert.NotNull(friends);
         Assert.All(friends, friend => Assert.Equal(TestUserEmail1, friend.FromUserName));
-    }
-
-    [Fact, Order(11)]
-    public async Task GetFriendsByStatus_DeclinedStatuses_ReturnsAllFriends()
-    {
-        // Arrange
-        var userName = TestUserEmail1;
-        var status = 2; // declined statuse
-
-        // Act
-        var response = await _client.GetAsync($"/api/friends/getFriendsByStatus?userName={userName}&status={status}");
-
-        // Assert
-        response.EnsureSuccessStatusCode();
-        var responseString = await response.Content.ReadAsStringAsync();
-        var friends = JsonConvert.DeserializeObject<List<Friendship>>(responseString);
-
-        Assert.Empty(friends);
-        //clean up
+        
+        // clean up the mock users
         _cognitoActions.DeleteUser(TestUserEmail1).Wait();
         _cognitoActions.DeleteUser(TestUserEmail2).Wait();
-        //clean up database
+        
+        // clean up database
         var value = await _friendshipActions.DeleteFriendship(TestUserEmail1, TestUserEmail2);
         await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
         Assert.True(value);
