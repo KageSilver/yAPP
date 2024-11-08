@@ -21,4 +21,10 @@ public class Award
 
     [JsonPropertyName("name")]
     public string Name { get; set; }
+
+    [JsonPropertyName("type")]
+    public string Type { get; set; }
+
+    [JsonPropertyName("tier")]
+    public int Tier { get; set; }
 }
