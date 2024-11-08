@@ -102,6 +102,11 @@ public class PostActions : IPostActions
             };
             
             var posts = await _dynamoDbContext.ScanAsync<Post>(scanConditions, _config).GetRemainingAsync();
+            
+            // check posts for awards
+            // does not need to be completed before finishing this (GetPostsByUser) method
+            Task.Run(() => _awardActions.CheckForPostAwards(posts));
+            
             return posts;
         }
         catch (Exception e)
