@@ -30,7 +30,7 @@
 	<!-- Show the modal only if showDeleteModal is true -->
 	<div
 		v-if="showModal"
-		class="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75">
+		class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
 		<div class="mx-auto max-w-lg rounded-lg bg-white p-6">
 			<h3 class="mb-4 text-lg font-bold">{{ header }}</h3>
 			<p>{{ message }}</p>
