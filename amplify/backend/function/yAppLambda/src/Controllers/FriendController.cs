@@ -98,7 +98,7 @@ public class FriendController : ControllerBase
                         : BadRequest("Failed to create friendship");
 
                 }
-                else // If AB friendship doesn't exist, BA friendship does
+                else if (noAB)// If AB friendship doesn't exist, BA friendship does
                 {
                     // Update existing BA friendship
                     existingReversedFriendship.Value.Status = FriendshipStatus.Pending;
@@ -110,6 +110,7 @@ public class FriendController : ControllerBase
                         ? (ActionResult<Friendship>)existingReversedFriendship.Value
                         : BadRequest("Failed to create friendship");
                 }
+
             }
         }
         return result;
@@ -191,7 +192,8 @@ public class FriendController : ControllerBase
         return friendships;
     }
 
-    // GET: api/friends/getFriendsByStatus?userName={username}&status={status}
+    // TODO: REVISE THIS COMMENT BLOCK
+    // GET: api/friends/getFriendsByStatus?fromUsername={username}&toUsername={status}
     /// <summary>
     /// Retrieves all friends of a user filtered by a specified status.
     /// </summary>

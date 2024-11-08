@@ -1,7 +1,7 @@
 <script setup>
+	import { get, post } from "aws-amplify/api";
 	import { getCurrentUser } from "aws-amplify/auth";
 	import { onMounted } from "vue";
-	import { post } from "aws-amplify/api";
 	import { ref } from "vue";
 	import Alert from "../components/Alert.vue";
 	import BackBtnHeader from "../components/BackBtnHeader.vue";
@@ -9,6 +9,7 @@
 
 	const userId = ref("");
 	const username = ref("");
+	const jsonData = ref(null);
 	const subheader = ref("");
 	const loading = ref(false);
 	const showAlert = ref(false);
@@ -27,30 +28,53 @@
 		showAlert.value = false;
 	};
 
+	const noAB = ref(false);
+	const noBA = ref(false);
+
 	const onSubmit = async () => {
-		const sender = username.value;
-		const receiver = document.getElementById("to-username").value.trim();
 		var requestButton = document.getElementById("request-button");
+		requestButton.disabled = true;
 
-		if (receiver === "") {
+		const sender = username.value;
+		const recipient = document.getElementById("to-username").value.trim();
+
+		await getFriendship(sender, recipient, noAB);
+		await getFriendship(recipient, sender, noBA);
+
+
+		if (recipient === "") {
 			alert("Enter in their username!");
-			resetFields();
-		} else if (receiver === username.value || receiver === userId.value) {
+		} else if (recipient === username.value || recipient === userId.value) {
 			alert("You can\’t add yourself as a friend, silly!");
-			resetFields();
 		} else {
-			requestButton.disabled = true;
-			console.log(sender + " " + receiver)
-			await sendFriendRequest(sender, receiver);
-			requestButton.disabled = false;
-			resetFields();
+			if (noAB.value && noBA.value) {
+				await sendFriendRequest(sender, recipient);
+			} else {
+				alert("You're either friends with this person or they already sent you a request, silly!");
+			}
 		}
+		requestButton.disabled = false;
+		resetFields();
 	};
-
-
 
 	function resetFields() {
 		document.getElementById("to-username").value = "";
+	}
+
+	const getFriendship = async (sender, recipient, noFriendship) => {
+		try
+		{
+			const restOperation = get({
+				apiName: "yapp",
+				path: `/api/friends/getFriendship?fromUserName=${sender}&toUserName=${recipient}`,
+			});
+			const { body } = await restOperation.response;
+			jsonData.value = await body.json();
+			noFriendship.value = false;
+		} catch (error) {
+			console.log("GET call failed", error);
+			noFriendship.value = true;
+		}
 	}
 
 	const sendFriendRequest = async (fromUser, toUser) => {

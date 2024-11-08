@@ -30,13 +30,15 @@
 		showModal.value = false;
 		currentFriendship.value = null;
 	};
+	
 	const closeAlert = () => {
 		showAlert.value = false;
 	};
+
 	const confirmDecline = async () => {
 		await declineRequest(currentFriendship.value);
 		showModal.value = false;
-		
+
 		// Update the view of pending requests
 		await getRequests();
 		currentFriendship.value = null;
