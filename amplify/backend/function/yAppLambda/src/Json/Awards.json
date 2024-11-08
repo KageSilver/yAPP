@@ -1,0 +1,53 @@
+[
+    {
+        "type": "comment",
+        "tiers": [
+            {
+                "name": "comment tier 1",
+                "minimum": 10
+            },
+            {
+                "name": "comment tier 2",
+                "minimum": 20
+            },
+            {
+                "name": "comment tier 3",
+                "minimum": 30
+            }
+        ]
+    },
+    {
+        "type": "upvote",
+        "tiers": [
+            {
+                "name": "upvote tier 1",
+                "minimum": 25
+            },
+            {
+                "name": "upvote tier 2",
+                "minimum": 50
+            },
+            {
+                "name": "upvote tier 3",
+                "minimum": 75
+            }
+        ]
+    },
+    {
+        "type": "downvotes",
+        "tiers": [
+            {
+                "name": "downvotes tier 1",
+                "minimum": 15
+            },
+            {
+                "name": "downvotes tier 2",
+                "minimum": 30
+            },
+            {
+                "name": "downvotes tier 3",
+                "minimum": 45
+            }
+        ]
+    }
+]
