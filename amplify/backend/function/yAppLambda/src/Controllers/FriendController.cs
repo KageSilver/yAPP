@@ -85,7 +85,7 @@ public class FriendController : ControllerBase
                         ? (ActionResult<Friendship>)friendship
                         : BadRequest("Failed to create friendship");
                 }
-                else if (noBA) // If BA friendship doesn't exist, AB friendship does
+                else if (!noAB && noBA) // If BA friendship doesn't exist, AB friendship does
                 {
                     // Update existing AB friendship
                     existingFriendship.Value.Status = FriendshipStatus.Pending;
@@ -98,7 +98,7 @@ public class FriendController : ControllerBase
                         : BadRequest("Failed to create friendship");
 
                 }
-                else if (noAB)// If AB friendship doesn't exist, BA friendship does
+                else // If AB friendship doesn't exist, BA friendship does
                 {
                     // Update existing BA friendship
                     existingReversedFriendship.Value.Status = FriendshipStatus.Pending;
@@ -192,14 +192,13 @@ public class FriendController : ControllerBase
         return friendships;
     }
 
-    // TODO: REVISE THIS COMMENT BLOCK
-    // GET: api/friends/getFriendsByStatus?fromUsername={username}&toUsername={status}
+    // GET: api/friends/getFriendship?fromUsername={username1}&toUsername={username2}
     /// <summary>
-    /// Retrieves all friends of a user filtered by a specified status.
+    /// Retrieves the friendship between `fromUsername` and `toUsername`.
     /// </summary>
-    /// <param name="userName">The username of the user whose friends are to be retrieved.</param>
-    /// <param name="status">The status of the friendships to filter by (-1:All requests, 0: Pending, 1: Accepted).</param>
-    /// <returns>An ActionResult containing a list of Friendship objects if the retrieval is successful, or an error message if it fails.</returns>
+    /// <param name="fromUserName">The username of the friendship's sender.</param>
+    /// <param name="toUserName">The username of the friendship's recipient.</param>
+    /// <returns>An ActionResult containing the frinedship if the retrieval is successful, or an error message if it fails.</returns>
     [HttpGet("getFriendship")]
     [ProducesResponseType(typeof(Friendship), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -216,11 +215,12 @@ public class FriendController : ControllerBase
         return friend;
     }
 
-    // DELETE: api/friends/deleteFriendship?fromUsername={username}&toUsername={username}
+    // DELETE: api/friends/deleteFriendship?fromUsername={username1}&toUsername={username2}
     /// <summary>
-    /// Deletes a post from the database by a post id.
+    /// Deletes a friendship from the database.
     /// </summary>
-    /// <param name="pid">The id of the post to be deleted.</param>
+    /// <param name="fromUserName">The username of the friendship's sender.</param>
+    /// <param name="toUserName">The username of the friendship's recipient.</param>
     /// <returns>A boolean indicating whether the deletion was successful.</returns>
     [HttpDelete("deleteFriendship")]
     [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]

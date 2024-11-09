@@ -30,7 +30,7 @@ public class FriendControllerTests
         _mockCognitoActions = new Mock<ICognitoActions>();
         _mockFriendshipActions = new Mock<IFriendshipActions>();
         _mockFriendshipStatusActions = new Mock<IFriendshipStatusActions>();
-        _friendController = new FriendController(_mockAppSettings.Object, _mockCognitoActions.Object, _mockDbContext.Object, 
+        _friendController = new FriendController(_mockAppSettings.Object, _mockCognitoActions.Object, _mockDbContext.Object,
                                                  _mockFriendshipActions.Object ,_mockFriendshipStatusActions.Object);
     }
 
@@ -67,20 +67,20 @@ public class FriendControllerTests
     public async Task SendFriendRequest_ShouldReturnOk_WhenFriendRequestIsCreatedSuccessfully()
     {
         // Arrange
-        var request = new FriendRequest 
-        { 
-            FromUserName = "user1@example.com", 
-            ToUserName = "user2@example.com" 
+        var request = new FriendRequest
+        {
+            FromUserName = "user1@example.com",
+            ToUserName = "user2@example.com"
         };
-        var friend = new User 
-        { 
-            UserName = "user2@example.com" 
+        var friend = new User
+        {
+            UserName = "user2@example.com"
         };
         var friendship = new Friendship
-        { 
-            FromUserName = request.FromUserName, 
-            ToUserName = friend.UserName, 
-            Status = FriendshipStatus.Pending 
+        {
+            FromUserName = request.FromUserName,
+            ToUserName = friend.UserName,
+            Status = FriendshipStatus.Pending
         };
 
         // Mock GetUserById to return a valid user
@@ -92,7 +92,7 @@ public class FriendControllerTests
         _mockFriendshipActions
         .Setup(f => f.GetFriendship(request.FromUserName, request.ToUserName))
         .ReturnsAsync((ActionResult<Friendship>)null);
-        
+
         _mockFriendshipActions
         .Setup(f => f.GetFriendship(request.ToUserName, request.FromUserName))
         .ReturnsAsync((ActionResult<Friendship>)null);
@@ -131,10 +131,10 @@ public class FriendControllerTests
     {
         // Arrange
         var request = new FriendRequest
-        { 
-            FromUserName = "user1@example.com", 
-            ToUserName = "user2@example.com", 
-            Status = 1 
+        {
+            FromUserName = "user1@example.com",
+            ToUserName = "user2@example.com",
+            Status = 1
         };
 
         _mockFriendshipActions
@@ -154,16 +154,16 @@ public class FriendControllerTests
     {
         // Arrange
         var request = new FriendRequest
-        { 
-            FromUserName = "user1@example.com", 
-            ToUserName = "user2@example.com", 
-            Status = 1 
+        {
+            FromUserName = "user1@example.com",
+            ToUserName = "user2@example.com",
+            Status = 1
         };
         var existingFriendship = new Friendship
-        { 
-            FromUserName = request.FromUserName, 
-            ToUserName = request.ToUserName, 
-            Status = FriendshipStatus.Pending 
+        {
+            FromUserName = request.FromUserName,
+            ToUserName = request.ToUserName,
+            Status = FriendshipStatus.Pending
         };
 
         _mockFriendshipActions
@@ -181,7 +181,7 @@ public class FriendControllerTests
         _mockFriendshipStatusActions
         .Setup(s => s.GetFriendshipStatus(It.IsAny<int>()))
         .Returns(FriendshipStatus.Accepted);
-    
+
         // Act
         var result = await _friendController.UpdateFriendRequest(request);
 
@@ -189,7 +189,7 @@ public class FriendControllerTests
         var updatedFriendship = result.Value;
         Assert.Equal(FriendshipStatus.Accepted, updatedFriendship.Status);
     }
-    
+
     [Fact]
     public async Task UpdateFriendRequest_ShouldReturnBadRequest_WhenUserNameIsMissing()
     {
@@ -227,7 +227,7 @@ public class FriendControllerTests
         var badRequestResult = result.Result;
         Assert.IsType<BadRequestObjectResult>(badRequestResult);
     }
-    
+
     [Fact]
     public async Task UpdateFriendRequest_ShouldReturnBadRequest_WhenUpdateFails()
     {
@@ -249,7 +249,7 @@ public class FriendControllerTests
         _mockFriendshipActions
         .Setup(f => f.GetFriendship(request.FromUserName, request.ToUserName))
         .ReturnsAsync(new OkObjectResult(existingFriendship));
-    
+
         // Mock a failure when updating the friendship status
         _mockFriendshipActions
         .Setup(f => f.UpdateFriendshipStatus(existingFriendship))
@@ -297,8 +297,6 @@ public class FriendControllerTests
         Assert.Equal("Failed to update friendship status", badRequestResult.Value);
     }
 
-    #region GetFriends Tests
-    
     [Fact]
     public async Task GetFriends_ShouldReturnFriends_WhenSuccessful()
     {
@@ -316,7 +314,7 @@ public class FriendControllerTests
         _mockFriendshipStatusActions
         .Setup(s => s.GetFriendshipStatus(It.IsAny<int>()))
         .Returns(FriendshipStatus.All);
-        
+
         _mockFriendshipActions
         .Setup(s => s.GetAllFriends(existingFriendship.FromUserName, It.IsAny<FriendshipStatus>()))
         .ReturnsAsync(list);
@@ -342,6 +340,28 @@ public class FriendControllerTests
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result.Result);
         Assert.Equal("Username is required", badRequestResult.Value);
     }
-    
-    #endregion
+
+    [Fact]
+    public async Task DeleteFriendship_ShouldReturnBadRequest_WhenSenderIsMissing()
+    {
+
+    }
+
+    [Fact]
+    public async Task DeleteFriendship_ShouldReturnBadRequest_WhenRecipientIsMissing()
+    {
+
+    }
+
+    [Fact]
+    public async Task DeleteFriendship_ShouldReturnBadRequest_WithNonexistingFriendship()
+    {
+
+    }
+
+    [Fact]
+    public async Task DeleteFriendship_ShouldReturnFriendship_WhenSuccessful()
+    {
+
+    }
 }
