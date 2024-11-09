@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using yAppLambda.Models;
-using yAppLambda.Common;
 
 namespace yAppLambda.DynamoDB;
 
@@ -47,4 +46,10 @@ public interface IAwardActions
     /// <param name="aid">The id of the award to be deleted.</param>
     /// <returns>A boolean indicating whether the deletion was successful.</returns>
     Task<bool> DeleteAward(string aid);
+
+    /// <summary>
+    /// Checks a list of posts for awards
+    /// </summary>
+    /// <param name="posts">The list of posts to check for awards.</param>
+    void CheckForPostAwards(List<Post> posts);
 }
