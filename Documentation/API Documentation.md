@@ -130,10 +130,9 @@
     - 404 Not Found: Post does not exist
 
 ### GetPostsByUser
- - Retrieves all posts from a user, either all public posts or all diary entries.
- - GET: api/posts/getPostsByUser?uid={uid}&diaryEntry={diaryEntry}
+ - Retrieves all public posts from a user
+ - GET: api/posts/getPostsByUser?uid={uid}
     - uid: The uid used to find all posts created by a user
-    - diaryEntry: If the query is for public posts or diary entries
  - Response: returns a list of posts by the specified user
     - [ { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true } ]
  - Status codes:
