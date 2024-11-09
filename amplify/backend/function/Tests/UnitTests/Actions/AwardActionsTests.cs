@@ -8,14 +8,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
-using Amazon.CognitoIdentityProvider;
-using Amazon.CognitoIdentityProvider.Model;
 using Amazon.DynamoDBv2.DataModel;
 using yAppLambda.Models;
 using yAppLambda.DynamoDB;
-using yAppLambda.Common;
-using System.Net;
-using yAppLambda.Enum;
 
 namespace Tests.UnitTests.Actions;
 
@@ -24,8 +19,6 @@ public class AwardActionsTests
     private readonly Mock<IAppSettings> _appSettingsMock;
     private readonly Mock<IDynamoDBContext> _dynamoDbContextMock;
     private readonly IAwardActions _awardActionsMock;
-    private readonly Mock<IAmazonCognitoIdentityProvider> _cognitoClientMock;
-    private readonly CognitoActions _cognitoActions;
     private const string AwardTableName = "Award-test";
 
     public AwardActionsTests()
@@ -38,12 +31,8 @@ public class AwardActionsTests
         // Initialize the dynamoDbContextMock
         _dynamoDbContextMock = new Mock<IDynamoDBContext>();
         
-        // Initialize the PostActions with the mocks
+        // Initialize the AwardActions with the mocks
         _awardActionsMock = new AwardActions(_appSettingsMock.Object, _dynamoDbContextMock.Object);
-
-        // Initialize the CognitoActions with the mocks
-        _cognitoClientMock = new Mock<IAmazonCognitoIdentityProvider>();
-        _cognitoActions = new CognitoActions(_cognitoClientMock.Object, _appSettingsMock.Object);
     }
     
     #region CreateAward Tests
@@ -236,7 +225,7 @@ public class AwardActionsTests
             Name = "GetAwardsByPost_ShouldReturnAwards_WithAValidQuery()"
         };
         
-        var response = new Award { AID = "1" };
+        var response = new Award { AID = request.AID };
 
         var list = new List<Award>();
         list.Add(response);
@@ -300,7 +289,7 @@ public class AwardActionsTests
             Name = "DeleteAwardsByPosts_ShouldCallDeleteAward()"
         };
         
-        var response = new Award { AID = "1" };
+        var response = new Award { AID = request.AID };
 
         var list = new List<Award>();
         list.Add(response);
@@ -342,7 +331,7 @@ public class AwardActionsTests
             Name = "DeleteAwardsByPosts_ShouldHandleException_WhenDeleteAwardFails()"
         };
         
-        var response = new Award { AID = "1" };
+        var response = new Award { AID = request.AID };
 
         var list = new List<Award>();
         list.Add(response);
@@ -457,5 +446,72 @@ public class AwardActionsTests
         _dynamoDbContextMock.Verify(d => d.DeleteAsync(request, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
+    #endregion
+    
+    #region CheckForPostAwards Tests
+
+    [Fact]
+    public async Task CheckForPostAwards_ShouldCallCreateAward_WhenNewAwardIsAchieved()
+    {
+        // Arrange
+        var now = DateTime.Now;
+        var post = new Post
+        {
+            PID = "11111",
+            CreatedAt = now,
+            UpdatedAt = now,
+            UID = "uid",
+            PostTitle = "CheckForPostAwards_ShouldCallCreateAward_WhenNewAwardIsAchieved()",
+            PostBody = "body",
+            Upvotes = 100,
+            Downvotes = 100,
+            DiaryEntry = false,
+            Anonymous = true
+        };
+
+        var postList = new List<Post>();
+        postList.Add(post);
+        
+        var awardList = new List<Award>();
+        
+        // Mock the AsyncSearch<Award> returned by QueryAsync
+        var queryFromSearchMock1 = new Mock<AsyncSearch<Award>>();
+        queryFromSearchMock1.Setup(q => q.GetNextSetAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(awardList);
+        
+        // Sets up FromQueryAsync to succeed
+        _dynamoDbContextMock.Setup(d => d.FromQueryAsync<Award>(It.IsAny<QueryOperationConfig>(), It.IsAny<DynamoDBOperationConfig>()))
+            .Returns(queryFromSearchMock1.Object);
+
+        // mock GetCommentsByPid
+        _appSettingsMock.Setup(a => a.CommentTableName).Returns(string.Empty);
+
+        // Mock the AsyncSearch<Comment> returned by QueryAsync
+        var queryFromSearchMock2 = new Mock<AsyncSearch<Comment>>();
+        queryFromSearchMock2.Setup(q => q.GetNextSetAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Comment>());
+
+        // Sets up FromQueryAsync to succeed
+        _dynamoDbContextMock.Setup(d => d.FromQueryAsync<Comment>(It.IsAny<QueryOperationConfig>(), It.IsAny<DynamoDBOperationConfig>()))
+            .Returns(queryFromSearchMock2.Object);
+        
+        // Setup SaveAsync to succeed
+        _dynamoDbContextMock.Setup(d => d.SaveAsync(It.IsAny<Award>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+        
+        // Act
+        var result = await _awardActionsMock.CheckForPostAwards(postList);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.NotEmpty(result);
+        
+        // Verify the SaveAsync was called once with the correct parameters
+        _dynamoDbContextMock.Verify(
+            d => d.SaveAsync(It.IsAny<Award>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()));
+    }
+    
+    // todo add individual tests for: new comment award, new upvote award, new downvote award, no award, multiple of the same award, different awards together
+    
     #endregion
 }

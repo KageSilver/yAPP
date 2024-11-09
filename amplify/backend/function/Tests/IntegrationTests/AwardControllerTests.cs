@@ -29,6 +29,7 @@ public class AwardControllerIntegrationTests
     private readonly HttpClient _client;
 
     private readonly IAppSettings _appSettings;
+    private readonly List<AwardType> awardTypes;
 
     //we must use simulator email to test the user without using email quota
     private const string TestUserEmail = "bounce4@simulator.amazonses.com";
@@ -36,6 +37,8 @@ public class AwardControllerIntegrationTests
     
     private ICognitoActions _cognitoActions;
     private IAwardActions _awardActions;
+    private IPostActions _postActions;
+    
     public AwardControllerIntegrationTests()
     {
         var webHostBuilder = new WebHostBuilder().UseStartup<Startup>();
@@ -46,6 +49,8 @@ public class AwardControllerIntegrationTests
 
         _appSettings = System.Text.Json.JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(@"appSettings.json"),
             new JsonSerializerOptions { ReadCommentHandling = JsonCommentHandling.Skip });
+        
+        awardTypes = JsonConvert.DeserializeObject<List<AwardType>>(File.ReadAllText(@"awards.json"));
 
         IAmazonCognitoIdentityProvider cognitoClient =
             new AmazonCognitoIdentityProviderClient(_appSettings.AwsRegionEndpoint);
@@ -59,6 +64,7 @@ public class AwardControllerIntegrationTests
         IDynamoDBContext dynamoDbContext = new DynamoDBContext(client);
 
         _awardActions = new AwardActions(_appSettings, dynamoDbContext);
+        _postActions = new PostActions(_appSettings, dynamoDbContext);
     }
     
     #region GetAwardById Tests
@@ -212,7 +218,7 @@ public class AwardControllerIntegrationTests
 
         // Clean up
         await _awardActions.DeleteAward(request.AID);
-        await _cognitoActions.DeleteUser(_testUserId);
+        // Test user is deleted in GetAwardsByPost_ShouldReturnAwards_WhenSuccessful()
     }
     
     [Fact, Order(7)]
@@ -225,5 +231,99 @@ public class AwardControllerIntegrationTests
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
     
+    #endregion
+    
+    #region CheckForPostAwards Tests (using PostActions.GetPostsByUser)
+
+    [Fact, Order(8)]
+    public async Task CheckForPostAwards_ShouldCreateUpvoteAward_WhenSuccessful()
+    {
+        // Arrange
+        var request = new NewPost
+        {
+            UID = _testUserId,
+            PostTitle = "title",
+            PostBody = "body",
+            DiaryEntry = false,
+            Anonymous = true
+        };
+        
+        var content = new StringContent(JsonConvert.SerializeObject(request), System.Text.Encoding.UTF8,
+            "application/json");
+
+        // Creates a new post to query
+        var response1 = await _client.PostAsync("/api/posts/createPost", content);
+        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        var responseString1 = await response1.Content.ReadAsStringAsync();
+        var newPost = JsonConvert.DeserializeObject<Post>(responseString1);
+        
+        // Update post upvotes
+        newPost.Upvotes = awardTypes.Where(a => a.Type.Equals("upvote")).First().Tiers.Where(t => t.TierNum == 1).First().Minimum;
+        var content2 = new StringContent(JsonConvert.SerializeObject(newPost), System.Text.Encoding.UTF8,
+            "application/json");
+        await _client.PutAsync($"/api/posts/updatePost", content2);
+        
+        // Act
+        await _postActions.GetPostsByUser(_testUserId);
+        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+
+        var awards = await _awardActions.GetAwardsByPost(newPost.PID);
+        
+        // Assert
+        Assert.NotNull(awards);
+        Assert.Equal(1, awards.Count);
+        // todo: add more asserts here
+        
+        // Clean up
+        await _postActions.DeletePost(newPost.PID);
+        // Test user is deleted in GetAwardsByPost_ShouldReturnAwards_WhenSuccessful()
+    }
+    
+    [Fact, Order(9)]
+    public async Task CheckForPostAwards_ShouldCreateDownvoteAward_WhenSuccessful()
+    {
+        // Arrange
+        var request = new NewPost
+        {
+            UID = _testUserId,
+            PostTitle = "title",
+            PostBody = "body",
+            DiaryEntry = false,
+            Anonymous = true
+        };
+        
+        var content = new StringContent(JsonConvert.SerializeObject(request), System.Text.Encoding.UTF8,
+            "application/json");
+
+        // Creates a new post to query
+        var response1 = await _client.PostAsync("/api/posts/createPost", content);
+        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        var responseString1 = await response1.Content.ReadAsStringAsync();
+        var newPost = JsonConvert.DeserializeObject<Post>(responseString1);
+        
+        // Update post upvotes
+        newPost.Upvotes = awardTypes.Where(a => a.Type.Equals("downvote")).First().Tiers.Where(t => t.TierNum == 1).First().Minimum;
+        var content2 = new StringContent(JsonConvert.SerializeObject(newPost), System.Text.Encoding.UTF8,
+            "application/json");
+        await _client.PutAsync($"/api/posts/updatePost", content2);
+        
+        // Act
+        await _postActions.GetPostsByUser(_testUserId);
+        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+
+        var awards = await _awardActions.GetAwardsByPost(newPost.PID);
+        
+        // Assert
+        Assert.NotNull(awards);
+        Assert.Equal(1, awards.Count);
+        // todo: add more asserts here
+        
+        // Clean up
+        await _postActions.DeletePost(newPost.PID);
+        await _cognitoActions.DeleteUser(TestUserEmail);
+    }
+    
+    // todo add test here for comment award
+
     #endregion
 }
