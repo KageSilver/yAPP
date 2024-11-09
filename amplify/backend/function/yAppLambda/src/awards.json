@@ -4,15 +4,18 @@
         "tiers": [
             {
                 "name": "comment tier 1",
-                "minimum": 10
+                "minimum": 10,
+                "tierNum": 1
             },
             {
                 "name": "comment tier 2",
-                "minimum": 20
+                "minimum": 20,
+                "tierNum": 2
             },
             {
                 "name": "comment tier 3",
-                "minimum": 30
+                "minimum": 30,
+                "tierNum": 3
             }
         ]
     },
@@ -21,15 +24,18 @@
         "tiers": [
             {
                 "name": "upvote tier 1",
-                "minimum": 25
+                "minimum": 25,
+                "tierNum": 1
             },
             {
                 "name": "upvote tier 2",
-                "minimum": 50
+                "minimum": 50,
+                "tierNum": 2
             },
             {
                 "name": "upvote tier 3",
-                "minimum": 75
+                "minimum": 75,
+                "tierNum": 3
             }
         ]
     },
@@ -38,15 +44,18 @@
         "tiers": [
             {
                 "name": "downvotes tier 1",
-                "minimum": 15
+                "minimum": 15,
+                "tierNum": 1
             },
             {
                 "name": "downvotes tier 2",
-                "minimum": 30
+                "minimum": 30,
+                "tierNum": 2
             },
             {
                 "name": "downvotes tier 3",
-                "minimum": 45
+                "minimum": 45,
+                "tierNum": 3
             }
         ]
     }
