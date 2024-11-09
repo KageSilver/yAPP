@@ -2,8 +2,7 @@ using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using yAppLambda.Common;
-using yAppLambda.Enum;
+using Newtonsoft.Json;
 using yAppLambda.Models;
 
 namespace yAppLambda.DynamoDB;
@@ -16,6 +15,8 @@ public class AwardActions : IAwardActions
     private readonly IAppSettings _appSettings;
     private readonly IDynamoDBContext _dynamoDbContext;
     private readonly DynamoDBOperationConfig _config;
+    private readonly ICommentActions _commentActions;
+    private readonly List<AwardType> awardTypes;
 
     public AwardActions(IAppSettings appSettings, IDynamoDBContext dynamoDbContext)
     {
@@ -30,6 +31,10 @@ public class AwardActions : IAwardActions
         {
             OverrideTableName = _awardTable
         };
+
+        awardTypes = JsonConvert.DeserializeObject<List<AwardType>>(File.ReadAllText(@"awards.json"));
+
+        _commentActions = new CommentActions(appSettings, dynamoDbContext);
     }
 
     /// <summary>
@@ -206,5 +211,72 @@ public class AwardActions : IAwardActions
             Console.WriteLine("Failed to delete award: " + e.Message);
             return false;
         }
+    }
+
+    /// <summary>
+    /// Checks a list of posts for awards
+    /// </summary>
+    /// <param name="posts">The list of posts to check for awards.</param>
+    /// <returns>A list of awards earned on the list of posts.</returns>
+    public async Task<List<Award>> CheckForPostAwards(List<Post> posts)
+    {
+        var list = new List<Award>();
+        
+        foreach(Post post in posts)
+        {
+            try
+            {
+                var awards = await GetAwardsByPost(post.PID);
+
+                var comments = _commentActions.GetCommentsByPid(post.PID).Result;
+                list.AddRange((await CheckAwardType(post, awards, awardTypes.Where(a => a.Type.Equals("comment")).First(), comments.Count)));
+                
+                list.AddRange((await CheckAwardType(post, awards, awardTypes.Where(a => a.Type.Equals("upvote")).First(), post.Upvotes)));
+                
+                list.AddRange((await CheckAwardType(post, awards, awardTypes.Where(a => a.Type.Equals("downvote")).First(), post.Downvotes)));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Failed to check post for awards: " + e.Message);
+            }
+        }
+
+        return list;
+    }
+
+    /// <summary>
+    /// Checks a post for a type of award
+    /// </summary>
+    /// <param name="post">The post to be checked for awards.</param>
+    /// <param name="awards">The existing awards on the post.</param>
+    /// <param name="type">The type award to check for.</param>
+    /// <param name="count">The amount of an award type to compare against the tiers.</param>
+    /// <returns>A list of awards earned on a post.</returns>
+    private async Task<List<Award>> CheckAwardType(Post post, List<Award> awards, AwardType type, int count)
+    {
+        var list = new List<Award>();
+        var theseAwards = awards.Where(a => a.Type.Equals(type.Type));
+        
+        foreach (AwardTier tier in type.Tiers)
+        {
+            // check if user has already received this tier of the award on this post
+            bool doesntExist = theseAwards.Count() == 0 || theseAwards.Where(c => c.Tier == tier.TierNum) == null;
+
+            if (doesntExist && count >= tier.Minimum)
+            {
+                var award = new Award
+                {
+                    PID = post.PID,
+                    UID = post.UID,
+                    Name = tier.Name,
+                    Type = type.Type,
+                    Tier = tier.TierNum
+                };
+
+                list.Add((await CreateAward(award)).Value);
+            }
+        }
+
+        return list;
     }
 }

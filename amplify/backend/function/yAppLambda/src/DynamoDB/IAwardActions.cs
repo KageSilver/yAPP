@@ -51,5 +51,6 @@ public interface IAwardActions
     /// Checks a list of posts for awards
     /// </summary>
     /// <param name="posts">The list of posts to check for awards.</param>
-    void CheckForPostAwards(List<Post> posts);
+    /// <returns>A list of awards earned on the list of posts.</returns>
+    Task<List<Award>> CheckForPostAwards(List<Post> posts);
 }
