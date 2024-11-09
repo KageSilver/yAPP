@@ -40,20 +40,20 @@
         ]
     },
     {
-        "type": "downvotes",
+        "type": "downvote",
         "tiers": [
             {
-                "name": "downvotes tier 1",
+                "name": "downvote tier 1",
                 "minimum": 15,
                 "tierNum": 1
             },
             {
-                "name": "downvotes tier 2",
+                "name": "downvote tier 2",
                 "minimum": 30,
                 "tierNum": 2
             },
             {
-                "name": "downvotes tier 3",
+                "name": "downvote tier 3",
                 "minimum": 45,
                 "tierNum": 3
             }
