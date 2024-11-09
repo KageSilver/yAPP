@@ -12,4 +12,7 @@ public class AwardTier
 
     [JsonPropertyName("minimum")]
     public int Minimum { get; set; }
+
+    [JsonPropertyName("tierNum")]
+    public int TierNum { get; set; }
 }
