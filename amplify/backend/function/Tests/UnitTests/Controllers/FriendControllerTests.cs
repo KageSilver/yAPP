@@ -34,6 +34,8 @@ public class FriendControllerTests
                                                  _mockFriendshipActions.Object ,_mockFriendshipStatusActions.Object);
     }
 
+    #region SendFriendRequest Tests
+
     [Fact]
     public async Task SendFriendRequest_ShouldReturnBadRequest_WhenRequestIsNull()
     {
@@ -111,6 +113,10 @@ public class FriendControllerTests
         Assert.Equal(friendship.ToUserName, returnedFriendship.ToUserName);
         Assert.Equal(friendship.Status, returnedFriendship.Status);
     }
+
+    #endregion
+
+    #region UpdateFriendRequest Tests
 
     [Fact]
     public async Task UpdateFriendRequest_ShouldReturnBadRequest_WhenRequestIsNull()
@@ -297,6 +303,10 @@ public class FriendControllerTests
         Assert.Equal("Failed to update friendship status", badRequestResult.Value);
     }
 
+    #endregion
+
+    #region GetFriends Tests
+
     [Fact]
     public async Task GetFriends_ShouldReturnFriends_WhenSuccessful()
     {
@@ -341,27 +351,110 @@ public class FriendControllerTests
         Assert.Equal("Username is required", badRequestResult.Value);
     }
 
-    [Fact]
-    public async Task DeleteFriendship_ShouldReturnBadRequest_WhenSenderIsMissing()
-    {
+    #endregion
 
+    #region GetFriendship Tests
+
+    [Fact]
+    public async Task GetFriendship_ShouldReturnBadRequest_WhenUsernamesAreMissing()
+    {
+        // Act
+        var result = await _friendController.GetFriendship(null, null);
+
+        // Assert
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+        Assert.Equal("Usernames are required",badRequestResult.Value);
     }
 
     [Fact]
-    public async Task DeleteFriendship_ShouldReturnBadRequest_WhenRecipientIsMissing()
+    public async Task GetFriendship_ShouldReturnNull_WithNonExistingFriendship()
     {
+        // Arrange
+        _mockFriendshipActions
+            .Setup(p => p.GetFriendship(It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync((Friendship)null);
 
+        // Act
+        var result = await _friendController.GetFriendship("nonexistentUser1", "nonexistentUser2");
+
+        // Assert
+        Assert.NotNull(result);
     }
 
     [Fact]
-    public async Task DeleteFriendship_ShouldReturnBadRequest_WithNonexistingFriendship()
+    public async Task GetFriendship_ShouldReturnFriendship_WhenSuccessful()
     {
+        // Arrange
+        var existingFriendship = new Friendship
+        {
+            FromUserName = "user1@example.com",
+            ToUserName = "user2@example.com",
+            Status = FriendshipStatus.Accepted
+        };
+        
+        _mockFriendshipActions
+            .Setup(s => s.GetFriendship(existingFriendship.FromUserName, existingFriendship.ToUserName))
+            .ReturnsAsync(existingFriendship);
+        
+        // Act
+        var result = await _friendController.GetFriendship(existingFriendship.FromUserName, existingFriendship.ToUserName);
+        
+        // Assert
+        Assert.Equal(existingFriendship.FromUserName, result.Value.FromUserName);
+        Assert.Equal(existingFriendship.ToUserName, result.Value.ToUserName);
+    }
 
+    #endregion
+
+    #region DeleteFriendship Tests
+
+    [Fact]
+    public async Task DeleteFriendship_ShouldReturnBadRequest_WhenUsernamesAreMissing()
+    {
+        // Act
+        var result = await _friendController.DeleteFriendship(null, null);
+
+        // Assert
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+        Assert.Equal("Usernames are required",badRequestResult.Value);
     }
 
     [Fact]
-    public async Task DeleteFriendship_ShouldReturnFriendship_WhenSuccessful()
+    public async Task DeleteFriendship_ShouldReturnNotFound_WithNonExistingFriendship()
     {
+        _mockFriendshipActions
+            .Setup(s => s.DeleteFriendship(It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync(false);
+        
+        // Act
+        var result = await _friendController.DeleteFriendship("nonexistentUser1", "nonexistentUser2");
 
+        // Assert
+        var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
+        Assert.Equal("The friendship doesn't exist!",notFoundResult.Value);
     }
+
+    [Fact]
+    public async Task DeleteFriendship_ShouldReturnTrue_WhenSuccessful()
+    {
+        // Arrange
+        var existingFriendship = new Friendship
+        {
+            FromUserName = "user1@example.com",
+            ToUserName = "user2@example.com",
+            Status = FriendshipStatus.Accepted
+        };
+        
+        _mockFriendshipActions
+            .Setup(s => s.DeleteFriendship(existingFriendship.FromUserName, existingFriendship.ToUserName))
+            .ReturnsAsync(true);
+        
+        // Act
+        var result = await _friendController.DeleteFriendship(existingFriendship.FromUserName, existingFriendship.ToUserName);
+        
+        // Assert
+        Assert.False(result.Value);
+    }
+
+    #endregion
 }

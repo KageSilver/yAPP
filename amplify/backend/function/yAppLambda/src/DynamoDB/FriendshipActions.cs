@@ -55,7 +55,7 @@ public class FriendshipActions: IFriendshipActions
     }
 
     /// <summary>
-    /// To accept/decline a friendship, we need to update the status of the friendship to "Accepted"
+    /// To accept a friendship, we need to update the status of the friendship to "Accepted"
     /// </summary>
     /// <param name="friendship">The friendship object containing updated details.</param>
     /// <returns>An ActionResult containing the updated Friendship object or an error status.</returns>
@@ -165,18 +165,8 @@ public class FriendshipActions: IFriendshipActions
     {
         try
         {
-            // Load the friendship record to check if it exists
-            var friendship = GetFriendship(fromUserName, toUserName).Result.Value;
-
-            if (friendship == null)
-            {
-                Console.WriteLine("Failed to retrieve friendship to be deleted");
-                return false;
-            }
-
             // Delete the friendship record
-            await _dynamoDbContext.DeleteAsync(friendship, _config);
-
+            await _dynamoDbContext.DeleteAsync<Friendship>(fromUserName, toUserName, _config);
             return true;
         }
         catch (Exception e)

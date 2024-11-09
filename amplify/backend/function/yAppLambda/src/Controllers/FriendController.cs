@@ -116,9 +116,9 @@ public class FriendController : ControllerBase
         return result;
     }
 
-    // PUT: api/friends/updateFriendRequest with body { "fromUserName": "username", "toUserName": "username", "status": 1 }
+    // PUT: api/friends/acceptFriendship with body { "fromUserName": "username", "toUserName": "username", "status": 1 }
     /// <summary>
-    /// Updates the status of an existing friend request.
+    /// Updates the status of the sent friendship.
     /// </summary>
     /// <param name="request">The friend request object containing the details of the request.</param>
     /// <returns>An ActionResult containing the updated Friendship object if the update is successful, or an error message if it fails.</returns>
@@ -171,7 +171,7 @@ public class FriendController : ControllerBase
     /// Retrieves all friends of a user filtered by a specified status.
     /// </summary>
     /// <param name="userName">The username of the user whose friends are to be retrieved.</param>
-    /// <param name="status">The status of the friendships to filter by (-1:All requests, 0: Pending, 1: Accepted).</param>
+    /// <param name="status">The status of the friendships to filter by (-1: All requests, 0: Pending, 1: Accepted).</param>
     /// <returns>An ActionResult containing a list of Friendship objects if the retrieval is successful, or an error message if it fails.</returns>
     [HttpGet("getFriendsByStatus")]
     [ProducesResponseType(typeof(List<Friendship>), StatusCodes.Status200OK)]
@@ -198,10 +198,9 @@ public class FriendController : ControllerBase
     /// </summary>
     /// <param name="fromUserName">The username of the friendship's sender.</param>
     /// <param name="toUserName">The username of the friendship's recipient.</param>
-    /// <returns>An ActionResult containing the frinedship if the retrieval is successful, or an error message if it fails.</returns>
+    /// <returns>An ActionResult containing the frinedship if the retrieval is successful, or null if it fails.</returns>
     [HttpGet("getFriendship")]
     [ProducesResponseType(typeof(Friendship), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Friendship>> GetFriendship(string fromUserName, string toUserName)
     {
         if (string.IsNullOrEmpty(fromUserName) || string.IsNullOrEmpty(toUserName))
@@ -229,11 +228,16 @@ public class FriendController : ControllerBase
     {
         if(string.IsNullOrEmpty(fromUserName) || string.IsNullOrEmpty(toUserName))
         {
-            return BadRequest("The usernames of the sender and receiver are required");
+            return BadRequest("Usernames are required");
+        }
+
+        var friendship = await _friendshipActions.GetFriendship(fromUserName, toUserName);
+        if(friendship == null)
+        {
+            return NotFound("The friendship doesn't exist!");
         }
 
         var deleted = await _friendshipActions.DeleteFriendship(fromUserName, toUserName);
-
         return deleted;
     }
 }

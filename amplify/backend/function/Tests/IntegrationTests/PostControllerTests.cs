@@ -196,9 +196,6 @@ public class PostControllerIntegrationTests
     [Fact, Order(5)]
     public async Task CreatePost_SecondDiaryPost_ReturnsBadRequest()
     {
-        // Let deletion of previous diary post to go through
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
-        
         // Arrange
         var newPost1 = new NewPost
         {
