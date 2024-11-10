@@ -100,12 +100,8 @@ public class PostActions : IPostActions
                 new ScanCondition("UID", ScanOperator.Equal, uid),
                 new ScanCondition("DiaryEntry", ScanOperator.Equal, false)
             };
-            
+
             var posts = await _dynamoDbContext.ScanAsync<Post>(scanConditions, _config).GetRemainingAsync();
-            
-            // check posts for awards
-            // does not need to be completed before finishing this (GetPostsByUser) method
-            Task.Run(() => _awardActions.CheckForPostAwards(posts));
             
             return posts;
         }
