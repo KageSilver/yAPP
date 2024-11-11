@@ -28,25 +28,25 @@ public class VoteController : ControllerBase
         _voteActions = voteActions;
     }
 
-    // GET: api/votes/getVoteStatus?uid={uid}&id={id}&type={type}
+    // GET: api/votes/getVoteStatus?uid={uid}&pid={pid}&type={type}
     /// <summary>
-    /// Get the given vote status by uid, isPost, id
+    /// Get the given vote status by uid, isPost, pid
     /// </summary>
     /// <param name="uid">The uid of the current user.</param>
-    /// <param name="id">The id of the post or comment.</param>
+    /// <param name="pid">The pid of the post or comment.</param>
     /// <param name="type">Whether it's checking for an upvote/downvote.</param>
     /// <returns>A boolean result showing if the vote exists.</returns>
     [HttpGet("getVoteStatus")]
     [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<bool>> GetVoteStatus(string uid, string id, bool type)
+    public async Task<ActionResult<bool>> GetVoteStatus(string uid, string pid, bool type)
     {
-        if(string.IsNullOrEmpty(uid) || string.IsNullOrEmpty(id) )
+        if(string.IsNullOrEmpty(uid) || string.IsNullOrEmpty(pid) )
         {
             return BadRequest("UID and Comment/Post ID are both required");
         }
 
-        var voteStatus = await _voteActions.GetVoteStatus(uid, id, type);
+        var voteStatus = await _voteActions.GetVoteStatus(uid, pid, type);
 
         if(!voteStatus)
         {
@@ -56,28 +56,28 @@ public class VoteController : ControllerBase
         return voteStatus;
     }
 
-    // GET: api/votes/getVotesById?id={id}
+    // GET: api/votes/getVotesByPid?pid={pid}
     /// <summary>
-    /// Gets all votes with given ID
+    /// Gets all votes with given PID
     /// </summary>
-    /// <param name="id">The id to find a vote under.</param>
+    /// <param name="pid">The pid to find a vote under.</param>
     /// <returns>A list of votes made under a post/comment.</returns>
-    [HttpGet("getVotesById")]
+    [HttpGet("getVotesByPid")]
     [ProducesResponseType(typeof(List<Vote>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<List<Vote>>> GetVotesById(string id)
+    public async Task<ActionResult<List<Vote>>> GetVotesByPid(string pid)
     {
-        if(string.IsNullOrEmpty(id))
+        if(string.IsNullOrEmpty(pid))
         {
-            return BadRequest("Id is required");
+            return BadRequest("Pid is required");
         }
 
-        var votes = await _voteActions.GetVotesById(id);
+        var votes = await _voteActions.GetVotesByPid(pid);
 
         return votes;
     }
 
-    // POST: api/votes/addVote with body {"id": "id", "isPost": "isPost", "type": "type", "uid": "uid"}
+    // POST: api/votes/addVote with body {"pid": "pid", "isPost": "isPost", "type": "type", "uid": "uid"}
     /// <summary>
     /// Creates a new vote
     /// </summary>
@@ -90,13 +90,13 @@ public class VoteController : ControllerBase
     {
         ActionResult<Vote> result;
 
-        if(request == null || string.IsNullOrEmpty(request.ID) || string.IsNullOrEmpty(request.UID))
+        if(request == null || string.IsNullOrEmpty(request.PID) || string.IsNullOrEmpty(request.UID))
         {
             result = BadRequest("Request body is required and must contain the post/comment's id and the user's id.");
         }
         else
         {
-            Console.WriteLine("Post request from: " + request.UID + " with id: " + request.ID);
+            Console.WriteLine("Post request from: " + request.UID + " with id: " + request.PID);
 
             var user = await _cognitoActions.GetUserById(request.UID);
 
@@ -108,7 +108,7 @@ public class VoteController : ControllerBase
             {
                 var vote = new Vote
                 {
-                    ID = request.ID,
+                    PID = request.PID,
                     IsPost = request.IsPost,
                     Type = request.Type,
                     UID = request.UID
@@ -124,25 +124,25 @@ public class VoteController : ControllerBase
         return result;
     }
 
-    // DELETE: api/votes/removeVote?uid={uid}&id={id}&type={type}
+    // DELETE: api/votes/removeVote?uid={uid}&pid={pid}&type={type}
     /// <summary>
-    /// Remove the corresponding vote by id and uid
+    /// Remove the corresponding vote by pid and uid
     /// </summary>
     /// <param name="uid">The uid of the current user.</param>
-    /// <param name="id">The id of the post or comment.</param>
+    /// <param name="pid">The pid of the post or comment.</param>
     /// <param name="type">Whether it's removing an upvote/downvote.</param>
     /// <returns>A boolean result determining if the deletion failed.</returns>
     [HttpDelete("removeVote")]
     [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<bool>> RemoveVote(string uid, string id, bool type)
+    public async Task<ActionResult<bool>> RemoveVote(string uid, string pid, bool type)
     {
-        if(string.IsNullOrEmpty(uid) || string.IsNullOrEmpty(id))
+        if(string.IsNullOrEmpty(uid) || string.IsNullOrEmpty(pid))
         {
             return BadRequest("User id and post/comment id is required");
         }
 
-        var deleted = await _voteActions.RemoveVote(uid, id, type);
+        var deleted = await _voteActions.RemoveVote(uid, pid, type);
 
         return deleted;
     }

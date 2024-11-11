@@ -7,8 +7,8 @@ namespace yAppLambda.Models;
 /// </summary>
 public class Vote
 {
-    [JsonPropertyName("id")]
-    public string ID { get; set; } // Partition key (id of the post/comment)
+    [JsonPropertyName("pid")]
+    public string PID { get; set; } // Partition key (id of the post/comment)
 
     [JsonPropertyName("isPost")]
     public bool IsPost { get; set; } // Is it a post (true) or a comment (false)

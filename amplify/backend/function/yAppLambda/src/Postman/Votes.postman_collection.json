@@ -26,7 +26,7 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{base_url}}/api/votes/getVoteStatus?uid=${uid}&id=${id}&type=${type}",
+          "raw": "{{base_url}}/api/votes/getVoteStatus?uid=${uid}&pid=${pid}&type=${type}",
           "host": ["{{base_url}}"],
           "path": ["api", "votes", "getVoteStatus"],
           "query": [
@@ -35,7 +35,7 @@
               "value": ""
             },
             {
-              "key": "id",
+              "key": "pid",
               "value": ""
             },
             {
@@ -49,7 +49,7 @@
       "response": []
     },
     {
-      "name": "GetVotesById",
+      "name": "GetVotesByPid",
       "event": [
         {
           "listen": "test",
@@ -67,12 +67,12 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{base_url}}/api/votes/getVotesById?id=${id}",
+          "raw": "{{base_url}}/api/votes/getVotesByPid?pid=${pid}",
           "host": ["{{base_url}}"],
-          "path": ["api", "votes", "getVotesById"],
+          "path": ["api", "votes", "getVotesByPid"],
           "query": [
             {
-              "key": "id",
+              "key": "pid",
               "value": ""
             }
           ]
@@ -102,7 +102,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n\t\"id\": \"\",\n\t\"isPost\": \"\",\n\t\"type\": \"\",\n\t\"uid\": \"\"\n}",
+          "raw": "{\n\t\"pid\": \"\",\n\t\"isPost\": \"\",\n\t\"type\": \"\",\n\t\"uid\": \"\"\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -138,7 +138,7 @@
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "{{base_url}}/api/votes/removeVote?uid=${uid}&id=${id}&type=${type}",
+          "raw": "{{base_url}}/api/votes/removeVote?uid=${uid}&pid=${pid}&type=${type}",
           "host": ["{{base_url}}"],
           "path": ["api", "votes", "removeVote"],
           "query": [
@@ -147,7 +147,7 @@
               "value": ""
             },
             {
-              "key": "id",
+              "key": "pid",
               "value": ""
             },
             {

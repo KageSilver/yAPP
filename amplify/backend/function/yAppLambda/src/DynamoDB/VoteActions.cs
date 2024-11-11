@@ -32,13 +32,13 @@ public class VoteActions : IVoteActions
     }
 
     /// <summary>
-    /// Get the given vote status by uid, isPost, id
+    /// Get the given vote status by uid, isPost, pid
     /// </summary>
     /// <param name="uid">The uid of the current user.</param>
-    /// <param name="id">The id of the post or comment.</param>
+    /// <param name="pid">The pid of the post or comment.</param>
     /// <param name="type">Whether it's checking for an upvote/downvote.</param>
     /// <returns>A boolean result showing if the vote exists.</returns>
-    public async Task<bool> GetVoteStatus(string uid, string id, bool type)
+    public async Task<bool> GetVoteStatus(string uid, string pid, bool type)
     {
         bool result = true;
         try
@@ -46,7 +46,7 @@ public class VoteActions : IVoteActions
             List<ScanCondition> scanConditions = new List<ScanCondition>
             {
                 new ScanCondition("UID", ScanOperator.Equal, uid),
-                new ScanCondition("ID", ScanOperator.Equal, id),
+                new ScanCondition("PID", ScanOperator.Equal, pid),
                 new ScanCondition("Type", ScanOperator.Equal, type)
             };
 
@@ -64,20 +64,20 @@ public class VoteActions : IVoteActions
     }
 
     /// <summary>
-    /// Gets all votes with given ID
+    /// Gets all votes with given PID
     /// </summary>
-    /// <param name="id">The id to find a vote under.</param>
+    /// <param name="pid">The pid to find a vote under.</param>
     /// <returns>A list of votes made under a post/comment.</returns>
-    public async Task<List<Vote>> GetVotesById(string id)
+    public async Task<List<Vote>> GetVotesByPid(string pid)
     {
         try
         {
             List<ScanCondition> scanConditions = new List<ScanCondition>
             {
-                new ScanCondition("ID", ScanOperator.Equal, id)
+                new ScanCondition("PID", ScanOperator.Equal, pid)
             };
 
-            // Query votes where the id is 'id'
+            // Query votes where the pid is 'pid'
             var votes = await _dynamoDbContext.ScanAsync<Vote>(scanConditions, _config).GetRemainingAsync();
 
             return votes;
@@ -110,19 +110,19 @@ public class VoteActions : IVoteActions
     }
     
     /// <summary>
-    /// Remove the corresponding vote by id and uid
+    /// Remove the corresponding vote by pid and uid
     /// </summary>
     /// <param name="uid">The uid of the current user.</param>
-    /// <param name="id">The id of the post or comment.</param>
+    /// <param name="pid">The pid of the post or comment.</param>
     /// <param name="type">Whether it's removing an upvote/downvote.</param>
     /// <returns>A boolean result determining if the deletion failed.</returns>
-    public async Task<bool> RemoveVote(string uid, string id, bool type)
+    public async Task<bool> RemoveVote(string uid, string pid, bool type)
     {
         bool result = true;
         try
         {
             // Load the vote record to check if it exists
-            var vote = GetVoteStatus(uid, id, type);
+            var vote = GetVoteStatus(uid, pid, type);
 
             if (vote.Result == null)
             {
@@ -144,17 +144,17 @@ public class VoteActions : IVoteActions
     }
 
     /// <summary>
-    /// Deletes all votes under one post/comment from the database by id
+    /// Deletes all votes under one post/comment from the database by pid
     /// </summary>
-    /// <param name="id">The id of the parent post/comment to be deleted.</param>
+    /// <param name="pid">The pid of the parent post/comment to be deleted.</param>
     /// <returns>A boolean indicating whether the deletions were successful.</returns>
-    public async Task<bool> DeleteVotes(string id)
+    public async Task<bool> DeleteVotes(string pid)
     {
         var result = true;
         try
         {
-            // Load the votes to check if the id exists
-            var votes = await GetVotesById(id);
+            // Load the votes to check if the pid exists
+            var votes = await GetVotesByPid(pid);
 
             if (votes.Count == 0)
             {
@@ -166,7 +166,7 @@ public class VoteActions : IVoteActions
                 // Delete all votes under the post/comment from the database
                 foreach ( var vote in votes )
                 {
-                    if ( ! await RemoveVote(vote.UID, vote.ID, vote.Type) )
+                    if ( ! await RemoveVote(vote.UID, vote.PID, vote.Type) )
                     {
                         result = false;
                     }
