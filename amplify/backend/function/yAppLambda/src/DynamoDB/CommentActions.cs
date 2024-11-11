@@ -204,8 +204,12 @@ public class CommentActions : ICommentActions
             {
                 // Delete all comments under the post from the database
                 foreach ( var comment in comments )
+                {
                     if ( ! await DeleteComment(comment.CID) )
+                    {
                         result = false;
+                    }
+                }
             }
         }
         catch (Exception e)

@@ -165,8 +165,12 @@ public class VoteActions : IVoteActions
             {
                 // Delete all votes under the post/comment from the database
                 foreach ( var vote in votes )
+                {
                     if ( ! await RemoveVote(vote.UID, vote.ID, vote.Type) )
+                    {
                         result = false;
+                    }
+                }
             }
         }
         catch (Exception e)
