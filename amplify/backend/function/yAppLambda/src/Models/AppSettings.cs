@@ -38,4 +38,9 @@ public class AppSettings: IAppSettings
     /// comment table name
     /// </summary>
     public string CommentTableName { get; set; }
+    
+    /// <summary>
+    /// Vote table name
+    /// </summary>
+    string VoteTableName { get; set; }
 }
