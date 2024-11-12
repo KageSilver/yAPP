@@ -8,7 +8,7 @@
   },
   "item": [
     {
-      "name": "GetVoteStatus",
+      "name": "GetVote",
       "event": [
         {
           "listen": "test",
@@ -26,9 +26,9 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{base_url}}/api/votes/getVoteStatus?uid=${uid}&pid=${pid}&type=${type}",
+          "raw": "{{base_url}}/api/votes/getVote?uid=${uid}&pid=${pid}&type=${type}",
           "host": ["{{base_url}}"],
-          "path": ["api", "votes", "getVoteStatus"],
+          "path": ["api", "votes", "getVote"],
           "query": [
             {
               "key": "uid",

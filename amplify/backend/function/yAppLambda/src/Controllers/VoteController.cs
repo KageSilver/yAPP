@@ -30,30 +30,30 @@ public class VoteController : ControllerBase
 
     // GET: api/votes/getVoteStatus?uid={uid}&pid={pid}&type={type}
     /// <summary>
-    /// Get the given vote status by uid, isPost, pid
+    /// Get the given vote by uid, pid, and type
     /// </summary>
     /// <param name="uid">The uid of the current user.</param>
     /// <param name="pid">The pid of the post or comment.</param>
     /// <param name="type">Whether it's checking for an upvote/downvote.</param>
     /// <returns>A boolean result showing if the vote exists.</returns>
-    [HttpGet("getVoteStatus")]
-    [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+    [HttpGet("getVote")]
+    [ProducesResponseType(typeof(Vote), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<bool>> GetVoteStatus(string uid, string pid, bool type)
+    public async Task<ActionResult<Vote>> GetVote(string uid, string pid, bool type)
     {
         if(string.IsNullOrEmpty(uid) || string.IsNullOrEmpty(pid) )
         {
             return BadRequest("UID and Comment/Post ID are both required");
         }
 
-        var voteStatus = await _voteActions.GetVoteStatus(uid, pid, type);
+        var vote = await _voteActions.GetVote(uid, pid, type);
 
-        if(!voteStatus)
+        if(vote == null)
         {
             return NotFound("Vote does not exist");
         }
 
-        return voteStatus;
+        return vote;
     }
 
     // GET: api/votes/getVotesByPid?pid={pid}

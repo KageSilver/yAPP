@@ -16,6 +16,8 @@ public class VoteActions : IVoteActions
     private readonly IDynamoDBContext _dynamoDbContext;
     private readonly string _voteTable;
     private readonly DynamoDBOperationConfig _config;
+    private readonly ICommentActions _commentActions;
+    private readonly IPostActions _postActions;
 
     public VoteActions(IAppSettings appSettings, IDynamoDBContext dynamoDbContext)
     {
@@ -29,18 +31,19 @@ public class VoteActions : IVoteActions
         {
             OverrideTableName = _voteTable
         };
+        _commentActions = new CommentActions(appSettings, dynamoDbContext);
+        _postActions = new PostActions(appSettings, dynamoDbContext);
     }
 
     /// <summary>
-    /// Get the given vote status by uid, isPost, pid
+    /// Get the given vote by uid, pid, and type
     /// </summary>
     /// <param name="uid">The uid of the current user.</param>
     /// <param name="pid">The pid of the post or comment.</param>
     /// <param name="type">Whether it's checking for an upvote/downvote.</param>
-    /// <returns>A boolean result showing if the vote exists.</returns>
-    public async Task<bool> GetVoteStatus(string uid, string pid, bool type)
+    /// <returns>The requested vote, or an empty result.</returns>
+    public async Task<Vote> GetVote(string uid, string pid, bool type)
     {
-        bool result = true;
         try
         {
             List<ScanCondition> scanConditions = new List<ScanCondition>
@@ -51,16 +54,15 @@ public class VoteActions : IVoteActions
             };
 
             // Query votes where the user's uid is 'uid' and is equal to the given id and whether it's an upvote/downvote
-            var vote = await _dynamoDbContext.ScanAsync<Vote>(scanConditions, _config).GetRemainingAsync();
+            var vote = await _dynamoDbContext.LoadAsync<Vote>(scanConditions, _config);
 
-            return result;
+            return vote;
         }
         catch (Exception e)
         {
-            Console.WriteLine("Failed to get vote status: " + e.Message);
-            result = false;
+            Console.WriteLine("Failed to get vote: " + e.Message);
+            return null;
         }
-        return result;
     }
 
     /// <summary>
@@ -100,6 +102,30 @@ public class VoteActions : IVoteActions
         {
             await _dynamoDbContext.SaveAsync(vote, _config);
 
+            // Checking if we're adding a vote to either a post (true) or a comment (false)
+            if ( vote.IsPost )
+            {
+                var post = await _postActions.GetPostById(vote.PID);
+                // Checking if the vote is an upvote (true) or a downvote (false)
+                if ( vote.Type )
+                {
+                    post.Upvotes++;
+                }
+                //Add downvote code here
+                await _postActions.UpdatePost(post);
+            }
+            else
+            {
+                var comment = await _commentActions.GetCommentById(vote.PID);
+                // Checking if the vote is an upvote (true) or a downvote (false)
+                if ( vote.Type )
+                {
+                    comment.Upvotes++;
+                }
+                //Add downvote code here
+                await _commentActions.UpdateComment(comment);
+            }
+
             return new OkObjectResult(vote);
         }
         catch (Exception e)
@@ -122,7 +148,7 @@ public class VoteActions : IVoteActions
         try
         {
             // Load the vote record to check if it exists
-            var vote = GetVoteStatus(uid, pid, type);
+            var vote = GetVote(uid, pid, type);
 
             if (vote.Result == null)
             {
@@ -131,6 +157,29 @@ public class VoteActions : IVoteActions
             }
             else
             {
+                // Remove the vote from either the post (true) or the comment (false)
+                if ( vote.Result.IsPost )
+                {
+                    var post = await _postActions.GetPostById(vote.Result.PID);
+                    // Checking if the vote is an upvote (true) or a downvote (false)
+                    if ( vote.Result.Type )
+                    {
+                        post.Upvotes--;
+                    }
+                    //Add downvote code here
+                    await _postActions.UpdatePost(post);
+                }
+                else
+                {
+                    var comment = await _commentActions.GetCommentById(vote.Result.PID);
+                    // Checking if the vote is an upvote (true) or a downvote (false)
+                    if ( vote.Result.Type )
+                    {
+                        comment.Upvotes--;
+                    }
+                    //Add downvote code here
+                    await _commentActions.UpdateComment(comment);
+                }
                 // Delete the vote from the database
                 await _dynamoDbContext.DeleteAsync(vote.Result, _config);
             }

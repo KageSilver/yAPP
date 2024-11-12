@@ -6,13 +6,13 @@ namespace yAppLambda.DynamoDB;
 public interface IVoteActions
 {
     /// <summary>
-    /// Get the given vote status by uid, isPost, pid
+    /// Get the given vote by uid, pid, and type
     /// </summary>
     /// <param name="uid">The uid of the current user.</param>
     /// <param name="pid">The id of the post or comment.</param>
     /// <param name="type">Whether it's checking for an upvote/downvote.</param>
     /// <returns>A boolean result showing if the vote exists.</returns>
-    Task<bool> GetVoteStatus(string uid, string pid, bool type);
+    Task<Vote> GetVote(string uid, string pid, bool type);
 
     /// <summary>
     /// Gets all votes with given PID
