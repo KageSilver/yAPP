@@ -179,7 +179,7 @@ pipeline {
                 script {
                     
                     echo "copying apk to host"
-                    sh(script: "docker cp ${CONTAINER_NAME}:${APK_OUTPUT_PATH} ${HOST_OUTPUT_DIR}/app-debug.apk")
+                    sh(script: "docker cp ${CONTAINER_NAME}:${APK_OUTPUT_PATH} ${HOST_OUTPUT_DIR}/app-dev-debug.apk")
 
                     sh(script: "docker rm ${CONTAINER_NAME}")
                 }
@@ -195,7 +195,7 @@ pipeline {
         }
         success {
             // Archive the APK file so it can be downloaded from Jenkins
-            archiveArtifacts artifacts: "${HOST_OUTPUT_DIR}/app-debug.apk", allowEmptyArchive: true
+            archiveArtifacts artifacts: "${HOST_OUTPUT_DIR}/app-dev-debug.apk", allowEmptyArchive: true
         }
         cleanup {
             echo "Clean up Post"
