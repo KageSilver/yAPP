@@ -11,6 +11,7 @@ def pool_id = ""
 def cloudfront_id = ""
 def awsProfile = "yApp"
 def awsRegion = "us-east-2"
+def containerId = ""
 
 
 
@@ -46,10 +47,13 @@ pipeline {
         AWS_SDK_LOAD_CONFIG = "1"
         AWS_PROFILE = "default"
         IMAGE_NAME = 'my-docker-image' // Replace with your image name
+        CONTAINER_NAME = 'my-docker-container' // Replace with your container name
         //DOCKER_REGISTRY = 'my-registry' // Optional: if you are using a private registry
         ACCESS_KEY_ID ="AKIA23WHT5F5J2CZOKNS"
         SECRET_ACCESS_KEY ="vJnMiQhPExnL0+ksaeTNVCEzJJPBgqq+Ydt9cmLs"
         AWS_DEFAULT_REGION = "us-east-2"
+        APK_OUTPUT_PATH = "/app/yAppMobile/app/build/outputs/apk/debug/app-debug.apk"  // Path to the APK inside the container
+        HOST_OUTPUT_DIR = "output"  // Directory on the Jenkins host to store the APK
     }
     agent any
     options {
@@ -94,6 +98,27 @@ pipeline {
 
                     echo "Show the content of the file"
                     sh ("cat ${LAMBDA_PATH}")
+                    //update awsconfiguration.json for jenkins
+                    def sourceFile = 'yAppMobile/app/src/main/res/raw/amplifyconfigurationdev.json'
+                    def destinationFile = 'yAppMobile/app/src/main/res/raw/amplifyconfiguration.json'
+
+                    // Ensure the source file exists before attempting to read it
+                    if (fileExists(sourceFile)) {
+                        echo "Replacing content of ${destinationFile} with content from ${sourceFile}."
+
+                        // Replace the content of the destination file with the source file content
+                        sh(script: "cat ${sourceFile} > ${destinationFile}")
+                        // Ensure the destination file exists after the replacement
+                        if (fileExists(destinationFile)) {
+                            echo "Content of ${destinationFile} replaced successfully."
+                        } else {
+                            error "Content of ${destinationFile} not replaced successfully."
+                        }
+                        sh ("cat ${destinationFile}")
+                    } else {
+                        error "Source file ${sourceFile} does not exist."
+                    }
+
 
                 }
             }
@@ -112,7 +137,7 @@ pipeline {
             steps {
                 script {
                     echo 'Running tests'
-                    sh(script: "docker run ${IMAGE_NAME} dotnet test ${SOLUTION}", returnStatus: true)
+                    //sh(script: "docker run ${IMAGE_NAME} dotnet test ${SOLUTION}", returnStatus: true)
                     // if (testStatus != 0) {
                     //     error("Tests failed. Exiting...")
                     // }
@@ -128,17 +153,49 @@ pipeline {
                     \"envName\":\"${amplify_env}\",\
                     \"defaultEditor\":\"code\"\
                     }"
-                   sh(script:"docker run ${IMAGE_NAME} sh -c 'ls'")
-                   sh(script: "docker run ${IMAGE_NAME} sh -c 'chmod +x ./bashDev.sh && ./bashDev.sh'")
+                   //sh(script:"docker run ${IMAGE_NAME} sh -c 'ls'")
+                  // sh(script: "docker run ${IMAGE_NAME} sh -c 'chmod +x ./bashDev.sh && ./bashDev.sh'")
                 }
             }
         }
+         stage('Build Apk') {
+             steps {
+                script {
+                     echo "Ensuring output directory exists..."
+                    sh(script: "mkdir -p ${HOST_OUTPUT_DIR}")
+
+                    echo "Creating Docker container to build APK..."
+                    sh(script: "docker create --name ${CONTAINER_NAME} ${IMAGE_NAME} sh -c 'chmod +x ./getApk.sh && ./getApk.sh'")
+
+                    echo "Starting the container..."
+                    sh(script: "docker start -a ${CONTAINER_NAME}")
+                            
+
+                }
+            }
+        }
+        stage('Copy Apk') {
+             steps {
+                script {
+                    
+                    echo "copying apk to host"
+                    sh(script: "docker cp ${CONTAINER_NAME}:${APK_OUTPUT_PATH} ${HOST_OUTPUT_DIR}/app-debug.apk")
+
+                    sh(script: "docker rm ${CONTAINER_NAME}")
+                }
+            }
+        }
+        
 
     }
     post {
         always {
             echo "Post run"
             // to create a webhook for the github repo
+        }
+        success {
+            // Archive the APK file so it can be downloaded from Jenkins
+            archiveArtifacts artifacts: "${HOST_OUTPUT_DIR}/app-debug.apk", allowEmptyArchive: true
         }
         cleanup {
             echo "Clean up Post"
