@@ -15,6 +15,7 @@ public class CommentActions : ICommentActions
     private readonly IAppSettings _appSettings;
     private readonly IDynamoDBContext _dynamoDbContext;
     private readonly string _commentTable;
+    private readonly IVoteActions _voteActions;
     private readonly DynamoDBOperationConfig _config;
 
     public CommentActions(IAppSettings appSettings, IDynamoDBContext dynamoDbContext)
@@ -29,6 +30,8 @@ public class CommentActions : ICommentActions
         {
             OverrideTableName = _commentTable
         };
+
+        _voteActions = new VoteActions(appSettings, dynamoDbContext);
     }
     
     /// <summary>
@@ -171,6 +174,7 @@ public class CommentActions : ICommentActions
             else
             {
                 // Delete the comment from the database
+                await _voteActions.DeleteVotes(cid);
                 await _dynamoDbContext.DeleteAsync(comment.Result, _config);
             }
         }
