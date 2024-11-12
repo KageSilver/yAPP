@@ -138,7 +138,7 @@ pipeline {
             steps {
                 script {
                     echo 'Running tests'
-                   // def testStatus = sh(script: "docker run ${IMAGE_NAME} dotnet test ${SOLUTION}", returnStatus: true)
+                    def testStatus = sh(script: "docker run ${IMAGE_NAME} dotnet test ${SOLUTION}", returnStatus: true)
                     // if (testStatus != 0) {
                     //     error("Tests failed. Exiting...")
                     // }
@@ -154,8 +154,8 @@ pipeline {
                     \"envName\":\"${amplify_env}\",\
                     \"defaultEditor\":\"code\"\
                     }"
-                   //sh(script:"docker run ${IMAGE_NAME} sh -c 'ls'")
-                  // sh(script: "docker run ${IMAGE_NAME} sh -c 'chmod +x ./bashMain.sh && ./bashMain.sh'")
+                   sh(script:"docker run ${IMAGE_NAME} sh -c 'ls'")
+                   sh(script: "docker run ${IMAGE_NAME} sh -c 'chmod +x ./bashMain.sh && ./bashMain.sh'")
                 }
             }
         }
