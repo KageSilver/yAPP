@@ -16,6 +16,8 @@ public class AwardActions : IAwardActions
     private readonly IDynamoDBContext _dynamoDbContext;
     private readonly DynamoDBOperationConfig _config;
     private readonly ICommentActions _commentActions;
+    private readonly IPostActions _postActions;
+    private readonly IFriendshipActions _friendshipActions;
     private readonly List<AwardType> awardTypes;
 
     public AwardActions(IAppSettings appSettings, IDynamoDBContext dynamoDbContext)
@@ -35,6 +37,8 @@ public class AwardActions : IAwardActions
         awardTypes = JsonConvert.DeserializeObject<List<AwardType>>(File.ReadAllText(@"awards.json"));
 
         _commentActions = new CommentActions(appSettings, dynamoDbContext);
+        _postActions = new PostActions(appSettings, dynamoDbContext);
+        _friendshipActions = new FriendshipActions(appSettings, dynamoDbContext);
     }
 
     /// <summary>
@@ -214,11 +218,27 @@ public class AwardActions : IAwardActions
     }
 
     /// <summary>
+    /// Gets new awards a user has earned
+    /// </summary>
+    /// <param name="uid">The user who earned the awards being fetched.</param>
+    /// <returns>A list of new awards earned by the user.</returns>
+    public async Task<List<Award>> GetNewAwardsByUser(string uid)
+    {
+        var newAwards = new List<Award>();
+        var userPosts = await _postActions.GetPostsByUser(uid);
+        
+        newAwards.AddRange(await CheckNewAwardsPerPost(userPosts));
+        newAwards.AddRange(await CheckNewAwardsTotalPosts(userPosts, uid));
+        
+        return newAwards;
+    }
+
+    /// <summary>
     /// Checks a list of posts for awards
     /// </summary>
     /// <param name="posts">The list of posts to check for awards.</param>
     /// <returns>A list of awards earned on the list of posts.</returns>
-    public async Task<List<Award>> CheckForPostAwards(List<Post> posts)
+    public async Task<List<Award>> CheckNewAwardsPerPost(List<Post> posts)
     {
         var list = new List<Award>();
         
@@ -228,7 +248,7 @@ public class AwardActions : IAwardActions
             {
                 var awards = await GetAwardsByPost(post.PID);
 
-                var comments = _commentActions.GetCommentsByPid(post.PID).Result;
+                var comments = await _commentActions.GetCommentsByPid(post.PID);
                 list.AddRange((await CheckAwardType(post, awards, awardTypes.Where(a => a.Type.Equals("comment")).First(), comments.Count)));
                 
                 list.AddRange((await CheckAwardType(post, awards, awardTypes.Where(a => a.Type.Equals("upvote")).First(), post.Upvotes)));
@@ -242,6 +262,21 @@ public class AwardActions : IAwardActions
         }
 
         return list;
+    }
+
+    /// <summary>
+    /// Checks number of posts a user has made for awards
+    /// </summary>
+    /// <param name="posts">The list of posts to check for awards.</param>
+    /// <returns>A list of awards earned on the number of posts made.</returns>
+    public async Task<List<Award>> CheckNewAwardsTotalPosts(List<Post> posts, string uid)
+    {
+        var post = new Post();
+        post.PID = "NA";
+        post.UID = uid;
+        var awards = await GetAwardsByPost(post.PID);
+        
+        return await CheckAwardType(post, awards, awardTypes.Where(a => a.Type.Equals("posts")).First(), posts.Count());
     }
 
     /// <summary>

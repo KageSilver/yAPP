@@ -448,10 +448,10 @@ public class AwardActionsTests
 
     #endregion
     
-    #region CheckForPostAwards Tests
+    #region CheckNewAwardsPerPost Tests
 
     [Fact]
-    public async Task CheckForPostAwards_ShouldCallCreateAward_WhenNewAwardIsAchieved()
+    public async Task CheckNewAwardsPerPost_ShouldCallCreateAward_WhenNewAwardIsAchieved()
     {
         // Arrange
         var now = DateTime.Now;
@@ -461,7 +461,7 @@ public class AwardActionsTests
             CreatedAt = now,
             UpdatedAt = now,
             UID = "uid",
-            PostTitle = "CheckForPostAwards_ShouldCallCreateAward_WhenNewAwardIsAchieved()",
+            PostTitle = "CheckNewAwardsPerPost_ShouldCallCreateAward_WhenNewAwardIsAchieved()",
             PostBody = "body",
             Upvotes = 100,
             Downvotes = 100,
@@ -500,7 +500,7 @@ public class AwardActionsTests
             .Returns(Task.CompletedTask);
         
         // Act
-        var result = await _awardActionsMock.CheckForPostAwards(postList);
+        var result = await _awardActionsMock.CheckNewAwardsPerPost(postList);
 
         // Assert
         Assert.NotNull(result);

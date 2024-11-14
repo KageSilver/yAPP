@@ -184,4 +184,20 @@ public class AwardControllerTests
     }
     
     #endregion
+
+    #region GetNewAwardsByUser Tests
+
+    [Fact]
+    public async Task GetNewAwardsByUser_ShouldReturnAwardsList_WhenSuccessful()
+    {
+        
+    }
+    
+    [Fact]
+    public async Task GetNewAwardsByUser_ShouldReturnBadRequest_WithInvalidUID()
+    {
+        
+    }
+
+    #endregion
 }
