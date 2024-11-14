@@ -52,6 +52,26 @@ public class VoteActionsTests
 
         _appSettingsMock.Setup(a => a.VoteTableName).Returns(VoteTableName);
 
+        // Arrange
+        var now = DateTime.Now;
+        var request = new Post
+        {
+            PID = "addVoteShouldReturnOK",
+            CreatedAt = now,
+            UpdatedAt = now,
+            UID = "c1cb",
+            PostTitle = "title",
+            PostBody = "body",
+            Upvotes = 0,
+            Downvotes = 0,
+            DiaryEntry = false,
+            Anonymous = true
+        };
+
+        // Sets up LoadAsync to return the request post
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Post>(It.IsAny<string>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(request);
+
         // Setup SaveAsync to succeed
         _dynamoDbContextMock.Setup(d => d.SaveAsync(It.IsAny<Vote>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
@@ -118,10 +138,22 @@ public class VoteActionsTests
             Type = true,
             UID = "1234"
         };
+        var response = new Vote { PID = "getVoteShouldReturnVote", IsPost = true, Type = true, UID = "1234" };
 
-        // Sets up LoadAsync to return the requested vote
-        _dynamoDbContextMock.Setup(d => d.LoadAsync<Vote>(It.IsAny<string>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+        // Sets up LoadAsync to return the request vote (for in GetVote)
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Vote>(vote.PID, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(vote);
+
+        var list = new List<Vote>();
+        list.Add(response);
+
+        // Mock the AsyncSearch<Post> returned by ScanAsync
+        var scanToSearchMock = new Mock<AsyncSearch<Vote>>();
+        scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(list);
+            
+        _dynamoDbContextMock.Setup(d => d.ScanAsync<Vote>(It.IsAny<List<ScanCondition>>(), It.IsAny<DynamoDBOperationConfig>()))
+            .Returns(scanToSearchMock.Object);
 
         // Act
         var result = await _voteActionsMock.GetVote(vote.UID, vote.PID, vote.Type);
@@ -132,14 +164,15 @@ public class VoteActionsTests
         Assert.Equal(vote.IsPost, returnedVote.IsPost);
         Assert.Equal(vote.Type, returnedVote.Type);
         Assert.Equal(vote.UID, returnedVote.UID);
-        _dynamoDbContextMock.Verify(d => d.LoadAsync<Vote>(It.IsAny<string>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Once);
+        _dynamoDbContextMock.Verify(d => d.ScanAsync<Vote>(It.IsAny<List<ScanCondition>>(), It.IsAny<DynamoDBOperationConfig>()), Times.Once);
     }
 
     [Fact]
     public async Task GetVote_ShouldReturnNull_WhenExceptionIsThrown()
     {
+        var scanToSearchMock = new Mock<AsyncSearch<Vote>>();
         // Arrange
-        _dynamoDbContextMock.Setup(d => d.LoadAsync<Vote>(It.IsAny<string>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+        scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("Failed to get vote: "));
             
         // Act
@@ -147,7 +180,7 @@ public class VoteActionsTests
         
         // Assert
         Assert.Null(result);
-        _dynamoDbContextMock.Verify(d => d.LoadAsync<Vote>(It.IsAny<string>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Once);
+        _dynamoDbContextMock.Verify(d => d.ScanAsync<Vote>(It.IsAny<List<ScanCondition>>(), It.IsAny<DynamoDBOperationConfig>()), Times.Once);
     }
 
     #endregion
@@ -165,7 +198,7 @@ public class VoteActionsTests
             Type = true,
             UID = "uid"
         };
-        var response = new Vote { PID = "1" };
+        var response = new Vote { PID = "getVotesByPidShouldReturnVotes", IsPost = true, Type = true, UID = "uid" };
 
         // Sets up LoadAsync to return the request vote (for in GetVote)
         _dynamoDbContextMock.Setup(d => d.LoadAsync<Vote>(vote.PID, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
@@ -174,14 +207,13 @@ public class VoteActionsTests
         var list = new List<Vote>();
         list.Add(response);
 
-        // Mock the AsyncSearch<Vote> returned by QueryAsync
-        var queryFromSearchMock = new Mock<AsyncSearch<Vote>>();
-        queryFromSearchMock.Setup(q => q.GetNextSetAsync(It.IsAny<CancellationToken>()))
+        // Mock the AsyncSearch<Post> returned by ScanAsync
+        var scanToSearchMock = new Mock<AsyncSearch<Vote>>();
+        scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(list);
-
-        // Sets up FromQueryAsync to succeed
-        _dynamoDbContextMock.Setup(d => d.FromQueryAsync<Vote>(It.IsAny<QueryOperationConfig>(), It.IsAny<DynamoDBOperationConfig>()))
-            .Returns(queryFromSearchMock.Object);
+            
+        _dynamoDbContextMock.Setup(d => d.ScanAsync<Vote>(It.IsAny<List<ScanCondition>>(), It.IsAny<DynamoDBOperationConfig>()))
+            .Returns(scanToSearchMock.Object);
 
         // Act
         var result = await _voteActionsMock.GetVotesByPid(vote.PID);
@@ -193,7 +225,7 @@ public class VoteActionsTests
         Assert.Equal(vote.Type, result.First().Type);
         Assert.Equal(vote.UID, result.First().UID);
 
-        _dynamoDbContextMock.Verify(d => d.FromQueryAsync<Vote>(It.IsAny<QueryOperationConfig>(), It.IsAny<DynamoDBOperationConfig>()), Times.Once);
+        _dynamoDbContextMock.Verify(d => d.ScanAsync<Vote>(It.IsAny<List<ScanCondition>>(), It.IsAny<DynamoDBOperationConfig>()), Times.Once);
     }
     
     [Fact]
