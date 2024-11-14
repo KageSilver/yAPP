@@ -54,9 +54,16 @@ public class VoteActions : IVoteActions
             };
 
             // Query votes where the user's uid is 'uid' and is equal to the given id and whether it's an upvote/downvote
-            var vote = await _dynamoDbContext.LoadAsync<Vote>(scanConditions, _config);
-
-            return vote;
+            var vote = await _dynamoDbContext.ScanAsync<Vote>(scanConditions, _config).GetRemainingAsync();
+            if (vote.Count == 1)
+            {
+                return vote.First();
+            }
+            else
+            {
+                Console.WriteLine("Retrieved too many votes, something went wrong!");
+                return null;
+            }
         }
         catch (Exception e)
         {

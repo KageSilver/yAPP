@@ -20,14 +20,16 @@ public class PostController : ControllerBase
     private readonly IDynamoDBContext _dbContext;
     private readonly ICognitoActions _cognitoActions;
     private readonly IPostActions _postActions;
+    private readonly IVoteActions _voteActions;
 
     public PostController(IAppSettings appSettings, ICognitoActions cognitoActions, 
-                          IDynamoDBContext dbContext, IPostActions postActions)
+                          IDynamoDBContext dbContext, IPostActions postActions, IVoteActions voteActions)
     {
         _appSettings = appSettings;
         _cognitoActions = cognitoActions;
         _dbContext = dbContext;
         _postActions = postActions;
+        _voteActions = voteActions;
     }
     
     // POST: api/posts/createPost with body { "uid": "uid", "postTitle": "title", "postBody": "body", "diaryEntry": false, "anonymous": false }
@@ -208,6 +210,7 @@ public class PostController : ControllerBase
         }
 
         var deleted = await _postActions.DeletePost(pid);
+        await _voteActions.DeleteVotes(pid);
 
         return deleted;
     }
