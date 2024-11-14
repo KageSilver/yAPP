@@ -190,13 +190,42 @@ public class AwardControllerTests
     [Fact]
     public async Task GetNewAwardsByUser_ShouldReturnAwardsList_WhenSuccessful()
     {
+        // Arrange
+        var award = new Award
+        {
+            AID = "1",
+            PID = "1",
+            UID = "1",
+            CreatedAt = DateTime.Now,
+            Name = "GetNewAwardsByUser_ShouldReturnAwardsList_WhenSuccessful()"
+        };
+
+        var list = new List<Award>();
+        list.Add(award);
+
+        _mockAwardActions.Setup(a => a.GetNewAwardsByUser(It.IsAny<string>())).ReturnsAsync(list);
         
+        // Act
+        var result = await _awardController.GetNewAwardsByUser(award.UID);
+
+        // Assert
+        var returnedList = Assert.IsType<List<Award>>(result.Value);
+        Assert.Equal(1, returnedList.Count);
+        Assert.Equal(award.PID, returnedList.First().PID);
+        Assert.Equal(award.UID, returnedList.First().UID);
+        Assert.Equal(award.AID, returnedList.First().AID);
+        Assert.Equal(award.Name, returnedList.First().Name);
     }
     
     [Fact]
     public async Task GetNewAwardsByUser_ShouldReturnBadRequest_WithInvalidUID()
     {
-        
+        // Act
+        var result = await _awardController.GetNewAwardsByUser(null);
+
+        // Assert
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+        Assert.Equal("uid is required", badRequestResult.Value);
     }
 
     #endregion
