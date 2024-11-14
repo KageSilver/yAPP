@@ -28,6 +28,7 @@ public class PostControllerTests
     private readonly Mock<IPostActions> _mockPostActions;
     private readonly Mock<IAmazonCognitoIdentityProvider> _cognitoClientMock;
     private readonly CognitoActions _cognitoActions;
+    private readonly Mock<IVoteActions> _mockVoteActions;
 
     public PostControllerTests()
     {
@@ -36,7 +37,7 @@ public class PostControllerTests
         _mockCognitoActions = new Mock<ICognitoActions>();
         _mockPostActions = new Mock<IPostActions>();
         _postController = new PostController(_mockAppSettings.Object, _mockCognitoActions.Object,
-            _dynamoDbContextMock.Object, _mockPostActions.Object);
+            _dynamoDbContextMock.Object, _mockPostActions.Object, _mockVoteActions.Object);
     }
 
     #region CreatePost Tests
