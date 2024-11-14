@@ -58,5 +58,65 @@
                 "tierNum": 3
             }
         ]
+    },
+    {
+        "type": "posts",
+        "tiers": [
+            {
+                "name": "posts tier 1",
+                "minimum": 1,
+                "tierNum": 1
+            },
+            {
+                "name": "posts tier 2",
+                "minimum": 5,
+                "tierNum": 2
+            },
+            {
+                "name": "posts tier 3",
+                "minimum": 10,
+                "tierNum": 3
+            },
+            {
+                "name": "posts tier 4",
+                "minimum": 25,
+                "tierNum": 4
+            },
+            {
+                "name": "posts tier 5",
+                "minimum": 50,
+                "tierNum": 5
+            }
+        ]
+    },
+    {
+        "type": "friends",
+        "tiers": [
+            {
+                "name": "friends tier 1",
+                "minimum": 1,
+                "tierNum": 1
+            },
+            {
+                "name": "friends tier 2",
+                "minimum": 5,
+                "tierNum": 2
+            },
+            {
+                "name": "friends tier 3",
+                "minimum": 10,
+                "tierNum": 3
+            },
+            {
+                "name": "friends tier 4",
+                "minimum": 15,
+                "tierNum": 4
+            },
+            {
+                "name": "friends tier 5",
+                "minimum": 20,
+                "tierNum": 5
+            }
+        ]
     }
 ]
