@@ -49,6 +49,44 @@ public class FriendControllerTests
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
         Assert.Equal("Request body is required and must contain the sender AND receiver's usernames", badRequestResult.Value);
     }
+    
+    [Fact]
+    public async Task SendFriendRequest_ShouldReturnBadRequest_WhenFriendshipAlreadyExists()
+    {
+        // Arrange
+        var request = new FriendRequest
+        {
+            FromUserName = "user1@example.com",
+            ToUserName = "user2@example.com"
+        };
+        var friend = new User
+        {
+            UserName = "user2@example.com"
+        };
+        var friendship = new Friendship
+        {
+            FromUserName = request.FromUserName,
+            ToUserName = request.ToUserName,
+            Status = FriendshipStatus.Pending
+        };
+
+        // Mock GetUserById to return a valid user
+        _mockCognitoActions
+            .Setup(c => c.GetUser(request.ToUserName))
+            .ReturnsAsync(friend);
+        
+        // Mock GetFriendship to return existing friendship
+        _mockFriendshipActions
+            .Setup(f => f.GetFriendship(It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync((ActionResult<Friendship>)friendship);
+        
+        // Act
+        var result = await _friendController.SendFriendRequest(request);
+
+        // Assert
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+        Assert.Equal("Friendship already exists", badRequestResult.Value);
+    }
 
     [Fact]
     public async Task SendFriendRequest_ShouldReturnNotFound_WhenFriendIsNotFound()
@@ -438,7 +476,7 @@ public class FriendControllerTests
     public async Task DeleteFriendship_ShouldReturnTrue_WhenSuccessful()
     {
         // Arrange
-        var existingFriendship = new Friendship
+        var friendship = new Friendship
         {
             FromUserName = "user1@example.com",
             ToUserName = "user2@example.com",
@@ -446,14 +484,18 @@ public class FriendControllerTests
         };
         
         _mockFriendshipActions
-            .Setup(s => s.DeleteFriendship(existingFriendship.FromUserName, existingFriendship.ToUserName))
+            .Setup(s => s.GetFriendship(It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync((ActionResult<Friendship>)friendship);
+        
+        _mockFriendshipActions
+            .Setup(s => s.DeleteFriendship(It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(true);
         
         // Act
-        var result = await _friendController.DeleteFriendship(existingFriendship.FromUserName, existingFriendship.ToUserName);
+        var result = await _friendController.DeleteFriendship("testing", "testing");
         
         // Assert
-        Assert.False(result.Value);
+        Assert.True(result.Value);
     }
 
     #endregion
