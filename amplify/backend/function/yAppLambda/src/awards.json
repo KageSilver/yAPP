@@ -4,18 +4,23 @@
         "tiers": [
             {
                 "name": "comment tier 1",
-                "minimum": 10,
+                "minimum": 1,
                 "tierNum": 1
             },
             {
                 "name": "comment tier 2",
-                "minimum": 20,
+                "minimum": 10,
                 "tierNum": 2
             },
             {
                 "name": "comment tier 3",
-                "minimum": 30,
+                "minimum": 20,
                 "tierNum": 3
+            },
+            {
+                "name": "comment tier 4",
+                "minimum": 30,
+                "tierNum": 4
             }
         ]
     },
