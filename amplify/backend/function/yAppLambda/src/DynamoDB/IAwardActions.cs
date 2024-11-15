@@ -39,20 +39,13 @@ public interface IAwardActions
     /// <param name="pid">The post on which the awards were earned to be deleted.</param>
     /// <returns>A boolean indicating whether the deletion was successful.</returns>
     Task<bool> DeleteAwardsByPost(string pid);
-    
+
     /// <summary>
     /// Deletes an award from the database by an award id
     /// </summary>
     /// <param name="aid">The id of the award to be deleted.</param>
     /// <returns>A boolean indicating whether the deletion was successful.</returns>
     Task<bool> DeleteAward(string aid);
-    
-    /// <summary>
-    /// Gets new awards a user has earned
-    /// </summary>
-    /// <param name="uid">The user who earned the awards being fetched.</param>
-    /// <returns>A list of new awards earned by the user.</returns>
-    Task<List<Award>> GetNewAwardsByUser(string uid);
 
     /// <summary>
     /// Checks a list of posts for awards
@@ -65,6 +58,15 @@ public interface IAwardActions
     /// Checks number of posts a user has made for awards
     /// </summary>
     /// <param name="posts">The list of posts to check for awards.</param>
+    /// <param name="uid">The user id of the user to check for awards.</param>
     /// <returns>A list of awards earned on the number of posts made.</returns>
     Task<List<Award>> CheckNewAwardsTotalPosts(List<Post> posts, string uid);
+
+    /// <summary>
+    /// Checks number of friends a user has made for awards
+    /// </summary>
+    /// <param name="friends">The list of friends to check for awards.</param>
+    /// <param name="uid">The user id of the user to check for awards.</param>
+    /// <returns>A list of awards earned on the number of friends made.</returns>
+    Task<List<Award>> CheckNewAwardsFriends(List<Friendship>friends, string uid);
 }

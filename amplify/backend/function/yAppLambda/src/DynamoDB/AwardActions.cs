@@ -16,8 +16,6 @@ public class AwardActions : IAwardActions
     private readonly IDynamoDBContext _dynamoDbContext;
     private readonly DynamoDBOperationConfig _config;
     private readonly ICommentActions _commentActions;
-    private readonly IPostActions _postActions;
-    private readonly IFriendshipActions _friendshipActions;
     private readonly List<AwardType> awardTypes;
 
     public AwardActions(IAppSettings appSettings, IDynamoDBContext dynamoDbContext)
@@ -37,8 +35,6 @@ public class AwardActions : IAwardActions
         awardTypes = JsonConvert.DeserializeObject<List<AwardType>>(File.ReadAllText(@"awards.json"));
 
         _commentActions = new CommentActions(appSettings, dynamoDbContext);
-        _postActions = new PostActions(appSettings, dynamoDbContext);
-        _friendshipActions = new FriendshipActions(appSettings, dynamoDbContext);
     }
 
     /// <summary>
@@ -218,22 +214,6 @@ public class AwardActions : IAwardActions
     }
 
     /// <summary>
-    /// Gets new awards a user has earned
-    /// </summary>
-    /// <param name="uid">The user who earned the awards being fetched.</param>
-    /// <returns>A list of new awards earned by the user.</returns>
-    public async Task<List<Award>> GetNewAwardsByUser(string uid)
-    {
-        var newAwards = new List<Award>();
-        var userPosts = await _postActions.GetPostsByUser(uid);
-        
-        newAwards.AddRange(await CheckNewAwardsPerPost(userPosts));
-        newAwards.AddRange(await CheckNewAwardsTotalPosts(userPosts, uid));
-        
-        return newAwards;
-    }
-
-    /// <summary>
     /// Checks a list of posts for awards
     /// </summary>
     /// <param name="posts">The list of posts to check for awards.</param>
@@ -249,11 +229,23 @@ public class AwardActions : IAwardActions
                 var awards = await GetAwardsByPost(post.PID);
 
                 var comments = await _commentActions.GetCommentsByPid(post.PID);
-                list.AddRange((await CheckAwardType(post, awards, awardTypes.Where(a => a.Type.Equals("comment")).First(), comments.Count)));
+                var commentAwards = await CheckAwardType(post, awards, awardTypes.Where(a => a.Type.Equals("comment")).First(), comments.Count);
+                if (commentAwards.Count > 0)
+                {
+                    list.AddRange(commentAwards);
+                }
                 
-                list.AddRange((await CheckAwardType(post, awards, awardTypes.Where(a => a.Type.Equals("upvote")).First(), post.Upvotes)));
-                
-                list.AddRange((await CheckAwardType(post, awards, awardTypes.Where(a => a.Type.Equals("downvote")).First(), post.Downvotes)));
+                var upvoteAwards = await CheckAwardType(post, awards, awardTypes.Where(a => a.Type.Equals("upvote")).First(), post.Upvotes);
+                if (upvoteAwards.Count > 0)
+                {
+                    list.AddRange((upvoteAwards));
+                }
+
+                var downvoteAwards = await CheckAwardType(post, awards, awardTypes.Where(a => a.Type.Equals("downvote")).First(), post.Downvotes);
+                if (downvoteAwards.Count > 0)
+                {
+                    list.AddRange((downvoteAwards));
+                }
             }
             catch (Exception e)
             {
@@ -268,15 +260,32 @@ public class AwardActions : IAwardActions
     /// Checks number of posts a user has made for awards
     /// </summary>
     /// <param name="posts">The list of posts to check for awards.</param>
+    /// <param name="uid">The user id of the user to check for awards.</param>
     /// <returns>A list of awards earned on the number of posts made.</returns>
     public async Task<List<Award>> CheckNewAwardsTotalPosts(List<Post> posts, string uid)
     {
         var post = new Post();
         post.PID = "NA";
         post.UID = uid;
-        var awards = await GetAwardsByPost(post.PID);
+        var awards = await GetAwardsByUser(post.UID);
         
-        return await CheckAwardType(post, awards, awardTypes.Where(a => a.Type.Equals("posts")).First(), posts.Count());
+        return await CheckAwardType(post, awards, awardTypes.Where(a => a.Type.Equals("posts")).First(), posts.Count);
+    }
+    
+    /// <summary>
+    /// Checks number of friends a user has made for awards
+    /// </summary>
+    /// <param name="friends">The list of friends to check for awards.</param>
+    /// <param name="uid">The user id of the user to check for awards.</param>
+    /// <returns>A list of awards earned on the number of friends made.</returns>
+    public async Task<List<Award>> CheckNewAwardsFriends(List<Friendship> friends, string uid)
+    {
+        var post = new Post();
+        post.PID = "NA";
+        post.UID = uid;
+        var awards = await GetAwardsByUser(post.UID);
+        
+        return await CheckAwardType(post, awards, awardTypes.Where(a => a.Type.Equals("friends")).First(), friends.Count);
     }
 
     /// <summary>
@@ -290,7 +299,12 @@ public class AwardActions : IAwardActions
     private async Task<List<Award>> CheckAwardType(Post post, List<Award> awards, AwardType type, int count)
     {
         var list = new List<Award>();
-        var theseAwards = awards.Where(a => a.Type.Equals(type.Type));
+        var theseAwards = Enumerable.Empty<Award>();
+
+        if (awards != null && awards.Count > 0)
+        {
+            theseAwards = awards.Where(a => a.Type.Equals(type.Type));
+        }
         
         foreach (AwardTier tier in type.Tiers)
         {
@@ -307,8 +321,18 @@ public class AwardActions : IAwardActions
                     Type = type.Type,
                     Tier = tier.TierNum
                 };
+                
+                var result = await CreateAward(award);
 
-                list.Add((await CreateAward(award)).Value);
+                try
+                {
+                    var actionResult = (OkObjectResult)result.Result;
+                    list.Add((Award)actionResult.Value);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Award creation failed: " + e.Message);
+                }
             }
         }
 
