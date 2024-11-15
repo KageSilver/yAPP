@@ -221,23 +221,9 @@ public class AwardActions : IAwardActions
                 var awards = await GetAwardsByPost(post.PID);
 
                 var comments = await _commentActions.GetCommentsByPid(post.PID);
-                var commentAwards = await CheckAwardType(post, awards, awardTypes.Where(a => a.Type.Equals("comment")).First(), comments.Count);
-                if (commentAwards.Count > 0)
-                {
-                    list.AddRange(commentAwards);
-                }
-                
-                var upvoteAwards = await CheckAwardType(post, awards, awardTypes.Where(a => a.Type.Equals("upvote")).First(), post.Upvotes);
-                if (upvoteAwards.Count > 0)
-                {
-                    list.AddRange((upvoteAwards));
-                }
-
-                var downvoteAwards = await CheckAwardType(post, awards, awardTypes.Where(a => a.Type.Equals("downvote")).First(), post.Downvotes);
-                if (downvoteAwards.Count > 0)
-                {
-                    list.AddRange((downvoteAwards));
-                }
+                list.AddRange(await CheckAwardType(post, awards, awardTypes.Where(a => a.Type.Equals("comment")).First(), comments.Count));
+                list.AddRange(await CheckAwardType(post, awards, awardTypes.Where(a => a.Type.Equals("upvote")).First(), post.Upvotes));
+                list.AddRange(await CheckAwardType(post, awards, awardTypes.Where(a => a.Type.Equals("downvote")).First(), post.Downvotes));
             }
             catch (Exception e)
             {
@@ -293,7 +279,7 @@ public class AwardActions : IAwardActions
         var list = new List<Award>();
         var theseAwards = Enumerable.Empty<Award>();
 
-        if (awards != null && awards.Count > 0)
+        if (awards.Count > 0)
         {
             theseAwards = awards.Where(a => a.Type.Equals(type.Type));
         }
@@ -301,7 +287,7 @@ public class AwardActions : IAwardActions
         foreach (AwardTier tier in type.Tiers)
         {
             // check if user has already received this tier of the award on this post
-            bool doesntExist = theseAwards.Count() == 0 || theseAwards.Where(c => c.Tier == tier.TierNum) == null;
+            bool doesntExist = theseAwards.Count() == 0 || theseAwards.Where(c => c.Tier == tier.TierNum).ToList().Count == 0;
 
             if (doesntExist && count >= tier.Minimum)
             {

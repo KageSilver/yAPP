@@ -454,7 +454,7 @@ public class AwardActionsTests
 
     #endregion
     
-    #region CheckNewAwardsPerPost Tests
+    #region CheckNewAwardsPerPost - Upvote Tests
 
     [Fact]
     public async Task CheckNewAwardsPerPost_ShouldCreateUpvoteAward_WhenNewUpvoteAwardIsAchieved()
@@ -523,7 +523,167 @@ public class AwardActionsTests
         _dynamoDbContextMock.Verify(
             d => d.SaveAsync(It.IsAny<Award>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Once);
     }
+    
+    [Fact]
+    public async Task CheckNewAwardsPerPost_ShouldCreateAllUpvoteAwards_WhenAllUpvoteAwardsAreAchieved()
+    {
+        // Arrange
+        var now = DateTime.Now;
+        var tiers = awardTypes.Where(a => a.Type.Equals("upvote")).First().Tiers;
+        var post = new Post
+        {
+            PID = "11111",
+            CreatedAt = now,
+            UpdatedAt = now,
+            UID = "uid",
+            PostTitle = "CheckNewAwardsPerPost_ShouldCreateAllUpvoteAwards_WhenAllUpvoteAwardsAreAchieved()",
+            PostBody = "body",
+            Upvotes = tiers.Where(t => t.TierNum == tiers.Count).First().Minimum,
+            Downvotes = 0,
+            DiaryEntry = false,
+            Anonymous = true
+        };
+        
+        var award = new Award()
+        {
+            AID = "1",
+            PID = post.PID,
+            UID = post.UID,
+            Name = "upvote tier 1",
+            Type = "upvote",
+            Tier = 1,
+            CreatedAt = now
+        };
 
+        var postList = new List<Post>();
+        postList.Add(post);
+        
+        var awardList = new List<Award>();
+        awardList.Add(award);
+        
+        // Sets up LoadAsync to return the request award (for in GetAwardById)
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Award>(It.IsAny<string>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(award);
+        
+        // Mock the AsyncSearch<Award> returned by QueryAsync
+        var queryFromSearchMock1 = new Mock<AsyncSearch<Award>>();
+        queryFromSearchMock1.Setup(q => q.GetNextSetAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(awardList);
+        
+        // Sets up FromQueryAsync to succeed
+        _dynamoDbContextMock.Setup(d => d.FromQueryAsync<Award>(It.IsAny<QueryOperationConfig>(), It.IsAny<DynamoDBOperationConfig>()))
+            .Returns(queryFromSearchMock1.Object);
+
+        // mock GetCommentsByPid
+        _appSettingsMock.Setup(a => a.CommentTableName).Returns(string.Empty);
+
+        // Mock the AsyncSearch<Comment> returned by QueryAsync
+        var queryFromSearchMock2 = new Mock<AsyncSearch<Comment>>();
+        queryFromSearchMock2.Setup(q => q.GetNextSetAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Comment>());
+
+        // Sets up FromQueryAsync to succeed
+        _dynamoDbContextMock.Setup(d => d.FromQueryAsync<Comment>(It.IsAny<QueryOperationConfig>(), It.IsAny<DynamoDBOperationConfig>()))
+            .Returns(queryFromSearchMock2.Object);
+        
+        // Setup SaveAsync to succeed
+        _dynamoDbContextMock.Setup(d => d.SaveAsync(It.IsAny<Award>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+        
+        // Act
+        var result = await _awardActionsMock.CheckNewAwardsPerPost(postList);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.NotEmpty(result);
+        Assert.Equal((tiers.Count - 1), result.Count);
+        
+        // Verify the SaveAsync was called once with the correct parameters
+        _dynamoDbContextMock.Verify(
+            d => d.SaveAsync(It.IsAny<Award>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Exactly((tiers.Count - 1)));
+    }
+    
+    [Fact]
+    public async Task CheckNewAwardsPerPost_ShouldNotCreateUpvoteAward_WhenAwardAlreadyExists()
+    {
+        // Arrange
+        var now = DateTime.Now;
+        var post = new Post
+        {
+            PID = "11111",
+            CreatedAt = now,
+            UpdatedAt = now,
+            UID = "uid",
+            PostTitle = "CheckNewAwardsPerPost_ShouldNotCreateUpvoteAward_WhenAwardAlreadyExists()",
+            PostBody = "body",
+            Upvotes = awardTypes.Where(a => a.Type.Equals("upvote")).First().Tiers.Where(t => t.TierNum == 1).First().Minimum,
+            Downvotes = 0,
+            DiaryEntry = false,
+            Anonymous = true
+        };
+        
+        var award = new Award()
+        {
+            AID = "1",
+            PID = post.PID,
+            UID = post.UID,
+            Name = "upvote tier 1",
+            Type = "upvote",
+            Tier = 1,
+            CreatedAt = now
+        };
+
+        var postList = new List<Post>();
+        postList.Add(post);
+        
+        var awardList = new List<Award>();
+        awardList.Add(award);
+        
+        // Sets up LoadAsync to return the request award (for in GetAwardById)
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Award>(It.IsAny<string>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(award);
+        
+        // Mock the AsyncSearch<Award> returned by QueryAsync
+        var queryFromSearchMock1 = new Mock<AsyncSearch<Award>>();
+        queryFromSearchMock1.Setup(q => q.GetNextSetAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(awardList);
+        
+        // Sets up FromQueryAsync to succeed
+        _dynamoDbContextMock.Setup(d => d.FromQueryAsync<Award>(It.IsAny<QueryOperationConfig>(), It.IsAny<DynamoDBOperationConfig>()))
+            .Returns(queryFromSearchMock1.Object);
+
+        // mock GetCommentsByPid
+        _appSettingsMock.Setup(a => a.CommentTableName).Returns(string.Empty);
+
+        // Mock the AsyncSearch<Comment> returned by QueryAsync
+        var queryFromSearchMock2 = new Mock<AsyncSearch<Comment>>();
+        queryFromSearchMock2.Setup(q => q.GetNextSetAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Comment>());
+
+        // Sets up FromQueryAsync to succeed
+        _dynamoDbContextMock.Setup(d => d.FromQueryAsync<Comment>(It.IsAny<QueryOperationConfig>(), It.IsAny<DynamoDBOperationConfig>()))
+            .Returns(queryFromSearchMock2.Object);
+        
+        // Setup SaveAsync to succeed
+        _dynamoDbContextMock.Setup(d => d.SaveAsync(It.IsAny<Award>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+        
+        // Act
+        var result = await _awardActionsMock.CheckNewAwardsPerPost(new List<Post>());
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result);
+        
+        // Verify the SaveAsync was never called
+        _dynamoDbContextMock.Verify(
+            d => d.SaveAsync(It.IsAny<Award>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+    
+    #endregion
+
+    #region CheckNewAwardsPerPost - Downvote Tests
+    
     [Fact]
     public async Task CheckNewAwardsPerPost_ShouldCreateDownvoteAward_WhenNewDownvoteAwardIsAchieved()
     {
@@ -591,6 +751,166 @@ public class AwardActionsTests
         _dynamoDbContextMock.Verify(
             d => d.SaveAsync(It.IsAny<Award>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Once);
     }
+    
+    [Fact]
+    public async Task CheckNewAwardsPerPost_ShouldCreateAllDownvoteAwards_WhenAllDownvoteAwardsAreAchieved()
+    {
+        // Arrange
+        var now = DateTime.Now;
+        var tiers = awardTypes.Where(a => a.Type.Equals("downvote")).First().Tiers;
+        var post = new Post
+        {
+            PID = "11111",
+            CreatedAt = now,
+            UpdatedAt = now,
+            UID = "uid",
+            PostTitle = "CheckNewAwardsPerPost_ShouldCreateAllDownvoteAwards_WhenAllDownvoteAwardsAreAchieved()",
+            PostBody = "body",
+            Upvotes = 0,
+            Downvotes = tiers.Where(t => t.TierNum == tiers.Count).First().Minimum,
+            DiaryEntry = false,
+            Anonymous = true
+        };
+        
+        var award = new Award()
+        {
+            AID = "1",
+            PID = post.PID,
+            UID = post.UID,
+            Name = "downvote tier 1",
+            Type = "downvote",
+            Tier = 1,
+            CreatedAt = now
+        };
+
+        var postList = new List<Post>();
+        postList.Add(post);
+        
+        var awardList = new List<Award>();
+        awardList.Add(award);
+        
+        // Sets up LoadAsync to return the request award (for in GetAwardById)
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Award>(It.IsAny<string>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(award);
+        
+        // Mock the AsyncSearch<Award> returned by QueryAsync
+        var queryFromSearchMock1 = new Mock<AsyncSearch<Award>>();
+        queryFromSearchMock1.Setup(q => q.GetNextSetAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(awardList);
+        
+        // Sets up FromQueryAsync to succeed
+        _dynamoDbContextMock.Setup(d => d.FromQueryAsync<Award>(It.IsAny<QueryOperationConfig>(), It.IsAny<DynamoDBOperationConfig>()))
+            .Returns(queryFromSearchMock1.Object);
+
+        // mock GetCommentsByPid
+        _appSettingsMock.Setup(a => a.CommentTableName).Returns(string.Empty);
+
+        // Mock the AsyncSearch<Comment> returned by QueryAsync
+        var queryFromSearchMock2 = new Mock<AsyncSearch<Comment>>();
+        queryFromSearchMock2.Setup(q => q.GetNextSetAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Comment>());
+
+        // Sets up FromQueryAsync to succeed
+        _dynamoDbContextMock.Setup(d => d.FromQueryAsync<Comment>(It.IsAny<QueryOperationConfig>(), It.IsAny<DynamoDBOperationConfig>()))
+            .Returns(queryFromSearchMock2.Object);
+        
+        // Setup SaveAsync to succeed
+        _dynamoDbContextMock.Setup(d => d.SaveAsync(It.IsAny<Award>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+        
+        // Act
+        var result = await _awardActionsMock.CheckNewAwardsPerPost(postList);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.NotEmpty(result);
+        Assert.Equal((tiers.Count - 1), result.Count);
+        
+        // Verify the SaveAsync was called once with the correct parameters
+        _dynamoDbContextMock.Verify(
+            d => d.SaveAsync(It.IsAny<Award>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Exactly((tiers.Count - 1)));
+    }
+    
+    [Fact]
+    public async Task CheckNewAwardsPerPost_ShouldNotCreateDownvoteAward_WhenAwardAlreadyExists()
+    {
+        // Arrange
+        var now = DateTime.Now;
+        var post = new Post
+        {
+            PID = "11111",
+            CreatedAt = now,
+            UpdatedAt = now,
+            UID = "uid",
+            PostTitle = "CheckNewAwardsPerPost_ShouldNotCreateDownvoteAward_WhenAwardAlreadyExists()",
+            PostBody = "body",
+            Upvotes = 0,
+            Downvotes = awardTypes.Where(a => a.Type.Equals("downvote")).First().Tiers.Where(t => t.TierNum == 1).First().Minimum,
+            DiaryEntry = false,
+            Anonymous = true
+        };
+        
+        var award = new Award()
+        {
+            AID = "1",
+            PID = post.PID,
+            UID = post.UID,
+            Name = "downvote tier 1",
+            Type = "downvote",
+            Tier = 1,
+            CreatedAt = now
+        };
+
+        var postList = new List<Post>();
+        postList.Add(post);
+        
+        var awardList = new List<Award>();
+        awardList.Add(award);
+        
+        // Sets up LoadAsync to return the request award (for in GetAwardById)
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Award>(It.IsAny<string>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(award);
+        
+        // Mock the AsyncSearch<Award> returned by QueryAsync
+        var queryFromSearchMock1 = new Mock<AsyncSearch<Award>>();
+        queryFromSearchMock1.Setup(q => q.GetNextSetAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(awardList);
+        
+        // Sets up FromQueryAsync to succeed
+        _dynamoDbContextMock.Setup(d => d.FromQueryAsync<Award>(It.IsAny<QueryOperationConfig>(), It.IsAny<DynamoDBOperationConfig>()))
+            .Returns(queryFromSearchMock1.Object);
+
+        // mock GetCommentsByPid
+        _appSettingsMock.Setup(a => a.CommentTableName).Returns(string.Empty);
+
+        // Mock the AsyncSearch<Comment> returned by QueryAsync
+        var queryFromSearchMock2 = new Mock<AsyncSearch<Comment>>();
+        queryFromSearchMock2.Setup(q => q.GetNextSetAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Comment>());
+
+        // Sets up FromQueryAsync to succeed
+        _dynamoDbContextMock.Setup(d => d.FromQueryAsync<Comment>(It.IsAny<QueryOperationConfig>(), It.IsAny<DynamoDBOperationConfig>()))
+            .Returns(queryFromSearchMock2.Object);
+        
+        // Setup SaveAsync to succeed
+        _dynamoDbContextMock.Setup(d => d.SaveAsync(It.IsAny<Award>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+        
+        // Act
+        var result = await _awardActionsMock.CheckNewAwardsPerPost(new List<Post>());
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result);
+        
+        // Verify the SaveAsync was never called
+        _dynamoDbContextMock.Verify(
+            d => d.SaveAsync(It.IsAny<Award>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+    
+    #endregion
+    
+    #region CheckNewAwardsByUser - Comment Tests
     
     [Fact]
     public async Task CheckNewAwardsPerPost_ShouldCreateCommentAward_WhenNewCommentAwardIsAchieved()
@@ -674,9 +994,9 @@ public class AwardActionsTests
         _dynamoDbContextMock.Verify(
             d => d.SaveAsync(It.IsAny<Award>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Once);
     }
-
+    
     [Fact]
-    public async Task CheckNewAwardsPerPost_ShouldNotCreateUpvoteAward_WhenAwardAlreadyExists()
+    public async Task CheckNewAwardsPerPost_ShouldCreateAllCommentAwards_WhenAllCommentAwardsAreAchieved()
     {
         // Arrange
         var now = DateTime.Now;
@@ -686,85 +1006,24 @@ public class AwardActionsTests
             CreatedAt = now,
             UpdatedAt = now,
             UID = "uid",
-            PostTitle = "CheckNewAwardsPerPost_ShouldNotCreateUpvoteAward_WhenAwardAlreadyExists()",
+            PostTitle = "CheckNewAwardsPerPost_ShouldCreateAllCommentAwards_WhenAllCommentAwardsAreAchieved()",
             PostBody = "body",
-            Upvotes = awardTypes.Where(a => a.Type.Equals("upvote")).First().Tiers.Where(t => t.TierNum == 1).First().Minimum,
+            Upvotes = 0,
             Downvotes = 0,
             DiaryEntry = false,
             Anonymous = true
         };
-        
-        var award = new Award()
+
+        var comment = new Comment()
         {
-            AID = "1",
-            PID = post.PID,
+            CID = "1",
             UID = post.UID,
-            Name = "upvote tier 1",
-            Type = "upvote",
-            Tier = 1,
-            CreatedAt = now
-        };
-
-        var postList = new List<Post>();
-        postList.Add(post);
-        
-        var awardList = new List<Award>();
-        awardList.Add(award);
-        
-        // Mock the AsyncSearch<Award> returned by QueryAsync
-        var queryFromSearchMock1 = new Mock<AsyncSearch<Award>>();
-        queryFromSearchMock1.Setup(q => q.GetNextSetAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(awardList);
-        
-        // Sets up FromQueryAsync to succeed
-        _dynamoDbContextMock.Setup(d => d.FromQueryAsync<Award>(It.IsAny<QueryOperationConfig>(), It.IsAny<DynamoDBOperationConfig>()))
-            .Returns(queryFromSearchMock1.Object);
-
-        // mock GetCommentsByPid
-        _appSettingsMock.Setup(a => a.CommentTableName).Returns(string.Empty);
-
-        // Mock the AsyncSearch<Comment> returned by QueryAsync
-        var queryFromSearchMock2 = new Mock<AsyncSearch<Comment>>();
-        queryFromSearchMock2.Setup(q => q.GetNextSetAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<Comment>());
-
-        // Sets up FromQueryAsync to succeed
-        _dynamoDbContextMock.Setup(d => d.FromQueryAsync<Comment>(It.IsAny<QueryOperationConfig>(), It.IsAny<DynamoDBOperationConfig>()))
-            .Returns(queryFromSearchMock2.Object);
-        
-        // Setup SaveAsync to succeed
-        _dynamoDbContextMock.Setup(d => d.SaveAsync(It.IsAny<Award>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
-            .Returns(Task.CompletedTask);
-        
-        // Act
-        var result = await _awardActionsMock.CheckNewAwardsPerPost(new List<Post>());
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Empty(result);
-        
-        // Verify the SaveAsync was never called
-        _dynamoDbContextMock.Verify(
-            d => d.SaveAsync(It.IsAny<Award>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Never);
-    }
-    
-    [Fact]
-    public async Task CheckNewAwardsPerPost_ShouldNotCreateDownvoteAward_WhenAwardAlreadyExists()
-    {
-        // Arrange
-        var now = DateTime.Now;
-        var post = new Post
-        {
-            PID = "11111",
+            PID = post.PID,
+            CommentBody = "CheckNewAwardsPerPost_ShouldCreateAllCommentAwards_WhenAllCommentAwardsAreAchieved()",
             CreatedAt = now,
             UpdatedAt = now,
-            UID = "uid",
-            PostTitle = "CheckNewAwardsPerPost_ShouldNotCreateDownvoteAward_WhenAwardAlreadyExists()",
-            PostBody = "body",
             Upvotes = 0,
-            Downvotes = awardTypes.Where(a => a.Type.Equals("downvote")).First().Tiers.Where(t => t.TierNum == 1).First().Minimum,
-            DiaryEntry = false,
-            Anonymous = true
+            Downvotes = 0
         };
         
         var award = new Award()
@@ -772,8 +1031,8 @@ public class AwardActionsTests
             AID = "1",
             PID = post.PID,
             UID = post.UID,
-            Name = "downvote tier 1",
-            Type = "downvote",
+            Name = "comment tier 1",
+            Type = "comment",
             Tier = 1,
             CreatedAt = now
         };
@@ -783,6 +1042,14 @@ public class AwardActionsTests
         
         var awardList = new List<Award>();
         awardList.Add(award);
+
+        var commentList = new List<Comment>();
+        var tiers = awardTypes.Where(a => a.Type.Equals("comment")).First().Tiers;
+        commentList.AddRange(Enumerable.Repeat(comment, tiers.Where(t => t.TierNum == tiers.Count).First().Minimum));
+        
+        // Sets up LoadAsync to return the request award (for in GetAwardById)
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Award>(It.IsAny<string>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(award);
         
         // Mock the AsyncSearch<Award> returned by QueryAsync
         var queryFromSearchMock1 = new Mock<AsyncSearch<Award>>();
@@ -799,7 +1066,7 @@ public class AwardActionsTests
         // Mock the AsyncSearch<Comment> returned by QueryAsync
         var queryFromSearchMock2 = new Mock<AsyncSearch<Comment>>();
         queryFromSearchMock2.Setup(q => q.GetNextSetAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<Comment>());
+            .ReturnsAsync(commentList);
 
         // Sets up FromQueryAsync to succeed
         _dynamoDbContextMock.Setup(d => d.FromQueryAsync<Comment>(It.IsAny<QueryOperationConfig>(), It.IsAny<DynamoDBOperationConfig>()))
@@ -810,15 +1077,16 @@ public class AwardActionsTests
             .Returns(Task.CompletedTask);
         
         // Act
-        var result = await _awardActionsMock.CheckNewAwardsPerPost(new List<Post>());
+        var result = await _awardActionsMock.CheckNewAwardsPerPost(postList);
 
         // Assert
         Assert.NotNull(result);
-        Assert.Empty(result);
+        Assert.NotEmpty(result);
+        Assert.Equal((tiers.Count - 1), result.Count);
         
-        // Verify the SaveAsync was never called
+        // Verify the SaveAsync was called once with the correct parameters
         _dynamoDbContextMock.Verify(
-            d => d.SaveAsync(It.IsAny<Award>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Never);
+            d => d.SaveAsync(It.IsAny<Award>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Exactly((tiers.Count - 1)));
     }
     
     [Fact]
@@ -872,6 +1140,10 @@ public class AwardActionsTests
         var commentList = new List<Comment>();
         commentList.AddRange(Enumerable.Repeat(comment, awardTypes.Where(a => a.Type.Equals("comment")).First().Tiers.Where(t => t.TierNum == 1).First().Minimum));
         
+        // Sets up LoadAsync to return the request award (for in GetAwardById)
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Award>(It.IsAny<string>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(award);
+        
         // Mock the AsyncSearch<Award> returned by QueryAsync
         var queryFromSearchMock1 = new Mock<AsyncSearch<Award>>();
         queryFromSearchMock1.Setup(q => q.GetNextSetAsync(It.IsAny<CancellationToken>()))
@@ -908,6 +1180,10 @@ public class AwardActionsTests
         _dynamoDbContextMock.Verify(
             d => d.SaveAsync(It.IsAny<Award>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Never);
     }
+    
+    #endregion
+    
+    #region CheckNewAwardsByUser Tests
 
     [Fact]
     public async Task CheckNewAwardsPerPost_ShouldNotCreateAward_WithEmptyPostList()
@@ -1067,6 +1343,72 @@ public class AwardActionsTests
         // Verify the SaveAsync was called once with the correct parameters
         _dynamoDbContextMock.Verify(
             d => d.SaveAsync(It.IsAny<Award>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+    
+    [Fact]
+    public async Task CheckNewAwardsTotalPosts_ShouldCreateAllPostsAwards_WhenAllPostsAwardsAreAchieved()
+    {
+        // Arrange
+        var now = DateTime.Now;
+        var post = new Post
+        {
+            PID = "11111",
+            CreatedAt = now,
+            UpdatedAt = now,
+            UID = "uid",
+            PostTitle = "CheckNewAwardsTotalPosts_ShouldCreateAllPostsAwards_WhenAllPostsAwardsAreAchieved()",
+            PostBody = "body",
+            Upvotes = 0,
+            Downvotes = 0,
+            DiaryEntry = false,
+            Anonymous = true
+        };
+        
+        var award = new Award()
+        {
+            AID = "1",
+            PID = post.PID,
+            UID = post.UID,
+            Name = "posts tier 1",
+            Type = "posts",
+            Tier = 1,
+            CreatedAt = now
+        };
+        
+        var awardList = new List<Award>();
+        awardList.Add(award);
+        
+        var postList = new List<Post>();
+        var tiers = awardTypes.Where(a => a.Type.Equals("posts")).First().Tiers;
+        postList.AddRange(Enumerable.Repeat(post, tiers.Where(t => t.TierNum == tiers.Count).First().Minimum));
+        
+        // Sets up LoadAsync to return the request award (for in GetAwardById)
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Award>(It.IsAny<string>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(award);
+        
+        // Mock the AsyncSearch<Post> returned by ScanAsync
+        var scanToSearchMock = new Mock<AsyncSearch<Award>>();
+        scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(awardList);
+            
+        _dynamoDbContextMock.Setup(d => d.ScanAsync<Award>(It.IsAny<List<ScanCondition>>(), It.IsAny<DynamoDBOperationConfig>()))
+            .Returns(scanToSearchMock.Object);
+        
+        // Setup SaveAsync to succeed
+        _dynamoDbContextMock.Setup(d => d.SaveAsync(It.IsAny<Award>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+        
+        // Act
+        var result = await _awardActionsMock.CheckNewAwardsTotalPosts(postList, post.UID);
+        
+        // Assert
+        Assert.NotNull(result);
+        Assert.NotEmpty(result);
+        Assert.Equal((tiers.Count - 1), result.Count);
+        
+        // Verify the SaveAsync was called once with the correct parameters
+        _dynamoDbContextMock.Verify(
+            d => d.SaveAsync(It.IsAny<Award>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Exactly((tiers.Count - 1)));
     }
     
     [Fact]
@@ -1255,6 +1597,64 @@ public class AwardActionsTests
         // Verify the SaveAsync was called once with the correct parameters
         _dynamoDbContextMock.Verify(
             d => d.SaveAsync(It.IsAny<Award>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+    
+    
+    [Fact]
+    public async Task CheckNewAwardsFriends_ShouldCreateAllFriendsAwards_WhenAllFriendsAwardsAreAchieved()
+    {
+        // Arrange
+        var now = DateTime.Now;
+        var friendship = new Friendship
+        {
+            FromUserName = "user1",
+            ToUserName = "user2",
+            Status = FriendshipStatus.Accepted,
+            CreatedAt = now,
+            UpdatedAt = now
+        };
+        
+        var award = new Award()
+        {
+            AID = "1",
+            PID = "NA",
+            UID = "1",
+            Name = "friends tier 1",
+            Type = "friends",
+            Tier = 1,
+            CreatedAt = now
+        };
+        
+        var awardList = new List<Award>();
+        awardList.Add(award);
+
+        var friendList = new List<Friendship>();
+        var tiers = awardTypes.Where(a => a.Type.Equals("friends")).First().Tiers;
+        friendList.AddRange(Enumerable.Repeat(friendship, tiers.Where(t => t.TierNum == tiers.Count).First().Minimum));
+        
+        // Mock the AsyncSearch<Post> returned by ScanAsync
+        var scanToSearchMock = new Mock<AsyncSearch<Award>>();
+        scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(awardList);
+            
+        _dynamoDbContextMock.Setup(d => d.ScanAsync<Award>(It.IsAny<List<ScanCondition>>(), It.IsAny<DynamoDBOperationConfig>()))
+            .Returns(scanToSearchMock.Object);
+        
+        // Setup SaveAsync to succeed
+        _dynamoDbContextMock.Setup(d => d.SaveAsync(It.IsAny<Award>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+        
+        // Act
+        var result = await _awardActionsMock.CheckNewAwardsFriends(friendList, "1");
+        
+        // Assert
+        Assert.NotNull(result);
+        Assert.NotEmpty(result);
+        Assert.Equal((tiers.Count - 1), result.Count);
+        
+        // Verify the SaveAsync was called once with the correct parameters
+        _dynamoDbContextMock.Verify(
+            d => d.SaveAsync(It.IsAny<Award>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Exactly((tiers.Count - 1)));
     }
     
     [Fact]
