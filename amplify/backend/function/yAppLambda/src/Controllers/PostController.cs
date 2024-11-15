@@ -209,8 +209,8 @@ public class PostController : ControllerBase
             return BadRequest("Post id is required");
         }
 
-        var deleted = await _postActions.DeletePost(pid);
         await _voteActions.DeleteVotes(pid);
+        var deleted = await _postActions.DeletePost(pid);
 
         return deleted;
     }

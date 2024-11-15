@@ -162,8 +162,8 @@ public class CommentController : ControllerBase
             return BadRequest("Comment ID is required");
         }
 
-        var deleted = await _commentActions.DeleteComment(cid);
         await _voteActions.DeleteVotes(cid);
+        var deleted = await _commentActions.DeleteComment(cid);
 
         return deleted;
     }

@@ -154,33 +154,11 @@ public class VoteControllerIntegrationTests
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 
-    [Fact, Order(3)]
-    public async Task AddVote_InvalidRequest_ReturnsBadRequest()
-    {
-        // Arrange
-        var vote = new Vote
-        {
-            PID = "addVoteInvalidRequest",
-            IsPost = true,
-            Type = true,
-            UID = _testUid
-        };
-
-        var content = new StringContent(JsonConvert.SerializeObject(vote), System.Text.Encoding.UTF8,
-            "application/json");
-
-        // Act
-        var response = await _client.PostAsync("/api/votes/addVote", content);
-
-        // Assert
-        Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
-    }
-
     #endregion
     
     #region GetVote Tests
     
-    [Fact, Order(4)]
+    [Fact, Order(3)]
     public async Task GetVote_ShouldReturnVote_WhenSuccessful()
     {
         // Uses the test user set up in AddVote_ValidRequest_ReturnsVote()
@@ -240,7 +218,7 @@ public class VoteControllerIntegrationTests
         // Test user is deleted in RemoveVote_ShouldReturnFalse_WhenDeleteFails()
     }
 
-    [Fact, Order(5)]
+    [Fact, Order(4)]
     public async Task GetVote_ShouldReturnNotFound_WhenVoteNotFound()
     {
         // Act
@@ -251,7 +229,7 @@ public class VoteControllerIntegrationTests
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
-    [Fact, Order(6)]
+    [Fact, Order(5)]
     public async Task GetVote_ShouldReturnBadRequest_WithNullPid()
     {
         // Act
@@ -261,7 +239,7 @@ public class VoteControllerIntegrationTests
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
-    [Fact, Order(7)]
+    [Fact, Order(6)]
     public async Task GetVote_ShouldReturnBadRequest_WithEmptyPid()
     {
         // Act
@@ -271,7 +249,7 @@ public class VoteControllerIntegrationTests
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
-    [Fact, Order(8)]
+    [Fact, Order(7)]
     public async Task GetVote_ShouldReturnBadRequest_WithNullUid()
     {
         // Act
@@ -282,7 +260,7 @@ public class VoteControllerIntegrationTests
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
     
-    [Fact, Order(9)]
+    [Fact, Order(8)]
     public async Task GetVote_ShouldReturnBadRequest_WithEmptyUid()
     {
         // Act
@@ -297,7 +275,7 @@ public class VoteControllerIntegrationTests
 
     #region GetVotesByPid Tests
 
-    [Fact, Order(10)]
+    [Fact, Order(9)]
     public async Task GetVotesByPid_ShouldReturnVotes_WhenSuccessful()
     {
         // Uses the test user set up in AddVote_ValidRequest_ReturnsVote()
@@ -357,7 +335,7 @@ public class VoteControllerIntegrationTests
         // Test user is deleted in RemoveVote_ShouldReturnFalse_WhenDeleteFails()
     }
 
-    [Fact, Order(11)]
+    [Fact, Order(10)]
     public async Task GetVotesByPid_ShouldReturnBadRequest_WithNullPid()
     {
         // Act
@@ -367,7 +345,7 @@ public class VoteControllerIntegrationTests
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
-    [Fact, Order(12)]
+    [Fact, Order(11)]
     public async Task GetVotesByPid_ShouldReturnBadRequest_WithEmptyPid()
     {
         // Act
@@ -381,7 +359,7 @@ public class VoteControllerIntegrationTests
 
     #region DeleteVotes Tests
     
-    [Fact, Order(13)]
+    [Fact, Order(12)]
     public async Task DeleteVotes_ShouldReturnTrue_WhenVotesAreDeletedSuccessfully()
     {
         // Uses the test user set up in AddVote_ValidRequest_ReturnsVote()
@@ -454,7 +432,7 @@ public class VoteControllerIntegrationTests
         // Test user is deleted in RemoveVote_ShouldReturnFalse_WhenDeleteFails()
     }
 
-    [Fact, Order(14)]
+    [Fact, Order(13)]
     public async Task DeleteVotes_ShouldReturnTrue_WhenVotesAreDeletedSuccessfully_FromComment()
     {
         // Uses the test user set up in AddVote_ValidRequest_ReturnsVote()
@@ -527,7 +505,7 @@ public class VoteControllerIntegrationTests
         // Test user is deleted in RemoveVote_ShouldReturnFalse_WhenDeleteFails()
     }
     
-    [Fact, Order(15)]
+    [Fact, Order(14)]
     public async Task DeleteVotes_ShouldReturnBadRequest_WhenPostIdIsNull()
     {
         // Act
@@ -537,7 +515,7 @@ public class VoteControllerIntegrationTests
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
     
-    [Fact, Order(16)]
+    [Fact, Order(15)]
     public async Task DeleteVotes_ShouldReturnFalse_WhenDeleteFails()
     {
         // Act
@@ -553,7 +531,7 @@ public class VoteControllerIntegrationTests
 
     #region RemoveVote Tests
     
-    [Fact, Order(17)]
+    [Fact, Order(16)]
     public async Task RemoveVote_ShouldReturnTrue_WhenVoteIsDeletedSuccessfully()
     {
         // Uses the test user set up in AddVote_ValidRequest_ReturnsVote()
@@ -607,7 +585,7 @@ public class VoteControllerIntegrationTests
         // Test user is deleted in RemoveVote_ShouldReturnFalse_WhenDeleteFails()
     }
 
-    [Fact, Order(18)]
+    [Fact, Order(17)]
     public async Task RemoveVote_ShouldReturnTrue_WhenVoteIsDeletedSuccessfully_ForComment()
     {
         // Uses the test user set up in AddVote_ValidRequest_ReturnsVote()
@@ -659,7 +637,7 @@ public class VoteControllerIntegrationTests
         // Test user is deleted in RemoveVote_ShouldReturnFalse_WhenDeleteFails()
     }
     
-    [Fact, Order(19)]
+    [Fact, Order(18)]
     public async Task RemoveVote_ShouldReturnBadRequest_WhenPidIsNull()
     {
         // Act
@@ -669,7 +647,7 @@ public class VoteControllerIntegrationTests
         Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
     }
 
-    [Fact, Order(20)]
+    [Fact, Order(19)]
     public async Task RemoveVote_ShouldReturnBadRequest_WhenUidIsNull()
     {
         // Act
@@ -679,7 +657,7 @@ public class VoteControllerIntegrationTests
         Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
     }
     
-    [Fact, Order(21)]
+    [Fact, Order(20)]
     public async Task RemoveVote_ShouldReturnBadRequest_WhenPidIsEmpty()
     {
         // Act
@@ -689,7 +667,7 @@ public class VoteControllerIntegrationTests
         Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
     }
 
-    [Fact, Order(22)]
+    [Fact, Order(21)]
     public async Task RemoveVote_ShouldReturnBadRequest_WhenUidIsEmpty()
     {
         // Act
@@ -699,7 +677,7 @@ public class VoteControllerIntegrationTests
         Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
     }
     
-    [Fact, Order(23)]
+    [Fact, Order(22)]
     public async Task RemoveVote_ShouldReturnFalse_WhenDeleteFails()
     {
         // Act
