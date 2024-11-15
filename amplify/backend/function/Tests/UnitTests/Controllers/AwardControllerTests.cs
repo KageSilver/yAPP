@@ -38,6 +38,7 @@ public class AwardControllerTests
         _mockCognitoActions = new Mock<ICognitoActions>();
         _mockAwardActions = new Mock<IAwardActions>();
         _mockPostActions = new Mock<IPostActions>();
+        _mockFriendshipActions = new Mock<IFriendshipActions>();
         _awardController = new AwardController(_mockAppSettings.Object, _mockCognitoActions.Object,
             _dynamoDbContextMock.Object, _mockAwardActions.Object, _mockPostActions.Object, _mockFriendshipActions.Object);
     }
@@ -194,23 +195,48 @@ public class AwardControllerTests
     public async Task GetNewAwardsByUser_ShouldReturnAwardsList_WhenSuccessful()
     {
         // Arrange
+        var user = new User {UserName = "user1@example.com", Id = "1" };
+        
+        var now = DateTime.Now;
+        var post = new Post
+        {
+            PID = "1",
+            UID = user.Id,
+            CreatedAt = now,
+            UpdatedAt = now,
+            PostTitle = "title",
+            PostBody = "body",
+            Upvotes = 0,
+            Downvotes = 0,
+            DiaryEntry = false,
+            Anonymous = true
+        };
         var award1 = new Award
         {
             AID = "1",
-            PID = "1",
-            UID = "1",
-            CreatedAt = DateTime.Now,
+            PID = post.PID,
+            UID = user.Id,
+            CreatedAt = now,
             Name = "GetNewAwardsByUser_ShouldReturnAwardsList_WhenSuccessful() 1"
         };
         
         var award2 = new Award
         {
-            AID = "1",
-            PID = "1",
-            UID = "1",
-            CreatedAt = DateTime.Now,
+            AID = "2",
+            PID = post.PID,
+            UID = user.Id,
+            CreatedAt = now,
             Name = "GetNewAwardsByUser_ShouldReturnAwardsList_WhenSuccessful() 2"
         };
+        var existingFriendship = new Friendship
+        {
+            FromUserName = "user1@example.com",
+            ToUserName = "user2@example.com",
+            Status = FriendshipStatus.Accepted
+        };
+
+        var friendList = new List<Friendship>();
+        friendList.Add(existingFriendship);
 
         var list1 = new List<Award>();
         list1.Add(award1);
@@ -218,8 +244,25 @@ public class AwardControllerTests
         var list2 = new List<Award>();
         list2.Add(award2);
 
+        var list = new List<Post>();
+        list.Add(post);
+
+        // Mock GetPostsByUser
+        _mockPostActions.Setup(p => p.GetPostsByUser(It.IsAny<string>())).ReturnsAsync(list);
+
+        // Mock GetUser to return the poster
+        _mockCognitoActions.Setup(c => c.GetUserById(It.IsAny<string>())).ReturnsAsync(user);
+        
+        // Mock GetAllFriends
+        _mockFriendshipActions
+            .Setup(s => s.GetAllFriends(existingFriendship.FromUserName, It.IsAny<FriendshipStatus>()))
+            .ReturnsAsync(friendList);
+        
+        // Mock award checks from award actions
         _mockAwardActions.Setup(a => a.CheckNewAwardsPerPost(It.IsAny<List<Post>>())).ReturnsAsync(list1);
         _mockAwardActions.Setup(a => a.CheckNewAwardsTotalPosts(It.IsAny<List<Post>>(), It.IsAny<string>())).ReturnsAsync(list2);
+        _mockAwardActions.Setup(a => a.CheckNewAwardsFriends(It.IsAny<List<Friendship>>(), It.IsAny<string>()))
+            .ReturnsAsync(new List<Award>());
         
         // Act
         var result = await _awardController.GetNewAwardsByUser(award1.UID);
