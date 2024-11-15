@@ -99,6 +99,14 @@ public class CalendarActivity extends AppCompatActivity
             }
         });
     }
+    
+    @Override
+    public void onRestart()
+    {
+        super.onRestart();
+        finish();
+        startActivity(getIntent());
+    }
 
     private void createDiaryFragment()
     {
