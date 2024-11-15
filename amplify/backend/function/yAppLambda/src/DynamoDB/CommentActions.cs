@@ -191,32 +191,24 @@ public class CommentActions : ICommentActions
     public async Task<bool> DeleteComments(string pid)
     {
         var result = true;
-        try
-        {
-            // Load the comments to check if the pid exists
-            var comments = await GetCommentsByPid(pid);
+        // Load the comments to check if the pid exists
+        var comments = await GetCommentsByPid(pid);
 
-            if (comments.Count == 0)
+        if (comments.Count == 0)
+        {
+            Console.WriteLine("Failed to retrieve comments");
+            result = false;
+        }
+        else
+        {
+            // Delete all comments under the post from the database
+            foreach ( var comment in comments )
             {
-                Console.WriteLine("Failed to retrieve comments");
-                result = false;
-            }
-            else
-            {
-                // Delete all comments under the post from the database
-                foreach ( var comment in comments )
+                if ( ! await DeleteComment(comment.CID) )
                 {
-                    if ( ! await DeleteComment(comment.CID) )
-                    {
-                        result = false;
-                    }
+                    result = false;
                 }
             }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Failed to delete comments: " + e.Message);
-            result = false;
         }
         return result;
     }

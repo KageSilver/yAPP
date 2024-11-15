@@ -207,32 +207,24 @@ public class VoteActions : IVoteActions
     public async Task<bool> DeleteVotes(string pid)
     {
         var result = true;
-        try
-        {
-            // Load the votes to check if the pid exists
-            var votes = await GetVotesByPid(pid);
+        // Load the votes to check if the pid exists
+        var votes = await GetVotesByPid(pid);
 
-            if (votes.Count == 0)
+        if (votes.Count == 0)
+        {
+            Console.WriteLine("Failed to retrieve votes");
+            result = false;
+        }
+        else
+        {
+            // Delete all votes under the post/comment from the database
+            foreach ( var vote in votes )
             {
-                Console.WriteLine("Failed to retrieve votes");
-                result = false;
-            }
-            else
-            {
-                // Delete all votes under the post/comment from the database
-                foreach ( var vote in votes )
+                if ( ! await RemoveVote(vote.UID, vote.PID, vote.Type) )
                 {
-                    if ( ! await RemoveVote(vote.UID, vote.PID, vote.Type) )
-                    {
-                        result = false;
-                    }
+                    result = false;
                 }
             }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Failed to delete votes: " + e.Message);
-            result = false;
         }
         return result;
     }
