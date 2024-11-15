@@ -1,5 +1,49 @@
 # API Documentation
 
+## Awards
+
+### GetAwardById
+ - Retrieves an award by a unique identifier.
+ - GET: api/awards/getAwardById?aid={aid}
+   - aid: The unique identifier for an award
+ - Response: returns the award object associated with the specified award id
+   - { "aid": "aid", "pid": "pid", "uid": "uid", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "name": "name", "type": "type", "tier": 0 }
+ - Status codes:
+   - 200 OK
+   - 400 Bad Request: award ID is required
+   - 404 Not Found: Award does not exist
+
+### GetAwardsByUser
+ - Gets all awards from a user
+ - GET: api/awards/getAwardsByUser?uid={uid}
+   - uid: The user who earned the awards being fetched
+ - Response: returns a list of award objects that have been earned by the user associated with the specified user id
+   - [ { "aid": "aid", "pid": "pid", "uid": "uid", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "name": "name", "type": "type", "tier": 0 } ]
+ - Status codes:
+   - 200 Ok
+   - 400 Bad Request: uid is required
+
+### GetAwardsByPost
+ - Gets all awards from a post
+ - GET: api/awards/getAwardsByPost?pid={pid}
+   - pid: The post on which the awards were earned
+ - Response: returns a list of award objects that have been earned on a post associated with the specified post id
+   - [ { "aid": "aid", "pid": "pid", "uid": "uid", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "name": "name", "type": "type", "tier": 0 } ]
+ - Status codes:
+   - 200 Ok
+   - 400 Bad Request: pid is required
+
+### GetNewAwardsByUser
+ - Gets new awards a user has earned since this endpoint was last called
+ - GET: api/awards/getNewAwardsByUser?uid={uid}
+   - uid: The user who earned the awards being fetched
+ - Response: returns a list of award objects that have been earned by the specified user through the checks done in this endpoint
+   - [ { "aid": "aid", "pid": "pid", "uid": "uid", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "name": "name", "type": "type", "tier": 0 } ] 
+ - Status codes:
+   - 200 Ok
+   - 400 Bad Request: uid is required
+   - 404 Not Found: User does not exist
+
 ## Comments
 
 ### GetPostByCid
