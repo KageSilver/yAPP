@@ -26,6 +26,8 @@ public class AwardControllerTests
     private readonly Mock<ICognitoActions> _mockCognitoActions;
     private readonly AwardController _awardController;
     private readonly Mock<IAwardActions> _mockAwardActions;
+    private readonly Mock<IPostActions> _mockPostActions;
+    private readonly Mock<IFriendshipActions> _mockFriendshipActions;
     private readonly Mock<IAmazonCognitoIdentityProvider> _cognitoClientMock;
     private readonly CognitoActions _cognitoActions;
     
@@ -35,8 +37,9 @@ public class AwardControllerTests
         _dynamoDbContextMock = new Mock<IDynamoDBContext>();
         _mockCognitoActions = new Mock<ICognitoActions>();
         _mockAwardActions = new Mock<IAwardActions>();
+        _mockPostActions = new Mock<IPostActions>();
         _awardController = new AwardController(_mockAppSettings.Object, _mockCognitoActions.Object,
-            _dynamoDbContextMock.Object, _mockAwardActions.Object);
+            _dynamoDbContextMock.Object, _mockAwardActions.Object, _mockPostActions.Object, _mockFriendshipActions.Object);
     }
     
     #region GetAwardById Tests
@@ -191,30 +194,47 @@ public class AwardControllerTests
     public async Task GetNewAwardsByUser_ShouldReturnAwardsList_WhenSuccessful()
     {
         // Arrange
-        var award = new Award
+        var award1 = new Award
         {
             AID = "1",
             PID = "1",
             UID = "1",
             CreatedAt = DateTime.Now,
-            Name = "GetNewAwardsByUser_ShouldReturnAwardsList_WhenSuccessful()"
+            Name = "GetNewAwardsByUser_ShouldReturnAwardsList_WhenSuccessful() 1"
+        };
+        
+        var award2 = new Award
+        {
+            AID = "1",
+            PID = "1",
+            UID = "1",
+            CreatedAt = DateTime.Now,
+            Name = "GetNewAwardsByUser_ShouldReturnAwardsList_WhenSuccessful() 2"
         };
 
-        var list = new List<Award>();
-        list.Add(award);
+        var list1 = new List<Award>();
+        list1.Add(award1);
+        
+        var list2 = new List<Award>();
+        list2.Add(award2);
 
-        _mockAwardActions.Setup(a => a.GetNewAwardsByUser(It.IsAny<string>())).ReturnsAsync(list);
+        _mockAwardActions.Setup(a => a.CheckNewAwardsPerPost(It.IsAny<List<Post>>())).ReturnsAsync(list1);
+        _mockAwardActions.Setup(a => a.CheckNewAwardsTotalPosts(It.IsAny<List<Post>>(), It.IsAny<string>())).ReturnsAsync(list2);
         
         // Act
-        var result = await _awardController.GetNewAwardsByUser(award.UID);
+        var result = await _awardController.GetNewAwardsByUser(award1.UID);
 
         // Assert
         var returnedList = Assert.IsType<List<Award>>(result.Value);
-        Assert.Equal(1, returnedList.Count);
-        Assert.Equal(award.PID, returnedList.First().PID);
-        Assert.Equal(award.UID, returnedList.First().UID);
-        Assert.Equal(award.AID, returnedList.First().AID);
-        Assert.Equal(award.Name, returnedList.First().Name);
+        Assert.Equal(2, returnedList.Count);
+        Assert.Equal(award1.PID, returnedList.First().PID);
+        Assert.Equal(award1.UID, returnedList.First().UID);
+        Assert.Equal(award1.AID, returnedList.First().AID);
+        Assert.Equal(award1.Name, returnedList.First().Name);
+        Assert.Equal(award2.PID, returnedList[1].PID);
+        Assert.Equal(award2.UID, returnedList[1].UID);
+        Assert.Equal(award2.AID, returnedList[1].AID);
+        Assert.Equal(award2.Name, returnedList[1].Name);
     }
     
     [Fact]
@@ -226,6 +246,21 @@ public class AwardControllerTests
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
         Assert.Equal("uid is required", badRequestResult.Value);
+    }
+    
+    [Fact]
+    public async Task GetNewAwardsByUser_ShouldReturnNotFound_WithUserDoesNotExist()
+    {
+        // Arrange
+        var uid = "1";
+        _mockCognitoActions.Setup(c => c.GetUserById(uid)).ReturnsAsync((User)null);
+        
+        // Act
+        var result = await _awardController.GetNewAwardsByUser(uid);
+
+        // Assert
+        var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
+        Assert.Equal("User does not exist", notFoundResult.Value);
     }
 
     #endregion

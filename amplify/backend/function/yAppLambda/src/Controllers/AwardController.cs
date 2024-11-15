@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using yAppLambda.Common;
 using yAppLambda.DynamoDB;
+using yAppLambda.Enum;
 using yAppLambda.Models;
 
 namespace yAppLambda.Controllers;
@@ -19,13 +20,18 @@ public class AwardController : ControllerBase
     private readonly IDynamoDBContext _dbContext;
     private readonly ICognitoActions _cognitoActions;
     private readonly IAwardActions _awardActions;
+    private readonly IPostActions _postActions;
+    private readonly IFriendshipActions _friendshipActions;
 
-    public AwardController(IAppSettings appSettings, ICognitoActions cognitoActions, IDynamoDBContext dbContext, IAwardActions awardActions)
+    public AwardController(IAppSettings appSettings, ICognitoActions cognitoActions, IDynamoDBContext dbContext, 
+        IAwardActions awardActions, IPostActions postActions, IFriendshipActions friendshipActions)
     {
         _appSettings = appSettings;
         _cognitoActions = cognitoActions;
         _dbContext = dbContext;
         _awardActions = awardActions;
+        _postActions = postActions;
+        _friendshipActions = friendshipActions;
     }
 
     // GET: api/awards/getAwardById?aid={aid}
@@ -112,7 +118,21 @@ public class AwardController : ControllerBase
             return BadRequest("uid is required");
         }
 
-        var awards = await _awardActions.GetNewAwardsByUser(uid);
+        var user = await _cognitoActions.GetUserById(uid);
+
+        if (user == null)
+        {
+            return NotFound("User does not exist");
+        }
+
+        var awards = new List<Award>();
+        
+        var posts = await _postActions.GetPostsByUser(uid);
+        awards.AddRange(await _awardActions.CheckNewAwardsPerPost(posts));
+        awards.AddRange(await _awardActions.CheckNewAwardsTotalPosts(posts, uid));
+
+        var friends = await _friendshipActions.GetAllFriends(user.UserName, FriendshipStatus.Accepted);
+        awards.AddRange(await _awardActions.CheckNewAwardsFriends(friends, uid));
 
         return awards;
     }
