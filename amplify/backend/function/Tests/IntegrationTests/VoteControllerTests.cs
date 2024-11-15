@@ -94,7 +94,7 @@ public class VoteControllerIntegrationTests
 
         // Act
         var response = await _client.PostAsync("/api/posts/createPost", content);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString = await response.Content.ReadAsStringAsync();
         var post = JsonConvert.DeserializeObject<Post>(responseString);
@@ -113,7 +113,7 @@ public class VoteControllerIntegrationTests
 
         // Act
         var response1 = await _client.PostAsync("/api/votes/addVote", content1);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         // Assert
         var responseString1 = await response1.Content.ReadAsStringAsync();
@@ -160,7 +160,7 @@ public class VoteControllerIntegrationTests
 
         // Act
         var response = await _client.PostAsync("/api/posts/createPost", content);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString = await response.Content.ReadAsStringAsync();
         var post = JsonConvert.DeserializeObject<Post>(responseString);
@@ -179,7 +179,7 @@ public class VoteControllerIntegrationTests
 
         // Act
         var response1 = await _client.PostAsync("/api/votes/addVote", content1);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         // Assert
         var responseString1 = await response1.Content.ReadAsStringAsync();
@@ -243,7 +243,7 @@ public class VoteControllerIntegrationTests
 
         // Act
         var response = await _client.PostAsync("/api/posts/createPost", content);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString = await response.Content.ReadAsStringAsync();
         var post = JsonConvert.DeserializeObject<Post>(responseString);
@@ -262,7 +262,7 @@ public class VoteControllerIntegrationTests
 
         // Creates a new vote to query
         var response1 = await _client.PostAsync("/api/votes/addVote", content1);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
         var responseString1 = await response1.Content.ReadAsStringAsync();
         var newVote = JsonConvert.DeserializeObject<Vote>(responseString1);
 
@@ -360,7 +360,7 @@ public class VoteControllerIntegrationTests
 
         // Act
         var response = await _client.PostAsync("/api/posts/createPost", content);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString = await response.Content.ReadAsStringAsync();
         var post = JsonConvert.DeserializeObject<Post>(responseString);
@@ -445,7 +445,7 @@ public class VoteControllerIntegrationTests
 
         // Act
         var response = await _client.PostAsync("/api/posts/createPost", content);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString = await response.Content.ReadAsStringAsync();
         var post = JsonConvert.DeserializeObject<Post>(responseString);
@@ -464,7 +464,7 @@ public class VoteControllerIntegrationTests
 
         // Create a new vote for testing
         var response1 = await _client.PostAsync("/api/votes/addVote", content1);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString1 = await response1.Content.ReadAsStringAsync();
         var responseVote1 = JsonConvert.DeserializeObject<Vote>(responseString1);
@@ -483,7 +483,7 @@ public class VoteControllerIntegrationTests
 
         // Create a new vote for testing
         var response2 = await _client.PostAsync("/api/votes/addVote", content2);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString2 = await response2.Content.ReadAsStringAsync();
         var responseVote2 = JsonConvert.DeserializeObject<Vote>(responseString2);
@@ -516,7 +516,7 @@ public class VoteControllerIntegrationTests
 
         // Create a new comment for testing
         var response1 = await _client.PostAsync("/api/comments/createComment", content1);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString1 = await response1.Content.ReadAsStringAsync();
         Console.WriteLine(responseString1);
@@ -537,7 +537,7 @@ public class VoteControllerIntegrationTests
 
         // Create a new vote for testing
         var response2 = await _client.PostAsync("/api/votes/addVote", content2);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString2 = await response2.Content.ReadAsStringAsync();
         var responseVote1 = JsonConvert.DeserializeObject<Vote>(responseString2);
@@ -556,7 +556,7 @@ public class VoteControllerIntegrationTests
 
         // Create a new vote for testing
         var response3 = await _client.PostAsync("/api/votes/addVote", content3);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString3 = await response3.Content.ReadAsStringAsync();
         var responseVote2 = JsonConvert.DeserializeObject<Vote>(responseString3);
@@ -616,7 +616,7 @@ public class VoteControllerIntegrationTests
 
         // Act
         var response = await _client.PostAsync("/api/posts/createPost", content);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString = await response.Content.ReadAsStringAsync();
         var post = JsonConvert.DeserializeObject<Post>(responseString);
@@ -670,7 +670,7 @@ public class VoteControllerIntegrationTests
 
         // Act
         var response = await _client.PostAsync("/api/posts/createPost", content);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString = await response.Content.ReadAsStringAsync();
         var post = JsonConvert.DeserializeObject<Post>(responseString);
@@ -722,7 +722,7 @@ public class VoteControllerIntegrationTests
 
         // Act
         var response = await _client.PostAsync("/api/comments/createComment", content);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString = await response.Content.ReadAsStringAsync();
         var comment = JsonConvert.DeserializeObject<Comment>(responseString);
@@ -741,7 +741,7 @@ public class VoteControllerIntegrationTests
 
         // Create a new vote for testing
         var response1 = await _client.PostAsync("/api/votes/addVote", content1);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString1 = await response1.Content.ReadAsStringAsync();
         var responseVote = JsonConvert.DeserializeObject<Vote>(responseString1);
@@ -774,7 +774,7 @@ public class VoteControllerIntegrationTests
 
         // Act
         var response = await _client.PostAsync("/api/comments/createComment", content);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString = await response.Content.ReadAsStringAsync();
         var comment = JsonConvert.DeserializeObject<Comment>(responseString);
@@ -793,7 +793,7 @@ public class VoteControllerIntegrationTests
 
         // Create a new vote for testing
         var response1 = await _client.PostAsync("/api/votes/addVote", content1);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString1 = await response1.Content.ReadAsStringAsync();
         var responseVote = JsonConvert.DeserializeObject<Vote>(responseString1);
