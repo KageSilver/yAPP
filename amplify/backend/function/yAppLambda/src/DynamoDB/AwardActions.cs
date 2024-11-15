@@ -159,28 +159,20 @@ public class AwardActions : IAwardActions
     /// <returns>A boolean indicating whether the deletion was successful.</returns>
     public async Task<bool> DeleteAwardsByPost(string pid)
     {
-        try
-        {
-            var awards = await GetAwardsByPost(pid);
+        var awards = await GetAwardsByPost(pid);
 
-            if(awards.Count > 0)
+        if(awards.Count > 0)
+        {
+            foreach(Award award in awards)
             {
-                foreach(Award award in awards)
+                if(!await DeleteAward(award.AID))
                 {
-                    if(!await DeleteAward(award.AID))
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
+        }
 
-            return true;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Failed to delete awards: " + e.Message);
-            return false;
-        }
+        return true;
     }
         
     /// <summary>
