@@ -35,6 +35,7 @@ public class PostControllerIntegrationTests
 
     private ICognitoActions _cognitoActions;
     private IPostActions _postActions;
+    private IFriendshipActions _friendshipActions;
 
     public PostControllerIntegrationTests()
     {
@@ -59,6 +60,7 @@ public class PostControllerIntegrationTests
         IDynamoDBContext dynamoDbContext = new DynamoDBContext(client);
 
         _postActions = new PostActions(_appSettings, dynamoDbContext);
+        _friendshipActions = new FriendshipActions(_appSettings, dynamoDbContext);
     }
 
     #region CreatePost Tests
@@ -696,6 +698,7 @@ public class PostControllerIntegrationTests
         Assert.Equal(newPost.Anonymous, postList.First().Anonymous);
 
         // Clean up
+        await _friendshipActions.DeleteFriendship(TestUserEmail2, TestUserEmail);
         await _cognitoActions.DeleteUser(TestUserEmail);
         await _cognitoActions.DeleteUser(TestUserEmail2);
         await _postActions.DeletePost(newPost.PID);
