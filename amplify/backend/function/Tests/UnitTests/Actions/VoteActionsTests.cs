@@ -52,7 +52,6 @@ public class VoteActionsTests
 
         _appSettingsMock.Setup(a => a.VoteTableName).Returns(VoteTableName);
 
-        // Arrange
         var now = DateTime.Now;
         var request = new Post
         {
@@ -115,7 +114,6 @@ public class VoteActionsTests
         // Act
         var result = await _voteActionsMock.AddVote(vote);
 
-        // Assert
         // Assert that the result is ActionResult<Vote>
         var actionResult = Assert.IsType<ActionResult<Vote>>(result); 
         // Access the Result property to get the actual StatusCodeResult
@@ -260,7 +258,6 @@ public class VoteActionsTests
         };
         var response = new Vote { PID = "11111", IsPost = true, Type = true, UID = "11111" };
         
-        // Arrange
         var now = DateTime.Now;
         var request = new Post
         {
@@ -314,7 +311,6 @@ public class VoteActionsTests
             UID = ""
         };
         var scanToSearchMock = new Mock<AsyncSearch<Vote>>();
-        // Arrange
         scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("Failed to retrieve vote"));
 
@@ -339,7 +335,6 @@ public class VoteActionsTests
         };
         var response = new Vote { PID = "11111", IsPost = true, Type = true, UID = "11111" };
         
-        // Arrange
         var now = DateTime.Now;
         var request = new Post
         {
@@ -399,7 +394,6 @@ public class VoteActionsTests
         };
         var response = new Vote { PID = "DeleteVotes_ShouldCallRemoveVote()", IsPost = true, Type = true, UID = "uid" };
         
-        // Arrange
         var now = DateTime.Now;
         var request = new Post
         {
@@ -453,7 +447,6 @@ public class VoteActionsTests
             UID = "11111"
         };
         var scanToSearchMock = new Mock<AsyncSearch<Vote>>();
-        // Arrange
         scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("Failed to retrieve votes"));
 
@@ -478,7 +471,6 @@ public class VoteActionsTests
         };
         var response = new Vote { PID = "", IsPost = true, Type = true, UID = "11111" };
         
-        // Arrange
         var now = DateTime.Now;
         var request = new Post
         {
