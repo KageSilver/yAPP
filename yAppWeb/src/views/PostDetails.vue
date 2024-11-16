@@ -1,14 +1,14 @@
 <script setup>
 	import { del, get, post, put } from "aws-amplify/api";
-	import { getCurrentUser } from "aws-amplify/auth";
-	import { onMounted, ref } from "vue";
-	import { useRoute, useRouter } from "vue-router";
-	import Alert from "../components/Alert.vue";
-	import BackBtn from "../components/BackBtn.vue";
-	import ConfirmationModal from "../components/ConfirmationModal.vue";
-	import DotMenu from "../components/DotMenu.vue";
-	import LoadingScreen from "../components/LoadingScreen.vue";
-	import { getCurrentTime } from "../composables/helper";
+import { getCurrentUser } from "aws-amplify/auth";
+import { onMounted, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import Alert from "../components/Alert.vue";
+import BackBtn from "../components/BackBtn.vue";
+import ConfirmationModal from "../components/ConfirmationModal.vue";
+import DotMenu from "../components/DotMenu.vue";
+import LoadingScreen from "../components/LoadingScreen.vue";
+import { getCurrentTime } from "../composables/helper";
 	// Importing necessary modules
 	const route = useRoute();
 	const router = useRouter();
@@ -148,6 +148,34 @@
 	const isEditingComment = comment => {
 		return ref(commentIds.value.includes(comment.cid)).value;
 	};
+
+	//check if clicked upvote or downvote for a comment
+	const isUpvoteComment = async (cid) => {
+		//check if the user has upvoted the comment
+		var votes = await getVotes(cid);
+		//filter the votes's type
+		var upvotes = votes.filter(vote => vote.isPost ==  false && vote.type == true);
+		return upvotes.length > 0;
+	};
+
+	const isDownvoteComment = async (cid) => {
+		//check if the user has downvoted the comment
+		var votes = await getVotes(cid);
+		//filter the votes's type
+		var downvotes = votes.filter(vote => vote.isPost ==  false && vote.type == false);
+		return downvotes.length > 0;
+	};
+
+	const getVotes = async (pid) => {
+		const restOperation = get({
+			apiName: "yapp",
+			path: `/api/votes/getVotesByPid?pid=${pid}`,
+		});
+		const { body: body } = await restOperation.response;
+		return await body.json();
+	};
+
+
 
 	onMounted(async () => {
 		const pid = route.params.pid;
@@ -430,22 +458,31 @@
 				</div>
 				<!-- Icons for upvote, downvote, and reply -->
 				<div class="mx-4 flex justify-end space-x-4">
-					<!-- <button @click.stop="upvote(post.pid)" class="flex items-center space-x-2">
-                        <img src="../assets/post/upvote.svg" alt="Upvote" class="w-6 h-6">
-                        <span>10</span>
-                    </button> -->
-					<!-- <button @click.stop="downvote(post.pid)" class="flex items-center space-x-2">
-                        <img src="../assets/post/downvote.svg" alt="Downvote" class="w-6 h-6">
-                        <span>20</span>
-                    </button> -->
+					<!-- Upvote -->
+					<button @click.stop="upvote(currentPost.pid)" class="relative flex items-center">
+						<span class="upvotes top-0"  v-if="currentPost.upvotes > 0">
+						{{currentPost.upvotes}}
+						</span>
+						<img src="../assets/post/upvote.svg" alt="Upvote" class="w-5 h-5 bg-red">
+					</button>
+
+					<!-- Downvote -->
+					<button @click.stop="downvote(currentPost.pid)" class="relative flex items-center">
+						<span class="downvotes top-0" v-if="currentPost.downvotes > 0">
+						{{currentPost.downvotes}}
+						</span>
+						<img src="../assets/post/downvote.svg" alt="Downvote" class="w-5 h-5">
+					</button>
+
+					<!-- Reply -->
 					<button
 						@click="reply()"
-						class="flex items-center space-x-2 rounded-xl p-2 hover:bg-light-pink hover:text-white"
+						class="relative flex items-center space-x-2 rounded-xl p-2 hover:bg-light-pink hover:text-white"
 					>
-						<img src="../assets/post/reply.svg" alt="Reply" class="h-6 w-6" />
-						<span>Reply</span>
+						<img src="../assets/post/reply.svg" alt="Reply" class="h-5 w-5" />
 					</button>
-				</div>
+					</div>
+
 				<hr />
 				<div class="relative mb-4 mt-5" v-if="isAddingComment">
 					<div class="px-2">
@@ -458,14 +495,14 @@
 					</div>
 					<div class="flex justify-end p-2">
 						<button
-							class="mr-2 rounded-lg bg-light-pink p-2 text-white"
+							class="mr-2 rounded-lg bg-light-pink p-2 text-white text-xs"
 							id="cancelAddComment"
 							@click="cancelReply()"
 						>
 							Cancel
 						</button>
 						<button
-							class="rounded-lg bg-dark-pink p-2 text-white"
+							class="rounded-lg bg-dark-pink p-2 text-white text-xs"
 							id="createAddComment"
 							@click="createComment"
 						>
@@ -477,7 +514,7 @@
 				<!--Comment section-->
 				<div v-for="comment in comments" :key="comment.cid" class="max flex-1">
 					<div
-						class="m-2 max-w-4xl flex-1 rounded-lg border border-gray-300 bg-gray-100 p-5 shadow transition-shadow hover:shadow-md"
+						class="mx-2 mt-2 max-w-4xl flex-1 rounded-lg border border-gray-300 bg-gray-100 px-5 pt-5 shadow transition-shadow hover:shadow-md"
 					>
 						<div class="relative mb-4" :id="`comment-${comment.cid}`">
 							<p
@@ -510,6 +547,22 @@
 								<strong>Updated At:</strong>
 								{{ new Date(comment.updatedAt).toLocaleString() }}
 							</p>
+							<div class="mx-4 flex justify-end space-x-4 pr-6 mt-4" v-if="!isEditingComment(comment)">
+									<button @click.stop="upvote(comment.pid)" class="relative  items-center flex">	
+										<span class="upvotes top-[-0.5rem]" v-if="comment.upvotes > 0">
+										{{comment.upvotes}}
+										</span>
+										<img src="../assets/post/upvote.svg" alt="Upvote" class="w-5 h-5" v-if="!isUpvoteComment(comment.id)">
+										<img src="../assets/post/upvote_activated.svg" alt="Upvote" class="w-5 h-5" v-else>
+									</button> 
+									<button @click.stop="downvote(comment.pid)" class="relative  items-center flex">
+									<span class="downvotes top-[-0.5rem]"  v-if="comment.downvotes > 0">
+										{{comment.downvotes}}
+										</span>
+										<img src="../assets/post/downvote.svg" alt="Downvote" class="w-5 h-5" v-if="!isDownvoteComment(comment.id)">
+										<img src="../assets/post/downvote_activated.svg" alt="Downvote" class="w-5 h-5" v-else>
+									</button>
+							</div>
 
 							<textarea
 								:id="`commentText-${comment.cid}`"
@@ -520,7 +573,7 @@
 
 							<DotMenu
 								v-if="!isEditingComment(comment) && comment.uid == userId"
-								:id="`commentDot-${comment.cid}`"
+								:id="`commentDot-${comment.pid}`"
 								@edit="editComment(comment)"
 								@openDeleteModal="openDeleteCommentModal(comment)"
 							/>
@@ -529,9 +582,10 @@
 							class="flex justify-end"
 							v-if="isEditingComment(comment) && comment.uid == userId"
 						>
+
 							<button
 								class="mr-2 rounded-lg bg-light-pink p-2 text-white"
-								:id="`cancelComment-${comment.cid}`"
+								:id="`cancelComment-${comment.pid}`"
 								@click="cancelEditComment(comment)"
 							>
 								Cancel
@@ -539,7 +593,7 @@
 							<button
 								class="rounded-lg bg-dark-pink p-2 text-white"
 								@click="updateComment(comment)"
-								:id="`updateComment-${comment.cid}`"
+								:id="`updateComment-${comment.pid}`"
 							>
 								Update Comment
 							</button>
@@ -575,7 +629,7 @@
 							></div>
 							<div
 								:class="{ 'translate-x-full': anonIsChecked }"
-								class="dot absolute left-1 top-1 h-6 w-6 rounded-full bg-white transition"
+								class="dot absolute left-1 top-1 h-5 w-5 rounded-full bg-white transition"
 							></div>
 						</div>
 					</label>
@@ -652,3 +706,14 @@
 		/>
 	</div>
 </template>
+
+<style scoped>
+
+.upvotes{
+	@apply absolute  right-[-0.5rem] text-xs;
+}
+
+.downvotes{
+	@apply absolute  right-[-0.8rem] text-xs;
+}
+</style>
