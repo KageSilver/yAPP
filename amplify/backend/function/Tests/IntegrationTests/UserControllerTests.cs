@@ -85,7 +85,6 @@ public class UserControllerIntegrationTests
         var response2 = await _client.GetAsync($"/api/users/getUserById?id={_testUserId}");
         Assert.Equal(HttpStatusCode.OK, response2.StatusCode);
     }
-    
 
     [Fact, Order(5)]
     public async Task UpdateUser_ShouldReturnBadRequest_WhenRequestIsNull()
