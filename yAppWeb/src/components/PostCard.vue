@@ -1,6 +1,8 @@
 <script setup>
 	import { getCurrentUser } from "aws-amplify/auth";
-	import { defineProps, onMounted, ref } from "vue";
+	import { defineProps, onMounted, ref, computed } from "vue";
+	import { get, post, del } from "aws-amplify/api";
+	const myPostVotes = ref([]);
 	const props = defineProps({
 		post: {
 			type: Object,
@@ -11,6 +13,8 @@
 				postBody: "",
 				uid: "",
 				pid: "",
+				upvotes: 0,
+				downvotes: 0,
 			}),
 		},
 	});
@@ -18,13 +22,81 @@
 	// function to get the current user , if we need to edit the post?
 	// diplay the 3 dot in the right corner of the post card
 	const currentUser = ref(null);
+	const userId = ref(null);
 	onMounted(async () => {
 		const user = await getCurrentUser();
+		console.log("user", user);
 		currentUser.value = user.username;
+		userId.value = user.userId;
+		myPostVotes.value = await getVotes(props.post.pid);
 	});
+	const isUpvotePost = computed(() => {
+	//check if the user has upvoted the post
+	const voted = ref(false);
+
+	voted.value = myPostVotes.value.filter(vote => vote.type == true).length > 0;
+
+	return voted;
+});
+
+	const isDownvotePost = computed(() => {
+		//check if the user has downvoted the post
+		const voted = ref(false);
+		voted.value = myPostVotes.value.filter(vote => vote.type == false).length > 0;
+
+		return voted;
+	});
+	
 
 	const toggleMenu = () => {
 		isMenuOpen.value = !isMenuOpen.value;
+	};
+
+	const getVotes = async (pid) => {
+		const restOperation = get({
+			apiName: "yapp",
+			path: `/api/votes/getVotesByPid?pid=${pid}`,
+		});
+		const { body: body } = await restOperation.response;
+		var votes = await body.json();
+		return votes
+	};
+
+	const vote = async (pid, isPost, isUpVote, currentValue) => {
+	//set loading screen
+		
+		const body = ref({});
+		body.value = {
+			uid: userId.value,
+			pid: pid,
+			type: isUpVote,
+			isPost: isPost,
+		};
+		console.log("currentValue", currentValue.value);
+		
+	if (currentValue.value == false) {
+			console.log("adding vote");
+			const restOperation = post({
+				apiName: "yapp",
+				path: `/api/votes/addVote`,
+				headers: {
+					"Content-Type": "application/json",
+				},
+				options: {
+					body: body.value,
+				},
+			});
+			await restOperation.response;
+		} else {
+			const restOperation = del({
+				apiName: "yapp",
+				path: `/api/votes/removeVote?uid=${userId.value}&pid=${pid}&isPost=${isPost}&type=${isUpVote}`,
+			});
+			await restOperation.response;
+		}
+
+		//refresh the votes
+		window.location.reload();
 	};
 </script>
 <template>
@@ -73,15 +145,34 @@
 		</div>
 
 		<!-- Icons for upvote, downvote, and reply -->
-		<!-- <div class="flex space-x-4 mt-8">
-            <button @click.stop="upvote(post.pid)">
-                <img src="../assets/post/upvote.svg" alt="Upvote" class="w-6 h-6">
-                10
-            </button>
-            <button @click.stop="downvote(post.pid)">
-                <img src="../assets/post/downvote.svg" alt="Downvote" class="w-6 h-6">
-                20
-            </button>
-        </div> -->
+		<div class="flex space-x-4 mt-8">
+         <!-- Upvote -->
+					<button @click.stop="vote(props.post.pid,true,true, isUpvotePost)" class="relative flex rounded-xl items-center p-2 hover:bg-light-pink hover:text-transparent">
+						<span class="upvotes top-0"  v-if="props.post.upvotes > 0">
+						{{props.post.upvotes}}
+						</span>
+						<img src="../assets/post/upvote.svg" alt="Upvote" class="w-5 h-5 bg-red" v-if="!isUpvotePost.value">
+						<img src="../assets/post/upvote_activated.svg" alt="Upvote" class="w-5 h-5 bg-red" v-else>
+					</button>
+
+					<!-- Downvote -->
+					<button @click.stop="vote(props.post.pid,true,false,isDownvotePost)" class="relative flex rounded-xl items-center p-2 hover:bg-light-pink hover:text-transparent">
+						<span class="downvotes top-0" v-if="props.post.downvotes > 0">
+						{{props.post.downvotes}}
+						</span>
+						<img src="../assets/post/downvote.svg" alt="Downvote" class="w-5 h-5" v-if="!isDownvotePost.value">
+						<img src="../assets/post/downvote_activated.svg" alt="Downvote" class="w-5 h-5" v-else>
+
+					</button>
+        </div>
 	</div>
 </template>
+<style scoped>
+	.upvotes{
+	@apply absolute  right-0 text-xs;
+}
+
+.downvotes{
+	@apply absolute  right-0 text-xs;
+}
+</style>
