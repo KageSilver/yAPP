@@ -178,7 +178,7 @@ public class AwardActionsTests
         var list = new List<Award>();
         list.Add(request);
         
-        // Mock the AsyncSearch<Post> returned by ScanAsync
+        // Mock the AsyncSearch<Award> returned by ScanAsync
         var scanToSearchMock = new Mock<AsyncSearch<Award>>();
         scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(list);
@@ -1314,7 +1314,7 @@ public class AwardActionsTests
         var postList = new List<Post>();
         postList.AddRange(Enumerable.Repeat(post, awardTypes.Where(a => a.Type.Equals("posts")).First().Tiers.Where(t => t.TierNum == 1).First().Minimum));
         
-        // Mock the AsyncSearch<Post> returned by ScanAsync
+        // Mock the AsyncSearch<Award> returned by ScanAsync
         var scanToSearchMock = new Mock<AsyncSearch<Award>>();
         scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<Award>());
@@ -1386,7 +1386,7 @@ public class AwardActionsTests
         _dynamoDbContextMock.Setup(d => d.LoadAsync<Award>(It.IsAny<string>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(award);
         
-        // Mock the AsyncSearch<Post> returned by ScanAsync
+        // Mock the AsyncSearch<Award> returned by ScanAsync
         var scanToSearchMock = new Mock<AsyncSearch<Award>>();
         scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(awardList);
@@ -1416,7 +1416,7 @@ public class AwardActionsTests
     {
         var postList = new List<Post>();
         
-        // Mock the AsyncSearch<Post> returned by ScanAsync
+        // Mock the AsyncSearch<Award> returned by ScanAsync
         var scanToSearchMock = new Mock<AsyncSearch<Award>>();
         scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<Award>());
@@ -1476,7 +1476,7 @@ public class AwardActionsTests
         var postList = new List<Post>();
         postList.AddRange(Enumerable.Repeat(post, awardTypes.Where(a => a.Type.Equals("posts")).First().Tiers.Where(t => t.TierNum == 1).First().Minimum));
         
-        // Mock the AsyncSearch<Post> returned by ScanAsync
+        // Mock the AsyncSearch<Award> returned by ScanAsync
         var scanToSearchMock = new Mock<AsyncSearch<Award>>();
         scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(awardList);
@@ -1522,7 +1522,7 @@ public class AwardActionsTests
         var postList = new List<Post>();
         postList.AddRange(Enumerable.Repeat(post, awardTypes.Where(a => a.Type.Equals("posts")).First().Tiers.Where(t => t.TierNum == 1).First().Minimum));
         
-        // Mock the AsyncSearch<Post> returned by ScanAsync
+        // Mock the AsyncSearch<Award> returned by ScanAsync
         var scanToSearchMock = new Mock<AsyncSearch<Award>>();
         scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<Award>());
@@ -1568,7 +1568,7 @@ public class AwardActionsTests
         var friendList = new List<Friendship>();
         friendList.AddRange(Enumerable.Repeat(friendship, awardTypes.Where(a => a.Type.Equals("friends")).First().Tiers.Where(t => t.TierNum == 1).First().Minimum));
         
-        // Mock the AsyncSearch<Post> returned by ScanAsync
+        // Mock the AsyncSearch<Award> returned by ScanAsync
         var scanToSearchMock = new Mock<AsyncSearch<Award>>();
         scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<Award>());
@@ -1632,7 +1632,7 @@ public class AwardActionsTests
         var tiers = awardTypes.Where(a => a.Type.Equals("friends")).First().Tiers;
         friendList.AddRange(Enumerable.Repeat(friendship, tiers.Where(t => t.TierNum == tiers.Count).First().Minimum));
         
-        // Mock the AsyncSearch<Post> returned by ScanAsync
+        // Mock the AsyncSearch<Award> returned by ScanAsync
         var scanToSearchMock = new Mock<AsyncSearch<Award>>();
         scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(awardList);
@@ -1662,7 +1662,7 @@ public class AwardActionsTests
     {
         var friendList = new List<Friendship>();
         
-        // Mock the AsyncSearch<Post> returned by ScanAsync
+        // Mock the AsyncSearch<Award> returned by ScanAsync
         var scanToSearchMock = new Mock<AsyncSearch<Award>>();
         scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<Award>());
@@ -1717,7 +1717,7 @@ public class AwardActionsTests
         var friendList = new List<Friendship>();
         friendList.AddRange(Enumerable.Repeat(friendship, awardTypes.Where(a => a.Type.Equals("friends")).First().Tiers.Where(t => t.TierNum == 1).First().Minimum));
         
-        // Mock the AsyncSearch<Post> returned by ScanAsync
+        // Mock the AsyncSearch<Award> returned by ScanAsync
         var scanToSearchMock = new Mock<AsyncSearch<Award>>();
         scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(awardList);
@@ -1758,7 +1758,7 @@ public class AwardActionsTests
         var friendList = new List<Friendship>();
         friendList.AddRange(Enumerable.Repeat(friendship, awardTypes.Where(a => a.Type.Equals("friends")).First().Tiers.Where(t => t.TierNum == 1).First().Minimum));
         
-        // Mock the AsyncSearch<Post> returned by ScanAsync
+        // Mock the AsyncSearch<Award> returned by ScanAsync
         var scanToSearchMock = new Mock<AsyncSearch<Award>>();
         scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<Award>());

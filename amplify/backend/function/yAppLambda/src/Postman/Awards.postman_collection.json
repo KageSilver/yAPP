@@ -74,7 +74,7 @@
         "response": []
       },
       {
-        "name": "getNewAwardsByUser",
+        "name": "GetNewAwardsByUser",
         "event": [
           {
             "listen": "test",
