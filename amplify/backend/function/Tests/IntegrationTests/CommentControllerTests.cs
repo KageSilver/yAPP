@@ -99,7 +99,7 @@ public class CommentControllerIntegrationTests
         Assert.Equal(newComment.CommentBody, comment.CommentBody);
         Assert.Equal(newComment.PID, comment.PID);
 
-        // Clean up (need to be uncommented when deletion is implemented)
+        // Clean up
         await _commentActions.DeleteComment(comment.CID);
         // Test user is deleted in DeleteComment_ShouldReturnFalse_WhenDeleteFails()
     }
