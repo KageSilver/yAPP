@@ -1,7 +1,7 @@
 <script setup>
 	import { del, get, post, put } from "aws-amplify/api";
 import { getCurrentUser } from "aws-amplify/auth";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Alert from "../components/Alert.vue";
 import BackBtn from "../components/BackBtn.vue";
@@ -9,12 +9,16 @@ import ConfirmationModal from "../components/ConfirmationModal.vue";
 import DotMenu from "../components/DotMenu.vue";
 import LoadingScreen from "../components/LoadingScreen.vue";
 import { getCurrentTime } from "../composables/helper";
+
 	// Importing necessary modules
 	const route = useRoute();
 	const router = useRouter();
 
 	// State
 	const currentPost = ref(null); // Stores the current post details
+	//votes
+	const myCommentVotes = ref([]);
+	const myPostVotes = ref([]);
 
 	// Loading and alert management
 	const loading = ref(false); // Controls the loading state
@@ -45,9 +49,6 @@ import { getCurrentTime } from "../composables/helper";
 	const editPost = () => {
 		isEditing.value = true;
 		isDiscardingUpdate.value = false;
-
-		console.log(currentPost.value);
-
 		if (currentPost.value.diaryEntry) {
 			document.getElementById("anonymous").hidden = false;
 			anonIsChecked.value = currentPost.value.anonymous;
@@ -150,21 +151,40 @@ import { getCurrentTime } from "../composables/helper";
 	};
 
 	//check if clicked upvote or downvote for a comment
-	const isUpvoteComment = async (cid) => {
+	const isUpvoteComment = (cid) => {
 		//check if the user has upvoted the comment
-		var votes = await getVotes(cid);
-		//filter the votes's type
-		var upvotes = votes.filter(vote => vote.isPost ==  false && vote.type == true);
-		return upvotes.length > 0;
+		const voted = ref(false);
+		console.log(myCommentVotes.value.filter(vote => vote.cid == cid ));
+		console.log(myCommentVotes.value.filter(vote => vote.cid == cid && vote.upvote.value));
+		voted.value = myCommentVotes.value.filter(vote => vote.cid == cid && vote.upvote).length > 0;
+		return voted;
 	};
 
-	const isDownvoteComment = async (cid) => {
-		//check if the user has downvoted the comment
-		var votes = await getVotes(cid);
-		//filter the votes's type
-		var downvotes = votes.filter(vote => vote.isPost ==  false && vote.type == false);
-		return downvotes.length > 0;
+	const isDownvoteComment = (cid) => {
+		//check if the user has upvoted the comment
+		const voted = ref(false)
+		voted.value = myCommentVotes.value.filter(vote => vote.cid == cid && vote.downvote).length > 0;
+		return voted;
 	};
+
+const isUpvotePost = computed(() => {
+	//check if the user has upvoted the post
+	const voted = ref(false);
+
+	voted.value = myPostVotes.value.filter(vote => vote.type == true).length > 0;
+
+	return voted;
+});
+
+	const isDownvotePost = computed(() => {
+		//check if the user has downvoted the post
+		const voted = ref(false);
+		voted.value = myPostVotes.value.filter(vote => vote.type == false).length > 0;
+
+		return voted;
+	});
+
+	
 
 	const getVotes = async (pid) => {
 		const restOperation = get({
@@ -172,8 +192,46 @@ import { getCurrentTime } from "../composables/helper";
 			path: `/api/votes/getVotesByPid?pid=${pid}`,
 		});
 		const { body: body } = await restOperation.response;
-		return await body.json();
+		var votes = await body.json();
+		return votes
 	};
+
+const vote = async (pid, isPost, isUpVote, currentValue) => {
+	//set loading screen
+		loading.value = true;
+		const body = ref({});
+		body.value = {
+			uid: userId.value,
+			pid: pid,
+			type: isUpVote,
+			isPost: isPost,
+		};
+		console.log("currentValue", currentValue.value);
+		
+	if (currentValue.value == false) {
+			console.log("adding vote");
+			const restOperation = post({
+				apiName: "yapp",
+				path: `/api/votes/addVote`,
+				headers: {
+					"Content-Type": "application/json",
+				},
+				options: {
+					body: body.value,
+				},
+			});
+			await restOperation.response;
+		} else {
+			const restOperation = del({
+				apiName: "yapp",
+				path: `/api/votes/removeVote?uid=${userId.value}&pid=${pid}&isPost=${isPost}&type=${isUpVote}`,
+			});
+			await restOperation.response;
+		}
+
+		//refresh the votes
+		window.location.reload();
+	}
 
 
 
@@ -187,6 +245,8 @@ import { getCurrentTime } from "../composables/helper";
 		await fetchPost(pid);
 		//fetch the comments
 		await fetchComments(pid);
+
+		
 	});
 
 	const fetchPost = async pid => {
@@ -201,7 +261,12 @@ import { getCurrentTime } from "../composables/helper";
 			const { body } = await restOperation.response;
 			const response = await body.json();
 			currentPost.value = response;
+			//fetch the votes for the post
+			const votes = await getVotes(pid);
+			//filter the votes's type
 
+			myPostVotes.value = votes.filter(vote => vote.isPost == true && vote.uid == userId.value);
+			
 			//disable loading screen
 			loading.value = false;
 		} catch (error) {
@@ -216,7 +281,6 @@ import { getCurrentTime } from "../composables/helper";
 		isDeleting.value = false;
 		//set loading screen
 		loading.value = true;
-		console.log(currentPost.value.pid);
 		try {
 			const deleteRequest = del({
 				apiName: "yapp",
@@ -284,6 +348,22 @@ import { getCurrentTime } from "../composables/helper";
 			});
 			const { body: bodyComments } = await restOperationComments.response;
 			comments.value = await bodyComments.json();
+			//fetch the votes for each comment
+			for (var i = 0; i < comments.value.length; i++) {
+				//fetch the votes for the comment
+				const votes = await getVotes(comments.value[i].cid);
+				//filter the votes's type
+				const upvotes = votes.filter(vote => vote.isPost == false && vote.type == true && vote.uid == userId.value);
+				const downvotes = votes.filter(vote => vote.isPost == false && vote.type == false && vote.uid == userId.value);
+				myCommentVotes.value.push({
+					cid: comments.value[i].cid,
+					upvote: upvotes.length >0 ,
+					downvote: downvotes.length>0,
+				});
+				
+
+			}
+		
 			//disable loading screen
 		} catch (error) {
 			console.log("Failed to load post", error);
@@ -332,7 +412,7 @@ import { getCurrentTime } from "../composables/helper";
 			upvotes: 0,
 			downvotes: 0,
 		});
-		console.log(comment);
+		
 		updatedComment.value.cid = comment.cid;
 		updatedComment.value.uid = comment.uid;
 		updatedComment.value.pid = comment.pid;
@@ -341,7 +421,7 @@ import { getCurrentTime } from "../composables/helper";
 		updatedComment.value.upvotes = comment.upvotes;
 		updatedComment.value.downvotes = comment.downvotes;
 		updatedComment.value.commentBody = message;
-		console.log(updatedComment);
+	
 		try {
 			const request = put({
 				apiName: "yapp",
@@ -387,7 +467,7 @@ import { getCurrentTime } from "../composables/helper";
 			alert("Comment cannot be empty");
 			return;
 		}
-		console.log(comment);
+	
 		//update the comment
 		await putComment(comment, commentText);
 		//remove the comment from the list of comments being edited
@@ -459,19 +539,22 @@ import { getCurrentTime } from "../composables/helper";
 				<!-- Icons for upvote, downvote, and reply -->
 				<div class="mx-4 flex justify-end space-x-4">
 					<!-- Upvote -->
-					<button @click.stop="upvote(currentPost.pid)" class="relative flex items-center">
+					<button @click.stop="vote(currentPost.pid,true,true, isUpvotePost)" class="relative flex items-center">
 						<span class="upvotes top-0"  v-if="currentPost.upvotes > 0">
 						{{currentPost.upvotes}}
 						</span>
-						<img src="../assets/post/upvote.svg" alt="Upvote" class="w-5 h-5 bg-red">
+						<img src="../assets/post/upvote.svg" alt="Upvote" class="w-5 h-5 bg-red" v-if="!isUpvotePost.value">
+						<img src="../assets/post/upvote_activated.svg" alt="Upvote" class="w-5 h-5 bg-red" v-else>
 					</button>
 
 					<!-- Downvote -->
-					<button @click.stop="downvote(currentPost.pid)" class="relative flex items-center">
+					<button @click.stop="vote(currentPost.pid,true,false,isDownvotePost)" class="relative flex items-center">
 						<span class="downvotes top-0" v-if="currentPost.downvotes > 0">
 						{{currentPost.downvotes}}
 						</span>
-						<img src="../assets/post/downvote.svg" alt="Downvote" class="w-5 h-5">
+						<img src="../assets/post/downvote.svg" alt="Downvote" class="w-5 h-5" v-if="!isDownvotePost.value">
+						<img src="../assets/post/downvote_activated.svg" alt="Downvote" class="w-5 h-5" v-else>
+
 					</button>
 
 					<!-- Reply -->
@@ -548,18 +631,20 @@ import { getCurrentTime } from "../composables/helper";
 								{{ new Date(comment.updatedAt).toLocaleString() }}
 							</p>
 							<div class="mx-4 flex justify-end space-x-4 pr-6 mt-4" v-if="!isEditingComment(comment)">
-									<button @click.stop="upvote(comment.pid)" class="relative  items-center flex">	
+									<button @click.stop="vote(comment.cid,false,true,isUpvoteComment(comment.cid))" class="relative  items-center flex">	
 										<span class="upvotes top-[-0.5rem]" v-if="comment.upvotes > 0">
 										{{comment.upvotes}}
 										</span>
-										<img src="../assets/post/upvote.svg" alt="Upvote" class="w-5 h-5" v-if="!isUpvoteComment(comment.id)">
+										
+										<img src="../assets/post/upvote.svg" alt="Upvote" class="w-5 h-5" v-if="!isUpvoteComment(comment.cid).value">
+									
 										<img src="../assets/post/upvote_activated.svg" alt="Upvote" class="w-5 h-5" v-else>
 									</button> 
-									<button @click.stop="downvote(comment.pid)" class="relative  items-center flex">
+									<button @click.stop="vote(comment.cid,false,true,isDownvoteComment(comment.cid))" class="relative  items-center flex">
 									<span class="downvotes top-[-0.5rem]"  v-if="comment.downvotes > 0">
 										{{comment.downvotes}}
 										</span>
-										<img src="../assets/post/downvote.svg" alt="Downvote" class="w-5 h-5" v-if="!isDownvoteComment(comment.id)">
+										<img src="../assets/post/downvote.svg" alt="Downvote" class="w-5 h-5" v-if="!isDownvoteComment(comment.cid).value">
 										<img src="../assets/post/downvote_activated.svg" alt="Downvote" class="w-5 h-5" v-else>
 									</button>
 							</div>
