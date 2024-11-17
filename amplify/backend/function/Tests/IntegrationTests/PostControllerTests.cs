@@ -523,7 +523,7 @@ public class PostControllerIntegrationTests
         var newPost = JsonConvert.DeserializeObject<Post>(responseString1);
 
         // Act
-        var response2 = await _client.GetAsync($"/api/posts/getPostsByUser?uid={_testUserId}&diaryEntry={false}");
+        var response2 = await _client.GetAsync($"/api/posts/getPostsByUser?uid={_testUserId}");
         var responseString2 = await response2.Content.ReadAsStringAsync();
         var postList = JsonConvert.DeserializeObject<List<Post>>(responseString2);
 
@@ -547,7 +547,7 @@ public class PostControllerIntegrationTests
     public async Task GetPostsByUser_ShouldReturnBadRequest_WithInvalidUID()
     {
         // Act
-        var response = await _client.GetAsync($"/api/posts/getPostsByUser?uid={null}&diaryEntry={false}");
+        var response = await _client.GetAsync($"/api/posts/getPostsByUser?uid={null}");
         
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);

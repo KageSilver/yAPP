@@ -21,12 +21,11 @@ public interface IPostActions
     Task<Post> GetPostById(string pid);
 
     /// <summary>
-    /// Gets the user's public posts or diary entries
+    /// Gets all public posts from a user
     /// </summary>
     /// <param name="uid">The author of the posts to be fetched.</param>
-    /// <param name="diaryEntry">If the query is for public posts or diary entries.</param>
-    /// <returns>A list of posts created by a user, either public posts or diary entries.</returns>
-    Task<List<Post>> GetPostsByUser(string uid, bool diaryEntry);
+    /// <returns>A list of public posts created by a user.</returns>
+    Task<List<Post>> GetPostsByUser(string uid);
 
     /// <summary>
     /// Gets the diary entries made by a user within a specific day

@@ -401,7 +401,7 @@ public class PostActionsTests
             .Returns(scanToSearchMock.Object);
 
         // Act
-        var result = await _postActionsMock.GetPostsByUser(post.UID, false);
+        var result = await _postActionsMock.GetPostsByUser(post.UID);
 
         // Assert
         Assert.Equal(1, result.Count);
@@ -427,7 +427,7 @@ public class PostActionsTests
             .ThrowsAsync(new Exception("error querying posts"));
 
         // Act
-        var result = await _postActionsMock.GetPostsByUser("uid", false);
+        var result = await _postActionsMock.GetPostsByUser("uid");
 
         // Assert
         Assert.Empty(result);
