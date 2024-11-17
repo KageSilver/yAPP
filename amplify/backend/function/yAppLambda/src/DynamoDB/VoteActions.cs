@@ -118,7 +118,10 @@ public class VoteActions : IVoteActions
                 {
                     post.Upvotes++;
                 }
-                //Add downvote code here
+                else
+                {
+                    post.Downvotes++;
+                }
                 await _postActions.UpdatePost(post);
             }
             else
@@ -129,7 +132,10 @@ public class VoteActions : IVoteActions
                 {
                     comment.Upvotes++;
                 }
-                //Add downvote code here
+                else
+                {
+                    comment.Downvotes++;
+                }
                 await _commentActions.UpdateComment(comment);
             }
 
@@ -173,7 +179,10 @@ public class VoteActions : IVoteActions
                     {
                         post.Upvotes--;
                     }
-                    //Add downvote code here
+                    else
+                    {
+                        post.Downvotes--;
+                    }
                     await _postActions.UpdatePost(post);
                 }
                 else
@@ -184,7 +193,10 @@ public class VoteActions : IVoteActions
                     {
                         comment.Upvotes--;
                     }
-                    //Add downvote code here
+                    else
+                    {
+                        comment.Downvotes--;
+                    }
                     await _commentActions.UpdateComment(comment);
                 }
                 // Delete the vote from the database

@@ -102,7 +102,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n\t\"pid\": \"\",\n\t\"isPost\": \"\",\n\t\"type\": \"\",\n\t\"uid\": \"\"\n}",
+          "raw": "{\n\t\"pid\": \"\",\n\t\"isPost\": true,\n\t\"type\": true,\n\t\"uid\": \"\"\n}",
           "options": {
             "raw": {
               "language": "json"
