@@ -44,4 +44,9 @@ public interface IAppSettings
     /// award table name
     /// </summary>
     string AwardTableName { get; set; }
+    
+    /// <summary>
+    /// Vote table name
+    /// </summary>
+    string VoteTableName { get; set; }
 }

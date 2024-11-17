@@ -43,4 +43,9 @@ public class AppSettings: IAppSettings
     /// award table name
     /// </summary>
     public string AwardTableName { get; set; }
+    
+    /// <summary>
+    /// Vote table name
+    /// </summary>
+    public string VoteTableName { get; set; }
 }

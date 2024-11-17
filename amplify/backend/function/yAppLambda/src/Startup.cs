@@ -112,6 +112,8 @@ public class Startup
             services.AddScoped<IPostActions, PostActions>();
             services.AddScoped<ICommentActions, CommentActions>();
             services.AddScoped<IAwardActions, AwardActions>();
+            services.AddScoped<IVoteActions, VoteActions>();
+
         }
         catch (Exception e)
         {

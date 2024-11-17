@@ -29,6 +29,7 @@ public class CommentActions : ICommentActions
         {
             OverrideTableName = _commentTable
         };
+
     }
     
     /// <summary>
@@ -190,28 +191,24 @@ public class CommentActions : ICommentActions
     public async Task<bool> DeleteComments(string pid)
     {
         var result = true;
-        try
-        {
-            // Load the comments to check if the pid exists
-            var comments = await GetCommentsByPid(pid);
+        // Load the comments to check if the pid exists
+        var comments = await GetCommentsByPid(pid);
 
-            if (comments.Count == 0)
-            {
-                Console.WriteLine("Failed to retrieve comments");
-                result = false;
-            }
-            else
-            {
-                // Delete all comments under the post from the database
-                foreach ( var comment in comments )
-                    if ( ! await DeleteComment(comment.CID) )
-                        result = false;
-            }
-        }
-        catch (Exception e)
+        if (comments.Count == 0)
         {
-            Console.WriteLine("Failed to delete comments: " + e.Message);
+            Console.WriteLine("Failed to retrieve comments");
             result = false;
+        }
+        else
+        {
+            // Delete all comments under the post from the database
+            foreach ( var comment in comments )
+            {
+                if ( ! await DeleteComment(comment.CID) )
+                {
+                    result = false;
+                }
+            }
         }
         return result;
     }

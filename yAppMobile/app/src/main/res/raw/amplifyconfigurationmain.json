@@ -6,7 +6,7 @@
             "awsAPIPlugin": {
                 "test": {
                     "endpointType": "REST",
-                    "endpoint": "https://y4cvw78v4d.execute-api.us-east-2.amazonaws.com/dev",
+                    "endpoint": "https://v0o5pgdx91.execute-api.us-east-2.amazonaws.com/main",
                     "region": "us-east-2",
                     "authorizationType": "NONE"
                 }
@@ -24,23 +24,23 @@
                 "CredentialsProvider": {
                     "CognitoIdentity": {
                         "Default": {
-                            "PoolId": "us-east-2:6cf1c726-006a-4564-8056-577579cb8b6a",
+                            "PoolId": "us-east-2:7433089d-2d47-4d46-8a17-1831e8d65349",
                             "Region": "us-east-2"
                         }
                     }
                 },
                 "CognitoUserPool": {
                     "Default": {
-                        "PoolId": "us-east-2_AoahD29kD",
-                        "AppClientId": "2vmsktps1vpvcrp4us3revrcja",
+                        "PoolId": "us-east-2_itXR8ULJ4",
+                        "AppClientId": "13r0mp5csf1ldd1jrmr9rh7354",
                         "Region": "us-east-2"
                     }
                 },
                 "Auth": {
                     "Default": {
                         "OAuth": {
-                            "WebDomain": "yappdev.auth.us-east-2.amazoncognito.com",
-                            "AppClientId": "2vmsktps1vpvcrp4us3revrcja",
+                            "WebDomain": "yappmain.auth.us-east-2.amazoncognito.com",
+                            "AppClientId": "13r0mp5csf1ldd1jrmr9rh7354",
                             "SignInRedirectURI": "yapp://callback/",
                             "SignOutRedirectURI": "yapp://signout/",
                             "Scopes": [
