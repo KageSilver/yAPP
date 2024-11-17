@@ -76,8 +76,7 @@
 	};
 
 	const vote = async (pid, isPost, isUpVote, currentValue) => {
-		//set loading screen
-
+	
 		const body = ref({});
 		body.value = {
 			uid: userId.value,
