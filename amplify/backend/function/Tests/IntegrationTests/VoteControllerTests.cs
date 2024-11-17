@@ -135,16 +135,6 @@ public class VoteControllerIntegrationTests
     [Fact, Order(2)]
     public async Task AddVote_ValidRequest_ReturnsVote_ForDownvote()
     {
-        //Setup the user for testing in first test
-        await _cognitoActions.CreateUser(TestUserEmail);
-        await Task.Delay(TimeSpan.FromSeconds(5)); // make sure the user is created
-
-        var responseId = await _client.GetAsync($"/api/users/getUserByName?username={TestUserEmail}");
-        Assert.Equal(HttpStatusCode.OK, responseId.StatusCode);
-        var responseIdString = await responseId.Content.ReadAsStringAsync();
-        var user = JsonConvert.DeserializeObject<User>(responseIdString);
-        _testUid = user.Id;
-
         // Setup post to create a vote under
         var newPost = new NewPost
         {
