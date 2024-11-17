@@ -539,7 +539,7 @@ const vote = async (pid, isPost, isUpVote, currentValue) => {
 				<!-- Icons for upvote, downvote, and reply -->
 				<div class="mx-4 flex justify-end space-x-4">
 					<!-- Upvote -->
-					<button @click.stop="vote(currentPost.pid,true,true, isUpvotePost)" class="relative flex items-center">
+					<button @click.stop="vote(currentPost.pid,true,true, isUpvotePost)" class="relative flex rounded-xl items-center p-2 hover:bg-light-pink hover:text-transparent">
 						<span class="upvotes top-0"  v-if="currentPost.upvotes > 0">
 						{{currentPost.upvotes}}
 						</span>
@@ -548,7 +548,7 @@ const vote = async (pid, isPost, isUpVote, currentValue) => {
 					</button>
 
 					<!-- Downvote -->
-					<button @click.stop="vote(currentPost.pid,true,false,isDownvotePost)" class="relative flex items-center">
+					<button @click.stop="vote(currentPost.pid,true,false,isDownvotePost)" class="relative flex rounded-xl items-center p-2 hover:bg-light-pink hover:text-transparent">
 						<span class="downvotes top-0" v-if="currentPost.downvotes > 0">
 						{{currentPost.downvotes}}
 						</span>
@@ -631,7 +631,7 @@ const vote = async (pid, isPost, isUpVote, currentValue) => {
 								{{ new Date(comment.updatedAt).toLocaleString() }}
 							</p>
 							<div class="mx-4 flex justify-end space-x-4 pr-6 mt-4" v-if="!isEditingComment(comment)">
-									<button @click.stop="vote(comment.cid,false,true,isUpvoteComment(comment.cid))" class="relative  items-center flex">	
+									<button @click.stop="vote(comment.cid,false,true,isUpvoteComment(comment.cid))" class="relative flex rounded-xl items-center p-2 hover:bg-light-pink hover:text-transparent">	
 										<span class="upvotes top-[-0.5rem]" v-if="comment.upvotes > 0">
 										{{comment.upvotes}}
 										</span>
@@ -640,7 +640,7 @@ const vote = async (pid, isPost, isUpVote, currentValue) => {
 									
 										<img src="../assets/post/upvote_activated.svg" alt="Upvote" class="w-5 h-5" v-else>
 									</button> 
-									<button @click.stop="vote(comment.cid,false,true,isDownvoteComment(comment.cid))" class="relative  items-center flex">
+									<button @click.stop="vote(comment.cid,false,false,isDownvoteComment(comment.cid))" class="relative flex rounded-xl items-center p-2 hover:bg-light-pink hover:text-transparent">
 									<span class="downvotes top-[-0.5rem]"  v-if="comment.downvotes > 0">
 										{{comment.downvotes}}
 										</span>
@@ -795,10 +795,10 @@ const vote = async (pid, isPost, isUpVote, currentValue) => {
 <style scoped>
 
 .upvotes{
-	@apply absolute  right-[-0.5rem] text-xs;
+	@apply absolute  right-0 text-xs;
 }
 
 .downvotes{
-	@apply absolute  right-[-0.8rem] text-xs;
+	@apply absolute  right-0 text-xs;
 }
 </style>
