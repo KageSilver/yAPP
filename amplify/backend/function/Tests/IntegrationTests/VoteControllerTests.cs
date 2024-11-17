@@ -248,7 +248,7 @@ public class VoteControllerIntegrationTests
         var responseString = await response.Content.ReadAsStringAsync();
         var post = JsonConvert.DeserializeObject<Post>(responseString);
 
-        // Arrange
+        // Arrange votes now
         var vote = new Vote
         {
             PID = post.PID,
@@ -365,7 +365,7 @@ public class VoteControllerIntegrationTests
         var responseString = await response.Content.ReadAsStringAsync();
         var post = JsonConvert.DeserializeObject<Post>(responseString);
 
-        // Arrange
+        // Arrange vote now
         var request = new Vote
         {
             PID = post.PID,
@@ -469,7 +469,6 @@ public class VoteControllerIntegrationTests
         var responseString1 = await response1.Content.ReadAsStringAsync();
         var responseVote1 = JsonConvert.DeserializeObject<Vote>(responseString1);
         
-        // Arrange
         var newVote2 = new Vote
         {
             PID = post.PID,
@@ -542,7 +541,6 @@ public class VoteControllerIntegrationTests
         var responseString2 = await response2.Content.ReadAsStringAsync();
         var responseVote1 = JsonConvert.DeserializeObject<Vote>(responseString2);
         
-        // Arrange
         var newVote2 = new Vote
         {
             PID = responseComment.CID,
@@ -621,7 +619,7 @@ public class VoteControllerIntegrationTests
         var responseString = await response.Content.ReadAsStringAsync();
         var post = JsonConvert.DeserializeObject<Post>(responseString);
 
-        // Arrange
+        // Arrange vote now
         var newVote = new Vote
         {
             PID = post.PID,
@@ -727,7 +725,7 @@ public class VoteControllerIntegrationTests
         var responseString = await response.Content.ReadAsStringAsync();
         var comment = JsonConvert.DeserializeObject<Comment>(responseString);
 
-        // Arrange
+        // Arrange vote now
         var newVote = new Vote
         {
             PID = comment.CID,

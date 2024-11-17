@@ -69,7 +69,6 @@ public class VoteControllerTests
         // Arrange 
         var request = new Vote { PID = "1", IsPost = true, Type = true, UID = "uid" };
         var voter = new User {Id = "uid" };
-        // Omitting 
         var vote = new Vote 
         { 
             PID = "1", 

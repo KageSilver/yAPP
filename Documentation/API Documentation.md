@@ -1,5 +1,49 @@
 # API Documentation
 
+## Awards
+
+### GetAwardById
+ - Retrieves an award by a unique identifier.
+ - GET: api/awards/getAwardById?aid={aid}
+   - aid: The unique identifier for an award
+ - Response: returns the award object associated with the specified award id
+   - { "aid": "aid", "pid": "pid", "uid": "uid", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "name": "name", "type": "type", "tier": 0 }
+ - Status codes:
+   - 200 OK
+   - 400 Bad Request: award ID is required
+   - 404 Not Found: Award does not exist
+
+### GetAwardsByUser
+ - Gets all awards from a user
+ - GET: api/awards/getAwardsByUser?uid={uid}
+   - uid: The user who earned the awards being fetched
+ - Response: returns a list of award objects that have been earned by the user associated with the specified user id
+   - [ { "aid": "aid", "pid": "pid", "uid": "uid", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "name": "name", "type": "type", "tier": 0 } ]
+ - Status codes:
+   - 200 Ok
+   - 400 Bad Request: uid is required
+
+### GetAwardsByPost
+ - Gets all awards from a post
+ - GET: api/awards/getAwardsByPost?pid={pid}
+   - pid: The post on which the awards were earned
+ - Response: returns a list of award objects that have been earned on a post associated with the specified post id
+   - [ { "aid": "aid", "pid": "pid", "uid": "uid", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "name": "name", "type": "type", "tier": 0 } ]
+ - Status codes:
+   - 200 Ok
+   - 400 Bad Request: pid is required
+
+### GetNewAwardsByUser
+ - Gets new awards a user has earned since this endpoint was last called
+ - GET: api/awards/getNewAwardsByUser?uid={uid}
+   - uid: The user who earned the awards being fetched
+ - Response: returns a list of award objects that have been earned by the specified user through the checks done in this endpoint
+   - [ { "aid": "aid", "pid": "pid", "uid": "uid", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "name": "name", "type": "type", "tier": 0 } ] 
+ - Status codes:
+   - 200 Ok
+   - 400 Bad Request: uid is required
+   - 404 Not Found: User does not exist
+
 ## Comments
 
 ### GetPostByCid
@@ -240,3 +284,48 @@
     - 200 OK
     - 400 Bad Request: request body is required and must contain username and name
     - 404 Not Found: User not found
+
+## Votes
+
+### GetVote
+ - Get the given vote by uid, pid, and type
+ - GET: api/votes/getVoteStatus?uid={uid}&pid={pid}&type={type}
+   - uid: The uid of the current user
+   - pid: The pid of the post or comment
+   - type: Whether it's checking for an upvote/downvote
+ - Response: returns a vote object that is associated with the given values
+   - { "pid": "pid", "isPost": true, "type": true, "uid": "uid" }
+
+### GetVotesByPid
+ - Gets all votes with given PID
+ - GET: api/votes/getVotesByPid?pid={pid}
+   - pid: The pid to find a vote under
+ - Response: returns a list of vote objects made on a post associated with the specified post id
+   - [ { "pid": "pid", "isPost": true, "type": true, "uid": "uid" } ]
+ - Status codes:
+   - 200 OK
+   - 400 Bad Request: Pid is required
+
+### AddVote
+ - Creates a new vote
+ - POST: api/votes/addVote
+ - Request body: { "pid": "pid", "isPost": "isPost", "type": "type", "uid": "uid" }
+ - Response: returns the vote object created from the new vote
+ - Status codes:
+   - 200 OK
+   - 400 Bad Request: 
+      - Request body is required and must contain the post/comment's id and the user's id
+      - Failed to create vote object
+   - 404 Not Found: User not found
+
+### RemoveVote
+ - Remove the corresponding vote by pid and uid
+ - DELETE: api/votes/removeVote?uid={uid}&pid={pid}&type={type}
+   - uid: The uid of the current user
+   - pid: The pid of the post or comment
+   - type: Whether it's removing an upvote/downvote
+ - Response: returns whether the deletion was successful
+   - true/false
+ - Status codes:
+   - 200 OK
+   - 400 Bad Request: User id and post/comment id is required
