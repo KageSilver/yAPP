@@ -152,7 +152,7 @@ public class VoteActionsTests
         // Arrange
         var vote = new Vote
         {
-            PID = "addVoteShouldReturnOK",
+            PID = "addVoteShouldReturnOKForDownvotes",
             IsPost = true,
             Type = false,
             UID = "c1cb"
@@ -160,11 +160,10 @@ public class VoteActionsTests
 
         _appSettingsMock.Setup(a => a.VoteTableName).Returns(VoteTableName);
 
-        // Arrange
         var now = DateTime.Now;
         var request = new Post
         {
-            PID = "addVoteShouldReturnOK",
+            PID = "addVoteShouldReturnOKForDownvotes",
             CreatedAt = now,
             UpdatedAt = now,
             UID = "c1cb",
@@ -178,6 +177,59 @@ public class VoteActionsTests
 
         // Sets up LoadAsync to return the request post
         _dynamoDbContextMock.Setup(d => d.LoadAsync<Post>(It.IsAny<string>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(request);
+
+        // Setup SaveAsync to succeed
+        _dynamoDbContextMock.Setup(d => d.SaveAsync(It.IsAny<Vote>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        // Act
+        var result = await _voteActionsMock.AddVote(vote);
+
+        // Assert
+        var actionResult = Assert.IsType<ActionResult<Vote>>(result);
+        var okResult = Assert.IsType<OkObjectResult>(actionResult.Result); // Access the actual result
+
+        var returnedVote = Assert.IsType<Vote>(okResult.Value);
+        Assert.Equal(vote.PID, returnedVote.PID);
+        Assert.Equal(vote.IsPost, returnedVote.IsPost);
+        Assert.Equal(vote.Type, returnedVote.Type);
+        Assert.Equal(vote.UID, returnedVote.UID);
+
+        // Verify the SaveAsync was called once with the correct parameters
+        _dynamoDbContextMock.Verify(
+            d => d.SaveAsync(It.IsAny<Vote>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task AddVote_ShouldReturnOK_WhenVoteIsCreatedSuccessfully_ForDownvotesAndComments()
+    {
+        // Arrange
+        var vote = new Vote
+        {
+            PID = "addVoteShouldReturnOKForDownvoteAndComment",
+            IsPost = false,
+            Type = false,
+            UID = "c1cb"
+        };
+
+        _appSettingsMock.Setup(a => a.VoteTableName).Returns(VoteTableName);
+
+        var now = DateTime.Now;
+        var request = new Comment
+        {
+            PID = "addVoteShouldReturnOKForDownvoteAndComment",
+            CID = "addVoteShouldReturnOKForDownvoteAndComment",
+            CommentBody = "addVoteShouldReturnOKForDownvoteAndComment",
+            CreatedAt = now,
+            UpdatedAt = now,
+            UID = "c1cb",
+            Upvotes = 0,
+            Downvotes = 0,
+        };
+
+        // Sets up LoadAsync to return the request comment
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Comment>(It.IsAny<string>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(request);
 
         // Setup SaveAsync to succeed
@@ -426,7 +478,165 @@ public class VoteActionsTests
         var list = new List<Vote>();
         list.Add(response);
 
-        // Mock the AsyncSearch<Post> returned by ScanAsync
+        // Mock the AsyncSearch<Vote> returned by ScanAsync
+        var scanToSearchMock = new Mock<AsyncSearch<Vote>>();
+        scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(list);
+            
+        _dynamoDbContextMock.Setup(d => d.ScanAsync<Vote>(It.IsAny<List<ScanCondition>>(), It.IsAny<DynamoDBOperationConfig>()))
+            .Returns(scanToSearchMock.Object);
+
+        // Sets up DeleteAsync to succeed            
+        _dynamoDbContextMock.Setup(d => d.DeleteAsync(It.IsAny<Vote>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()));
+
+        // Act
+        var result = await _voteActionsMock.RemoveVote(vote.UID, vote.PID, vote.Type);
+
+        // Assert
+        Assert.True(result);
+        _dynamoDbContextMock.Verify(d => d.DeleteAsync(response, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()));
+    }
+
+    [Fact]
+    public async Task RemoveVote_ShouldCallDeleteAsync_ForComment()
+    {
+        // Arrange
+        var vote = new Vote
+        {
+            PID = "11111",
+            IsPost = false,
+            Type = true,
+            UID = "11111"
+        };
+        var response = new Vote { PID = "11111", IsPost = false, Type = true, UID = "11111" };
+        
+        var now = DateTime.Now;
+        var request = new Comment
+        {
+            PID = "11111",
+            CID = "11111",
+            CreatedAt = now,
+            UpdatedAt = now,
+            UID = "c1cb",
+            CommentBody = "body",
+            Upvotes = 0,
+            Downvotes = 0,
+        };
+
+        // Sets up LoadAsync to return the request comment
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Comment>(It.IsAny<string>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(request);
+
+        var list = new List<Vote>();
+        list.Add(response);
+
+        // Mock the AsyncSearch<Vote> returned by ScanAsync
+        var scanToSearchMock = new Mock<AsyncSearch<Vote>>();
+        scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(list);
+            
+        _dynamoDbContextMock.Setup(d => d.ScanAsync<Vote>(It.IsAny<List<ScanCondition>>(), It.IsAny<DynamoDBOperationConfig>()))
+            .Returns(scanToSearchMock.Object);
+
+        // Sets up DeleteAsync to succeed            
+        _dynamoDbContextMock.Setup(d => d.DeleteAsync(It.IsAny<Vote>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()));
+
+        // Act
+        var result = await _voteActionsMock.RemoveVote(vote.UID, vote.PID, vote.Type);
+
+        // Assert
+        Assert.True(result);
+        _dynamoDbContextMock.Verify(d => d.DeleteAsync(response, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()));
+    }
+
+    [Fact]
+    public async Task RemoveVote_ShouldCallDeleteAsync_ForDownvotesAndComment()
+    {
+        // Arrange
+        var vote = new Vote
+        {
+            PID = "11111",
+            IsPost = false,
+            Type = false,
+            UID = "11111"
+        };
+        var response = new Vote { PID = "11111", IsPost = false, Type = false, UID = "11111" };
+        
+        var now = DateTime.Now;
+        var request = new Comment
+        {
+            PID = "11111",
+            CID = "11111",
+            CreatedAt = now,
+            UpdatedAt = now,
+            UID = "c1cb",
+            CommentBody = "body",
+            Upvotes = 0,
+            Downvotes = 0,
+        };
+
+        // Sets up LoadAsync to return the request comment
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Comment>(It.IsAny<string>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(request);
+
+        var list = new List<Vote>();
+        list.Add(response);
+
+        // Mock the AsyncSearch<Vote> returned by ScanAsync
+        var scanToSearchMock = new Mock<AsyncSearch<Vote>>();
+        scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(list);
+            
+        _dynamoDbContextMock.Setup(d => d.ScanAsync<Vote>(It.IsAny<List<ScanCondition>>(), It.IsAny<DynamoDBOperationConfig>()))
+            .Returns(scanToSearchMock.Object);
+
+        // Sets up DeleteAsync to succeed            
+        _dynamoDbContextMock.Setup(d => d.DeleteAsync(It.IsAny<Vote>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()));
+
+        // Act
+        var result = await _voteActionsMock.RemoveVote(vote.UID, vote.PID, vote.Type);
+
+        // Assert
+        Assert.True(result);
+        _dynamoDbContextMock.Verify(d => d.DeleteAsync(response, It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()));
+    }
+
+    [Fact]
+    public async Task RemoveVote_ShouldCallDeleteAsync_ForDownvote()
+    {
+        // Arrange
+        var vote = new Vote
+        {
+            PID = "11111",
+            IsPost = true,
+            Type = false,
+            UID = "11111"
+        };
+        var response = new Vote { PID = "11111", IsPost = true, Type = false, UID = "11111" };
+        
+        var now = DateTime.Now;
+        var request = new Post
+        {
+            PID = "11111",
+            CreatedAt = now,
+            UpdatedAt = now,
+            UID = "c1cb",
+            PostTitle = "title",
+            PostBody = "body",
+            Upvotes = 0,
+            Downvotes = 0,
+            DiaryEntry = false,
+            Anonymous = true
+        };
+
+        // Sets up LoadAsync to return the request post
+        _dynamoDbContextMock.Setup(d => d.LoadAsync<Post>(It.IsAny<string>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(request);
+
+        var list = new List<Vote>();
+        list.Add(response);
+
+        // Mock the AsyncSearch<Vote> returned by ScanAsync
         var scanToSearchMock = new Mock<AsyncSearch<Vote>>();
         scanToSearchMock.Setup(s => s.GetRemainingAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(list);
