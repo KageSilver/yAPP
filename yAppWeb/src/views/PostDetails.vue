@@ -1,14 +1,30 @@
 <script setup>
-	import { del, get, post, put } from "aws-amplify/api";
-import { getCurrentUser } from "aws-amplify/auth";
-import { computed, onMounted, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import Alert from "../components/Alert.vue";
-import BackBtn from "../components/BackBtn.vue";
-import ConfirmationModal from "../components/ConfirmationModal.vue";
-import DotMenu from "../components/DotMenu.vue";
-import LoadingScreen from "../components/LoadingScreen.vue";
-import { getCurrentTime } from "../composables/helper";
+	import {
+		del,
+		get,
+		post,
+		put
+	} from "aws-amplify/api";
+	import {
+		getCurrentUser
+	} from "aws-amplify/auth";
+	import {
+		computed,
+		onMounted,
+		ref
+	} from "vue";
+	import {
+		useRoute,
+		useRouter
+	} from "vue-router";
+	import Alert from "../components/Alert.vue";
+	import BackBtn from "../components/BackBtn.vue";
+	import ConfirmationModal from "../components/ConfirmationModal.vue";
+	import DotMenu from "../components/DotMenu.vue";
+	import LoadingScreen from "../components/LoadingScreen.vue";
+	import {
+		getCurrentTime
+	} from "../composables/helper";
 
 	// Importing necessary modules
 	const route = useRoute();
@@ -154,7 +170,7 @@ import { getCurrentTime } from "../composables/helper";
 	const isUpvoteComment = (cid) => {
 		//check if the user has upvoted the comment
 		const voted = ref(false);
-		console.log(myCommentVotes.value.filter(vote => vote.cid == cid ));
+		console.log(myCommentVotes.value.filter(vote => vote.cid == cid));
 		console.log(myCommentVotes.value.filter(vote => vote.cid == cid && vote.upvote.value));
 		voted.value = myCommentVotes.value.filter(vote => vote.cid == cid && vote.upvote).length > 0;
 		return voted;
@@ -167,14 +183,14 @@ import { getCurrentTime } from "../composables/helper";
 		return voted;
 	};
 
-const isUpvotePost = computed(() => {
-	//check if the user has upvoted the post
-	const voted = ref(false);
+	const isUpvotePost = computed(() => {
+		//check if the user has upvoted the post
+		const voted = ref(false);
 
-	voted.value = myPostVotes.value.filter(vote => vote.type == true).length > 0;
+		voted.value = myPostVotes.value.filter(vote => vote.type == true).length > 0;
 
-	return voted;
-});
+		return voted;
+	});
 
 	const isDownvotePost = computed(() => {
 		//check if the user has downvoted the post
@@ -184,20 +200,22 @@ const isUpvotePost = computed(() => {
 		return voted;
 	});
 
-	
+
 
 	const getVotes = async (pid) => {
 		const restOperation = get({
 			apiName: "yapp",
 			path: `/api/votes/getVotesByPid?pid=${pid}`,
 		});
-		const { body: body } = await restOperation.response;
+		const {
+			body: body
+		} = await restOperation.response;
 		var votes = await body.json();
 		return votes
 	};
 
-const vote = async (pid, isPost, isUpVote, currentValue) => {
-	//set loading screen
+	const vote = async (pid, isPost, isUpVote, currentValue) => {
+		//set loading screen
 		loading.value = true;
 		const body = ref({});
 		body.value = {
@@ -207,8 +225,8 @@ const vote = async (pid, isPost, isUpVote, currentValue) => {
 			isPost: isPost,
 		};
 		console.log("currentValue", currentValue.value);
-		
-	if (currentValue.value == false) {
+
+		if (currentValue.value == false) {
 			console.log("adding vote");
 			const restOperation = post({
 				apiName: "yapp",
@@ -246,7 +264,7 @@ const vote = async (pid, isPost, isUpVote, currentValue) => {
 		//fetch the comments
 		await fetchComments(pid);
 
-		
+
 	});
 
 	const fetchPost = async pid => {
@@ -258,7 +276,9 @@ const vote = async (pid, isPost, isUpVote, currentValue) => {
 				apiName: "yapp",
 				path: `/api/posts/getPostById?pid=${pid}`,
 			});
-			const { body } = await restOperation.response;
+			const {
+				body
+			} = await restOperation.response;
 			const response = await body.json();
 			currentPost.value = response;
 			//fetch the votes for the post
@@ -266,7 +286,7 @@ const vote = async (pid, isPost, isUpVote, currentValue) => {
 			//filter the votes's type
 
 			myPostVotes.value = votes.filter(vote => vote.isPost == true && vote.uid == userId.value);
-			
+
 			//disable loading screen
 			loading.value = false;
 		} catch (error) {
@@ -324,7 +344,9 @@ const vote = async (pid, isPost, isUpVote, currentValue) => {
 					body: updatedPost.value,
 				},
 			});
-			const { body } = await putRequest.response;
+			const {
+				body
+			} = await putRequest.response;
 			const response = await body.json();
 			//update the current post with the new values
 			currentPost.value = updatedPost.value;
@@ -346,24 +368,28 @@ const vote = async (pid, isPost, isUpVote, currentValue) => {
 				apiName: "yapp",
 				path: `/api/comments/getCommentsByPid?pid=${pid}`,
 			});
-			const { body: bodyComments } = await restOperationComments.response;
+			const {
+				body: bodyComments
+			} = await restOperationComments.response;
 			comments.value = await bodyComments.json();
 			//fetch the votes for each comment
 			for (var i = 0; i < comments.value.length; i++) {
 				//fetch the votes for the comment
 				const votes = await getVotes(comments.value[i].cid);
 				//filter the votes's type
-				const upvotes = votes.filter(vote => vote.isPost == false && vote.type == true && vote.uid == userId.value);
-				const downvotes = votes.filter(vote => vote.isPost == false && vote.type == false && vote.uid == userId.value);
+				const upvotes = votes.filter(vote => vote.isPost == false && vote.type == true && vote.uid ==
+					userId.value);
+				const downvotes = votes.filter(vote => vote.isPost == false && vote.type == false && vote.uid ==
+					userId.value);
 				myCommentVotes.value.push({
 					cid: comments.value[i].cid,
-					upvote: upvotes.length >0 ,
-					downvote: downvotes.length>0,
+					upvote: upvotes.length > 0,
+					downvote: downvotes.length > 0,
 				});
-				
+
 
 			}
-		
+
 			//disable loading screen
 		} catch (error) {
 			console.log("Failed to load post", error);
@@ -390,7 +416,9 @@ const vote = async (pid, isPost, isUpVote, currentValue) => {
 					body: newComment,
 				},
 			});
-			const { body } = await request.response;
+			const {
+				body
+			} = await request.response;
 			const response = await body.json();
 			setAlert("Yipee!", "Comment created successfully");
 		} catch (error) {
@@ -412,7 +440,7 @@ const vote = async (pid, isPost, isUpVote, currentValue) => {
 			upvotes: 0,
 			downvotes: 0,
 		});
-		
+
 		updatedComment.value.cid = comment.cid;
 		updatedComment.value.uid = comment.uid;
 		updatedComment.value.pid = comment.pid;
@@ -421,7 +449,7 @@ const vote = async (pid, isPost, isUpVote, currentValue) => {
 		updatedComment.value.upvotes = comment.upvotes;
 		updatedComment.value.downvotes = comment.downvotes;
 		updatedComment.value.commentBody = message;
-	
+
 		try {
 			const request = put({
 				apiName: "yapp",
@@ -433,7 +461,9 @@ const vote = async (pid, isPost, isUpVote, currentValue) => {
 					body: updatedComment.value,
 				},
 			});
-			const { body } = await request.response;
+			const {
+				body
+			} = await request.response;
 			const response = await body.json();
 			setAlert("Yipee!", "Comment updated successfully");
 		} catch (error) {
@@ -467,7 +497,7 @@ const vote = async (pid, isPost, isUpVote, currentValue) => {
 			alert("Comment cannot be empty");
 			return;
 		}
-	
+
 		//update the comment
 		await putComment(comment, commentText);
 		//remove the comment from the list of comments being edited
@@ -506,16 +536,12 @@ const vote = async (pid, isPost, isUpVote, currentValue) => {
 <template>
 	<LoadingScreen v-if="loading" />
 
-	<div
-		v-else
-		class="mb-5 flex min-h-screen flex-row items-start justify-center gap-4 px-4 pt-[10rem]"
-		id="postDetails"
-	>
+	<div v-else class="mb-5 flex min-h-screen flex-row items-start justify-center gap-4 px-4 pt-[10rem]"
+		id="postDetails">
 		<div v-if="currentPost && !isEditing" class="flex w-full justify-center">
 			<BackBtn class="mt-2 self-start" />
 			<div
-				class="m-2 max-w-4xl flex-1 rounded-lg border border-gray-300 bg-gray-100 p-5 shadow transition-shadow hover:shadow-md"
-			>
+				class="m-2 max-w-4xl flex-1 rounded-lg border border-gray-300 bg-gray-100 p-5 shadow transition-shadow hover:shadow-md">
 				<div class="relative mb-4">
 					<!-- Post Title and Created At -->
 					<h3 class="break-words text-lg font-semibold">
@@ -525,11 +551,7 @@ const vote = async (pid, isPost, isUpVote, currentValue) => {
 						<strong>Created At:</strong>
 						{{ new Date(currentPost.createdAt).toLocaleString() }}
 					</p>
-					<DotMenu
-						v-if="currentPost.uid == userId"
-						@edit="editPost"
-						@openDeleteModal="openDeleteModal"
-					/>
+					<DotMenu v-if="currentPost.uid == userId" @edit="editPost" @openDeleteModal="openDeleteModal" />
 				</div>
 
 				<!-- Post Body -->
@@ -538,44 +560,43 @@ const vote = async (pid, isPost, isUpVote, currentValue) => {
 				</div>
 				<!-- Icons for upvote, downvote, and reply -->
 				<div class="mx-4 flex justify-end space-x-4">
-					<!-- Upvote -->
-					<button @click.stop="vote(currentPost.pid,true,true, isUpvotePost)" class="relative flex rounded-xl items-center p-2 hover:bg-light-pink hover:text-transparent">
-						<span class="upvotes top-0"  v-if="currentPost.upvotes > 0">
-						{{currentPost.upvotes}}
+					<!-- Upvote Button -->
+					<button @click.stop="vote(currentPost.pid, true, true, isUpvotePost)"
+						class="button"
+						:disabled="isDownvotePost.value">
+						<span class="upvotes top-0" v-if="currentPost.upvotes > 0">
+							{{ currentPost.upvotes }}
 						</span>
-						<img src="../assets/post/upvote.svg" alt="Upvote" class="w-5 h-5 bg-red" v-if="!isUpvotePost.value">
-						<img src="../assets/post/upvote_activated.svg" alt="Upvote" class="w-5 h-5 bg-red" v-else>
+						<img src="../assets/post/upvote.svg" alt="Upvote" class="w-5 h-5" v-if="!isUpvotePost.value" />
+						<img src="../assets/post/upvote_activated.svg" alt="Upvote" class="w-5 h-5" v-else />
 					</button>
 
-					<!-- Downvote -->
-					<button @click.stop="vote(currentPost.pid,true,false,isDownvotePost)" class="relative flex rounded-xl items-center p-2 hover:bg-light-pink hover:text-transparent">
+					<!-- Downvote Button -->
+					<button @click.stop="vote(currentPost.pid, true, false, isDownvotePost)"
+						class="button"
+						:disabled="isUpvotePost.value">
 						<span class="downvotes top-0" v-if="currentPost.downvotes > 0">
-						{{currentPost.downvotes}}
+							{{ currentPost.downvotes }}
 						</span>
-						<img src="../assets/post/downvote.svg" alt="Downvote" class="w-5 h-5" v-if="!isDownvotePost.value">
-						<img src="../assets/post/downvote_activated.svg" alt="Downvote" class="w-5 h-5" v-else>
-
+						<img src="../assets/post/downvote.svg" alt="Downvote" class="w-5 h-5"
+							v-if="!isDownvotePost.value" />
+						<img src="../assets/post/downvote_activated.svg" alt="Downvote" class="w-5 h-5" v-else />
 					</button>
+
+
 
 					<!-- Reply -->
-					<button
-						@click="reply()"
-						class="relative flex items-center space-x-2 rounded-xl p-2 hover:bg-light-pink hover:text-white"
-					>
+					<button @click="reply()"
+						class="relative flex items-center space-x-2 rounded-xl p-2 hover:bg-light-pink hover:text-white">
 						<img src="../assets/post/reply.svg" alt="Reply" class="h-5 w-5" />
 					</button>
-					</div>
+				</div>
 
 				<hr />
 				<div class="relative mb-4 mt-5" v-if="isAddingComment">
 					<div class="px-2">
-						<textarea
-							type="text"
-							class="input"
-							placeholder="Add a comment"
-							id="comment"
-						/>
-					</div>
+						<textarea type="text" class="input" placeholder="Add a comment" id="comment" />
+						</div>
 					<div class="flex justify-end p-2">
 						<button
 							class="mr-2 rounded-lg bg-light-pink p-2 text-white text-xs"
@@ -631,7 +652,7 @@ const vote = async (pid, isPost, isUpVote, currentValue) => {
 								{{ new Date(comment.updatedAt).toLocaleString() }}
 							</p>
 							<div class="mx-4 flex justify-end space-x-4 pr-6 mt-4" v-if="!isEditingComment(comment)">
-									<button @click.stop="vote(comment.cid,false,true,isUpvoteComment(comment.cid))" class="relative flex rounded-xl items-center p-2 hover:bg-light-pink hover:text-transparent">	
+									<button @click.stop="vote(comment.cid,false,true,isUpvoteComment(comment.cid))" class="button" :disabled="isDownvoteComment(comment.cid).value">	
 										<span class="upvotes top-[-0.5rem]" v-if="comment.upvotes > 0">
 										{{comment.upvotes}}
 										</span>
@@ -640,7 +661,7 @@ const vote = async (pid, isPost, isUpVote, currentValue) => {
 									
 										<img src="../assets/post/upvote_activated.svg" alt="Upvote" class="w-5 h-5" v-else>
 									</button> 
-									<button @click.stop="vote(comment.cid,false,false,isDownvoteComment(comment.cid))" class="relative flex rounded-xl items-center p-2 hover:bg-light-pink hover:text-transparent">
+									<button @click.stop="vote(comment.cid,false,false,isDownvoteComment(comment.cid))" class="button" :disabled="isUpvoteComment(comment.cid).value">
 									<span class="downvotes top-[-0.5rem]"  v-if="comment.downvotes > 0">
 										{{comment.downvotes}}
 										</span>
@@ -653,152 +674,87 @@ const vote = async (pid, isPost, isUpVote, currentValue) => {
 								:id="`commentText-${comment.cid}`"
 								v-if="isEditingComment(comment) && comment.uid == userId"
 								class="input"
-								>{{ comment.commentBody }}</textarea
-							>
+								>{{ comment.commentBody }}</textarea>
 
-							<DotMenu
-								v-if="!isEditingComment(comment) && comment.uid == userId"
-								:id="`commentDot-${comment.pid}`"
-								@edit="editComment(comment)"
-								@openDeleteModal="openDeleteCommentModal(comment)"
-							/>
-						</div>
-						<div
-							class="flex justify-end"
-							v-if="isEditingComment(comment) && comment.uid == userId"
-						>
+						<DotMenu v-if="!isEditingComment(comment) && comment.uid == userId"
+							:id="`commentDot-${comment.pid}`" @edit="editComment(comment)"
+							@openDeleteModal="openDeleteCommentModal(comment)" />
+					</div>
+					<div class="flex justify-end" v-if="isEditingComment(comment) && comment.uid == userId">
 
-							<button
-								class="mr-2 rounded-lg bg-light-pink p-2 text-white"
-								:id="`cancelComment-${comment.pid}`"
-								@click="cancelEditComment(comment)"
-							>
-								Cancel
-							</button>
-							<button
-								class="rounded-lg bg-dark-pink p-2 text-white"
-								@click="updateComment(comment)"
-								:id="`updateComment-${comment.pid}`"
-							>
-								Update Comment
-							</button>
-						</div>
+						<button class="mr-2 rounded-lg bg-light-pink p-2 text-white"
+							:id="`cancelComment-${comment.pid}`" @click="cancelEditComment(comment)">
+							Cancel
+						</button>
+						<button class="rounded-lg bg-dark-pink p-2 text-white" @click="updateComment(comment)"
+							:id="`updateComment-${comment.pid}`">
+							Update Comment
+						</button>
 					</div>
 				</div>
 			</div>
 		</div>
+	</div>
 
-		<div
-			v-if="currentPost && isEditing"
-			class="m-2 max-w-4xl flex-1 rounded-lg border border-gray-300 bg-gray-100 p-5 shadow transition-shadow hover:shadow-md"
-		>
-			<div
-				v-if="currentPost.diaryEntry"
-				class="mb-4 rounded-lg border-2 border-gray-300 p-8"
-			>
-				<div class="float-root mb-6">
-					<label class="float-left block text-lg font-semibold text-gray-700"
-						>Anonymous?</label
-					>
+	<div v-if="currentPost && isEditing"
+		class="m-2 max-w-4xl flex-1 rounded-lg border border-gray-300 bg-gray-100 p-5 shadow transition-shadow hover:shadow-md">
+		<div v-if="currentPost.diaryEntry" class="mb-4 rounded-lg border-2 border-gray-300 p-8">
+			<div class="float-root mb-6">
+				<label class="float-left block text-lg font-semibold text-gray-700">Anonymous?</label>
 
-					<label class="float-right cursor-pointer select-none items-center">
-						<div class="relative ml-2 mr-2">
-							<input
-								type="checkbox"
-								class="sr-only"
-								@change="toggleAnonymous"
-							/>
-							<div
-								:class="{ '!bg-[#A55678]': anonIsChecked }"
-								class="box block h-8 w-14 rounded-full bg-[#9E9E9E]"
-							></div>
-							<div
-								:class="{ 'translate-x-full': anonIsChecked }"
-								class="dot absolute left-1 top-1 h-5 w-5 rounded-full bg-white transition"
-							></div>
-						</div>
-					</label>
-				</div>
-			</div>
-
-			<div class="form-group mb-4 w-full">
-				<label for="title" class="mb-2 block text-gray-700">Title:</label>
-				<input
-					type="text"
-					id="title"
-					required
-					:value="currentPost.postTitle"
-					class="input"
-				/>
-			</div>
-
-			<div class="form-group mb-4 w-full">
-				<label for="content" class="mb-2 block text-gray-700">Content:</label>
-				<textarea
-					id="content"
-					required
-					:value="currentPost.postBody"
-					class="input"
-				></textarea>
-			</div>
-
-			<div class="flex w-full flex-col space-y-2">
-				<button
-					title="Update Post"
-					id="updatePostButton"
-					class="w-full rounded-xl bg-pink-purple px-5 py-3 text-white"
-					type="submit"
-					@click="updatePost"
-				>
-					Update Post
-				</button>
-				<button
-					title="Discard Post"
-					class="w-full rounded-xl border border-gray-300 bg-white px-5 py-3 text-dark"
-					@click="openDiscardModal"
-				>
-					Discard
-				</button>
+				<label class="float-right cursor-pointer select-none items-center">
+					<div class="relative ml-2 mr-2">
+						<input type="checkbox" class="sr-only" @change="toggleAnonymous" />
+						<div :class="{ '!bg-[#A55678]': anonIsChecked }"
+							class="box block h-8 w-14 rounded-full bg-[#9E9E9E]"></div>
+						<div :class="{ 'translate-x-full': anonIsChecked }"
+							class="dot absolute left-1 top-1 h-5 w-5 rounded-full bg-white transition"></div>
+					</div>
+				</label>
 			</div>
 		</div>
 
-		<ConfirmationModal
-			:showModal="isDeleting"
-			:close="closeDeleteModal"
-			:confirm="deletePost"
-			header="Woah there!"
-			message="Are you sure you want to delete this post?"
-		/>
-		<ConfirmationModal
-			:showModal="isDiscardingUpdate"
-			:close="closeDiscardModal"
-			:confirm="confirmDiscard"
-			header="Woah there!"
-			message="Are you sure you want to discard your update?"
-		/>
-		<ConfirmationModal
-			:showModal="isDeletingComment"
-			:close="closeDeleteCommentModal"
-			:confirm="confirmDeleteComment"
-			header="Woah there!"
-			:message="`Are you sure you want to delete this '${commentMsg}'?`"
-		/>
-		<Alert
-			:showModal="showAlert"
-			:header="alertMsg.header"
-			:message="alertMsg.message"
-			:close="closeAlert"
-		/>
+		<div class="form-group mb-4 w-full">
+			<label for="title" class="mb-2 block text-gray-700">Title:</label>
+			<input type="text" id="title" required :value="currentPost.postTitle" class="input" />
+		</div>
+
+		<div class="form-group mb-4 w-full">
+			<label for="content" class="mb-2 block text-gray-700">Content:</label>
+			<textarea id="content" required :value="currentPost.postBody" class="input"></textarea>
+		</div>
+
+		<div class="flex w-full flex-col space-y-2">
+			<button title="Update Post" id="updatePostButton"
+				class="w-full rounded-xl bg-pink-purple px-5 py-3 text-white" type="submit" @click="updatePost">
+				Update Post
+			</button>
+			<button title="Discard Post" class="w-full rounded-xl border border-gray-300 bg-white px-5 py-3 text-dark"
+				@click="openDiscardModal">
+				Discard
+			</button>
+		</div>
+	</div>
+
+	<ConfirmationModal :showModal="isDeleting" :close="closeDeleteModal" :confirm="deletePost" header="Woah there!"
+		message="Are you sure you want to delete this post?" />
+	<ConfirmationModal :showModal="isDiscardingUpdate" :close="closeDiscardModal" :confirm="confirmDiscard"
+		header="Woah there!" message="Are you sure you want to discard your update?" />
+	<ConfirmationModal :showModal="isDeletingComment" :close="closeDeleteCommentModal" :confirm="confirmDeleteComment"
+		header="Woah there!" :message="`Are you sure you want to delete this '${commentMsg}'?`" />
+	<Alert :showModal="showAlert" :header="alertMsg.header" :message="alertMsg.message" :close="closeAlert" />
 	</div>
 </template>
 
 <style scoped>
+	.upvotes {
+		@apply absolute right-0 text-xs;
+	}
 
-.upvotes{
-	@apply absolute  right-0 text-xs;
-}
-
-.downvotes{
-	@apply absolute  right-0 text-xs;
-}
+	.downvotes {
+		@apply absolute right-0 text-xs;
+	}
+	.button{
+		@apply relative flex rounded-xl items-center p-2 hover:bg-light-pink hover:text-transparent disabled:hover:bg-none disabled:hover:text-current disabled:opacity-50 disabled:cursor-not-allowed
+	}
 </style>
