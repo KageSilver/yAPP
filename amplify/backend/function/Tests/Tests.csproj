@@ -33,6 +33,9 @@
         <None Update="..\yAppLambda\src\appSettings.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Update="..\yAppLambda\src\awards.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
         <None Remove="Tests.csproj.DotSettings" />
     </ItemGroup>
 </Project>
