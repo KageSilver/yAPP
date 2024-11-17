@@ -94,7 +94,7 @@ public class VoteControllerIntegrationTests
 
         // Act
         var response = await _client.PostAsync("/api/posts/createPost", content);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString = await response.Content.ReadAsStringAsync();
         var post = JsonConvert.DeserializeObject<Post>(responseString);
@@ -113,7 +113,7 @@ public class VoteControllerIntegrationTests
 
         // Act
         var response1 = await _client.PostAsync("/api/votes/addVote", content1);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         // Assert
         var responseString1 = await response1.Content.ReadAsStringAsync();
@@ -133,6 +133,62 @@ public class VoteControllerIntegrationTests
     }
 
     [Fact, Order(2)]
+    public async Task AddVote_ValidRequest_ReturnsVote_ForDownvote()
+    {
+        // Setup post to create a vote under
+        var newPost = new NewPost
+        {
+            UID = _testUid,
+            PostTitle = "AddVote_ValidRequest_ReturnsVote_ForDownvote()",
+            PostBody = "body",
+            DiaryEntry = false,
+            Anonymous = true
+        };
+        
+        var content = new StringContent(JsonConvert.SerializeObject(newPost), System.Text.Encoding.UTF8,
+            "application/json");
+
+        // Act
+        var response = await _client.PostAsync("/api/posts/createPost", content);
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
+
+        var responseString = await response.Content.ReadAsStringAsync();
+        var post = JsonConvert.DeserializeObject<Post>(responseString);
+
+        // Arrange
+        var vote = new Vote
+        {
+            PID = post.PID,
+            IsPost = true,
+            Type = true,
+            UID = _testUid
+        };
+        
+        var content1 = new StringContent(JsonConvert.SerializeObject(vote), System.Text.Encoding.UTF8,
+            "application/json");
+
+        // Act
+        var response1 = await _client.PostAsync("/api/votes/addVote", content1);
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
+
+        // Assert
+        var responseString1 = await response1.Content.ReadAsStringAsync();
+
+        var returnedVote = JsonConvert.DeserializeObject<Vote>(responseString1);
+
+        Assert.NotNull(returnedVote);
+        Assert.Equal(_testUid, returnedVote.UID);
+        Assert.Equal(vote.PID, returnedVote.PID);
+        Assert.Equal(vote.IsPost, returnedVote.IsPost);
+        Assert.Equal(vote.Type, returnedVote.Type);
+
+        // Clean up
+        await _voteActions.RemoveVote(vote.UID, vote.PID, true);
+        await _postActions.DeletePost(post.PID);
+        // Test user is deleted in RemoveVote_ShouldReturnFalse_WhenDeleteFails()
+    }
+
+    [Fact, Order(3)]
     public async Task AddVote_UserNotFound_ReturnsNotFound()
     {
         // Arrange
@@ -158,7 +214,7 @@ public class VoteControllerIntegrationTests
     
     #region GetVote Tests
     
-    [Fact, Order(3)]
+    [Fact, Order(4)]
     public async Task GetVote_ShouldReturnVote_WhenSuccessful()
     {
         // Uses the test user set up in AddVote_ValidRequest_ReturnsVote()
@@ -177,7 +233,7 @@ public class VoteControllerIntegrationTests
 
         // Act
         var response = await _client.PostAsync("/api/posts/createPost", content);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString = await response.Content.ReadAsStringAsync();
         var post = JsonConvert.DeserializeObject<Post>(responseString);
@@ -196,7 +252,7 @@ public class VoteControllerIntegrationTests
 
         // Creates a new vote to query
         var response1 = await _client.PostAsync("/api/votes/addVote", content1);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
         var responseString1 = await response1.Content.ReadAsStringAsync();
         var newVote = JsonConvert.DeserializeObject<Vote>(responseString1);
 
@@ -218,7 +274,7 @@ public class VoteControllerIntegrationTests
         // Test user is deleted in RemoveVote_ShouldReturnFalse_WhenDeleteFails()
     }
 
-    [Fact, Order(4)]
+    [Fact, Order(5)]
     public async Task GetVote_ShouldReturnNotFound_WhenVoteNotFound()
     {
         // Act
@@ -229,7 +285,7 @@ public class VoteControllerIntegrationTests
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
-    [Fact, Order(5)]
+    [Fact, Order(6)]
     public async Task GetVote_ShouldReturnBadRequest_WithNullPid()
     {
         // Act
@@ -239,7 +295,7 @@ public class VoteControllerIntegrationTests
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
-    [Fact, Order(6)]
+    [Fact, Order(7)]
     public async Task GetVote_ShouldReturnBadRequest_WithEmptyPid()
     {
         // Act
@@ -249,7 +305,7 @@ public class VoteControllerIntegrationTests
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
-    [Fact, Order(7)]
+    [Fact, Order(8)]
     public async Task GetVote_ShouldReturnBadRequest_WithNullUid()
     {
         // Act
@@ -260,7 +316,7 @@ public class VoteControllerIntegrationTests
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
     
-    [Fact, Order(8)]
+    [Fact, Order(9)]
     public async Task GetVote_ShouldReturnBadRequest_WithEmptyUid()
     {
         // Act
@@ -275,7 +331,7 @@ public class VoteControllerIntegrationTests
 
     #region GetVotesByPid Tests
 
-    [Fact, Order(9)]
+    [Fact, Order(10)]
     public async Task GetVotesByPid_ShouldReturnVotes_WhenSuccessful()
     {
         // Uses the test user set up in AddVote_ValidRequest_ReturnsVote()
@@ -294,7 +350,7 @@ public class VoteControllerIntegrationTests
 
         // Act
         var response = await _client.PostAsync("/api/posts/createPost", content);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString = await response.Content.ReadAsStringAsync();
         var post = JsonConvert.DeserializeObject<Post>(responseString);
@@ -335,7 +391,7 @@ public class VoteControllerIntegrationTests
         // Test user is deleted in RemoveVote_ShouldReturnFalse_WhenDeleteFails()
     }
 
-    [Fact, Order(10)]
+    [Fact, Order(11)]
     public async Task GetVotesByPid_ShouldReturnBadRequest_WithNullPid()
     {
         // Act
@@ -345,7 +401,7 @@ public class VoteControllerIntegrationTests
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
-    [Fact, Order(11)]
+    [Fact, Order(12)]
     public async Task GetVotesByPid_ShouldReturnBadRequest_WithEmptyPid()
     {
         // Act
@@ -359,7 +415,7 @@ public class VoteControllerIntegrationTests
 
     #region DeleteVotes Tests
     
-    [Fact, Order(12)]
+    [Fact, Order(13)]
     public async Task DeleteVotes_ShouldReturnTrue_WhenVotesAreDeletedSuccessfully()
     {
         // Uses the test user set up in AddVote_ValidRequest_ReturnsVote()
@@ -379,7 +435,7 @@ public class VoteControllerIntegrationTests
 
         // Act
         var response = await _client.PostAsync("/api/posts/createPost", content);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString = await response.Content.ReadAsStringAsync();
         var post = JsonConvert.DeserializeObject<Post>(responseString);
@@ -398,7 +454,7 @@ public class VoteControllerIntegrationTests
 
         // Create a new vote for testing
         var response1 = await _client.PostAsync("/api/votes/addVote", content1);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString1 = await response1.Content.ReadAsStringAsync();
         var responseVote1 = JsonConvert.DeserializeObject<Vote>(responseString1);
@@ -416,7 +472,7 @@ public class VoteControllerIntegrationTests
 
         // Create a new vote for testing
         var response2 = await _client.PostAsync("/api/votes/addVote", content2);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString2 = await response2.Content.ReadAsStringAsync();
         var responseVote2 = JsonConvert.DeserializeObject<Vote>(responseString2);
@@ -431,7 +487,7 @@ public class VoteControllerIntegrationTests
         // Test user is deleted in RemoveVote_ShouldReturnFalse_WhenDeleteFails()
     }
 
-    [Fact, Order(13)]
+    [Fact, Order(14)]
     public async Task DeleteVotes_ShouldReturnTrue_WhenVotesAreDeletedSuccessfully_FromComment()
     {
         // Uses the test user set up in AddVote_ValidRequest_ReturnsVote()
@@ -449,7 +505,7 @@ public class VoteControllerIntegrationTests
 
         // Create a new comment for testing
         var response1 = await _client.PostAsync("/api/comments/createComment", content1);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString1 = await response1.Content.ReadAsStringAsync();
         Console.WriteLine(responseString1);
@@ -470,7 +526,7 @@ public class VoteControllerIntegrationTests
 
         // Create a new vote for testing
         var response2 = await _client.PostAsync("/api/votes/addVote", content2);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString2 = await response2.Content.ReadAsStringAsync();
         var responseVote1 = JsonConvert.DeserializeObject<Vote>(responseString2);
@@ -488,7 +544,7 @@ public class VoteControllerIntegrationTests
 
         // Create a new vote for testing
         var response3 = await _client.PostAsync("/api/votes/addVote", content3);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString3 = await response3.Content.ReadAsStringAsync();
         var responseVote2 = JsonConvert.DeserializeObject<Vote>(responseString3);
@@ -503,7 +559,7 @@ public class VoteControllerIntegrationTests
         // Test user is deleted in RemoveVote_ShouldReturnFalse_WhenDeleteFails()
     }
     
-    [Fact, Order(14)]
+    [Fact, Order(15)]
     public async Task DeleteVotes_ShouldReturnBadRequest_WhenPostIdIsNull()
     {
         // Act
@@ -513,7 +569,7 @@ public class VoteControllerIntegrationTests
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
     
-    [Fact, Order(15)]
+    [Fact, Order(16)]
     public async Task DeleteVotes_ShouldReturnFalse_WhenDeleteFails()
     {
         // Act
@@ -529,7 +585,7 @@ public class VoteControllerIntegrationTests
 
     #region RemoveVote Tests
     
-    [Fact, Order(16)]
+    [Fact, Order(17)]
     public async Task RemoveVote_ShouldReturnTrue_WhenVoteIsDeletedSuccessfully()
     {
         // Uses the test user set up in AddVote_ValidRequest_ReturnsVote()
@@ -548,7 +604,7 @@ public class VoteControllerIntegrationTests
 
         // Act
         var response = await _client.PostAsync("/api/posts/createPost", content);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString = await response.Content.ReadAsStringAsync();
         var post = JsonConvert.DeserializeObject<Post>(responseString);
@@ -583,7 +639,61 @@ public class VoteControllerIntegrationTests
         // Test user is deleted in RemoveVote_ShouldReturnFalse_WhenDeleteFails()
     }
 
-    [Fact, Order(17)]
+    [Fact, Order(18)]
+    public async Task RemoveVote_ShouldReturnTrue_WhenVoteIsDeletedSuccessfully_ForDownvote()
+    {
+        // Uses the test user set up in AddVote_ValidRequest_ReturnsVote()
+        // Setup post to create a vote under
+        var newPost = new NewPost
+        {
+            UID = _testUid,
+            PostTitle = "RemoveVote_ShouldReturnTrue_ForDownvote()",
+            PostBody = "body",
+            DiaryEntry = false,
+            Anonymous = true
+        };
+        
+        var content = new StringContent(JsonConvert.SerializeObject(newPost), System.Text.Encoding.UTF8,
+            "application/json");
+
+        // Act
+        var response = await _client.PostAsync("/api/posts/createPost", content);
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
+
+        var responseString = await response.Content.ReadAsStringAsync();
+        var post = JsonConvert.DeserializeObject<Post>(responseString);
+
+        // Arrange
+        var newVote = new Vote
+        {
+            PID = post.PID,
+            IsPost = true,
+            Type = false,
+            UID = _testUid
+        };
+        
+        var content1 = new StringContent(JsonConvert.SerializeObject(newVote), System.Text.Encoding.UTF8,
+            "application/json");
+
+        // Create a new vote for testing
+        var response1 = await _client.PostAsync("/api/votes/addVote", content1);
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
+
+        var responseString1 = await response1.Content.ReadAsStringAsync();
+        var responseVote = JsonConvert.DeserializeObject<Vote>(responseString1);
+
+        // Act
+        var response2 = await _client.DeleteAsync($"/api/votes/removeVote?uid={newVote.UID}&pid={newVote.PID}&type={newVote.Type}");
+        var responseString2 = response2.Content.ReadAsStringAsync().Result;
+        var result = JsonConvert.DeserializeObject<bool>(responseString2);
+
+        // Assert
+        Assert.True(result);
+        await _postActions.DeletePost(post.PID);
+        // Test user is deleted in RemoveVote_ShouldReturnFalse_WhenDeleteFails()
+    }
+
+    [Fact, Order(19)]
     public async Task RemoveVote_ShouldReturnTrue_WhenVoteIsDeletedSuccessfully_ForComment()
     {
         // Uses the test user set up in AddVote_ValidRequest_ReturnsVote()
@@ -600,7 +710,7 @@ public class VoteControllerIntegrationTests
 
         // Act
         var response = await _client.PostAsync("/api/comments/createComment", content);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString = await response.Content.ReadAsStringAsync();
         var comment = JsonConvert.DeserializeObject<Comment>(responseString);
@@ -619,7 +729,59 @@ public class VoteControllerIntegrationTests
 
         // Create a new vote for testing
         var response1 = await _client.PostAsync("/api/votes/addVote", content1);
-        await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
+
+        var responseString1 = await response1.Content.ReadAsStringAsync();
+        var responseVote = JsonConvert.DeserializeObject<Vote>(responseString1);
+
+        // Act
+        var response2 = await _client.DeleteAsync($"/api/votes/removeVote?uid={newVote.UID}&pid={newVote.PID}&type={newVote.Type}");
+        var responseString2 = response2.Content.ReadAsStringAsync().Result;
+        var result = JsonConvert.DeserializeObject<bool>(responseString2);
+
+        // Assert
+        Assert.True(result);
+        await _commentActions.DeleteComment(comment.CID);
+        // Test user is deleted in RemoveVote_ShouldReturnFalse_WhenDeleteFails()
+    }
+
+    [Fact, Order(20)]
+    public async Task RemoveVote_ShouldReturnTrue_WhenVoteIsDeletedSuccessfully_ForComment_Downvote()
+    {
+        // Uses the test user set up in AddVote_ValidRequest_ReturnsVote()
+        // Setup comment to create a vote under
+        var newComment = new NewComment
+        {
+            UID = _testUid,
+            CommentBody = "RemoveVote_ShouldReturnTrue_WhenVoteIsDeletedSuccessfully_ForComment_Downvote()",
+            PID = "1"
+        };
+        
+        var content = new StringContent(JsonConvert.SerializeObject(newComment), System.Text.Encoding.UTF8,
+            "application/json");
+
+        // Act
+        var response = await _client.PostAsync("/api/comments/createComment", content);
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
+
+        var responseString = await response.Content.ReadAsStringAsync();
+        var comment = JsonConvert.DeserializeObject<Comment>(responseString);
+
+        // Arrange
+        var newVote = new Vote
+        {
+            PID = comment.CID,
+            IsPost = false,
+            Type = false,
+            UID = _testUid
+        };
+        
+        var content1 = new StringContent(JsonConvert.SerializeObject(newVote), System.Text.Encoding.UTF8,
+            "application/json");
+
+        // Create a new vote for testing
+        var response1 = await _client.PostAsync("/api/votes/addVote", content1);
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Adjust the delay duration as needed
 
         var responseString1 = await response1.Content.ReadAsStringAsync();
         var responseVote = JsonConvert.DeserializeObject<Vote>(responseString1);
@@ -635,7 +797,7 @@ public class VoteControllerIntegrationTests
         // Test user is deleted in RemoveVote_ShouldReturnFalse_WhenDeleteFails()
     }
     
-    [Fact, Order(18)]
+    [Fact, Order(21)]
     public async Task RemoveVote_ShouldReturnBadRequest_WhenPidIsNull()
     {
         // Act
@@ -645,7 +807,7 @@ public class VoteControllerIntegrationTests
         Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
     }
 
-    [Fact, Order(19)]
+    [Fact, Order(22)]
     public async Task RemoveVote_ShouldReturnBadRequest_WhenUidIsNull()
     {
         // Act
@@ -655,7 +817,7 @@ public class VoteControllerIntegrationTests
         Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
     }
     
-    [Fact, Order(20)]
+    [Fact, Order(23)]
     public async Task RemoveVote_ShouldReturnBadRequest_WhenPidIsEmpty()
     {
         // Act
@@ -665,7 +827,7 @@ public class VoteControllerIntegrationTests
         Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
     }
 
-    [Fact, Order(21)]
+    [Fact, Order(24)]
     public async Task RemoveVote_ShouldReturnBadRequest_WhenUidIsEmpty()
     {
         // Act
@@ -675,7 +837,7 @@ public class VoteControllerIntegrationTests
         Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
     }
     
-    [Fact, Order(22)]
+    [Fact, Order(25)]
     public async Task RemoveVote_ShouldReturnFalse_WhenDeleteFails()
     {
         // Act
