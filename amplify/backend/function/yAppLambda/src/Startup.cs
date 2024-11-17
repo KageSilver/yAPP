@@ -112,6 +112,7 @@ public class Startup
             services.AddScoped<IFriendshipActions, FriendshipActions>();
             services.AddScoped<IPostActions, PostActions>();
             services.AddScoped<ICommentActions, CommentActions>();
+            services.AddScoped<IVoteActions, VoteActions>();
 
         }
         catch (Exception e)
