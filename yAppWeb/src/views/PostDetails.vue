@@ -653,7 +653,7 @@
 							</p>
 							<div class="mx-4 flex justify-end space-x-4 pr-6 mt-4" v-if="!isEditingComment(comment)">
 									<button @click.stop="vote(comment.cid,false,true,isUpvoteComment(comment.cid))" class="button" :disabled="isDownvoteComment(comment.cid).value">	
-										<span class="upvotes" v-if="comment.upvotes > 0">
+										<span class="upvotes top-[-0.1rem]" v-if="comment.upvotes > 0">
 										{{comment.upvotes}}
 										</span>
 										
@@ -662,7 +662,7 @@
 										<img src="../assets/post/upvote_activated.svg" alt="Upvote" class="w-5 h-5" v-else>
 									</button> 
 									<button @click.stop="vote(comment.cid,false,false,isDownvoteComment(comment.cid))" class="button" :disabled="isUpvoteComment(comment.cid).value">
-									<span class="downvotes"  v-if="comment.downvotes > 0">
+									<span class="downvotes top-[-0.1rem]"  v-if="comment.downvotes > 0">
 										{{comment.downvotes}}
 										</span>
 										<img src="../assets/post/downvote.svg" alt="Downvote" class="w-5 h-5" v-if="!isDownvoteComment(comment.cid).value">
