@@ -542,10 +542,10 @@ public class PostControllerTests
         var list = new List<Post>();
         list.Add(post);
 
-        _mockPostActions.Setup(p => p.GetPostsByUser(It.IsAny<string>(), It.IsAny<bool>())).ReturnsAsync(list);
+        _mockPostActions.Setup(p => p.GetPostsByUser(It.IsAny<string>())).ReturnsAsync(list);
 
         // Act
-        var result = await _postController.GetPostsByUser(post.UID, false);
+        var result = await _postController.GetPostsByUser(post.UID);
 
         // Assert
         var returnedList = Assert.IsType<List<Post>>(result.Value);
@@ -567,7 +567,7 @@ public class PostControllerTests
     public async Task GetPostsByUser_ShouldReturnBadRequest_WithInvalidUID()
     {
         // Act
-        var result = await _postController.GetPostsByUser(null, false);
+        var result = await _postController.GetPostsByUser(null);
 
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
