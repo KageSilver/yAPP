@@ -126,7 +126,7 @@ public class AwardActionsTests
             Name = "GetAwardById_ShouldReturnAward_WhenSuccessful()"
         };
         
-        // Sets up LoadAsync to return the request post
+        // Sets up LoadAsync to return the request award
         _dynamoDbContextMock.Setup(d => d.LoadAsync<Award>(It.IsAny<string>(), It.IsAny<DynamoDBOperationConfig>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(request);
         
