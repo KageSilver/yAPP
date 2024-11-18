@@ -19,13 +19,16 @@ public class CommentController : ControllerBase
     private readonly IDynamoDBContext _dbContext;
     private readonly ICognitoActions _cognitoActions;
     private readonly ICommentActions _commentActions;
+    private readonly IVoteActions _voteActions;
 
-    public CommentController(IAppSettings appSettings, ICognitoActions cognitoActions, IDynamoDBContext dbContext, ICommentActions commentActions)
+    public CommentController(IAppSettings appSettings, ICognitoActions cognitoActions, 
+                            IDynamoDBContext dbContext, ICommentActions commentActions, IVoteActions voteActions)
     {
         _appSettings = appSettings;
         _cognitoActions = cognitoActions;
         _dbContext = dbContext;
         _commentActions = commentActions;
+        _voteActions = voteActions;
     }
 
     // POST: api/comments/createComment with body { "uid": "uid", "commentBody": "body", "pid": "pid" }
@@ -159,6 +162,7 @@ public class CommentController : ControllerBase
             return BadRequest("Comment ID is required");
         }
 
+        await _voteActions.DeleteVotes(cid);
         var deleted = await _commentActions.DeleteComment(cid);
 
         return deleted;

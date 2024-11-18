@@ -18,6 +18,7 @@ public class PostActions : IPostActions
     private readonly DynamoDBOperationConfig _config;
     private readonly ICommentActions _commentActions;
     private readonly IFriendshipActions _friendshipActions;
+    private readonly IAwardActions _awardActions;
 
     public PostActions(IAppSettings appSettings, IDynamoDBContext dynamoDbContext)
     {
@@ -35,6 +36,7 @@ public class PostActions : IPostActions
         
         _commentActions = new CommentActions(appSettings, dynamoDbContext);
         _friendshipActions = new FriendshipActions(appSettings, dynamoDbContext);
+        _awardActions = new AwardActions(appSettings, dynamoDbContext);
     }
     
     /// <summary>
@@ -84,23 +86,23 @@ public class PostActions : IPostActions
     }
 
     /// <summary>
-    /// Gets the user's public posts or diary entries
+    /// Gets all public posts from a user
     /// </summary>
     /// <param name="uid">The author of the posts to be fetched.</param>
-    /// <param name="diaryEntry">If the query is for public posts or diary entries.</param>
-    /// <returns>A list of posts created by a user, either public posts or diary entries.</returns>
-    public async Task<List<Post>> GetPostsByUser(string uid, bool diaryEntry)
+    /// <returns>A list of public posts created by a user.</returns>
+    public async Task<List<Post>> GetPostsByUser(string uid)
     {
         try
         {
-            // Scan for posts where the poster's uid is 'uid' and 'diaryEntry' is equal to the input
+            // Scan for posts where the poster's uid is 'uid'
             List<ScanCondition> scanConditions = new List<ScanCondition>
             {
                 new ScanCondition("UID", ScanOperator.Equal, uid),
-                new ScanCondition("DiaryEntry", ScanOperator.Equal, diaryEntry)
+                new ScanCondition("DiaryEntry", ScanOperator.Equal, false)
             };
-            
+
             var posts = await _dynamoDbContext.ScanAsync<Post>(scanConditions, _config).GetRemainingAsync();
+            
             return posts;
         }
         catch (Exception e)
@@ -291,6 +293,7 @@ public class PostActions : IPostActions
 
             // Delete the post from the database
             await _commentActions.DeleteComments(pid);
+            await _awardActions.DeleteAwardsByPost(pid);
             await _dynamoDbContext.DeleteAsync(post.Result, _config);
 
             return true;
