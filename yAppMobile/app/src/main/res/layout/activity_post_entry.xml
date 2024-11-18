@@ -154,11 +154,10 @@
             android:layout_height="36dp"
             android:layout_centerVertical="true"
             android:layout_marginStart="80dp"
-            android:background="@null"
+            android:background="@drawable/ic_down"
             android:contentDescription="Downvote"
             android:padding="2dp"
-            android:src="@drawable/ic_down"
-            app:tint="@color/white" />
+            app:tint="@null" />
 
         <TextView
             android:id="@+id/downvoteText"
@@ -180,11 +179,10 @@
             android:layout_height="36dp"
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
-            android:background="@null"
+            android:background="@drawable/ic_reply"
             android:contentDescription="Reply"
             android:padding="8dp"
-            android:src="@drawable/ic_reply"
-            app:tint="@color/white" />
+            app:tint="@null" />
     </RelativeLayout>
 
 </RelativeLayout>
