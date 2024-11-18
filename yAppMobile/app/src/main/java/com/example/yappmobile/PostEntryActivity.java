@@ -19,15 +19,15 @@ import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.CardList.CardListHelper;
 import com.example.yappmobile.Comments.CommentsBottomSheet;
-import com.example.yappmobile.NaviBarDestinations.PublicPostsActivity;
+import com.example.yappmobile.Utils.DateUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class PostEntryActivity extends AppCompatActivity
 {
-    private String _pid, _uid, _title, _createdAt, _content, _updatedAt, _uuid;
-    private TextView _postTitle, _postBody, _postDate;
+    private String _pid, _uid, _title, _createdAt, _content, _updatedAt, _uuid, _upvotes, _downvotes;
+    private TextView _postTitle, _postBody, _postDate, _postUpvodates, _postDownvotes;
     private CardListHelper _postListHelper;
 
     private ImageView _moreOptions;
@@ -46,6 +46,8 @@ public class PostEntryActivity extends AppCompatActivity
         _postTitle = findViewById(R.id.post_title);
         _postBody = findViewById(R.id.post_body);
         _postDate = findViewById(R.id.post_date);
+        _postDownvotes = findViewById(R.id.downvoteText);
+        _postUpvodates = findViewById(R.id.upvoteText);
         _moreOptions = findViewById(R.id.menuButton);
         // Back button code
         ImageButton backButton = findViewById(R.id.backButton);
@@ -59,10 +61,21 @@ public class PostEntryActivity extends AppCompatActivity
             _title =  _currentPost.getString("postTitle");
             _content = _currentPost.getString("postBody");
             _createdAt =  _currentPost.getString("createdAt");
+            _upvotes = _currentPost.getString("upvotes");
+            _downvotes = _currentPost.getString("downvotes");
+
 
             _postTitle.setText(_title);
             _postBody.setText(_content);
-            _postDate.setText(_createdAt);
+            _postDate.setText(DateUtils.convertUtcToFormattedTime(_createdAt));
+            if(_upvotes.equals("0")){
+                _upvotes = "";
+            }
+            if(_downvotes.equals("0")){
+                _downvotes = "";
+            }
+            _postUpvodates.setText(_upvotes);
+            _postDownvotes.setText(_downvotes);
 
 
         } catch (JSONException e) {

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.R;
+import com.example.yappmobile.Utils.DateUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -226,7 +227,7 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     // Populate data into a PostCard
     public static class PostViewHolder extends RecyclerView.ViewHolder
     {
-        public TextView postTitle, postDate, postBody;
+        public TextView postTitle, postDate, postBody, postUpvotes, postDownvotes;
 
         public PostViewHolder(View itemView, IListCardItemInteractions postCardInteractions)
         {
@@ -235,6 +236,9 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             postTitle = itemView.findViewById(R.id.post_title);
             postDate = itemView.findViewById(R.id.post_date);
             postBody = itemView.findViewById(R.id.post_body);
+            postUpvotes = itemView.findViewById(R.id.upvote_count);
+            postDownvotes = itemView.findViewById(R.id.downvote_count);
+
 
             // Set up an onClickListener for the post list card
             itemView.setOnClickListener(new View.OnClickListener()
@@ -260,8 +264,19 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             try
             {
                 postTitle.setText(card.get("postTitle").toString());
-                postDate.setText(card.get("createdAt").toString());
+                postDate.setText(DateUtils.convertUtcToFormattedTime(card.get("createdAt").toString()));
                 postBody.setText(card.get("postBody").toString());
+                //check value
+                String down = card.get("downvotes").toString();
+                if(down.equals("0")){
+                    down = "";
+                }
+                String up = card.get("upvotes").toString();
+                if(up.equals("0")){
+                    up = "";
+                }
+                postDownvotes.setText(down);
+                postUpvotes.setText(up);
             }
             catch (JSONException jsonException)
             {
