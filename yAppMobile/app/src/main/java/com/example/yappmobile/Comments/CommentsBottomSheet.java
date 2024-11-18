@@ -123,11 +123,13 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
                             String uid = commentObj.getString("uid");
                             String cid = commentObj.getString("cid");
                             String pid = commentObj.getString("pid");
+                            String upvotes = commentObj.getString("upvotes");
+                            String downvotes = commentObj.getString("downvotes");
                             String commentBody = commentObj.getString("commentBody");
                             String createdAt = commentObj.getString("createdAt");
                             String updatedAt = commentObj.getString("updatedAt");
 
-                            Comment comment = new Comment(uid, commentBody, pid, cid, createdAt, updatedAt);
+                            Comment comment = new Comment(uid, commentBody, pid, cid, createdAt, updatedAt,upvotes,downvotes);
                             commentList.add(comment);
                         }
 

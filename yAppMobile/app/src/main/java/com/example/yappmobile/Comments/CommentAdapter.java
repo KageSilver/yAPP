@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.yappmobile.PostEntryActivity;
 import com.example.yappmobile.R;
+import com.example.yappmobile.Utils.DateUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,8 +60,18 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         Comment comment = (Comment) _commentList.get(position);
         // Set comment body and time
         holder.commentBody.setText(comment.getCommentBody());
-        holder.commentTime.setText(comment.getCreateAt());
-
+        holder.commentTime.setText(DateUtils.convertUtcToFormattedTime(comment.getCreateAt()));
+        //get up & down votes
+        String upvotes = comment.getUpvotes();
+        if (upvotes.equals("0")){
+            upvotes = "";
+        }
+        String downvotes = comment.getDownvotes();
+        if (downvotes.equals("0")){
+           downvotes = "";
+        }
+        holder.commentUpvotes.setText(upvotes);
+        holder.commentDownvotes.setText(downvotes);
         // Check if the comment belongs to the current user
         if (comment.getUid() != null && comment.getCommentBody() != null && comment.getCid() != null && comment.getUid().equals(_uuid)) {
             // Apply the custom drawable with border for current user's comment
@@ -123,12 +134,14 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     // ViewHolder class for comment items
     public static class CommentViewHolder extends RecyclerView.ViewHolder {
-        TextView commentBody, commentTime;
+        TextView commentBody, commentTime, commentUpvotes, commentDownvotes;
 
         public CommentViewHolder(@NonNull View itemView) {
             super(itemView);
             commentBody = itemView.findViewById(R.id.comment_body);
             commentTime = itemView.findViewById(R.id.comment_time);
+            commentUpvotes = itemView.findViewById(R.id.upvote_count);
+            commentDownvotes = itemView.findViewById(R.id.downvote_count);
         }
     }
 }
