@@ -64,7 +64,7 @@ public class EditPostEntryActivity extends BasePostActivity
                 }
 
             } catch (JSONException e) {
-                Toast.makeText(getApplicationContext(), "Something happened!Please try again", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Something happened! Please try again", Toast.LENGTH_SHORT).show();
                 Log.e(LOG_NAME, e.getMessage());
             }
         }

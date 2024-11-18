@@ -170,7 +170,7 @@ public class FriendController : ControllerBase
         return friendships;
     }
 
-    // GET: api/friends/getFriendship?fromUsername={username1}&toUsername={username2}
+    // GET: api/friends/getFriendship?fromUserName={username1}&toUserName={username2}
     /// <summary>
     /// Retrieves the friendship between `fromUsername` and `toUsername`.
     /// </summary>

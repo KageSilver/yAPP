@@ -90,7 +90,7 @@
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="12dp"
                     android:layout_marginEnd="24dp"
-                    android:hint="What's your new friend's name?"
+                    android:hint="What's their name?"
                     android:minWidth="225dp"
                     app:boxBackgroundColor="#DCBFCC"
                     app:boxCornerRadiusBottomEnd="15dp"

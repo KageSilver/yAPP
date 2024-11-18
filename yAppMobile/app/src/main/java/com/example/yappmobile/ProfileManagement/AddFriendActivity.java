@@ -25,7 +25,6 @@ import com.google.android.material.textfield.TextInputLayout;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class AddFriendActivity extends AppCompatActivity
@@ -103,6 +102,7 @@ public class AddFriendActivity extends AppCompatActivity
         String receiver = requestField.getEditText().getText().toString().trim();
         if(!receiver.equals(""))
         {
+            // Get current authenticated user
             CompletableFuture<AuthUser> future = new CompletableFuture<>();
             Amplify.Auth.getCurrentUser(future::complete, error -> {
                 Log.e("Auth", "Error occurred when getting current user. Redirecting to authenticator");
@@ -118,15 +118,7 @@ public class AddFriendActivity extends AppCompatActivity
                     }
                     else
                     {
-                        checkFriendshipExistence(user.getUsername(), receiver);
-
-                        if(!friendshipExists)
-                        {
-                            // if not, send post request
-                            sendPostRequest(user.getUsername(), receiver);
-                            success.show();
-                            friendshipExists = false;
-                        }
+                        sendPostRequest(user.getUsername(), receiver);
                     }
                 });
             });
@@ -136,27 +128,6 @@ public class AddFriendActivity extends AppCompatActivity
             Log.d("Faulty Form Field", "You have to enter in something, silly!");
             requestField.setError("You have to enter in something, silly!");
         }
-    }
-
-    private void checkFriendshipExistence(String sender, String receiver)
-    {
-        String getAB = "/api/friends/getFriendship?fromUserName="+sender+"&toUserName="+receiver;
-        String getBA = "/api/friends/getFriendship?fromUserName="+receiver+"&toUserName="+sender;
-
-        CompletableFuture<String> future = friendshipListHelper.getItemsFromAPI(getAB);
-
-        future.thenAccept(jsonData -> {
-            List<JSONObject> results = friendshipListHelper.handleData(jsonData);
-            if(results.size() != 0)
-            {
-                Log.d("Faulty Form Field", "Friendship object already exists");
-                requestField.setError("You have an existing/pending friendship with this person already!");
-                friendshipExists = true;
-            }
-        }).exceptionally(throwable -> {
-           Log.e("API", "Error fetching data", throwable);
-           return null;
-        });
     }
 
     private void sendPostRequest(String sender, String receiver)
@@ -183,7 +154,26 @@ public class AddFriendActivity extends AppCompatActivity
                                              .addHeader("Content-Type", "application/json")
                                              .build();
             Amplify.API.post(options,
-                             response -> Log.i("API", "POST response: " + response.getData().asString()),
+                             response ->
+                             {
+                                Log.i("API", "POST response: " + response.getData().asString());
+                                runOnUiThread(() -> {
+                                    if(response.getData().asString().equals("\"Friendship already exists\""))
+                                    {
+                                        Log.d("Faulty Form Field", "You already have an existing/pending friendship with "+ receiver);
+                                        requestField.setError("Friendship with "+receiver+" either exists or is pending, silly!");
+                                    }
+                                    else if(response.getData().asString().equals("\"Friend not found\""))
+                                    {
+                                        Log.d("Faulty Form Field", "Cannot find a Yapper with the username "+ receiver);
+                                        requestField.setError("This Yapper does not exist, silly!");
+                                    }
+                                    else
+                                    {
+                                        success.show();
+                                    }
+                                });
+                             },
                              error -> Log.e("API", "POST request failed", error));
         }
         catch (Exception e)
