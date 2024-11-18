@@ -39,8 +39,8 @@
             <!-- Upvote Button -->
             <ImageButton
                 android:id="@+id/upvote_button"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:background="@null"
                 android:src="@drawable/ic_up"
                 android:contentDescription="Upvote" />
@@ -50,7 +50,7 @@
                 android:id="@+id/upvote_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
+                android:layout_marginStart="0dp"
                 android:gravity="center_vertical"
                 android:text="0"
                 android:textSize="14sp"
@@ -60,9 +60,9 @@
             <!-- Downvote Button -->
             <ImageButton
                 android:id="@+id/downvote_button"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="2dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="0dp"
                 android:background="@null"
                 android:src="@drawable/ic_down"
                 android:contentDescription="Downvote" />
@@ -72,7 +72,7 @@
                 android:id="@+id/downvote_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="0dp"
                 android:gravity="center_vertical"
                 android:text="0"
                 android:textSize="14sp"
