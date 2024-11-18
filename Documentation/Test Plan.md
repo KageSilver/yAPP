@@ -37,6 +37,8 @@
     - SendFriendRequest()
     - UpdateFriendRequest()
     - GetFriends()
+    - GetFriendship()
+    - DeleteFriendship()
  - Test average cases and expected exceptions for CognitoActions with unit tests for the following methods:
     - CreateUser()
     - DeleteUser()
@@ -50,6 +52,8 @@
 #### Integration tests
  - Test average cases and some expected exceptions for FriendshipController with integration tests for api endpoints:
     - GET: api/friends/getFriendsByStatus?userName={username}?status={status}
+    - GET: api/friends/getFriendship?fromUserName={fromUserName}&toUserName={toUserName}
+    - DELETE: api/friends/deleteFriendship?fromUsername={username}&toUsername={username}
     - POST: api/friends/friendRequest
     - PUT: api/friends/updateFriendRequest
  - Test average cases and some expected exceptions for UserController with integration tests for api endpoints:
@@ -103,6 +107,12 @@
     - DeleteComment()
     - DeleteComments()
     - UpdateComment()
+ - Test average cases and expected exceptions for VoteActions with unit tests for the following methods:
+    - GetVote()
+    - GetVotesByPid()
+    - AddVote()
+    - RemoveVote()
+    - DeleteVotes()
  - Test average cases and expected exceptions for CommentController with unit tests for the following methods:
     - CreateComment()
     - GetCommentById()
@@ -110,6 +120,11 @@
     - GetCommentsByPid()
     - DeleteComment()
     - UpdateComment()
+ - Test average cases and expected exceptions for VoteController with unit tests for the following methods:
+    - GetVote()
+    - GetVotesByPid()
+    - AddVote()
+    - RemoveVote()
 #### Integration tests
  - Test average cases and some expected exceptions for CommentController with integration tests for api endpoints:
     - GET: api/comments/getPostByCid?cid={cid}
@@ -119,10 +134,17 @@
     - POST: api/comments/createComment
     - PUT: api/comments/updateComment
     - DELETE: api/comments/deleteComment?cid={cid}
+ - Test average cases and some expected exceptions for VoteController with integration tests for api endpoints:
+    - GET: api/votes/getVoteStatus?uid={uid}&pid={pid}&type={type}
+    - GET: api/votes/getVotesByPid?pid={pid}
+    - POST: api/votes/addVote
+    - DELETE: api/votes/removeVote?uid={uid}&pid={pid}&type={type}
 #### Acceptance tests
  - For each of the following user stories that belong to this feature, write two manual acceptance tests, one for the website and one for the mobile app:
     - As a Yapper, I want to be able to reply to other public posts.
     - As a Yapper, I want to be able to edit and delete posts and comments I make.
+    - As a Yapper, I want to be able to upvote posts.
+    - As a Yapper, I want to be able to downvote posts.
 
 ### Personal Calendar
 #### Unit tests
@@ -133,7 +155,7 @@
     - GetDiariesByUser()
     - GetDiariesByFriends()
 #### Integration tests
- - Test average cases and some expected exceptions for CommentController with integration tests for api endpoints:
+ - Test average cases and some expected exceptions for PostController with integration tests for api endpoints:
     - GET: api/posts/getDiariesByUser?uid={uid}&current={current}
     - GET: api/posts/getDiariesByFriends?uid={uid}&current={current}
 #### Acceptance tests
@@ -142,5 +164,29 @@
     - As a Yapper, I want to be able to view my diary entries through a personal calendar for easier access and tracking.
     - As a Yapper, I want to be able to see my friends’ diary entries anonymously through the calendar view.
 
-## Regression Tests
- - Nothing here...yet.
+### Hidden Achievement System
+#### Unit tests
+ - Test average cases and expected exceptions for AwardActions with unit tests for the following methods:
+    - CreateAward()
+    - GetAwardById()
+    - GetAwardsByUser()
+    - GetAwardsByPost()
+    - DeleteAwardsByPost()
+    - CheckNewAwardPerPost()
+    - CheckNewAwardsTotalPosts()
+    - CheckNewAwardsFriends()
+ - Test average cases and expected exceptions for AwardController with unit tests for the following methods:
+    - GetAwardById()
+    - GetAwardsByUser()
+    - GetAwardsByPost()
+    - GetNewAwardsByUser()
+#### Integration tests
+ - Test average cases and some expected exceptions for AwardController with integration tests for api endpoints:
+    - GET: api/awards/getAwardById?aid={aid}
+    - GET: api/awards/getAwardsByUser?uid={uid}
+    - GET: api/awards/getAwardsByPost?pid={pid}
+    - GET: api/awards/getNewAwardsByUser?uid={uid}
+#### Acceptance tests
+ - For each of the following user stories that belong to this feature, write two manual acceptance tests, one for the website and one for the mobile app:
+    - As a Yapper, I want to earn achievements based on the interactions from other Yappers on posts I make.
+    - As a Yapper, I want to see the achievements I have earned.
