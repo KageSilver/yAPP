@@ -101,6 +101,7 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
         }
     }
 
+    // TODO: Change this to delete
     private void removeFriendship(String personA, String personB)
     {
         JSONObject newFriendship = new JSONObject();

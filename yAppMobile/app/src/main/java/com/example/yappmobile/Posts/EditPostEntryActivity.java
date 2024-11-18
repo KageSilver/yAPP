@@ -1,4 +1,4 @@
-package com.example.yappmobile;
+package com.example.yappmobile.Posts;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,12 +11,14 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.core.Amplify;
+import com.example.yappmobile.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class EditPostEntryActivity extends BasePostActivity {
+public class EditPostEntryActivity extends BasePostActivity
+{
 
     private JSONObject _currentPost;
     private final String LOG_NAME = "EDIT_POST";

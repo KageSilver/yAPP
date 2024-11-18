@@ -142,12 +142,12 @@ public class MyRequestsActivity extends AppCompatActivity implements IListReques
 
     private void declineRequest(String personA, String personB)
     {
-        JSONObject newFriendship = new JSONObject();
+        // Create DELETE request's body
+        JSONObject friendship = new JSONObject();
         try
         {
-            newFriendship.put("fromUserName", personA);
-            newFriendship.put("toUserName", personB);
-            newFriendship.put("status", 2);
+            friendship.put("fromUserName", personA);
+            friendship.put("toUserName", personB);
         }
         catch (JSONException error)
         {
@@ -155,8 +155,8 @@ public class MyRequestsActivity extends AppCompatActivity implements IListReques
         }
 
         // Send API put request to delete friendship
-        String apiUrl = "/api/friends/updateFriendRequest";
-        sendPutRequest(apiUrl, newFriendship.toString());
+        String apiUrl = "/api/friends/deleteFriendship";
+        sendDeleteRequest(apiUrl, friendship.toString());
     }
 
     private void sendPutRequest(String apiUrl, String putBody)
@@ -167,6 +167,28 @@ public class MyRequestsActivity extends AppCompatActivity implements IListReques
                                          .addPath(apiUrl)
                                          .addHeader("Content-Type", "application/json")
                                          .addBody(putBody.getBytes())
+                                         .build();
+        Amplify.API.put(options,
+                        future::complete,
+                        error -> Log.e("API", "PUT request failed", error));
+
+        // Then update friend list
+        future.thenAccept(restResponse -> {
+            runOnUiThread(() -> {
+                Log.i("API", restResponse.toString());
+                reloadRequestList();
+            });
+        });
+    }
+
+    private void sendDeleteRequest(String apiUrl, String deleteBody)
+    {
+        CompletableFuture<RestResponse> future = new CompletableFuture<>();
+
+        RestOptions options = RestOptions.builder()
+                                         .addPath(apiUrl)
+                                         .addHeader("Content-Type", "application/json")
+                                         .addBody(deleteBody.getBytes())
                                          .build();
         Amplify.API.put(options,
                         future::complete,

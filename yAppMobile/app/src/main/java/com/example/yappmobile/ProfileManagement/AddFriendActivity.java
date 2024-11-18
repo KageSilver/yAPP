@@ -18,12 +18,14 @@ import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.auth.AuthUser;
 import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.AuthenticatorActivity;
+import com.example.yappmobile.CardList.CardListHelper;
 import com.example.yappmobile.R;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class AddFriendActivity extends AppCompatActivity
@@ -31,13 +33,17 @@ public class AddFriendActivity extends AppCompatActivity
     private AlertDialog success;
     private AlertDialog failure;
     private JSONObject newRequest;
+    private CardListHelper friendshipListHelper;
     private TextInputLayout requestField;
+    private boolean friendshipExists;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friend);
+
+        friendshipListHelper = new CardListHelper(this);
 
         // Set the activity to be full screen
         View decorView = getWindow().getDecorView();
@@ -112,8 +118,15 @@ public class AddFriendActivity extends AppCompatActivity
                     }
                     else
                     {
-                        sendPostRequest(user.getUsername(), receiver);
-                        success.show();
+                        checkFriendshipExistence(user.getUsername(), receiver);
+
+                        if(!friendshipExists)
+                        {
+                            // if not, send post request
+                            sendPostRequest(user.getUsername(), receiver);
+                            success.show();
+                            friendshipExists = false;
+                        }
                     }
                 });
             });
@@ -125,13 +138,34 @@ public class AddFriendActivity extends AppCompatActivity
         }
     }
 
+    private void checkFriendshipExistence(String sender, String receiver)
+    {
+        String getAB = "/api/friends/getFriendship?fromUserName="+sender+"&toUserName="+receiver;
+        String getBA = "/api/friends/getFriendship?fromUserName="+receiver+"&toUserName="+sender;
+
+        CompletableFuture<String> future = friendshipListHelper.getItemsFromAPI(getAB);
+
+        future.thenAccept(jsonData -> {
+            List<JSONObject> results = friendshipListHelper.handleData(jsonData);
+            if(results.size() != 0)
+            {
+                Log.d("Faulty Form Field", "Friendship object already exists");
+                requestField.setError("You have an existing/pending friendship with this person already!");
+                friendshipExists = true;
+            }
+        }).exceptionally(throwable -> {
+           Log.e("API", "Error fetching data", throwable);
+           return null;
+        });
+    }
+
     private void sendPostRequest(String sender, String receiver)
     {
         // Fill out newRequest with valid information
         try
         {
             newRequest.put("fromUserName", sender);
-            newRequest.put("toUserId", receiver);
+            newRequest.put("toUserName", receiver);
         }
         catch (JSONException e)
         {
@@ -191,7 +225,7 @@ public class AddFriendActivity extends AppCompatActivity
         try
         {
             newRequest.put("fromUserName", "");
-            newRequest.put("toUserId", "");
+            newRequest.put("toUserName", "");
             newRequest.put("status", 0);
         }
         catch (JSONException e)
