@@ -24,6 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <!-- Title -->
             <TextView
                 android:id="@+id/post_title"
                 android:layout_width="0dp"
@@ -31,37 +32,17 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="24dp"
-                android:layout_marginBottom="8dp"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="Post Name"
                 android:textColor="@color/cardview_dark_background"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/post_date"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/post_body"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginBottom="24dp"
-                android:ellipsize="end"
-                android:maxLines="2"
-                android:text="Post Body"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/post_date"
-                app:layout_constraintVertical_bias="0.0" />
-
+            <!-- Date -->
             <TextView
                 android:id="@+id/post_date"
                 android:layout_width="0dp"
@@ -77,6 +58,76 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/post_title" />
 
+            <!-- Post Body -->
+            <TextView
+                android:id="@+id/post_body"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="24dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="Post Body"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/post_date" />
+
+            <!-- Upvote and Downvote Section Horizontally -->
+            <LinearLayout
+                android:id="@+id/vote_section"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="start"
+                android:layout_marginStart="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/post_body">
+
+                <!-- Upvote Button -->
+                <ImageButton
+                    android:id="@+id/upvote_button"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@null"
+                    android:src="@drawable/ic_up"
+                    android:contentDescription="Upvote" />
+
+                <!-- Upvote Count -->
+                <TextView
+                    android:id="@+id/upvote_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginEnd="14dp"
+                    android:text="0"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:gravity="center" />
+
+                <!-- Downvote Button -->
+                <ImageButton
+                    android:id="@+id/downvote_button"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@null"
+                    android:src="@drawable/ic_down"
+                    android:contentDescription="Downvote" />
+
+                <!-- Downvote Count -->
+                <TextView
+                    android:id="@+id/downvote_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="0dp"
+                    android:text="0"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:gravity="center" />
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
