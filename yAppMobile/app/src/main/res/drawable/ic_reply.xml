@@ -6,7 +6,7 @@
 
     <path
         android:fillColor="@color/white"
-        android:strokeColor="?android:attr/textColorPrimary"
+        android:strokeColor="@color/pink"
         android:strokeWidth="2"
         android:strokeLineCap="round"
         android:strokeLineJoin="round"
