@@ -134,6 +134,17 @@
     - 200 OK
     - 400 Bad Request: username is required
 
+### GetFriendship
+ - Retrieves the friendship between fromUsername and toUsername.
+ - GET: api/friends/getFriendship?fromUsername={username1}&toUsername={username2}
+    - fromUsername: The username of the friendship's sender
+    - toUsername: The username of the friendship's recipient
+ - Response: returns the friendship object associated with the two specified users
+    - { "FromUserName": "string", "ToUserName": "string", "Status": 0, "CreatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "UpdatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ" }
+ - Status codes:
+    - 200 OK
+    - 400 Bad Request: Usernames are required
+
 ### SendFriendRequest
  - Sends a friend request from one user to another.
  - POST: api/friends/friendRequest
@@ -159,6 +170,17 @@
         - request body is required and must contain username and friend's username
         - Failed to update friendship status
     - 404 Not Found: Friendship not found
+
+### DeleteFriendship
+ - Deletes a friendship from the database.
+ - DELETE: api/friends/deleteFriendship?fromUsername={username1}&toUsername={username2}
+    - fromUsername: The username of the friendship's sender
+    - toUsername: The username of the friendship's recipient
+ - Response: returns whether the deletion was successful
+ - Status codes:
+    - 200 OK
+    - 400 Bad Request: Usernames are required
+    - 404 Not Found: The friendship doesn't exist
 
 ## Posts
 
