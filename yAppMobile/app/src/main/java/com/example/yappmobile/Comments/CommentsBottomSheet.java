@@ -90,8 +90,6 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment implements IL
         _adapter = new CommentAdapter(commentList, _uid, this, _parent,this);
         _recyclerView.setAdapter(_adapter);
 
-        // After loading the data, hide the progress bar
-        // For example, when comments are loaded:
         loadComments();
         // Handle the "Send Comment" button click
         EditText newCommentInput = view.findViewById(R.id.new_comment_input);
