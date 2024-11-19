@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.core.Amplify;
+import com.example.yappmobile.CardList.IListCardItemInteractions;
 import com.example.yappmobile.PostEntryActivity;
 import com.example.yappmobile.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -24,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import android.widget.ProgressBar;
 
-public class CommentsBottomSheet extends BottomSheetDialogFragment {
+public class CommentsBottomSheet extends BottomSheetDialogFragment implements IListCardItemInteractions {
 
     private static final String ARG_PID = "pid";
     private static  final String ARG_UID = "uid";
@@ -86,7 +87,7 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
         _recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Initialize the adapter with the fragment reference
-        _adapter = new CommentAdapter(commentList, _uid, this, _parent);
+        _adapter = new CommentAdapter(commentList, _uid, this, _parent,this);
         _recyclerView.setAdapter(_adapter);
 
         // After loading the data, hide the progress bar
@@ -107,9 +108,8 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
     }
 
 
-
-
     private void loadComments() {
+        _progressBar.setVisibility(View.VISIBLE);
         RestOptions options = RestOptions.builder()
                 .addPath("/api/comments/getCommentsByPid?pid=" + _pid)
                 .build();
@@ -117,6 +117,7 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
         Amplify.API.get(options,
                 restResponse -> {
                     try {
+                        commentList.clear(); // Clear the list before adding new items
                         JSONArray commentsArray = new JSONArray(restResponse.getData().asString());
                         for (int i = 0; i < commentsArray.length(); i++) {
                             JSONObject commentObj = commentsArray.getJSONObject(i);
@@ -179,7 +180,6 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
                         // Hide the progress bar once the response is received
                         getActivity().runOnUiThread(() -> {
                             _progressBar.setVisibility(View.GONE);
-                            commentList.clear();
                             loadComments();
                         });
                     },
@@ -196,6 +196,17 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
         } catch (Exception e) {
             Log.e(LOG_NAME, "Error posting comment", e);
         }
+    }
+
+    @Override
+    public void onItemClick(int position) {
+
+    }
+
+    @Override
+    public void refreshUI() {
+
+        loadComments();
     }
 }
 
