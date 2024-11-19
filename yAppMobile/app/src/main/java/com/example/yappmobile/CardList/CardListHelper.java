@@ -235,7 +235,7 @@ public class CardListHelper extends AppCompatActivity
         runOnUiThread(() ->
         {
             // Setup the adapter with an empty list that will be updated later
-            adapter = new CardListAdapter(context, cardItemList, cardType, itemInteractions);
+            adapter = new CardListAdapter(context, cardItemList, cardType, itemInteractions,context.getSharedPreferences("yAppPreferences",Context.MODE_PRIVATE));
             recyclerView.setAdapter(adapter);
         });
     }
