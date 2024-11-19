@@ -181,7 +181,7 @@
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "{{base_url}/}api/friends/deleteFriendship?fromUsername={username}&toUsername={username}",
+          "raw": "{{base_url}/}api/friends/deleteFriendship?fromUserName={fromUserName}&toUserName={toUserName}",
           "host": ["{{base_url}}"],
           "path": ["api", "friends", "deleteFriendship"],
           "query": [

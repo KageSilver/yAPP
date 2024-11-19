@@ -192,7 +192,7 @@ public class MyRequestsActivity extends AppCompatActivity implements IListReques
                                          .build();
         Amplify.API.put(options,
                         future::complete,
-                        error -> Log.e("API", "PUT request failed", error));
+                        error -> Log.e("API", "DELETE request failed", error));
 
         // Then update friend list
         future.thenAccept(restResponse -> {

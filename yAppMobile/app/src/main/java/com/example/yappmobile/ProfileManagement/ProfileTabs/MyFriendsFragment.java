@@ -101,7 +101,6 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
         }
     }
 
-    // TODO: Change this to delete
     private void removeFriendship(String personA, String personB)
     {
         JSONObject newFriendship = new JSONObject();
@@ -109,7 +108,6 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
         {
             newFriendship.put("fromUserName", personA);
             newFriendship.put("toUserName", personB);
-            newFriendship.put("status", 2);
         }
         catch (JSONException error)
         {
@@ -117,22 +115,22 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
         }
 
         // Send API put request to delete friendship
-        String apiUrl = "/api/friends/updateFriendRequest";
-        sendPutRequest(apiUrl, newFriendship.toString());
+        String apiUrl = "/api/friends/deleteFriendship";
+        sendDeleteRequest(apiUrl, newFriendship.toString());
     }
 
-    private void sendPutRequest(String apiUrl, String putBody)
+    private void sendDeleteRequest(String apiUrl, String deleteBody)
     {
         CompletableFuture<RestResponse> future = new CompletableFuture<>();
 
         RestOptions options = RestOptions.builder()
                                          .addPath(apiUrl)
                                          .addHeader("Content-Type", "application/json")
-                                         .addBody(putBody.getBytes())
+                                         .addBody(deleteBody.getBytes())
                                          .build();
-        Amplify.API.put(options,
+        Amplify.API.delete(options,
                         future::complete,
-                        error -> Log.e("API", "PUT request failed", error));
+                        error -> Log.e("API", "DELETE request failed", error));
 
         // Then update friend list
         future.thenAccept(restResponse -> {
