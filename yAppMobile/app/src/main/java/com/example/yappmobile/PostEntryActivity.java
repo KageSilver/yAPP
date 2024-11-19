@@ -1,10 +1,12 @@
 package com.example.yappmobile;
 
+import static com.example.yappmobile.Votes.Votes.addVotes;
 import static com.example.yappmobile.Votes.Votes.checkVoted;
 
-import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,9 +24,8 @@ import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.CardList.CardListHelper;
 import com.example.yappmobile.Comments.CommentsBottomSheet;
 import com.example.yappmobile.Utils.DateUtils;
-import com.example.yappmobile.Votes.Votes;
 
-import org.json.JSONArray;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -43,9 +44,6 @@ public class PostEntryActivity extends AppCompatActivity {
     private ImageView _moreOptions;
     private JSONObject _currentPost;
 
-    private JSONArray _votes;
-
-    @SuppressLint({"MissingInflatedId", "ResourceAsColor"})
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,84 +92,129 @@ public class PostEntryActivity extends AppCompatActivity {
         }
 
 
-        CompletableFuture<Void> fetchUser = new CompletableFuture<>();
-
-
         //get current user
         _replyButton = findViewById(R.id.replyButton);
 
-        Amplify.Auth.getCurrentUser(result -> {
-            Log.i(LOG_NAME, "Continuing as " + result.getUsername() + "...");
+        SharedPreferences sharedPreferences = getSharedPreferences("yAppPreferences", Context.MODE_PRIVATE);
+        _uuid = sharedPreferences.getString("uuid","");
+        if (_uid.equals(_uuid)) {
+            _moreOptions.setVisibility(View.VISIBLE);
 
-            runOnUiThread(() -> {
-                _uuid = result.getUserId();
-                Log.i(LOG_NAME, "uid: " + _uid);
-                Log.i(LOG_NAME, "uuid" + _uuid);
-                if (_uid.equals(_uuid)) {
-                    _moreOptions.setVisibility(View.VISIBLE);
-
-                } else {
-                    _moreOptions.setVisibility(View.INVISIBLE);
-                }
-
-
-                _replyButton.setOnClickListener(v -> {
-                    CommentsBottomSheet bottomSheet = CommentsBottomSheet.newInstance(_pid, _uid, _uuid, this);
-                    bottomSheet.show(getSupportFragmentManager(), bottomSheet.getTag());
-                });
-                fetchUser.complete(null); // Mark fetchUser as complete
-            });
-        }, error -> {
-            Log.i(LOG_NAME, "There is no user signed in!!");
-            fetchUser.completeExceptionally(new Exception(error.getMessage())); // Complete with an error
+        } else {
+            _moreOptions.setVisibility(View.INVISIBLE);
+        }
+        _replyButton.setOnClickListener(v -> {
+            CommentsBottomSheet bottomSheet = CommentsBottomSheet.newInstance(_pid, _uid, _uuid, this);
+            bottomSheet.show(getSupportFragmentManager(), bottomSheet.getTag());
         });
 
 
-        CompletableFuture.allOf(fetchUser).thenRun(() -> {
-            runOnUiThread(() -> {
+        try {
+            // Start both `checkVoted` calls in parallel
+            CompletableFuture<Boolean> upVoteFuture = checkVoted(true, true, _uuid, _pid, LOG_NAME);
+            CompletableFuture<Boolean> downVoteFuture = checkVoted(false, true, _uuid, _pid, LOG_NAME);
 
-                try {
-                    // Start both `checkVoted` calls in parallel
-                    CompletableFuture<Boolean> upVoteFuture = checkVoted(true, true, _uuid, _pid, LOG_NAME);
-                    CompletableFuture<Boolean> downVoteFuture = checkVoted(false, true, _uuid, _pid, LOG_NAME);
+            // Combine both futures to wait for completion
+            CompletableFuture.allOf(upVoteFuture, downVoteFuture).thenRun(() -> {
+                // Get results from the completed futures
+                AtomicBoolean upVoted = new AtomicBoolean(false);
 
-                    // Combine both futures to wait for completion
-                    CompletableFuture.allOf(upVoteFuture, downVoteFuture).thenRun(() -> {
-                        try {
-                            // Get results from the completed futures
-                            boolean upVoted = upVoteFuture.get();
-                            boolean downVoted = downVoteFuture.get();
+                upVoteFuture.thenAccept(result -> {
+                    upVoted.set(result); // Update AtomicBoolean value
+                    Log.i("Vote", "Upvoted: " + upVoted.get());
+                }).exceptionally(e -> {
+                    Log.e("Vote", "Error while checking vote status: " + e.getMessage(), e);
+                    return null;
+                });
 
-                            Log.i(LOG_NAME, "upVoted: " + upVoted);
-                            Log.i(LOG_NAME, "downVoted: " + downVoted);
 
-                            // Update UI on the main thread
-                            runOnUiThread(() -> {
-                                if (upVoted) {
-                                    _upvotesButton.setBackgroundResource(R.drawable.ic_up_activated);
-                                } else {
-                                    _upvotesButton.setBackgroundResource(R.drawable.ic_up);
-                                }
+                AtomicBoolean downVoted = new AtomicBoolean(false);
 
-                                if (downVoted) {
-                                    _downvotesButton.setBackgroundResource(R.drawable.ic_down_activated);
-                                } else {
-                                    _downvotesButton.setBackgroundResource(R.drawable.ic_down);
-                                }
-                            });
-                        } catch (InterruptedException | ExecutionException e) {
-                            Log.e(LOG_NAME, "Error waiting for vote results: " + e.getMessage(), e);
+                downVoteFuture.thenAccept(result -> {
+                    downVoted.set(result); // Update AtomicBoolean value
+                    Log.i("Vote", "downVoted: " + downVoted.get());
+                }).exceptionally(e -> {
+                    Log.e("Vote", "Error while checking vote status: " + e.getMessage(), e);
+                    return null;
+                });
+
+                Log.i(LOG_NAME, "upVoted: " + upVoted);
+                Log.i(LOG_NAME, "downVoted: " + downVoted);
+
+                // Update UI on the main thread
+                runOnUiThread(() -> {
+                    if (upVoted.get()) {
+                        _upvotesButton.setBackgroundResource(R.drawable.ic_up_activated);
+                    } else {
+                        _upvotesButton.setBackgroundResource(R.drawable.ic_up);
+                    }
+
+                    if (downVoted.get()) {
+                        _downvotesButton.setBackgroundResource(R.drawable.ic_down_activated);
+                    } else {
+                        _downvotesButton.setBackgroundResource(R.drawable.ic_down);
+                    }
+                    _upvotesButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            addVotes(true, true, _uuid, _pid, LOG_NAME, upVoted.get(), downVoted.get())
+                                    .thenAccept(success -> {
+                                        if (success) {
+                                            getPost();
+                                            if(upVoted.get()){
+                                                //previous is true
+                                                _upvotesButton.setBackgroundResource(R.drawable.ic_up);
+                                                upVoted.set(false);
+                                            }else{
+                                                _upvotesButton.setBackgroundResource(R.drawable.ic_down_activated);
+                                                upVoted.set(true);
+                                            }
+                                        } else {
+                                            Toast.makeText(getApplicationContext(),"Please unvote first!",Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                                    .exceptionally(error -> {
+                                        Log.e("Vote", "Vote operation failed: " + error.getMessage(), error);
+                                        return null;
+                                    });
+
                         }
-                    }).exceptionally(e -> {
-                        Log.e(LOG_NAME, "Error during vote checks: " + e.getMessage(), e);
-                        return null;
                     });
 
-                } catch (UnsupportedEncodingException e) {
-                    Log.e(LOG_NAME, "Error on check vote: " + e.getMessage());
-                }
+                    _downvotesButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            addVotes(true, false, _uuid, _pid, LOG_NAME, upVoted.get(), downVoted.get())
+                                    .thenAccept(success -> {
+                                        if (success) {
+                                           getPost();
+                                           if(downVoted.get()){
+                                                _downvotesButton.setBackgroundResource(R.drawable.ic_down);
+                                                downVoted.set(false);
+                                           }else{
+                                               _downvotesButton.setBackgroundResource(R.drawable.ic_down_activated);
+                                               downVoted.set(true);
+                                           }
+                                        } else {
+                                           Toast.makeText(getApplicationContext(),"Please unvote first!",Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                                    .exceptionally(error -> {
+                                        Log.e("Vote", "Vote operation failed: " + error.getMessage(), error);
+                                        return null;
+                                    });
+
+                        }
+                    });
+                });
+            }).exceptionally(e -> {
+                Log.e(LOG_NAME, "Error during vote checks: " + e.getMessage(), e);
+                return null;
             });
-        });
+
+        } catch (UnsupportedEncodingException e) {
+            Log.e(LOG_NAME, "Error on check vote: " + e.getMessage());
+        }
 
 
         _backButton.setOnClickListener(new View.OnClickListener() {
@@ -210,20 +253,60 @@ public class PostEntryActivity extends AppCompatActivity {
         });
 
         //set event listener
-        _upvotesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Votes.addVotes(true, true,_uuid,_pid,LOG_NAME);
-            }
-        });
+    }
 
-        _downvotesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Votes.addVotes(true, false,_uuid,_pid,LOG_NAME);
-            }
-        });
 
+    public void getPost() {
+        String path = "/api/posts/getPostById?pid=" + _pid;
+        Log.i(LOG_NAME, "Constructed API path: " + path);
+
+        RestOptions options = RestOptions.builder()
+                .addPath(path)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        // Perform the asynchronous API request
+        Amplify.API.get(options, response -> {
+            runOnUiThread(() -> {
+                try {
+                    // Log raw response for debugging
+                    String rawResponse = response.getData().asString();
+                    Log.i(LOG_NAME, "Raw Response: " + rawResponse);
+
+                    // Parse JSON response
+                    if (rawResponse.startsWith("{") && rawResponse.endsWith("}")) {
+                        _currentPost = new JSONObject(rawResponse);
+
+                        // Extract data from JSON
+                        _pid = _currentPost.getString("pid");
+                        _uid = _currentPost.getString("uid");
+                        _title = _currentPost.getString("postTitle");
+                        _content = _currentPost.getString("postBody");
+                        _createdAt = _currentPost.getString("createdAt");
+                        _upvotes = _currentPost.getString("upvotes");
+                        _downvotes = _currentPost.getString("downvotes");
+
+                        // Update UI
+                        _postTitle.setText(_title);
+                        _postBody.setText(_content);
+                        _postDate.setText(DateUtils.convertUtcToFormattedTime(_createdAt));
+                        _postUpvodates.setText(_upvotes.equals("0") ? "" : _upvotes);
+                        _postDownvotes.setText(_downvotes.equals("0") ? "" : _downvotes);
+
+                    } else {
+                        throw new JSONException("Invalid JSON response");
+                    }
+                } catch (JSONException e) {
+                    Log.e(LOG_NAME, "JSON Parsing Error: " + e.getMessage(), e);
+                    Toast.makeText(getApplicationContext(), "Error parsing post data!", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }, error -> {
+            Log.e(LOG_NAME, "Fetch post error: " + error.getMessage(), error);
+            runOnUiThread(() -> {
+                Toast.makeText(getApplicationContext(), "Error fetching post!", Toast.LENGTH_SHORT).show();
+            });
+        });
     }
 
 
