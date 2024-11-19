@@ -92,8 +92,7 @@
                     android:id="@+id/upvote_button"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:background="@null"
-                    android:src="@drawable/ic_up"
+                    android:background="@drawable/ic_up"
                     android:contentDescription="Upvote" />
 
                 <!-- Upvote Count -->
@@ -113,8 +112,7 @@
                     android:id="@+id/downvote_button"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:background="@null"
-                    android:src="@drawable/ic_down"
+                    android:background="@drawable/ic_down"
                     android:contentDescription="Downvote" />
 
                 <!-- Downvote Count -->
