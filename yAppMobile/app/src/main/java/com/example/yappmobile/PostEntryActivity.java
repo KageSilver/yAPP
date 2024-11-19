@@ -31,7 +31,6 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
@@ -65,26 +64,7 @@ public class PostEntryActivity extends AppCompatActivity {
         String jsonString = getIntent().getStringExtra("currentPost");
         try {
             _currentPost = new JSONObject(jsonString);
-            _pid = _currentPost.getString("pid");
-            _uid = _currentPost.getString("uid");
-            _title = _currentPost.getString("postTitle");
-            _content = _currentPost.getString("postBody");
-            _createdAt = _currentPost.getString("createdAt");
-            _upvotes = _currentPost.getString("upvotes");
-            _downvotes = _currentPost.getString("downvotes");
-            Log.i(LOG_NAME, "ID" + _pid);
-
-            _postTitle.setText(_title);
-            _postBody.setText(_content);
-            _postDate.setText(DateUtils.convertUtcToFormattedTime(_createdAt));
-            if (_upvotes.equals("0")) {
-                _upvotes = "";
-            }
-            if (_downvotes.equals("0")) {
-                _downvotes = "";
-            }
-            _postUpvodates.setText(_upvotes);
-            _postDownvotes.setText(_downvotes);
+            updateUI();
 
         } catch (JSONException e) {
             Toast.makeText(getApplicationContext(), "Error! failed to read the post", Toast.LENGTH_SHORT).show();
@@ -160,18 +140,28 @@ public class PostEntryActivity extends AppCompatActivity {
                             addVotes(true, true, _uuid, _pid, LOG_NAME, upVoted.get(), downVoted.get())
                                     .thenAccept(success -> {
                                         if (success) {
-                                            getPost();
-                                            if(upVoted.get()){
-                                                //previous is true
-                                                _upvotesButton.setBackgroundResource(R.drawable.ic_up);
-                                                upVoted.set(false);
-                                            }else{
-                                                _upvotesButton.setBackgroundResource(R.drawable.ic_down_activated);
-                                                upVoted.set(true);
+                                            //check votes
+                                            try {
+                                                CompletableFuture<Boolean> up = checkVoted(true,true,_uuid,_pid,LOG_NAME);
+                                                up.thenAccept(result -> {
+                                                    upVoted.set(result); // Update AtomicBoolean value
+                                                    runOnUiThread(()->{
+                                                        if (upVoted.get()){
+                                                            _upvotesButton.setBackgroundResource(R.drawable.ic_up_activated);
+                                                        }else{
+                                                            _upvotesButton.setBackgroundResource(R.drawable.ic_up);
+                                                        }
+                                                    });
+
+                                                }).exceptionally(e -> {
+                                                    Log.e("Vote", "Error while checking vote status: " + e.getMessage(), e);
+                                                    return null;
+                                                });
+                                            } catch (UnsupportedEncodingException e) {
+                                                throw new RuntimeException(e);
                                             }
-                                        } else {
-                                            Toast.makeText(getApplicationContext(),"Please unvote first!",Toast.LENGTH_SHORT).show();
                                         }
+                                        getPost();
                                     })
                                     .exceptionally(error -> {
                                         Log.e("Vote", "Vote operation failed: " + error.getMessage(), error);
@@ -187,17 +177,29 @@ public class PostEntryActivity extends AppCompatActivity {
                             addVotes(true, false, _uuid, _pid, LOG_NAME, upVoted.get(), downVoted.get())
                                     .thenAccept(success -> {
                                         if (success) {
-                                           getPost();
-                                           if(downVoted.get()){
-                                                _downvotesButton.setBackgroundResource(R.drawable.ic_down);
-                                                downVoted.set(false);
-                                           }else{
-                                               _downvotesButton.setBackgroundResource(R.drawable.ic_down_activated);
-                                               downVoted.set(true);
-                                           }
-                                        } else {
-                                           Toast.makeText(getApplicationContext(),"Please unvote first!",Toast.LENGTH_SHORT).show();
+
+                                            try {
+                                                CompletableFuture<Boolean> down = checkVoted(false,true,_uuid,_pid,LOG_NAME);
+                                                down.thenAccept(result -> {
+                                                    downVoted.set(result); // Update AtomicBoolean value
+                                                    runOnUiThread(()->{
+                                                        if (downVoted.get()){
+                                                            _downvotesButton.setBackgroundResource(R.drawable.ic_down_activated);
+                                                        }else{
+                                                            _downvotesButton.setBackgroundResource(R.drawable.ic_down);
+                                                        }
+                                                    });
+                                                    getPost();
+
+                                                }).exceptionally(e -> {
+                                                    Log.e("Vote", "Error while checking vote status: " + e.getMessage(), e);
+                                                    return null;
+                                                });
+                                            } catch (UnsupportedEncodingException e) {
+                                                throw new RuntimeException(e);
+                                            }
                                         }
+                                        getPost();
                                     })
                                     .exceptionally(error -> {
                                         Log.e("Vote", "Vote operation failed: " + error.getMessage(), error);
@@ -276,22 +278,7 @@ public class PostEntryActivity extends AppCompatActivity {
                     // Parse JSON response
                     if (rawResponse.startsWith("{") && rawResponse.endsWith("}")) {
                         _currentPost = new JSONObject(rawResponse);
-
-                        // Extract data from JSON
-                        _pid = _currentPost.getString("pid");
-                        _uid = _currentPost.getString("uid");
-                        _title = _currentPost.getString("postTitle");
-                        _content = _currentPost.getString("postBody");
-                        _createdAt = _currentPost.getString("createdAt");
-                        _upvotes = _currentPost.getString("upvotes");
-                        _downvotes = _currentPost.getString("downvotes");
-
-                        // Update UI
-                        _postTitle.setText(_title);
-                        _postBody.setText(_content);
-                        _postDate.setText(DateUtils.convertUtcToFormattedTime(_createdAt));
-                        _postUpvodates.setText(_upvotes.equals("0") ? "" : _upvotes);
-                        _postDownvotes.setText(_downvotes.equals("0") ? "" : _downvotes);
+                        updateUI();
 
                     } else {
                         throw new JSONException("Invalid JSON response");
@@ -307,6 +294,24 @@ public class PostEntryActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Error fetching post!", Toast.LENGTH_SHORT).show();
             });
         });
+    }
+
+    private void updateUI() throws JSONException {
+        // Extract data from JSON
+        _pid = _currentPost.getString("pid");
+        _uid = _currentPost.getString("uid");
+        _title = _currentPost.getString("postTitle");
+        _content = _currentPost.getString("postBody");
+        _createdAt = _currentPost.getString("createdAt");
+        _upvotes = _currentPost.getString("upvotes");
+        _downvotes = _currentPost.getString("downvotes");
+
+        // Update UI
+        _postTitle.setText(_title);
+        _postBody.setText(_content);
+        _postDate.setText(DateUtils.convertUtcToFormattedTime(_createdAt));
+        _postUpvodates.setText(_upvotes.equals("0") ? "" : _upvotes);
+        _postDownvotes.setText(_downvotes.equals("0") ? "" : _downvotes);
     }
 
 
