@@ -71,29 +71,58 @@ public class Votes {
     }
 
 
-    public static void addVotes(boolean isPost, boolean type, String uuid, String pid, String log_name) {
-        JSONObject votesObj = new JSONObject();
-        try {
-            votesObj.put("uid", uuid);
-            votesObj.put("pid", pid);
+    public static CompletableFuture<Boolean> addVotes(boolean isPost, boolean type, String uuid, String pid, String log_name, boolean up, boolean down) {
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
 
-            votesObj.put("type", type);
-            votesObj.put("isPost", isPost);
-
-            RestOptions options = RestOptions.builder()
-                    .addPath("/api/votes/addVote")
-                    .addHeader("Content-Type", "application/json")
-                    .addBody(votesObj.toString().getBytes())
-                    .build();
-            //post type
-            Amplify.API.post(options, response -> {
-                Log.i(log_name, "Successfully vote: " + response.getData().toString());
-            }, error -> {
-                Log.i(log_name, "Failed to vote: " + error.getMessage());
-            });
-        } catch (JSONException e) {
-            Log.e(log_name, "Failed to create vote object: " + e.getMessage());
+        // Check if the vote action is invalid
+        if ((type == true && down) || (type == false && up)) {
+            future.complete(false); // Invalid vote action
+            return future;
         }
 
+        // Check if we need to remove the existing vote
+        if (type == true && up || type == false && down) {
+            RestOptions options = RestOptions.builder()
+                    .addPath("/api/votes/removeVote?uid=" + uuid + "&pid=" + pid + "&isPost=" + isPost + "&type=" + type)
+                    .addHeader("Content-Type", "application/json")
+                    .build();
+
+            Amplify.API.delete(options, response -> {
+                Log.i(log_name, "Successfully removed vote: " + response.getData().toString());
+                future.complete(true); // Successfully removed vote
+            }, error -> {
+                Log.e(log_name, "Failed to remove vote: " + error.getMessage());
+                future.completeExceptionally(new RuntimeException("Failed to remove vote: " + error.getMessage()));
+            });
+        } else {
+            // Add a new vote
+            JSONObject votesObj = new JSONObject();
+            try {
+                votesObj.put("uid", uuid);
+                votesObj.put("pid", pid);
+                votesObj.put("type", type);
+                votesObj.put("isPost", isPost);
+
+                RestOptions options = RestOptions.builder()
+                        .addPath("/api/votes/addVote")
+                        .addHeader("Content-Type", "application/json")
+                        .addBody(votesObj.toString().getBytes())
+                        .build();
+
+                Amplify.API.post(options, response -> {
+                    Log.i(log_name, "Successfully added vote: " + response.getData().toString());
+                    future.complete(true); // Successfully added vote
+                }, error -> {
+                    Log.e(log_name, "Failed to add vote: " + error.getMessage());
+                    future.completeExceptionally(new RuntimeException("Failed to add vote: " + error.getMessage()));
+                });
+            } catch (JSONException e) {
+                Log.e(log_name, "Failed to create vote object: " + e.getMessage());
+                future.completeExceptionally(new RuntimeException("Failed to create vote object: " + e.getMessage()));
+            }
+        }
+
+        return future;
     }
+
 }
