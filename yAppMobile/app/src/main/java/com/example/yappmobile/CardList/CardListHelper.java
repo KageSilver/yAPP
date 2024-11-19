@@ -223,9 +223,9 @@ public class CardListHelper extends AppCompatActivity
         final int MAX_RETRIES = 5;
         CompletableFuture<String> future = new CompletableFuture<>();
         RestOptions options = RestOptions.builder()
-                                         .addPath(apiUrl)
-                                         .addHeader("Content-Type", "application/json")
-                                         .build();
+                .addPath(apiUrl)
+                .addHeader("Content-Type", "application/json")
+                .build();
         retryAPICall(options, future, MAX_RETRIES);
         return future;
     }
@@ -235,7 +235,7 @@ public class CardListHelper extends AppCompatActivity
         runOnUiThread(() ->
         {
             // Setup the adapter with an empty list that will be updated later
-            adapter = new CardListAdapter(context, cardItemList, cardType, itemInteractions,context.getSharedPreferences("yAppPreferences",Context.MODE_PRIVATE));
+            adapter = new CardListAdapter(context, cardItemList, cardType, itemInteractions);
             recyclerView.setAdapter(adapter);
         });
     }
@@ -265,7 +265,7 @@ public class CardListHelper extends AppCompatActivity
                 error ->
                 {
                     if (retriesLeft > 0
-                        && error.getCause() instanceof java.net.SocketTimeoutException)
+                            && error.getCause() instanceof java.net.SocketTimeoutException)
                     {
                         Log.i("API", "Retrying... Attempts left: " + retriesLeft);
                         retryAPICall(options, future, retriesLeft - 1);
@@ -375,7 +375,7 @@ public class CardListHelper extends AppCompatActivity
             else
             {
                 Log.d("CardListHelper",
-                      "Wrong card type! Tried to get the last post's time on a non-PostCard item");
+                        "Wrong card type! Tried to get the last post's time on a non-PostCard item");
             }
         }
         catch (JSONException jsonException)

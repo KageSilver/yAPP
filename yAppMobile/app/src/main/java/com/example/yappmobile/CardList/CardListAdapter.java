@@ -1,38 +1,23 @@
 package com.example.yappmobile.CardList;
 
-import static com.example.yappmobile.Votes.Votes.addVotes;
-import static com.example.yappmobile.Votes.Votes.checkVoted;
-
-import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.amplifyframework.core.Amplify;
-import com.example.yappmobile.Comments.Comment;
-import com.example.yappmobile.Comments.CommentAdapter;
 import com.example.yappmobile.R;
-import com.example.yappmobile.Utils.DateUtils;
-import com.example.yappmobile.Votes.IVoteHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.sql.Time;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 // Manages the creation, data population, and click events of individual CardItems
 public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
@@ -41,16 +26,14 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private final Context context; // Where the CardItems are contained
     private final String cardType;
     private List<JSONObject> itemList; // List of CardItems
-    private SharedPreferences preferences;
 
     public CardListAdapter(Context context, List<JSONObject> itemList,
-                           String cardType, IListCardItemInteractions itemInteractions, SharedPreferences preferences)
+                           String cardType, IListCardItemInteractions itemInteractions)
     {
         this.context = context;
         this.itemList = itemList;
         this.cardType = cardType;
         this.itemInteractions = itemInteractions;
-        this.preferences = preferences;
     }
 
     // Triggers when creating each CardItem to be displayed
@@ -75,7 +58,7 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             case "POST":
             {
                 View view = inflater.inflate(R.layout.card_post, parent, false);
-                return new PostViewHolder(view, itemInteractions,context);
+                return new PostViewHolder(view, itemInteractions);
             }
             case "DIARY":
             {
@@ -102,33 +85,7 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
         else if (holder instanceof PostViewHolder)
         {
-             ((PostViewHolder) holder).bind(item);
-
-            try {
-              CompletableFuture<Boolean> up =  checkVoted(true,true,preferences.getString("uuid",""),item.getString("pid"),"ADAPTER");
-                up.thenAccept(voted -> {
-                    // This block is executed once the CompletableFuture completes
-                   ((PostViewHolder) holder).setUpvoted(voted);
-                }).exceptionally(error -> {
-                    Log.e("ADAPTER", "Error checking vote status", error);
-                    return null;
-                });
-
-                CompletableFuture<Boolean> down =  checkVoted(false,true,preferences.getString("uuid",""),item.getString("pid"),"ADAPTER");
-                down.thenAccept(voted -> {
-                    // This block is executed once the CompletableFuture completes
-                    ((PostViewHolder) holder).setDownvoted(voted);
-                }).exceptionally(error -> {
-                    Log.e("ADAPTER", "Error checking vote status", error);
-                    return null;
-                });
-
-            } catch (UnsupportedEncodingException ignored) {
-                throw new RuntimeException(ignored);
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
-
+            ((PostViewHolder) holder).bind(item);
         }
         else if (holder instanceof DiaryViewHolder)
         {
@@ -246,7 +203,6 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             {
                 String personA = card.get("FromUserName").toString();
                 String personB = card.get("ToUserName").toString();
-
                 Amplify.Auth.getCurrentUser(result -> {
                     if (personA.equals(result.getUsername()))
                     {
@@ -268,31 +224,17 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     // Populate data into a PostCard
-    public static class PostViewHolder extends RecyclerView.ViewHolder implements IVoteHandler
+    public static class PostViewHolder extends RecyclerView.ViewHolder
     {
-        public TextView postTitle, postDate, postBody, postUpvotes, postDownvotes;
-        public ImageButton upButton, downButton;
-        public Context context;
-        public IListCardItemInteractions postCardInteractions;
-        private static final String LOG_NAME = "POST_APDATER";
-        private String uuid, pid;
+        public TextView postTitle, postDate, postBody;
 
-       // private final VoteHandler voteHandler;
-
-        public PostViewHolder(View itemView, IListCardItemInteractions postCardInteractions, Context context)
+        public PostViewHolder(View itemView, IListCardItemInteractions postCardInteractions)
         {
             super(itemView);
-            this.context = context;
-            this.postCardInteractions = postCardInteractions;
 
             postTitle = itemView.findViewById(R.id.post_title);
             postDate = itemView.findViewById(R.id.post_date);
             postBody = itemView.findViewById(R.id.post_body);
-            postUpvotes = itemView.findViewById(R.id.upvote_count);
-            postDownvotes = itemView.findViewById(R.id.downvote_count);
-            upButton = itemView.findViewById(R.id.upvote_button);
-            downButton = itemView.findViewById(R.id.downvote_button);
-
 
             // Set up an onClickListener for the post list card
             itemView.setOnClickListener(new View.OnClickListener()
@@ -312,129 +254,21 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             });
         }
 
-
         // Populate data into a PostCard
         public void bind(JSONObject card)
         {
             try
             {
                 postTitle.setText(card.get("postTitle").toString());
-                postDate.setText(DateUtils.convertUtcToFormattedTime(card.get("createdAt").toString()));
+                postDate.setText(card.get("createdAt").toString());
                 postBody.setText(card.get("postBody").toString());
-                //check value
-                String down = card.get("downvotes").toString();
-                if(down.equals("0")){
-                    down = "";
-                }
-                String up = card.get("upvotes").toString();
-                if(up.equals("0")){
-                    up = "";
-                }
-                postDownvotes.setText(down);
-                postUpvotes.setText(up);
-                AtomicReference<AtomicBoolean> upVoted = new AtomicReference<>(new AtomicBoolean(false));
-                AtomicReference<AtomicBoolean> downVoted = new AtomicReference<>(new AtomicBoolean(false));
-                SharedPreferences sharedPreferences = context.getSharedPreferences("yAppPreferences", Context.MODE_PRIVATE);
-                uuid = sharedPreferences.getString("uuid", "");
-                pid = card.getString("pid");
-
-
-
-                upButton.setOnClickListener(v -> {
-                        handleVote(pid,true);
-                    }
-                );
-                downButton.setOnClickListener(v -> {
-                    handleVote(pid,false);
-                });
             }
             catch (JSONException jsonException)
             {
-                Log.e(LOG_NAME, "Error parsing JSON", jsonException);
-            }
-
-        }
-
-        private void handleVote( String pid, boolean isUpvote) {
-            AtomicReference<AtomicBoolean> upVoted = new AtomicReference<>(new AtomicBoolean(false));
-            AtomicReference<AtomicBoolean> downVoted = new AtomicReference<>(new AtomicBoolean(false));
-
-            try {
-                CompletableFuture<Boolean> upVoteFuture = checkVoted(true, false, uuid, pid, LOG_NAME);
-                CompletableFuture<Boolean> downVoteFuture = checkVoted(false, false, uuid, pid, LOG_NAME);
-
-                CompletableFuture.allOf(upVoteFuture, downVoteFuture).thenRun(() -> {
-                    updateVoteStatus(upVoteFuture, upVoted, "Upvoted");
-                    updateVoteStatus(downVoteFuture, downVoted, "Downvoted");
-
-                    ((Activity)context).runOnUiThread(() -> {
-                        onVote(true, isUpvote, uuid, pid, isUpvote ? upButton : downButton,
-                                isUpvote ? upVoted.get() : downVoted.get(), LOG_NAME, upVoted.get(), downVoted.get());
-                        try {
-                            Thread.sleep(500);
-
-                        } catch (InterruptedException e) {
-                            Log.e(LOG_NAME,"Fail to sleep");
-                        }
-                        if(postCardInteractions!=null){
-                            postCardInteractions.refreshUI();
-                        }
-
-                    });
-
-                }).exceptionally(e -> {
-                    Log.e(LOG_NAME, "Error during vote checks: " + e.getMessage(), e);
-                    return null;
-                });
-            } catch (UnsupportedEncodingException e) {
-                Log.e(LOG_NAME, "Error encoding vote request: " + e.getMessage());
+                Log.e("JSON", "Error parsing JSON", jsonException);
             }
         }
-
-
-        public void setUpvoted(boolean value){
-
-            if(value) {
-                upButton.setBackgroundResource(R.drawable.ic_up_activated);
-            }
-            else{
-                upButton.setBackgroundResource(R.drawable.ic_up);
-            }
-        }
-
-        public void setDownvoted(boolean value){
-            if(value) {
-               downButton.setBackgroundResource(R.drawable.ic_down_activated);
-            }
-            else{
-                downButton.setBackgroundResource(R.drawable.ic_down);
-            }
-
-        }
-
-        // Update vote status from CompletableFuture
-        private void updateVoteStatus(CompletableFuture<Boolean> future, AtomicReference<AtomicBoolean> voteRef, String logPrefix) {
-            voteRef.set(new AtomicBoolean(false));
-            future.thenAccept(result -> {
-                voteRef.get().set(result);
-                Log.i("Vote", logPrefix + ": " + voteRef.get().get());
-            }).exceptionally(e -> {
-                Log.e("Vote", "Error while checking vote status: " + e.getMessage(), e);
-                return null;
-            });
-        }
-
-        // Update the UI based on vote status
-        private void updateVoteUI(boolean upVoted, boolean downVoted) {
-            upButton.setBackgroundResource(upVoted ? R.drawable.ic_up_activated : R.drawable.ic_up);
-            downButton.setBackgroundResource(downVoted ? R.drawable.ic_down_activated : R.drawable.ic_down);
-
-        }
-
     }
-
-
-
 
     // Populate data into a DiaryCard
     public static class DiaryViewHolder extends RecyclerView.ViewHolder
