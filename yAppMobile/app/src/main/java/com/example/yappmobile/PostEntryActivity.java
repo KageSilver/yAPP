@@ -24,7 +24,7 @@ import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.CardList.CardListHelper;
 import com.example.yappmobile.Comments.CommentsBottomSheet;
 import com.example.yappmobile.Utils.DateUtils;
-import com.example.yappmobile.Votes.VoteHandler;
+import com.example.yappmobile.Votes.IVoteHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,7 +34,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
-public class PostEntryActivity extends AppCompatActivity implements VoteHandler {
+public class PostEntryActivity extends AppCompatActivity implements IVoteHandler {
     private final static String LOG_NAME = "POST_ENTRY";
     private String _pid, _uid, _title, _createdAt, _content, _updatedAt, _uuid, _upvotes, _downvotes;
     private TextView _postTitle, _postBody, _postDate, _postUpvodates, _postDownvotes;
