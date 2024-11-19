@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.core.Amplify;
-import com.example.yappmobile.CardList.IListCardItemInteractions;
 import com.example.yappmobile.PostEntryActivity;
 import com.example.yappmobile.R;
+import com.example.yappmobile.Votes.IRefreshListener;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import android.widget.ProgressBar;
 
-public class CommentsBottomSheet extends BottomSheetDialogFragment implements IListCardItemInteractions {
+public class CommentsBottomSheet extends BottomSheetDialogFragment implements IRefreshListener {
 
     private static final String ARG_PID = "pid";
     private static  final String ARG_UID = "uid";
@@ -196,14 +196,9 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment implements IL
         }
     }
 
-    @Override
-    public void onItemClick(int position) {
-
-    }
 
     @Override
     public void refreshUI() {
-
         loadComments();
     }
 }

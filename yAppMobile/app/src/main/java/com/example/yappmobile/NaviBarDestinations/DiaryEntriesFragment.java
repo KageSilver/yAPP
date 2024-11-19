@@ -46,7 +46,7 @@ public class DiaryEntriesFragment extends Fragment implements IListCardItemInter
     public void onViewCreated(View view, Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        
+
         ProgressBar loadingSpinner = view.findViewById(R.id.indeterminate_bar);
         diaryEntryHelper = new CardListHelper(this.getContext(), loadingSpinner, "DIARY", this);
 
@@ -88,11 +88,6 @@ public class DiaryEntriesFragment extends Fragment implements IListCardItemInter
         String currentPost = diaryEntryHelper.getItem(position).toString();
         intent.putExtra("currentPost", currentPost);
         activityLauncher.launch(intent);
-    }
-
-    @Override
-    public void refreshUI() {
-
     }
 
     ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(

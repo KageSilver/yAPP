@@ -39,7 +39,7 @@ public class MyRequestsActivity extends AppCompatActivity implements IListReques
 
         ProgressBar loadingSpinner = findViewById(R.id.indeterminate_bar);
         requestListHelper = new CardListHelper(this, loadingSpinner,
-                                               "FRIEND_REQUEST", this);
+                "FRIEND_REQUEST", this);
 
         // Setup recycler view to display request cards
         rvRequests = findViewById(R.id.request_list);
@@ -73,11 +73,6 @@ public class MyRequestsActivity extends AppCompatActivity implements IListReques
     public void onItemClick(int position)
     {
         // Do nothing hehe
-    }
-
-    @Override
-    public void refreshUI() {
-
     }
 
     @Override
@@ -169,13 +164,13 @@ public class MyRequestsActivity extends AppCompatActivity implements IListReques
         CompletableFuture<RestResponse> future = new CompletableFuture<>();
 
         RestOptions options = RestOptions.builder()
-                                         .addPath(apiUrl)
-                                         .addHeader("Content-Type", "application/json")
-                                         .addBody(putBody.getBytes())
-                                         .build();
+                .addPath(apiUrl)
+                .addHeader("Content-Type", "application/json")
+                .addBody(putBody.getBytes())
+                .build();
         Amplify.API.put(options,
-                        future::complete,
-                        error -> Log.e("API", "PUT request failed", error));
+                future::complete,
+                error -> Log.e("API", "PUT request failed", error));
 
         // Then update friend list
         future.thenAccept(restResponse -> {

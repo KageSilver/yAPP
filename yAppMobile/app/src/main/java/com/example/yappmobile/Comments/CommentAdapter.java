@@ -22,6 +22,7 @@ import com.example.yappmobile.CardList.IListCardItemInteractions;
 import com.example.yappmobile.PostEntryActivity;
 import com.example.yappmobile.R;
 import com.example.yappmobile.Utils.DateUtils;
+import com.example.yappmobile.Votes.IRefreshListener;
 import com.example.yappmobile.Votes.IVoteHandler;
 
 import org.json.JSONException;
@@ -41,11 +42,11 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     private final String _uuid;
     private final Fragment _parentFragment;
     private final PostEntryActivity _parentActivity;
-    private final IListCardItemInteractions _interaction;
+    private final IRefreshListener _interaction;
 
 
     // Constructor to initialize the comment list
-    public CommentAdapter(List<Comment> commentList, String uuid, Fragment parentFragment, PostEntryActivity parentActivity, IListCardItemInteractions refreshListener) {
+    public CommentAdapter(List<Comment> commentList, String uuid, Fragment parentFragment, PostEntryActivity parentActivity, IRefreshListener refreshListener) {
 
         _commentList = (ArrayList) commentList;
         _uuid = uuid;
