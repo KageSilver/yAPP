@@ -11,13 +11,13 @@ public class Comment {
     private final String createAt;   // Comment creation timestamp
     private final String updateAt;   // Comment update timestamp
 
-    private final  String downvotes;
+    private String downvotes;
 
-    private final String upvotes;
+    private String upvotes;
 
 
     // Constructor to initialize all fields
-    public Comment(String uid, String commentBody, String pid, String cid, String createAt, String updateAt, String downvotes, String upvotes) {
+    public Comment(String uid, String commentBody, String pid, String cid, String createAt, String updateAt, String upvotes, String downvotes) {
         this.uid = uid;
         this.commentBody = commentBody;
         this.pid = pid;
@@ -48,7 +48,7 @@ public class Comment {
         return commentBody;
     }
 
-    public void setCommentBody(String commentBody){
+    public void setCommentBody(String commentBody) {
         this.commentBody = commentBody;
     }
 
@@ -62,9 +62,21 @@ public class Comment {
         return updateAt;
     }
 
-    public String getUpvotes() {return upvotes;}
+    public String getUpvotes() {
+        return upvotes;
+    }
 
-    public  String getDownvotes() {return downvotes;}
+    public String getDownvotes() {
+        return downvotes;
+    }
+
+    public void setUpvotes(String vote) {
+        upvotes = vote;
+    }
+
+    public void setDownvotes(String vote) {
+        downvotes = vote;
+    }
 
 
     @Override
@@ -88,8 +100,8 @@ public class Comment {
             jsonObject.put("cid", cid);
             jsonObject.put("pid", pid);
             jsonObject.put("commentBody", commentBody);
-            jsonObject.put("upvotes",upvotes);
-            jsonObject.put("downvotes",downvotes);
+            jsonObject.put("upvotes", upvotes);
+            jsonObject.put("downvotes", downvotes);
             jsonObject.put("createAt", createAt);
             jsonObject.put("updateAt", updateAt);
         } catch (JSONException e) {
