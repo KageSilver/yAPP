@@ -1,5 +1,7 @@
 package com.example.yappmobile;
 
+import static com.example.yappmobile.Votes.Votes.checkVoted;
+
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,26 +22,32 @@ import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.CardList.CardListHelper;
 import com.example.yappmobile.Comments.CommentsBottomSheet;
 import com.example.yappmobile.Utils.DateUtils;
+import com.example.yappmobile.Votes.Votes;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class PostEntryActivity extends AppCompatActivity
-{
+import java.io.UnsupportedEncodingException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+
+public class PostEntryActivity extends AppCompatActivity {
+    private final static String LOG_NAME = "POST_ENTRY";
     private String _pid, _uid, _title, _createdAt, _content, _updatedAt, _uuid, _upvotes, _downvotes;
     private TextView _postTitle, _postBody, _postDate, _postUpvodates, _postDownvotes;
     private CardListHelper _postListHelper;
-
+    private ImageButton _upvotesButton, _downvotesButton, _replyButton, _backButton;
     private ImageView _moreOptions;
-
-    private final static  String LOG_NAME ="POST_ENTRY";
-
     private JSONObject _currentPost;
 
-    @SuppressLint("MissingInflatedId")
+    private JSONArray _votes;
+
+    @SuppressLint({"MissingInflatedId", "ResourceAsColor"})
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_entry);
         _postListHelper = new CardListHelper(this);
@@ -50,7 +58,10 @@ public class PostEntryActivity extends AppCompatActivity
         _postUpvodates = findViewById(R.id.upvoteText);
         _moreOptions = findViewById(R.id.menuButton);
         // Back button code
-        ImageButton backButton = findViewById(R.id.backButton);
+        _backButton = findViewById(R.id.backButton);
+        _upvotesButton = findViewById(R.id.upvoteButton);
+        _downvotesButton = findViewById(R.id.downvoteButton);
+
 
         // Setup content view to display post content
         String jsonString = getIntent().getStringExtra("currentPost");
@@ -58,62 +69,114 @@ public class PostEntryActivity extends AppCompatActivity
             _currentPost = new JSONObject(jsonString);
             _pid = _currentPost.getString("pid");
             _uid = _currentPost.getString("uid");
-            _title =  _currentPost.getString("postTitle");
+            _title = _currentPost.getString("postTitle");
             _content = _currentPost.getString("postBody");
-            _createdAt =  _currentPost.getString("createdAt");
+            _createdAt = _currentPost.getString("createdAt");
             _upvotes = _currentPost.getString("upvotes");
             _downvotes = _currentPost.getString("downvotes");
-
+            Log.i(LOG_NAME, "ID" + _pid);
 
             _postTitle.setText(_title);
             _postBody.setText(_content);
             _postDate.setText(DateUtils.convertUtcToFormattedTime(_createdAt));
-            if(_upvotes.equals("0")){
+            if (_upvotes.equals("0")) {
                 _upvotes = "";
             }
-            if(_downvotes.equals("0")){
+            if (_downvotes.equals("0")) {
                 _downvotes = "";
             }
             _postUpvodates.setText(_upvotes);
             _postDownvotes.setText(_downvotes);
 
-
         } catch (JSONException e) {
-            Toast.makeText(getApplicationContext(),"Error! failed to read the post", Toast.LENGTH_SHORT).show();
-            Log.e(LOG_NAME,"Error of parsing the intent extra: "+e.getMessage());
+            Toast.makeText(getApplicationContext(), "Error! failed to read the post", Toast.LENGTH_SHORT).show();
+            Log.e(LOG_NAME, "Error of parsing the intent extra: " + e.getMessage());
         }
 
+
+        CompletableFuture<Void> fetchUser = new CompletableFuture<>();
+
+
         //get current user
-        ImageButton replyButton = findViewById(R.id.replyButton);
+        _replyButton = findViewById(R.id.replyButton);
+
         Amplify.Auth.getCurrentUser(result -> {
             Log.i(LOG_NAME, "Continuing as " + result.getUsername() + "...");
-            _uuid = result.getUserId();
-            Log.i(LOG_NAME,"uid: "+_uid);
-            Log.i(LOG_NAME,"uuid"+_uuid);
 
             runOnUiThread(() -> {
-                if(_uid.equals(_uuid)){
+                _uuid = result.getUserId();
+                Log.i(LOG_NAME, "uid: " + _uid);
+                Log.i(LOG_NAME, "uuid" + _uuid);
+                if (_uid.equals(_uuid)) {
                     _moreOptions.setVisibility(View.VISIBLE);
 
-                }else{
+                } else {
                     _moreOptions.setVisibility(View.INVISIBLE);
                 }
 
-                replyButton.setOnClickListener(v -> {
+
+                _replyButton.setOnClickListener(v -> {
                     CommentsBottomSheet bottomSheet = CommentsBottomSheet.newInstance(_pid, _uid, _uuid, this);
                     bottomSheet.show(getSupportFragmentManager(), bottomSheet.getTag());
                 });
+                fetchUser.complete(null); // Mark fetchUser as complete
             });
         }, error -> {
             Log.i(LOG_NAME, "There is no user signed in!!");
+            fetchUser.completeExceptionally(new Exception(error.getMessage())); // Complete with an error
         });
 
 
-        backButton.setOnClickListener(new View.OnClickListener()
-        {
+        CompletableFuture.allOf(fetchUser).thenRun(() -> {
+            runOnUiThread(() -> {
+
+                try {
+                    // Start both `checkVoted` calls in parallel
+                    CompletableFuture<Boolean> upVoteFuture = checkVoted(true, true, _uuid, _pid, LOG_NAME);
+                    CompletableFuture<Boolean> downVoteFuture = checkVoted(false, true, _uuid, _pid, LOG_NAME);
+
+                    // Combine both futures to wait for completion
+                    CompletableFuture.allOf(upVoteFuture, downVoteFuture).thenRun(() -> {
+                        try {
+                            // Get results from the completed futures
+                            boolean upVoted = upVoteFuture.get();
+                            boolean downVoted = downVoteFuture.get();
+
+                            Log.i(LOG_NAME, "upVoted: " + upVoted);
+                            Log.i(LOG_NAME, "downVoted: " + downVoted);
+
+                            // Update UI on the main thread
+                            runOnUiThread(() -> {
+                                if (upVoted) {
+                                    _upvotesButton.setBackgroundResource(R.drawable.ic_up_activated);
+                                } else {
+                                    _upvotesButton.setBackgroundResource(R.drawable.ic_up);
+                                }
+
+                                if (downVoted) {
+                                    _downvotesButton.setBackgroundResource(R.drawable.ic_down_activated);
+                                } else {
+                                    _downvotesButton.setBackgroundResource(R.drawable.ic_down);
+                                }
+                            });
+                        } catch (InterruptedException | ExecutionException e) {
+                            Log.e(LOG_NAME, "Error waiting for vote results: " + e.getMessage(), e);
+                        }
+                    }).exceptionally(e -> {
+                        Log.e(LOG_NAME, "Error during vote checks: " + e.getMessage(), e);
+                        return null;
+                    });
+
+                } catch (UnsupportedEncodingException e) {
+                    Log.e(LOG_NAME, "Error on check vote: " + e.getMessage());
+                }
+            });
+        });
+
+
+        _backButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 getOnBackPressedDispatcher().onBackPressed();
             }
         });
@@ -130,7 +193,7 @@ public class PostEntryActivity extends AppCompatActivity
                 if (item.getItemId() == R.id.action_edit) {
                     // Handle Edit action
                     Intent intent = new Intent(this, EditPostEntryActivity.class);
-                    intent.putExtra("post",_currentPost.toString());
+                    intent.putExtra("post", _currentPost.toString());
                     startActivity(intent);
                     finish();
                     return true;
@@ -146,9 +209,24 @@ public class PostEntryActivity extends AppCompatActivity
             popup.show();
         });
 
+        //set event listener
+        _upvotesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Votes.addVotes(true, true,_uuid,_pid,LOG_NAME);
+            }
+        });
 
+        _downvotesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Votes.addVotes(true, false,_uuid,_pid,LOG_NAME);
+            }
+        });
 
     }
+
+
 
 
     public void showConfirmationDialog() {
@@ -164,8 +242,8 @@ public class PostEntryActivity extends AppCompatActivity
             public void onClick(DialogInterface dialog, int which) {
                 // create delete
                 RestOptions options = RestOptions.builder()
-                        .addPath("/api/posts/deletePost?pid="+_pid)
-                        .addHeader("Content-Type","application/json")
+                        .addPath("/api/posts/deletePost?pid=" + _pid)
+                        .addHeader("Content-Type", "application/json")
                         .build();
 
                 Amplify.API.delete(options,
