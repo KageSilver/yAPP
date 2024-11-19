@@ -18,6 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.amplifyframework.core.Amplify;
+import com.example.yappmobile.Comments.Comment;
+import com.example.yappmobile.Comments.CommentAdapter;
 import com.example.yappmobile.R;
 import com.example.yappmobile.Utils.DateUtils;
 import com.example.yappmobile.Votes.IVoteHandler;
@@ -26,6 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.sql.Time;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -272,6 +275,7 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public Context context;
         public IListCardItemInteractions postCardInteractions;
         private static final String LOG_NAME = "POST_APDATER";
+        private String uuid, pid;
 
        // private final VoteHandler voteHandler;
 
@@ -331,79 +335,62 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 AtomicReference<AtomicBoolean> upVoted = new AtomicReference<>(new AtomicBoolean(false));
                 AtomicReference<AtomicBoolean> downVoted = new AtomicReference<>(new AtomicBoolean(false));
                 SharedPreferences sharedPreferences = context.getSharedPreferences("yAppPreferences", Context.MODE_PRIVATE);
-                String uuid = sharedPreferences.getString("uuid", "");
-                String pid = card.getString("pid");
-                CompletableFuture<Boolean> upVoteFuture = checkVoted(true, true, uuid, pid, LOG_NAME);
-                CompletableFuture<Boolean> downVoteFuture = checkVoted(false, true, uuid, pid, LOG_NAME);
-                CompletableFuture.allOf(upVoteFuture, downVoteFuture).thenRun(() -> {
-                    // Get results from the completed futures
-                    upVoted.set(new AtomicBoolean(false));
+                uuid = sharedPreferences.getString("uuid", "");
+                pid = card.getString("pid");
 
-                    upVoteFuture.thenAccept(result -> {
-                        upVoted.get().set(result); // Update AtomicBoolean value
-                        Log.i("Vote", "Upvoted: " + upVoted.get().get());
-                    }).exceptionally(e -> {
-                        Log.e("Vote", "Error while checking vote status: " + e.getMessage(), e);
-                        return null;
-                    });
-
-
-                    downVoted.set(new AtomicBoolean(false));
-
-                    downVoteFuture.thenAccept(result -> {
-                        downVoted.get().set(result); // Update AtomicBoolean value
-                        Log.i("Vote", "downVoted: " + downVoted.get().get());
-                    }).exceptionally(e -> {
-                        Log.e("Vote", "Error while checking vote status: " + e.getMessage(), e);
-                        return null;
-                    });
-
-                    Log.i(LOG_NAME, "upVoted: " + upVoted);
-                    Log.i(LOG_NAME, "downVoted: " + downVoted);
-
-                    // Update UI on the main thread
-                    ((Activity)context).runOnUiThread(() -> {
-                        if (upVoted.get().get()) {
-                            upButton.setBackgroundResource(R.drawable.ic_up_activated);
-                        } else {
-                            upButton.setBackgroundResource(R.drawable.ic_up);
-                        }
-
-                        if (downVoted.get().get()) {
-                            downButton.setBackgroundResource(R.drawable.ic_down_activated);
-                        } else {
-                            downButton.setBackgroundResource(R.drawable.ic_down);
-                        }
-
-                    });
-                }).exceptionally(e -> {
-                    Log.e(LOG_NAME, "Error during vote checks: " + e.getMessage(), e);
-                    return null;
-                });
 
 
                 upButton.setOnClickListener(v -> {
-                    onVote(true, true, uuid, pid, upButton, upVoted.get(), "PostAdapter", upVoted.get(), downVoted.get());
-                    if (postCardInteractions != null) {
-                        postCardInteractions.refreshUI();
-                    }
+                        handleVote(pid,true);
                     }
                 );
                 downButton.setOnClickListener(v -> {
-                    onVote(true, false, uuid, pid, downButton, downVoted.get(), "PostAdapter", upVoted.get(), downVoted.get());
-                    if (postCardInteractions != null) {
-                        postCardInteractions.refreshUI();
-                    }
+                    handleVote(pid,false);
                 });
             }
             catch (JSONException jsonException)
             {
                 Log.e(LOG_NAME, "Error parsing JSON", jsonException);
-            } catch (UnsupportedEncodingException e) {
-                Log.e(LOG_NAME, "Error encoding", e);
             }
 
         }
+
+        private void handleVote( String pid, boolean isUpvote) {
+            AtomicReference<AtomicBoolean> upVoted = new AtomicReference<>(new AtomicBoolean(false));
+            AtomicReference<AtomicBoolean> downVoted = new AtomicReference<>(new AtomicBoolean(false));
+
+            try {
+                CompletableFuture<Boolean> upVoteFuture = checkVoted(true, false, uuid, pid, LOG_NAME);
+                CompletableFuture<Boolean> downVoteFuture = checkVoted(false, false, uuid, pid, LOG_NAME);
+
+                CompletableFuture.allOf(upVoteFuture, downVoteFuture).thenRun(() -> {
+                    updateVoteStatus(upVoteFuture, upVoted, "Upvoted");
+                    updateVoteStatus(downVoteFuture, downVoted, "Downvoted");
+
+                    ((Activity)context).runOnUiThread(() -> {
+                        onVote(true, isUpvote, uuid, pid, isUpvote ? upButton : downButton,
+                                isUpvote ? upVoted.get() : downVoted.get(), LOG_NAME, upVoted.get(), downVoted.get());
+                        try {
+                            Thread.sleep(500);
+
+                        } catch (InterruptedException e) {
+                            Log.e(LOG_NAME,"Fail to sleep");
+                        }
+                        if(postCardInteractions!=null){
+                            postCardInteractions.refreshUI();
+                        }
+
+                    });
+
+                }).exceptionally(e -> {
+                    Log.e(LOG_NAME, "Error during vote checks: " + e.getMessage(), e);
+                    return null;
+                });
+            } catch (UnsupportedEncodingException e) {
+                Log.e(LOG_NAME, "Error encoding vote request: " + e.getMessage());
+            }
+        }
+
 
         public void setUpvoted(boolean value){
 
@@ -425,32 +412,28 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         }
 
-        @Override
-        public void onVote(boolean isPost, boolean voteType, String uuid, String pid, ImageButton button, AtomicBoolean voteStatus, String logName, AtomicBoolean upVoted, AtomicBoolean downVoted) {
-            addVotes(isPost, voteType, uuid, pid, logName, upVoted.get(), downVoted.get())
-                    .thenAccept(success -> {
-                        if (success) {
-                            try {
-                                checkVoted(voteType, isPost, uuid, pid, logName)
-                                        .thenAccept(result -> {
-                                            voteStatus.set(result);
-
-                                        })
-                                        .exceptionally(e -> {
-                                            Log.e(logName, "Error while checking vote status: " + e.getMessage(), e);
-                                            return null;
-                                        });
-                            } catch (UnsupportedEncodingException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                    })
-                    .exceptionally(error -> {
-                        Log.e(logName, "Vote operation failed: " + error.getMessage(), error);
-                        return null;
-                    });
+        // Update vote status from CompletableFuture
+        private void updateVoteStatus(CompletableFuture<Boolean> future, AtomicReference<AtomicBoolean> voteRef, String logPrefix) {
+            voteRef.set(new AtomicBoolean(false));
+            future.thenAccept(result -> {
+                voteRef.get().set(result);
+                Log.i("Vote", logPrefix + ": " + voteRef.get().get());
+            }).exceptionally(e -> {
+                Log.e("Vote", "Error while checking vote status: " + e.getMessage(), e);
+                return null;
+            });
         }
+
+        // Update the UI based on vote status
+        private void updateVoteUI(boolean upVoted, boolean downVoted) {
+            upButton.setBackgroundResource(upVoted ? R.drawable.ic_up_activated : R.drawable.ic_up);
+            downButton.setBackgroundResource(downVoted ? R.drawable.ic_down_activated : R.drawable.ic_down);
+
+        }
+
     }
+
+
 
 
     // Populate data into a DiaryCard
