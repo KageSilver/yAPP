@@ -84,6 +84,11 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
         this.position = position;
     }
 
+    @Override
+    public void refreshUI() {
+
+    }
+
     private void removeFriendship(int position)
     {
         // Based on the position, recreate the friendship as a JSONObject

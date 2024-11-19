@@ -90,6 +90,11 @@ public class DiaryEntriesFragment extends Fragment implements IListCardItemInter
         activityLauncher.launch(intent);
     }
 
+    @Override
+    public void refreshUI() {
+
+    }
+
     ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {

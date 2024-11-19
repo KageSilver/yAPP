@@ -76,6 +76,11 @@ public class MyRequestsActivity extends AppCompatActivity implements IListReques
     }
 
     @Override
+    public void refreshUI() {
+
+    }
+
+    @Override
     public void onAcceptClick(int position)
     {
         acceptRequest(position);

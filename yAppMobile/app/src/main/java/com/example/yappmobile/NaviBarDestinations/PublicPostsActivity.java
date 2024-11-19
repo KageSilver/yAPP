@@ -155,6 +155,13 @@ public class PublicPostsActivity extends AppCompatActivity implements IListCardI
     }
 
     @Override
+    public void refreshUI() {
+        finish();
+        startActivity(getIntent());
+    }
+
+
+    @Override
     public void onRestart()
     {
         super.onRestart();
