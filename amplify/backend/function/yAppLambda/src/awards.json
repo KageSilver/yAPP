@@ -3,22 +3,22 @@
         "type": "comment",
         "tiers": [
             {
-                "name": "comment tier 1",
+                "name": "a different purr-spective",
                 "minimum": 1,
                 "tierNum": 1
             },
             {
-                "name": "comment tier 2",
+                "name": "prattle cattle",
                 "minimum": 10,
                 "tierNum": 2
             },
             {
-                "name": "comment tier 3",
+                "name": "motor meow-th",
                 "minimum": 20,
                 "tierNum": 3
             },
             {
-                "name": "comment tier 4",
+                "name": "echo chamb-purr",
                 "minimum": 30,
                 "tierNum": 4
             }
@@ -28,17 +28,17 @@
         "type": "upvote",
         "tiers": [
             {
-                "name": "upvote tier 1",
+                "name": "litter-ally me!",
                 "minimum": 25,
                 "tierNum": 1
             },
             {
-                "name": "upvote tier 2",
+                "name": "social purr-suader",
                 "minimum": 50,
                 "tierNum": 2
             },
             {
-                "name": "upvote tier 3",
+                "name": "hooray for ex-purr-nal validation",
                 "minimum": 75,
                 "tierNum": 3
             }
@@ -48,17 +48,17 @@
         "type": "downvote",
         "tiers": [
             {
-                "name": "downvote tier 1",
+                "name": "yapping up the wrong tree",
                 "minimum": 15,
                 "tierNum": 1
             },
             {
-                "name": "downvote tier 2",
+                "name": "maybe it's time to paws and reflect",
                 "minimum": 30,
                 "tierNum": 2
             },
             {
-                "name": "downvote tier 3",
+                "name": "a total cat-astrophe",
                 "minimum": 45,
                 "tierNum": 3
             }
@@ -68,29 +68,34 @@
         "type": "posts",
         "tiers": [
             {
-                "name": "posts tier 1",
+                "name": "yapprentice",
                 "minimum": 1,
                 "tierNum": 1
             },
             {
-                "name": "posts tier 2",
+                "name": "tell meow-about it",
                 "minimum": 5,
                 "tierNum": 2
             },
             {
-                "name": "posts tier 3",
+                "name": "feline a bit chatty",
                 "minimum": 10,
                 "tierNum": 3
             },
             {
-                "name": "posts tier 4",
+                "name": "cat’s out of the bag",
                 "minimum": 25,
                 "tierNum": 4
             },
             {
-                "name": "posts tier 5",
+                "name": "someone’s a cat-ter box",
                 "minimum": 50,
                 "tierNum": 5
+            },
+            {
+                "name": "on top of the yappalachians",
+                "minimum": 75,
+                "tierNum": 6
             }
         ]
     },
@@ -98,27 +103,27 @@
         "type": "friends",
         "tiers": [
             {
-                "name": "friends tier 1",
+                "name": "chitter chatter, hello fellow yapper!",
                 "minimum": 1,
                 "tierNum": 1
             },
             {
-                "name": "friends tier 2",
+                "name": "cool cat",
                 "minimum": 5,
                 "tierNum": 2
             },
             {
-                "name": "friends tier 3",
+                "name": "yappy hour",
                 "minimum": 10,
                 "tierNum": 3
             },
             {
-                "name": "friends tier 4",
+                "name": "friendship fiend",
                 "minimum": 15,
                 "tierNum": 4
             },
             {
-                "name": "friends tier 5",
+                "name": "a solid yapport group",
                 "minimum": 20,
                 "tierNum": 5
             }
