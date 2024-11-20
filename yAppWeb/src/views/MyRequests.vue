@@ -1,5 +1,5 @@
 <script setup>
-	import { get, put } from "aws-amplify/api";
+	import { get, put, del } from "aws-amplify/api";
 	import { getCurrentUser } from "aws-amplify/auth";
 	import { onMounted, ref } from "vue";
 	import Alert from "../components/Alert.vue";
@@ -30,7 +30,7 @@
 		showModal.value = false;
 		currentFriendship.value = null;
 	};
-	
+
 	const closeAlert = () => {
 		showAlert.value = false;
 	};
@@ -106,29 +106,18 @@
 		loading.value = false;
 	};
 
+
 	// Decline toUser's friend request to authenticated user
 	const declineRequest = async request => {
 		// Close modal
 		showModal.value = false;
 		loading.value = true;
 		try {
-			const newRequest = {
-				fromUserName: request.FromUserName,
-				toUserName: request.ToUserName,
-				status: 2,
-			};
-
-			const sendPutRequest = put({
+			const deleteRequest = del({
 				apiName: "yapp",
-				path: "/api/friends/updateFriendRequest",
-				headers: {
-					"Content-type": "application/json",
-				},
-				options: {
-					body: newRequest,
-				},
+				path: `/api/friends/deleteFriendship?fromUserName=${request.FromUserName}&toUserName=${request.ToUserName}`,
 			});
-			await sendPutRequest.response;
+			await deleteRequest.response;
 			(alertMsg.value.header = "Yipee!"),
 				(alertMsg.value.message = `Declined ${request.FromUserName}'s friend request!`);
 			showAlert.value = true;

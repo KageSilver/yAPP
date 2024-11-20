@@ -91,16 +91,16 @@
 		try {
 			const deleteRequest = del({
 				apiName: "yapp",
-				path: `/api/friends/deleteFriendship?fromUsername=${friendship.FromUserName}&toUsername=${friendship.ToUserName}`,
+				path: `/api/friends/deleteFriendship?fromUserName=${friendship.FromUserName}&toUserName=${friendship.ToUserName}`,
 			});
 			await deleteRequest.response;
-1
+
 			//set alert
 			setAlert("Yipee!", "Friendship deleted successfully");
 
 			//send it back to the previous page
 			router.push({
-				name: "profile",
+				name: "friends",
 			});
 		} catch (e) {
 			console.log("DELETE call failed: ", e);
