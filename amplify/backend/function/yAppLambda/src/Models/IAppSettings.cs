@@ -39,4 +39,14 @@ public interface IAppSettings
     /// Comment table name
     /// </summary>
     string CommentTableName { get; set; }
+    
+    /// <summary>
+    /// award table name
+    /// </summary>
+    string AwardTableName { get; set; }
+    
+    /// <summary>
+    /// Vote table name
+    /// </summary>
+    string VoteTableName { get; set; }
 }

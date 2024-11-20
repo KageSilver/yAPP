@@ -134,6 +134,17 @@
     - 200 OK
     - 400 Bad Request: username is required
 
+### GetFriendship
+ - Retrieves the friendship between fromUsername and toUsername.
+ - GET: api/friends/getFriendship?fromUsername={username1}&toUsername={username2}
+    - fromUsername: The username of the friendship's sender
+    - toUsername: The username of the friendship's recipient
+ - Response: returns the friendship object associated with the two specified users
+    - { "FromUserName": "string", "ToUserName": "string", "Status": 0, "CreatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "UpdatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ" }
+ - Status codes:
+    - 200 OK
+    - 400 Bad Request: Usernames are required
+
 ### SendFriendRequest
  - Sends a friend request from one user to another.
  - POST: api/friends/friendRequest
@@ -160,6 +171,17 @@
         - Failed to update friendship status
     - 404 Not Found: Friendship not found
 
+### DeleteFriendship
+ - Deletes a friendship from the database.
+ - DELETE: api/friends/deleteFriendship?fromUsername={username1}&toUsername={username2}
+    - fromUsername: The username of the friendship's sender
+    - toUsername: The username of the friendship's recipient
+ - Response: returns whether the deletion was successful
+ - Status codes:
+    - 200 OK
+    - 400 Bad Request: Usernames are required
+    - 404 Not Found: The friendship doesn't exist
+
 ## Posts
 
 ### GetPostById
@@ -174,10 +196,9 @@
     - 404 Not Found: Post does not exist
 
 ### GetPostsByUser
- - Retrieves all posts from a user, either all public posts or all diary entries.
- - GET: api/posts/getPostsByUser?uid={uid}&diaryEntry={diaryEntry}
+ - Retrieves all public posts from a user
+ - GET: api/posts/getPostsByUser?uid={uid}
     - uid: The uid used to find all posts created by a user
-    - diaryEntry: If the query is for public posts or diary entries
  - Response: returns a list of posts by the specified user
     - [ { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true } ]
  - Status codes:

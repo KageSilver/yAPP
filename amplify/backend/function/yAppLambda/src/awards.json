@@ -1,0 +1,132 @@
+[
+    {
+        "type": "comment",
+        "tiers": [
+            {
+                "name": "a different purr-spective",
+                "minimum": 1,
+                "tierNum": 1
+            },
+            {
+                "name": "prattle cattle",
+                "minimum": 10,
+                "tierNum": 2
+            },
+            {
+                "name": "motor meow-th",
+                "minimum": 20,
+                "tierNum": 3
+            },
+            {
+                "name": "echo chamb-purr",
+                "minimum": 30,
+                "tierNum": 4
+            }
+        ]
+    },
+    {
+        "type": "upvote",
+        "tiers": [
+            {
+                "name": "litter-ally me!",
+                "minimum": 25,
+                "tierNum": 1
+            },
+            {
+                "name": "social purr-suader",
+                "minimum": 50,
+                "tierNum": 2
+            },
+            {
+                "name": "hooray for ex-purr-nal validation",
+                "minimum": 75,
+                "tierNum": 3
+            }
+        ]
+    },
+    {
+        "type": "downvote",
+        "tiers": [
+            {
+                "name": "yapping up the wrong tree",
+                "minimum": 15,
+                "tierNum": 1
+            },
+            {
+                "name": "maybe it's time to paws and reflect",
+                "minimum": 30,
+                "tierNum": 2
+            },
+            {
+                "name": "a total cat-astrophe",
+                "minimum": 45,
+                "tierNum": 3
+            }
+        ]
+    },
+    {
+        "type": "posts",
+        "tiers": [
+            {
+                "name": "yapprentice",
+                "minimum": 1,
+                "tierNum": 1
+            },
+            {
+                "name": "tell meow-about it",
+                "minimum": 5,
+                "tierNum": 2
+            },
+            {
+                "name": "feline a bit chatty",
+                "minimum": 10,
+                "tierNum": 3
+            },
+            {
+                "name": "cat’s out of the bag",
+                "minimum": 25,
+                "tierNum": 4
+            },
+            {
+                "name": "someone’s a cat-ter box",
+                "minimum": 50,
+                "tierNum": 5
+            },
+            {
+                "name": "on top of the yappalachians",
+                "minimum": 75,
+                "tierNum": 6
+            }
+        ]
+    },
+    {
+        "type": "friends",
+        "tiers": [
+            {
+                "name": "chitter chatter, hello fellow yapper!",
+                "minimum": 1,
+                "tierNum": 1
+            },
+            {
+                "name": "cool cat",
+                "minimum": 5,
+                "tierNum": 2
+            },
+            {
+                "name": "yappy hour",
+                "minimum": 10,
+                "tierNum": 3
+            },
+            {
+                "name": "friendship fiend",
+                "minimum": 15,
+                "tierNum": 4
+            },
+            {
+                "name": "a solid yapport group",
+                "minimum": 20,
+                "tierNum": 5
+            }
+        ]
+    }
+]

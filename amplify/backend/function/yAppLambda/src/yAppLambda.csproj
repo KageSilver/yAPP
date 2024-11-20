@@ -24,9 +24,13 @@
     <None Update="appSettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="awards.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Enum\" />
+    <Folder Include="Models\AwardModels\" />
   </ItemGroup>
 </Project>
 

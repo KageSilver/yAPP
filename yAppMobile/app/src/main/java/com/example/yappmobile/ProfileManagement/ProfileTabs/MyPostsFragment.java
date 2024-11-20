@@ -60,7 +60,7 @@ public class MyPostsFragment extends Fragment implements IListCardItemInteractio
 
         future.thenAccept(uid -> {
             getActivity().runOnUiThread(() -> {
-                String myPostsAPI = "/api/posts/getPostsByUser?uid=" + uid + "&diaryEntry=false";
+                String myPostsAPI = "/api/posts/getPostsByUser?uid=" + uid;
                 postListHelper.loadItems(myPostsAPI, rvPosts);
             });
         });
