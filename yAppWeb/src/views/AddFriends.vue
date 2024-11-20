@@ -84,6 +84,7 @@
 				fromUserName: fromUser,
 				toUserName: toUser,
 			};
+			console.log(newRequest);
 
 			const sendPostRequest = post({
 				apiName: "yapp",
