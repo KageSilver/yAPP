@@ -103,30 +103,18 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
 
     private void removeFriendship(String personA, String personB)
     {
-        JSONObject newFriendship = new JSONObject();
-        try
-        {
-            newFriendship.put("fromUserName", personA);
-            newFriendship.put("toUserName", personB);
-        }
-        catch (JSONException error)
-        {
-            Log.e("JSON", "Error creating a JSONObject", error);
-        }
-
         // Send API put request to delete friendship
-        String apiUrl = "/api/friends/deleteFriendship";
-        sendDeleteRequest(apiUrl, newFriendship.toString());
+        String apiUrl = "/api/friends/deleteFriendship?fromUserName="+personA+"&toUserName="+personB;
+        sendDeleteRequest(apiUrl);
     }
 
-    private void sendDeleteRequest(String apiUrl, String deleteBody)
+    private void sendDeleteRequest(String apiUrl)
     {
         CompletableFuture<RestResponse> future = new CompletableFuture<>();
 
         RestOptions options = RestOptions.builder()
                                          .addPath(apiUrl)
                                          .addHeader("Content-Type", "application/json")
-                                         .addBody(deleteBody.getBytes())
                                          .build();
         Amplify.API.delete(options,
                         future::complete,

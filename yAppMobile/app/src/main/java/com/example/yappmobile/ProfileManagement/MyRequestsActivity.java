@@ -142,21 +142,9 @@ public class MyRequestsActivity extends AppCompatActivity implements IListReques
 
     private void declineRequest(String personA, String personB)
     {
-        // Create DELETE request's body
-        JSONObject friendship = new JSONObject();
-        try
-        {
-            friendship.put("fromUserName", personA);
-            friendship.put("toUserName", personB);
-        }
-        catch (JSONException error)
-        {
-            Log.e("JSON", "Error creating a JSONObject", error);
-        }
-
         // Send API put request to delete friendship
-        String apiUrl = "/api/friends/deleteFriendship";
-        sendDeleteRequest(apiUrl, friendship.toString());
+        String apiUrl = "/api/friends/deleteFriendship?fromUserName="+personA+"&toUserName="+personB;
+        sendDeleteRequest(apiUrl);
     }
 
     private void sendPutRequest(String apiUrl, String putBody)
@@ -181,23 +169,22 @@ public class MyRequestsActivity extends AppCompatActivity implements IListReques
         });
     }
 
-    private void sendDeleteRequest(String apiUrl, String deleteBody)
+    private void sendDeleteRequest(String apiUrl)
     {
         CompletableFuture<RestResponse> future = new CompletableFuture<>();
 
         RestOptions options = RestOptions.builder()
                                          .addPath(apiUrl)
                                          .addHeader("Content-Type", "application/json")
-                                         .addBody(deleteBody.getBytes())
                                          .build();
-        Amplify.API.put(options,
+        Amplify.API.delete(options,
                         future::complete,
                         error -> Log.e("API", "DELETE request failed", error));
 
         // Then update friend list
         future.thenAccept(restResponse -> {
             runOnUiThread(() -> {
-                Log.i("API", restResponse.toString());
+                Log.i("API", "DELETE request succeeded"+restResponse.toString());
                 reloadRequestList();
             });
         });
@@ -209,7 +196,7 @@ public class MyRequestsActivity extends AppCompatActivity implements IListReques
         CompletableFuture<AuthUser> future = new CompletableFuture<>();
 
         Amplify.Auth.getCurrentUser(future::complete, error -> {
-            Log.e("Auth", "Uh oh! THere's trouble getting the current user", error);
+            Log.e("Auth", "Uh oh! There's trouble getting the current user", error);
         });
 
         future.thenAccept(user -> {
