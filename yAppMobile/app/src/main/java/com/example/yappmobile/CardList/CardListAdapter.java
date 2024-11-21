@@ -65,6 +65,11 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 View view = inflater.inflate(R.layout.card_diary, parent, false);
                 return new DiaryViewHolder(view, itemInteractions);
             }
+            case "AWARD":
+            {
+                View view = inflater.inflate(R.layout.card_award, parent, false);
+                return new AwardViewHolder(view, itemInteractions);
+            }
         }
         throw new RuntimeException("Unknown view type");
     }
@@ -90,6 +95,10 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         else if (holder instanceof DiaryViewHolder)
         {
             ((DiaryViewHolder) holder).bind(item);
+        }
+        else if (holder instanceof AwardViewHolder)
+        {
+            ((AwardViewHolder) holder).bind(item);
         }
     }
 
@@ -313,6 +322,51 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 postDate.setText(card.get("createdAt").toString());
                 postBody.setText(card.get("postBody").toString());
                 postAuthor.setText(card.get("username").toString());
+            }
+            catch (JSONException jsonException)
+            {
+                Log.e("JSON", "Error parsing JSON", jsonException);
+            }
+        }
+    }
+
+    // Populate data into an AwardCard
+    public static class AwardViewHolder extends RecyclerView.ViewHolder
+    {
+        public TextView awardTitle, awardDate, awardType, awardTier, awardBody;
+
+        public AwardViewHolder(View itemView, IListCardItemInteractions awardCardInteractions)
+        {
+            super(itemView);
+
+            // Set up an onClickListener for the award list card
+            itemView.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    if (awardCardInteractions != null)
+                    {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION)
+                        {
+                            awardCardInteractions.onItemClick(position);
+                        }
+                    }
+                }
+            });
+        }
+
+        // Populate data into a DiaryCard
+        public void bind(JSONObject card)
+        {
+            try
+            {
+                awardTitle.setText(card.get("name").toString());
+                awardDate.setText(card.get("createdAt").toString());
+                awardType.setText(card.get("type").toString());
+                awardTier.setText(card.get("tier").toString());
+                awardBody.setText(card.get("body").toString());
             }
             catch (JSONException jsonException)
             {
