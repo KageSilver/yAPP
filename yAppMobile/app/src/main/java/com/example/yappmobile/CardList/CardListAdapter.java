@@ -147,14 +147,16 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     if (personA.equals(result.getUsername()))
                     {
                         // If the current user is the sender, only view the request as "pending"
-                        // And prevent them from accepting or declining the request
                         sender.setText(personB + ": pending");
                         acceptButton.setVisibility(View.GONE);
                         declineButton.setVisibility(View.GONE);
                     }
                     else
                     {
+                        // If the current user is the receiver, enable "accept" and "decline"
                         sender.setText(personA);
+                        acceptButton.setVisibility(View.VISIBLE);
+                        declineButton.setVisibility(View.VISIBLE);
                     }
                 }, error -> {
                     Log.e("CardListAdapter", "Error populating Friend card", error);

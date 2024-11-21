@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.core.Amplify;
-import com.example.yappmobile.PostEntryActivity;
+import com.example.yappmobile.Posts.PostEntryActivity;
 import com.example.yappmobile.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import org.json.JSONArray;

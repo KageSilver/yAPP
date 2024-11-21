@@ -1,4 +1,4 @@
-package com.example.yappmobile;
+package com.example.yappmobile.Posts;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
@@ -19,7 +19,7 @@ import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.CardList.CardListHelper;
 import com.example.yappmobile.Comments.CommentsBottomSheet;
-import com.example.yappmobile.NaviBarDestinations.PublicPostsActivity;
+import com.example.yappmobile.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;

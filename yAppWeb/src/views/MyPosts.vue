@@ -61,8 +61,7 @@
 			class="card m-2 w-full max-w-4xl cursor-pointer rounded-lg border border-gray-300 bg-gray-100 p-5 shadow transition-shadow hover:shadow-md"
 			v-for="post in jsonData"
 			:key="post.pid"
-			@click="clickPost(post.pid)"
-		>
+			@click="clickPost(post.pid)">
 			<PostCard :post="post" />
 		</div>
 	</div>

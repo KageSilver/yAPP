@@ -8,7 +8,7 @@
   },
   "item": [
     {
-      "name": "Get all friends by status",
+      "name": "GetFriendsByStatus",
       "event": [
         {
           "listen": "test",
@@ -44,7 +44,45 @@
       },
       "response": []
     },
-    
+
+    {
+      "name": "GetFriendship",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/friends/getFriendship?fromUserName=${fromUserName}&toUserName=${toUserName}",
+          "host": ["{{base_url}}"],
+          "path": ["api", "friends", "getFriendship"],
+          "query": [
+            {
+              "key": "fromUserName",
+              "value": ""
+            },
+            {
+                "key": "toUserName",
+                "value": ""
+            }
+          ]
+        },
+        "description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+      },
+      "response": []
+    },
+
     {
       "name": "SendFriendRequest",
       "event": [
@@ -66,7 +104,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n\t\"fromUserName\": \"\",\n\t\"toUserId\": \"\"\n}",
+          "raw": "{\n\t\"fromUserName\": \"\",\n\t\"toUserName\": \"\"\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -82,8 +120,9 @@
       },
       "response": []
     },
+
     {
-      "name": "Update Friend Request",
+      "name": "UpdateFriendRequest",
       "event": [
         {
           "listen": "test",
@@ -118,6 +157,45 @@
           ]
         },
         "description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
+      },
+      "response": []
+    },
+
+    {
+      "name": "DeleteFriendship",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Successful DELETE request\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
+              "});",
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}/}api/friends/deleteFriendship?fromUserName={fromUserName}&toUserName={toUserName}",
+          "host": ["{{base_url}}"],
+          "path": ["api", "friends", "deleteFriendship"],
+          "query": [
+            {
+              "key": "fromUserName",
+              "value": ""
+            },
+            {
+              "key": "toUserName",
+              "value": ""
+            }
+          ]
+        },
+        "description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
       },
       "response": []
     }

@@ -4,8 +4,10 @@ import android.content.Context;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.core.Amplify;
 
@@ -15,11 +17,11 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.concurrent.CompletableFuture;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class CardListHelper extends AppCompatActivity
 {
@@ -29,7 +31,6 @@ public class CardListHelper extends AppCompatActivity
     private List<JSONObject> cardItemList; // List of CardItems
     private final IListCardItemInteractions itemInteractions; // Handles clicks of the CardItem
     private CardListAdapter adapter;
-
     private boolean myPosts;
 
     public CardListHelper(Context context)
@@ -131,7 +132,8 @@ public class CardListHelper extends AppCompatActivity
         }
     }
 
-    public void loadDiaries(String apiUrlUser, String apiUrlFriends, RecyclerView recyclerView, List<JSONObject> friends, String uid)
+    public void loadDiaries(String apiUrlUser, String apiUrlFriends,
+                            RecyclerView recyclerView, List<JSONObject> friends, String uid)
     {
         // Make loading spinner visible while we populate our CardItemAdapter
         loadingSpinner.setVisibility(View.VISIBLE);
@@ -208,13 +210,6 @@ public class CardListHelper extends AppCompatActivity
                 Log.e("JSON", "Error parsing JSON", e);
             }
         }
-    }
-
-    public void clearItems()
-    {
-        // clears items in the recycler view for cleaner transitions between calendar dates
-        cardItemList = new ArrayList<>();
-        adapter.updateList(cardItemList);
     }
 
     public CompletableFuture<String> getItemsFromAPI(String apiUrl)
@@ -297,15 +292,6 @@ public class CardListHelper extends AppCompatActivity
         return parsedItems;
     }
 
-    public String getPID(int position)
-    {
-        return getPostKey(position, "pid");
-    }
-
-    public  String getUID(int position){
-        return  getPostKey(position, "uid");
-    }
-
     public void removePost(String pid)
     {
         try {
@@ -334,28 +320,6 @@ public class CardListHelper extends AppCompatActivity
 
     public JSONObject getItem(int position){
         return cardItemList.get(position);
-    }
-
-    private String getPostKey(int position,String key){
-        String value = null;
-        try
-        {
-            if(cardType.equals("POST") || cardType.equals("DIARY"))
-            {
-                value = cardItemList.get(position).get(key).toString();
-            }
-            else
-            {
-                Log.d("CardListHelper",
-                        "You're trying to invoke a method on the wrong card type");
-            }
-        }
-        catch (JSONException jsonException)
-        {
-            Log.e("JSON", "Error parsing JSON", jsonException);
-        }
-        return value;
-
     }
 
     public String getLastPostTime()
