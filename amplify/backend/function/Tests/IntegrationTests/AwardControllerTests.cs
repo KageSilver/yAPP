@@ -34,7 +34,7 @@ public class AwardControllerIntegrationTests
 
     //we must use simulator email to test the user without using email quota
     private const string TestUserEmail1 = "bounce6@simulator.amazonses.com";
-    private const string TestUserEmail2 = "bounce2@simulator.amazonses.com";
+    private const string TestUserEmail2 = "bounce7@simulator.amazonses.com";
     private static string _testUserId = ""; // this will be updated in the first test when the test user is created
     // this will be updated in GetNewAwardsByUser_ShouldCreateTotalPostsAward_WhenSuccessful() when the award is created and will be deleted later
     private static string _postsAwardId = ""; 
@@ -447,7 +447,7 @@ public class AwardControllerIntegrationTests
         var friendRequest = new FriendRequest
         {
             FromUserName = TestUserEmail2,
-            ToUserId = _testUserId
+            ToUserName = TestUserEmail1
         };
 
         var content = new StringContent(JsonConvert.SerializeObject(friendRequest), System.Text.Encoding.UTF8,

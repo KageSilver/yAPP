@@ -29,7 +29,7 @@ public class VoteControllerIntegrationTests
     private readonly IAppSettings _appSettings;
 
     // We must use simulator email to test the user without using email quota
-    private const string TestUserEmail = "bounce7@simulator.amazonses.com";
+    private const string TestUserEmail = "bounce9@simulator.amazonses.com";
     private static string _testUid = "";
 
     private ICognitoActions _cognitoActions;
