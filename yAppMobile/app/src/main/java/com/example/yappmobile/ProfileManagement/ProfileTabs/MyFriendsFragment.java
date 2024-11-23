@@ -46,7 +46,7 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
 
         ProgressBar loadingSpinner = view.findViewById(R.id.indeterminateBar);
         friendListHelper = new CardListHelper(this.getContext(), loadingSpinner,
-                "CURRENT_FRIEND", this);
+                                              "CURRENT_FRIEND", this);
 
         // Setup recycler view to display post list cards
         rvFriends = (RecyclerView) view.findViewById(R.id.my_friends_list);
@@ -58,22 +58,22 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
         confirmUnfollow.setTitle("Woah there!");
         confirmUnfollow.setMessage("Are you really sure that you want to unfollow them?");
         confirmUnfollow.setButton(AlertDialog.BUTTON_POSITIVE,
-                "Yes", new DialogInterface.OnClickListener()
-                {
-                    public void onClick(DialogInterface dialog, int id)
-                    {
-                        // If confirmed, send an API request to update your friendship
-                        removeFriendship(position);
-                    }
-                });
+                                  "Yes", new DialogInterface.OnClickListener()
+        {
+            public void onClick(DialogInterface dialog, int id)
+            {
+                // If confirmed, send an API request to update your friendship
+                removeFriendship(position);
+            }
+        });
         confirmUnfollow.setButton(AlertDialog.BUTTON_NEGATIVE,
-                "No, I was just playing", new DialogInterface.OnClickListener()
-                {
-                    public void onClick(DialogInterface dialog, int id)
-                    {
-                        Log.i("OnClick", "Friendship saved!");
-                    }
-                });
+                                  "No, I was just playing", new DialogInterface.OnClickListener()
+        {
+            public void onClick(DialogInterface dialog, int id)
+            {
+                Log.i("OnClick", "Friendship saved!");
+            }
+        });
     }
 
     @Override
@@ -103,35 +103,22 @@ public class MyFriendsFragment extends Fragment implements IListCardItemInteract
 
     private void removeFriendship(String personA, String personB)
     {
-        JSONObject newFriendship = new JSONObject();
-        try
-        {
-            newFriendship.put("fromUserName", personA);
-            newFriendship.put("toUserName", personB);
-            newFriendship.put("status", 2);
-        }
-        catch (JSONException error)
-        {
-            Log.e("JSON", "Error creating a JSONObject", error);
-        }
-
         // Send API put request to delete friendship
-        String apiUrl = "/api/friends/updateFriendRequest";
-        sendPutRequest(apiUrl, newFriendship.toString());
+        String apiUrl = "/api/friends/deleteFriendship?fromUserName="+personA+"&toUserName="+personB;
+        sendDeleteRequest(apiUrl);
     }
 
-    private void sendPutRequest(String apiUrl, String putBody)
+    private void sendDeleteRequest(String apiUrl)
     {
         CompletableFuture<RestResponse> future = new CompletableFuture<>();
 
         RestOptions options = RestOptions.builder()
-                .addPath(apiUrl)
-                .addHeader("Content-Type", "application/json")
-                .addBody(putBody.getBytes())
-                .build();
-        Amplify.API.put(options,
-                future::complete,
-                error -> Log.e("API", "PUT request failed", error));
+                                         .addPath(apiUrl)
+                                         .addHeader("Content-Type", "application/json")
+                                         .build();
+        Amplify.API.delete(options,
+                        future::complete,
+                        error -> Log.e("API", "DELETE request failed", error));
 
         // Then update friend list
         future.thenAccept(restResponse -> {

@@ -46,10 +46,10 @@
             android:name=".NaviBarDestinations.CreatePostActivity"
             android:exported="false" />
         <activity
-            android:name=".PostEntryActivity"
+            android:name=".Posts.PostEntryActivity"
             android:exported="false" />
         <activity
-            android:name=".EditPostEntryActivity"
+            android:name=".Posts.EditPostEntryActivity"
             android:exported="false" />
          <activity
             android:name=".NaviBarDestinations.PublicPostsActivity"

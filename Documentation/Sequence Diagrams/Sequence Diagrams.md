@@ -15,3 +15,11 @@
 ### Interactions with Posts (minus upvotes & downvotes)
 
 ![image](./postInteractionsSequenceDiagram.png)
+
+### Interactions with Posts (just upvotes & downvotes)
+
+![image](./postInteractionsSequenceDiagramPart2.png)
+
+### Awards
+
+![image](./awardsSequenceDiagram.png)

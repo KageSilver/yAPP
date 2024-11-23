@@ -18,6 +18,7 @@ import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.auth.AuthUser;
 import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.AuthenticatorActivity;
+import com.example.yappmobile.CardList.CardListHelper;
 import com.example.yappmobile.R;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -31,13 +32,17 @@ public class AddFriendActivity extends AppCompatActivity
     private AlertDialog success;
     private AlertDialog failure;
     private JSONObject newRequest;
+    private CardListHelper friendshipListHelper;
     private TextInputLayout requestField;
+    private boolean friendshipExists;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friend);
+
+        friendshipListHelper = new CardListHelper(this);
 
         // Set the activity to be full screen
         View decorView = getWindow().getDecorView();
@@ -97,6 +102,7 @@ public class AddFriendActivity extends AppCompatActivity
         String receiver = requestField.getEditText().getText().toString().trim();
         if(!receiver.equals(""))
         {
+            // Get current authenticated user
             CompletableFuture<AuthUser> future = new CompletableFuture<>();
             Amplify.Auth.getCurrentUser(future::complete, error -> {
                 Log.e("Auth", "Error occurred when getting current user. Redirecting to authenticator");
@@ -113,7 +119,6 @@ public class AddFriendActivity extends AppCompatActivity
                     else
                     {
                         sendPostRequest(user.getUsername(), receiver);
-                        success.show();
                     }
                 });
             });
@@ -131,7 +136,7 @@ public class AddFriendActivity extends AppCompatActivity
         try
         {
             newRequest.put("fromUserName", sender);
-            newRequest.put("toUserId", receiver);
+            newRequest.put("toUserName", receiver);
         }
         catch (JSONException e)
         {
@@ -149,7 +154,26 @@ public class AddFriendActivity extends AppCompatActivity
                                              .addHeader("Content-Type", "application/json")
                                              .build();
             Amplify.API.post(options,
-                             response -> Log.i("API", "POST response: " + response.getData().asString()),
+                             response ->
+                             {
+                                Log.i("API", "POST response: " + response.getData().asString());
+                                runOnUiThread(() -> {
+                                    if(response.getData().asString().equals("\"Friendship already exists\""))
+                                    {
+                                        Log.d("Faulty Form Field", "You already have an existing/pending friendship with "+ receiver);
+                                        requestField.setError("Friendship with "+receiver+" either exists or is pending, silly!");
+                                    }
+                                    else if(response.getData().asString().equals("\"Friend not found\""))
+                                    {
+                                        Log.d("Faulty Form Field", "Cannot find a Yapper with the username "+ receiver);
+                                        requestField.setError("This Yapper does not exist, silly!");
+                                    }
+                                    else
+                                    {
+                                        success.show();
+                                    }
+                                });
+                             },
                              error -> Log.e("API", "POST request failed", error));
         }
         catch (Exception e)
@@ -191,7 +215,7 @@ public class AddFriendActivity extends AppCompatActivity
         try
         {
             newRequest.put("fromUserName", "");
-            newRequest.put("toUserId", "");
+            newRequest.put("toUserName", "");
             newRequest.put("status", 0);
         }
         catch (JSONException e)

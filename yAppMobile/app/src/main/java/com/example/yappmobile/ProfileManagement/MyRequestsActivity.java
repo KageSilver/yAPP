@@ -142,21 +142,9 @@ public class MyRequestsActivity extends AppCompatActivity implements IListReques
 
     private void declineRequest(String personA, String personB)
     {
-        JSONObject newFriendship = new JSONObject();
-        try
-        {
-            newFriendship.put("fromUserName", personA);
-            newFriendship.put("toUserName", personB);
-            newFriendship.put("status", 2);
-        }
-        catch (JSONException error)
-        {
-            Log.e("JSON", "Error creating a JSONObject", error);
-        }
-
         // Send API put request to delete friendship
-        String apiUrl = "/api/friends/updateFriendRequest";
-        sendPutRequest(apiUrl, newFriendship.toString());
+        String apiUrl = "/api/friends/deleteFriendship?fromUserName="+personA+"&toUserName="+personB;
+        sendDeleteRequest(apiUrl);
     }
 
     private void sendPutRequest(String apiUrl, String putBody)
@@ -181,13 +169,34 @@ public class MyRequestsActivity extends AppCompatActivity implements IListReques
         });
     }
 
+    private void sendDeleteRequest(String apiUrl)
+    {
+        CompletableFuture<RestResponse> future = new CompletableFuture<>();
+
+        RestOptions options = RestOptions.builder()
+                                         .addPath(apiUrl)
+                                         .addHeader("Content-Type", "application/json")
+                                         .build();
+        Amplify.API.delete(options,
+                        future::complete,
+                        error -> Log.e("API", "DELETE request failed", error));
+
+        // Then update friend list
+        future.thenAccept(restResponse -> {
+            runOnUiThread(() -> {
+                Log.i("API", "DELETE request succeeded"+restResponse.toString());
+                reloadRequestList();
+            });
+        });
+    }
+
     // Reload RecyclerView of FriendRequests
     private void reloadRequestList()
     {
         CompletableFuture<AuthUser> future = new CompletableFuture<>();
 
         Amplify.Auth.getCurrentUser(future::complete, error -> {
-            Log.e("Auth", "Uh oh! THere's trouble getting the current user", error);
+            Log.e("Auth", "Uh oh! There's trouble getting the current user", error);
         });
 
         future.thenAccept(user -> {

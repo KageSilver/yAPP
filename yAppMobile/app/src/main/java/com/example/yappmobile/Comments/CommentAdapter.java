@@ -18,8 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.core.Amplify;
-import com.example.yappmobile.CardList.IListCardItemInteractions;
-import com.example.yappmobile.PostEntryActivity;
+import com.example.yappmobile.Posts.PostEntryActivity;
 import com.example.yappmobile.R;
 import com.example.yappmobile.Utils.DateUtils;
 import com.example.yappmobile.Votes.IRefreshListener;
