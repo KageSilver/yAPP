@@ -333,11 +333,15 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     // Populate data into an AwardCard
     public static class AwardViewHolder extends RecyclerView.ViewHolder
     {
-        public TextView awardTitle, awardDate, awardType, awardTier, awardBody;
+        public TextView awardTitle, awardDate, awardTypeTier;
 
         public AwardViewHolder(View itemView, IListCardItemInteractions awardCardInteractions)
         {
             super(itemView);
+
+            awardTitle = itemView.findViewById(R.id.award_title);
+            awardDate = itemView.findViewById(R.id.award_date);
+            awardTypeTier = itemView.findViewById(R.id.award_type_tier);
 
             // Set up an onClickListener for the award list card
             itemView.setOnClickListener(new View.OnClickListener()
@@ -364,9 +368,10 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             {
                 awardTitle.setText(card.get("name").toString());
                 awardDate.setText(card.get("createdAt").toString());
-                awardType.setText(card.get("type").toString());
-                awardTier.setText(card.get("tier").toString());
-                awardBody.setText(card.get("body").toString());
+
+                String type = card.get("type").toString();
+                String tier = card.get("tier").toString();
+                awardTypeTier.setText(type + " Award: Tier " + tier);
             }
             catch (JSONException jsonException)
             {

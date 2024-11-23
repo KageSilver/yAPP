@@ -27,7 +27,7 @@ public class CardListHelper extends AppCompatActivity
 {
     private final Context context; // Where CardItems are Contained
     private final ProgressBar loadingSpinner;
-    private final String cardType; // Currently 4 types: POST, DIARY, CURRENT_FRIEND, AND FRIEND_REQUEST
+    private final String cardType; // Currently 5 types: POST, DIARY, CURRENT_FRIEND, FRIEND_REQUEST, and AWARD
     private List<JSONObject> cardItemList; // List of CardItems
     private final IListCardItemInteractions itemInteractions; // Handles clicks of the CardItem
     private CardListAdapter adapter;
