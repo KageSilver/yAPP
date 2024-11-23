@@ -90,6 +90,39 @@ public class CardListHelper extends AppCompatActivity
         });
     }
 
+    public void loadAwardsByUser(String uid, RecyclerView recyclerView)
+    {
+        // Make loading spinner visible while we populate our CardItemAdapter
+        loadingSpinner.setVisibility(View.VISIBLE);
+
+        createAdapter(recyclerView);
+
+        String existingAwards = "/api/awards/getAwardsByUser?uid="+uid;
+        String newAwards = "/api/awards/getNewAwardsByUser?uid="+uid;
+
+        // Fetch card items from API
+        CompletableFuture<String> future = getItemsFromAPI(existingAwards);
+        future.thenAccept(jsonData -> {
+            cardItemList.addAll(0, handleData(jsonData));
+            populateCard();
+            runOnUiThread(() -> {
+                loadingSpinner.setVisibility(View.VISIBLE);
+            });
+        }).exceptionally(throwable -> {
+           Log.e("API", "Error fetching data", throwable);
+           return null;
+        });
+
+        future = getItemsFromAPI(newAwards);
+        future.thenAccept(jsonData -> {
+           cardItemList.addAll(handleData(jsonData));
+           populateCard();
+        }).exceptionally(throwable -> {
+            Log.e("API", "Error fetching data", throwable);
+            return null;
+        });
+    }
+
     private void sortPosts()
     {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");

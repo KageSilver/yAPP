@@ -371,7 +371,7 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                 String type = card.get("type").toString();
                 String tier = card.get("tier").toString();
-                awardTypeTier.setText(type + " Award: Tier " + tier);
+                awardTypeTier.setText(type + " award: tier " + tier);
             }
             catch (JSONException jsonException)
             {

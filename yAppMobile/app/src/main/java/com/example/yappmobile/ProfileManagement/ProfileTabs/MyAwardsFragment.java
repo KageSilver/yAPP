@@ -52,8 +52,7 @@ public class MyAwardsFragment extends Fragment implements IListCardItemInteracti
 
         future.thenAccept(uid -> {
            getActivity().runOnUiThread(() -> {
-               String myAwardsAPI = "/api/awards/getAwardsByUser?uid="+uid;
-               awardListHelper.loadItems(myAwardsAPI, rvAwards);
+               awardListHelper.loadAwardsByUser(uid, rvAwards);
            });
         });
     }

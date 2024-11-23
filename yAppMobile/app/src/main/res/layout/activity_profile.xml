@@ -94,9 +94,10 @@
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/profile_tabs"
-            android:background="@color/white"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:elevation="16dp">
 
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/profile_my_posts_tab"
