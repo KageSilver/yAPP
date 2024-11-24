@@ -181,5 +181,5 @@ public class PublicPostsActivity extends AppCompatActivity implements IListCardI
                         }
                     }
                 }
-        });
+            });
 }

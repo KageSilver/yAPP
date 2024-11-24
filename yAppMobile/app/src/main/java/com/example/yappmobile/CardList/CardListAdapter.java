@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.R;
+import com.example.yappmobile.Utils.DateUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -271,7 +272,7 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             try
             {
                 postTitle.setText(card.get("postTitle").toString());
-                postDate.setText(card.get("createdAt").toString());
+                postDate.setText(DateUtils.convertUtcToFormattedTime(card.get("createdAt").toString()));
                 postBody.setText(card.get("postBody").toString());
             }
             catch (JSONException jsonException)
