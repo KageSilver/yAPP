@@ -105,9 +105,6 @@ public class CardListHelper extends AppCompatActivity
         future.thenAccept(jsonData -> {
             cardItemList.addAll(0, handleData(jsonData));
             populateCard();
-            runOnUiThread(() -> {
-                loadingSpinner.setVisibility(View.VISIBLE);
-            });
         }).exceptionally(throwable -> {
            Log.e("API", "Error fetching data", throwable);
            return null;
@@ -121,6 +118,8 @@ public class CardListHelper extends AppCompatActivity
             Log.e("API", "Error fetching data", throwable);
             return null;
         });
+
+        loadingSpinner.setVisibility(View.GONE);
     }
 
     private void sortPosts()
