@@ -222,8 +222,7 @@
     - Username
     - Password
 4. Select the "Sign in" button at the bottom of the panel
-5. Upvoting or Downvoting a post can be done from any full screen post
-5. Upvoting or downvoting a post can be done from the home page or from any full screen post
+5. Upvoting or downvoting a post can be done from any full screen post
     - Public posts can be accessed from the Home page
     - Posts you have made can be accessed from the Profile page under the My Posts tab
     - Diary entries can be accessed from the Calendar page
