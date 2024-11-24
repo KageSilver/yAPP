@@ -51,6 +51,7 @@ public class AuthenticatorActivity extends AppCompatActivity {
                         // Save username to SharedPreferences
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString("username", currentUser.getUsername());
+                        editor.putString("uuid", currentUser.getUserId());
                         editor.apply();
                     },
                     error -> {
