@@ -1,4 +1,4 @@
-package com.example.yappmobile;
+package com.example.yappmobile.Posts;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -10,6 +10,7 @@ import android.widget.EditText;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.yappmobile.R;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -105,7 +106,6 @@ public abstract class BasePostActivity extends AppCompatActivity {
     }
 
     public abstract  void initializeSuccessDialog() ;
-
     public  abstract  void initializeFailureDialog();
     public  abstract  void initializeDiscardDialog();
 

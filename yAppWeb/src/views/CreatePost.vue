@@ -148,8 +148,7 @@
 	<div v-else class="backBtnDiv">
 		<BackBtnHeader
 			header="Create a new post!"
-			subheader="Yapp your heart out."
-		/>
+			subheader="Yapp your heart out." />
 
 		<div class="mt-3 w-full md:mx-6 md:px-16">
 			<form class="post-heading rounded-lg bg-white p-8" id="post">
@@ -164,16 +163,13 @@
 								<input
 									type="checkbox"
 									class="sr-only"
-									@change="toggleDiaryEntry"
-								/>
+									@change="toggleDiaryEntry" />
 								<div
 									:class="{ '!bg-[#A55678]': diaryEntryIsChecked }"
-									class="box block h-8 w-14 rounded-full bg-[#9E9E9E]"
-								></div>
+									class="box block h-8 w-14 rounded-full bg-[#9E9E9E]"></div>
 								<div
 									:class="{ 'translate-x-full': diaryEntryIsChecked }"
-									class="dot absolute left-1 top-1 h-6 w-6 rounded-full bg-white transition"
-								></div>
+									class="dot absolute left-1 top-1 h-6 w-6 rounded-full bg-white transition"></div>
 							</div>
 						</label>
 					</div>
@@ -194,16 +190,13 @@
 								<input
 									type="checkbox"
 									class="sr-only"
-									@change="toggleAnonymous"
-								/>
+									@change="toggleAnonymous" />
 								<div
 									:class="{ '!bg-[#A55678]': anonIsChecked }"
-									class="box block h-8 w-14 rounded-full bg-[#9E9E9E]"
-								></div>
+									class="box block h-8 w-14 rounded-full bg-[#9E9E9E]"></div>
 								<div
 									:class="{ 'translate-x-full': anonIsChecked }"
-									class="dot absolute left-1 top-1 h-6 w-6 rounded-full bg-white transition"
-								></div>
+									class="dot absolute left-1 top-1 h-6 w-6 rounded-full bg-white transition"></div>
 							</div>
 						</label>
 					</div>
@@ -223,8 +216,7 @@
 						id="title"
 						required
 						placeholder="Insert your title here."
-						class="input"
-					/>
+						class="input" />
 				</div>
 				<div class="form-group mb-4 w-full">
 					<label for="content" class="mb-2 block text-gray-700">Content:</label>
@@ -232,23 +224,20 @@
 						id="content"
 						required
 						placeholder="Insert the most heinous, confounding, baffling tea you've ever heard."
-						class="input"
-					></textarea>
+						class="input"></textarea>
 				</div>
 				<div class="flex w-full flex-col space-y-2">
 					<button
 						title="Create Post"
 						id="create-button"
 						class="w-full rounded-xl bg-pink-purple px-5 py-3 text-white"
-						@click="createPost"
-					>
+						@click="createPost">
 						Create Post
 					</button>
 					<button
 						title="Discard Post"
 						class="w-full rounded-xl border border-gray-300 bg-white px-5 py-3 text-dark"
-						@click="discardPost"
-					>
+						@click="discardPost">
 						Discard
 					</button>
 				</div>

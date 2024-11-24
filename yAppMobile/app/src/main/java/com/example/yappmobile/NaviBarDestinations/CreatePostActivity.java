@@ -11,7 +11,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.AuthenticatorActivity;
-import com.example.yappmobile.BasePostActivity;
+import com.example.yappmobile.Posts.BasePostActivity;
 import com.example.yappmobile.R;
 
 import org.json.JSONException;
