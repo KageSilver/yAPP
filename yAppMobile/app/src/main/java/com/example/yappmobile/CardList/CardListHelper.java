@@ -118,8 +118,6 @@ public class CardListHelper extends AppCompatActivity
             Log.e("API", "Error fetching data", throwable);
             return null;
         });
-
-        loadingSpinner.setVisibility(View.GONE);
     }
 
     private void sortPosts()
