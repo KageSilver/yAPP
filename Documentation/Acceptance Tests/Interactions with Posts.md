@@ -89,6 +89,44 @@
 8. You should remain on the post you deleted a comment from and the comment you deleted should not appear
 9. Done!
 
+### Upvote or Downvote a Post - Website
+1. Navigate to the yAPP website
+2. If not already selected, select the "Sign In" tab at the top of the panel
+3. Enter account details
+    - Username
+    - Password
+4. Select the "Sign In" button at the bottom of the panel
+5. Upvoting or downvoting a post can be done from the home page or from any full screen post
+    - Public posts can be accessed from the Home page
+    - Posts you have made can be accessed from the Profile page under the My Posts tab
+    - Diary entries can be accessed from the Calendar page
+6. Select a post you would like to upvote or downvote
+7. Select the triangle pointing up button for an upvote or the triangle pointing down button for a downvote on the post
+    - The appropriate triangle button will be filled once you have selected it
+    - You should not be able to select the other triangle button after this
+8. To remove an upvote or downvote, select the filled triangle again
+    - The appropriate triangle button should now only be outlined
+9. Done!
+
+### Upvote or Downvote a Comment - Website
+1. Navigate to the yAPP website
+2. If not already selected, select the "Sign In" tab at the top of the panel
+3. Enter account details
+    - Username
+    - Password
+4. Select the "Sign In" button at the bottom of the panel
+5. Upvoting or downvoting a comment can be done from any full screen post that has comments on it
+    - Public posts can be accessed from the Home page
+    - Posts you have made can be accessed from the Profile page under the My Posts tab
+    - Diary entries can be accessed from the Calendar page
+6. Locate a comment you would like to upvote or downvote on a post
+7. Select the triangle pointing up button for an upvote or the triangle pointing down button for a downvote on the comment
+    - The appropriate triangle button will be filled once you have selected it
+    - You should not be able to select the other triangle button after this
+8. To remove an upvote or downvote, select the filled triangle again
+    - The appropriate triangle button should now only be outlined
+9. Done!
+
 ## Mobile Acceptance Tests
 
 ### Reply to Public Posts - Mobile
@@ -176,3 +214,42 @@
     - A pop-up should appear if you would like to delete the comment, select "Confirm"
 9. You should remain on the post you deleted a comment from and the comment you deleted should not appear
 10. Done!
+
+### Upvote or Downvote a Post - Mobile
+1. Navigate to the yAPP mobile app
+2. To sign in, you will be redirected to a browser webpage
+3. Enter account details
+    - Username
+    - Password
+4. Select the "Sign in" button at the bottom of the panel
+5. Upvoting or Downvoting a post can be done from any full screen post
+5. Upvoting or downvoting a post can be done from the home page or from any full screen post
+    - Public posts can be accessed from the Home page
+    - Posts you have made can be accessed from the Profile page under the My Posts tab
+    - Diary entries can be accessed from the Calendar page
+6. Select a post you would like to upvote or downvote
+7. Select the triangle pointing up button for an upvote or the triangle pointing down button for a downvote on the post
+    - The appropriate triangle button will be filled once you have selected it
+    - You should not be able to select the other triangle button after this
+8. To remove an upvote or downvote, select the filled triangle again
+    - The appropriate triangle button should now only be outlined
+9. Done! 
+
+### Upvote or Downvote a Comment - Mobile
+1. Navigate to the yAPP mobile app
+2. To sign in, you will be redirected to a browser webpage
+3. Enter account details
+    - Username
+    - Password
+4. Select the "Sign in" button at the bottom of the panel
+5. Upvoting or downvoting a comment can be done from any full screen post that has comments on it
+    - Public posts can be accessed from the Home page
+    - Posts you have made can be accessed from the Profile page under the My Posts tab
+    - Diary entries can be accessed from the Calendar page
+6. Locate a comment you would like to upvote or downvote on a post
+7. Select the triangle pointing up button for an upvote or the triangle pointing down button for a downvote on the comment
+    - The appropriate triangle button will be filled once you have selected it
+    - You should not be able to select the other triangle button after this
+8. To remove an upvote or downvote, select the filled triangle again
+    - The appropriate triangle button should now only be outlined
+9. Done!
