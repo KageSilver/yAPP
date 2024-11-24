@@ -323,6 +323,8 @@ public class PostEntryActivity extends AppCompatActivity implements IVoteHandler
 
     @Override
     public void onVote(boolean isPost, boolean voteType, String uuid, String pid, ImageButton button, AtomicBoolean voteStatus,String logName,AtomicBoolean upVoted, AtomicBoolean downVoted) {
+        _downvotesButton.setEnabled(false);
+        _upvotesButton.setEnabled(false);
         addVotes(isPost, voteType, uuid, pid, logName, upVoted.get(), downVoted.get())
                 .thenAccept(success -> {
                     if (success) {
@@ -336,18 +338,33 @@ public class PostEntryActivity extends AppCompatActivity implements IVoteHandler
                                     } else {
                                         button.setBackgroundResource(voteType ? R.drawable.ic_up : R.drawable.ic_down);
                                     }
+                                    _downvotesButton.setEnabled(true);
+                                    _upvotesButton.setEnabled(true);
                                 });
                             }).exceptionally(e -> {
+                                runOnUiThread(() -> {
+                                    _downvotesButton.setEnabled(true);
+                                    _upvotesButton.setEnabled(true);
+                                });
                                 Log.e(logName, "Error while checking vote status: " + e.getMessage(), e);
                                 return null;
                             });
                         } catch (UnsupportedEncodingException e) {
+                            runOnUiThread(() -> {
+                                _downvotesButton.setEnabled(true);
+                                _upvotesButton.setEnabled(true);
+                            });
                             Log.e(logName, "Error creating vote request: " + e.getMessage(), e);
                         }
                     }
+
                     getPost();
                 })
                 .exceptionally(error -> {
+                    runOnUiThread(() -> {
+                        _downvotesButton.setEnabled(true);
+                        _upvotesButton.setEnabled(true);
+                    });
                     Log.e(logName, "Vote operation failed: " + error.getMessage(), error);
                     return null;
                 });

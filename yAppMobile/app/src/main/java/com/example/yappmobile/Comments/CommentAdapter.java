@@ -136,6 +136,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         AtomicReference<AtomicBoolean> downVoted = new AtomicReference<>(new AtomicBoolean(false));
 
         try {
+            holder.downButton.setEnabled(false);
+            holder.upButton.setEnabled(false);
             CompletableFuture<Boolean> upVoteFuture = checkVoted(true, false, _uuid, comment.getCid(), LOG_NAME);
             CompletableFuture<Boolean> downVoteFuture = checkVoted(false, false, _uuid, comment.getCid(), LOG_NAME);
 
@@ -147,6 +149,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                     onVote(false, isUpvote, _uuid, comment.getCid(), isUpvote ? holder.upButton : holder.downButton,
                             isUpvote ? upVoted.get() : downVoted.get(), LOG_NAME, upVoted.get(), downVoted.get());
                     updateVoteUI(holder, upVoted.get().get(), downVoted.get().get(),comment);
+                    holder.upButton.setEnabled(true);
+                    holder.downButton.setEnabled(true);
                     try {
                         Thread.sleep(500);
                     } catch (InterruptedException e) {
