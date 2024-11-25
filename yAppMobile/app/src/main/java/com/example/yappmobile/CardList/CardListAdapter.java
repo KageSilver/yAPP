@@ -320,7 +320,7 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             try
             {
                 postTitle.setText(card.get("postTitle").toString());
-                postDate.setText(card.get("createdAt").toString());
+                postDate.setText(DateUtils.convertUtcToFormattedTime(card.get("createdAt").toString()));
                 postBody.setText(card.get("postBody").toString());
                 postAuthor.setText(card.get("username").toString());
             }
@@ -362,13 +362,13 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             });
         }
 
-        // Populate data into a DiaryCard
+        // Populate data into a AwardCard
         public void bind(JSONObject card)
         {
             try
             {
                 awardTitle.setText(card.get("name").toString());
-                awardDate.setText(card.get("createdAt").toString());
+                awardDate.setText(DateUtils.convertUtcToFormattedTime(card.get("createdAt").toString()));
 
                 String type = card.get("type").toString();
                 String tier = card.get("tier").toString();
