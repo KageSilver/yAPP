@@ -66,6 +66,11 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 View view = inflater.inflate(R.layout.card_diary, parent, false);
                 return new DiaryViewHolder(view, itemInteractions);
             }
+            case "AWARD":
+            {
+                View view = inflater.inflate(R.layout.card_award, parent, false);
+                return new AwardViewHolder(view, itemInteractions);
+            }
         }
         throw new RuntimeException("Unknown view type");
     }
@@ -91,6 +96,10 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         else if (holder instanceof DiaryViewHolder)
         {
             ((DiaryViewHolder) holder).bind(item);
+        }
+        else if (holder instanceof AwardViewHolder)
+        {
+            ((AwardViewHolder) holder).bind(item);
         }
     }
 
@@ -311,9 +320,59 @@ public class CardListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             try
             {
                 postTitle.setText(card.get("postTitle").toString());
-                postDate.setText(card.get("createdAt").toString());
+                postDate.setText(DateUtils.convertUtcToFormattedTime(card.get("createdAt").toString()));
                 postBody.setText(card.get("postBody").toString());
                 postAuthor.setText(card.get("username").toString());
+            }
+            catch (JSONException jsonException)
+            {
+                Log.e("JSON", "Error parsing JSON", jsonException);
+            }
+        }
+    }
+
+    // Populate data into an AwardCard
+    public static class AwardViewHolder extends RecyclerView.ViewHolder
+    {
+        public TextView awardTitle, awardDate, awardTypeTier;
+
+        public AwardViewHolder(View itemView, IListCardItemInteractions awardCardInteractions)
+        {
+            super(itemView);
+
+            awardTitle = itemView.findViewById(R.id.award_title);
+            awardDate = itemView.findViewById(R.id.award_date);
+            awardTypeTier = itemView.findViewById(R.id.award_type_tier);
+
+            // Set up an onClickListener for the award list card
+            itemView.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    if (awardCardInteractions != null)
+                    {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION)
+                        {
+                            awardCardInteractions.onItemClick(position);
+                        }
+                    }
+                }
+            });
+        }
+
+        // Populate data into a AwardCard
+        public void bind(JSONObject card)
+        {
+            try
+            {
+                awardTitle.setText(card.get("name").toString());
+                awardDate.setText(DateUtils.convertUtcToFormattedTime(card.get("createdAt").toString()));
+
+                String type = card.get("type").toString();
+                String tier = card.get("tier").toString();
+                awardTypeTier.setText(type + " award: tier " + tier);
             }
             catch (JSONException jsonException)
             {
