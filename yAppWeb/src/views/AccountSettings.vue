@@ -52,8 +52,7 @@
 		<BackBtnHeader
 			header="Account Settings"
 			subheader="Want to change your password?"
-			:backBtn="true"
-		/>
+			:backBtn="true" />
 		<br /><br />
 		<div class="mt-3 w-full md:mx-6 md:px-16">
 			<div class="post-heading rounded-lg bg-white p-8">
@@ -68,8 +67,7 @@
 				<br />
 				<button
 					class="w-full rounded-xl bg-pink-purple px-5 py-3 text-white"
-					@click="onSubmit"
-				>
+					@click="onSubmit">
 					Submit Changes
 				</button>
 			</div>

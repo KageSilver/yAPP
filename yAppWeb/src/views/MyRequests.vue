@@ -1,5 +1,5 @@
 <script setup>
-	import { get, put } from "aws-amplify/api";
+	import { get, put, del } from "aws-amplify/api";
 	import { getCurrentUser } from "aws-amplify/auth";
 	import { onMounted, ref } from "vue";
 	import Alert from "../components/Alert.vue";
@@ -19,24 +19,28 @@
 	const showModal = ref(false);
 	const message = ref("");
 	const currentFriendship = ref(null);
+
 	const openModal = request => {
 		message.value = `Are you sure you want to decline ${request.FromUserName}'s friend request?`;
 		showModal.value = true;
 		currentFriendship.value = request;
 	};
+
 	const closeModal = () => {
 		showModal.value = false;
 		currentFriendship.value = null;
 	};
+
 	const closeAlert = () => {
 		showAlert.value = false;
 	};
+
 	const confirmDecline = async () => {
 		await declineRequest(currentFriendship.value);
 		showModal.value = false;
+
 		// Update the view of pending requests
 		await getRequests();
-
 		currentFriendship.value = null;
 	};
 
@@ -102,29 +106,18 @@
 		loading.value = false;
 	};
 
+
 	// Decline toUser's friend request to authenticated user
 	const declineRequest = async request => {
 		// Close modal
 		showModal.value = false;
 		loading.value = true;
 		try {
-			const newRequest = {
-				fromUserName: request.FromUserName,
-				toUserName: request.ToUserName,
-				status: 2,
-			};
-
-			const sendPutRequest = put({
+			const deleteRequest = del({
 				apiName: "yapp",
-				path: "/api/friends/updateFriendRequest",
-				headers: {
-					"Content-type": "application/json",
-				},
-				options: {
-					body: newRequest,
-				},
+				path: `/api/friends/deleteFriendship?fromUserName=${request.FromUserName}&toUserName=${request.ToUserName}`,
 			});
-			await sendPutRequest.response;
+			await deleteRequest.response;
 			(alertMsg.value.header = "Yipee!"),
 				(alertMsg.value.message = `Declined ${request.FromUserName}'s friend request!`);
 			showAlert.value = true;
@@ -147,8 +140,7 @@
 			subheader="Here are your pending friend requests!"
 			:backBtn="true"
 			url="/profile/addFriends"
-			btnText="Add a new Friend!"
-		/>
+			btnText="Add a new Friend!" />
 
 		<!-- Show this message if the request list is empty -->
 		<div v-if="jsonData.length == 0">
@@ -161,21 +153,18 @@
 			<div v-for="request in jsonData">
 				<div
 					class="request bg-deep-dark p-5 text-white"
-					v-if="request.FromUserName !== username"
-				>
+					v-if="request.FromUserName !== username">
 					<h4>{{ request.FromUserName }}</h4>
 					<div class="request-actions">
 						<button
 							class="rounded-lg bg-light-pink p-4 font-bold text-white"
 							@click="accept(request)"
-							style="margin-right: 10px"
-						>
+							style="margin-right: 10px">
 							Accept
 						</button>
 						<button
 							class="rounded-lg bg-light-pink p-4 font-bold text-white"
-							@click="openModal(request)"
-						>
+							@click="openModal(request)">
 							Decline
 						</button>
 					</div>
@@ -186,14 +175,12 @@
 				:close="closeModal"
 				:confirm="confirmDecline"
 				header="Woah there!"
-				:message="message"
-			/>
+				:message="message" />
 			<Alert
 				:showModal="showAlert"
 				:header="alertMsg.header"
 				:message="alertMsg.message"
-				:close="closeAlert"
-			/>
+				:close="closeAlert" />
 		</div>
 	</div>
 </template>

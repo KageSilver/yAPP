@@ -39,7 +39,7 @@ public class MyRequestsActivity extends AppCompatActivity implements IListReques
 
         ProgressBar loadingSpinner = findViewById(R.id.indeterminate_bar);
         requestListHelper = new CardListHelper(this, loadingSpinner,
-                                               "FRIEND_REQUEST", this);
+                "FRIEND_REQUEST", this);
 
         // Setup recycler view to display request cards
         rvRequests = findViewById(R.id.request_list);
@@ -142,21 +142,9 @@ public class MyRequestsActivity extends AppCompatActivity implements IListReques
 
     private void declineRequest(String personA, String personB)
     {
-        JSONObject newFriendship = new JSONObject();
-        try
-        {
-            newFriendship.put("fromUserName", personA);
-            newFriendship.put("toUserName", personB);
-            newFriendship.put("status", 2);
-        }
-        catch (JSONException error)
-        {
-            Log.e("JSON", "Error creating a JSONObject", error);
-        }
-
         // Send API put request to delete friendship
-        String apiUrl = "/api/friends/updateFriendRequest";
-        sendPutRequest(apiUrl, newFriendship.toString());
+        String apiUrl = "/api/friends/deleteFriendship?fromUserName="+personA+"&toUserName="+personB;
+        sendDeleteRequest(apiUrl);
     }
 
     private void sendPutRequest(String apiUrl, String putBody)
@@ -164,18 +152,39 @@ public class MyRequestsActivity extends AppCompatActivity implements IListReques
         CompletableFuture<RestResponse> future = new CompletableFuture<>();
 
         RestOptions options = RestOptions.builder()
-                                         .addPath(apiUrl)
-                                         .addHeader("Content-Type", "application/json")
-                                         .addBody(putBody.getBytes())
-                                         .build();
+                .addPath(apiUrl)
+                .addHeader("Content-Type", "application/json")
+                .addBody(putBody.getBytes())
+                .build();
         Amplify.API.put(options,
-                        future::complete,
-                        error -> Log.e("API", "PUT request failed", error));
+                future::complete,
+                error -> Log.e("API", "PUT request failed", error));
 
         // Then update friend list
         future.thenAccept(restResponse -> {
             runOnUiThread(() -> {
                 Log.i("API", restResponse.toString());
+                reloadRequestList();
+            });
+        });
+    }
+
+    private void sendDeleteRequest(String apiUrl)
+    {
+        CompletableFuture<RestResponse> future = new CompletableFuture<>();
+
+        RestOptions options = RestOptions.builder()
+                                         .addPath(apiUrl)
+                                         .addHeader("Content-Type", "application/json")
+                                         .build();
+        Amplify.API.delete(options,
+                        future::complete,
+                        error -> Log.e("API", "DELETE request failed", error));
+
+        // Then update friend list
+        future.thenAccept(restResponse -> {
+            runOnUiThread(() -> {
+                Log.i("API", "DELETE request succeeded"+restResponse.toString());
                 reloadRequestList();
             });
         });
@@ -187,7 +196,7 @@ public class MyRequestsActivity extends AppCompatActivity implements IListReques
         CompletableFuture<AuthUser> future = new CompletableFuture<>();
 
         Amplify.Auth.getCurrentUser(future::complete, error -> {
-            Log.e("Auth", "Uh oh! THere's trouble getting the current user", error);
+            Log.e("Auth", "Uh oh! There's trouble getting the current user", error);
         });
 
         future.thenAccept(user -> {
