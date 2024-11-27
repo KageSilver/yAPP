@@ -40,6 +40,8 @@
 		currentUser.value = user.username;
 		userId.value = user.userId;
 		myPostVotes.value = await getVotes(props.post.pid);
+		//filter out the votes for the current user
+		myPostVotes.value = myPostVotes.value.filter(vote => vote.uid == userId.value);
 	});
 	const isUpvotePost = computed(() => {
 		//check if the user has upvoted the post
