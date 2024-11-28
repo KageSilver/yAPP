@@ -25,15 +25,17 @@
 
 	// Get list of friends as JSON
 	onMounted(async () => {
-		getRequests();
+		
 		const user = await getCurrentUser();
 		username.value = user.username;
 		//update selected tab
 		selectedTab.value = route.path;
+		await getRequests(username.value);
+		
 	});
 
 	// Get authenticated user's friend requests
-	async function getRequests() {
+	async function getRequests(username) {
 		try {
 			const restOperation = get({
 				apiName: "yapp",
@@ -64,7 +66,7 @@
 			<span class="material-icons">group_add</span>
 			<!-- Notification Badge -->
 			<span
-				class="absolute -right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-dark-pink text-xs font-bold text-white"
+				class="absolute -right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-deep-blue text-xs font-bold text-white"
 				v-if="counts">
 				{{ counts }}
 			</span>

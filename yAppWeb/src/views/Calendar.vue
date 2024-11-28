@@ -4,6 +4,7 @@
 	import { onMounted, ref } from "vue";
 	import { useRouter } from "vue-router";
 	import LoadingScreen from "../components/LoadingScreen.vue";
+	import PostCard from "../components/PostCard.vue";
 
 	const router = useRouter(); // Use router hook
 	const uid = ref("");
@@ -28,6 +29,7 @@
 		await getFriendUIDs(username);
 		await getUserDiaries(uid);
 		await getFriendDiaries(uid);
+
 	});
 
 	// get list of accepted friends for their usernames
@@ -322,221 +324,23 @@
 					<div class="font-bold text-white">S</div>
 				</div>
 				<div class="mt-4 grid grid-cols-7 gap-px">
-					<div
-						id="blank0"
-						class="mx-auto flex size-10 w-full items-center justify-center"
-						style="display: none"></div>
-					<div
-						id="blank1"
-						class="mx-auto flex size-10 w-full items-center justify-center"
-						style="display: none"></div>
-					<div
-						id="blank2"
-						class="mx-auto flex size-10 w-full items-center justify-center"
-						style="display: none"></div>
-					<div
-						id="blank3"
-						class="mx-auto flex size-10 w-full items-center justify-center"
-						style="display: none"></div>
-					<div
-						id="blank4"
-						class="mx-auto flex size-10 w-full items-center justify-center"
-						style="display: none"></div>
-					<div
-						id="blank5"
-						class="mx-auto flex size-10 w-full items-center justify-center"
-						style="display: none"></div>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(1)">
-						<time datetime="#_">1</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(2)">
-						<time datetime="#_">2</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(3)">
-						<time datetime="#_">3</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(4)">
-						<time datetime="#_">4</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(5)">
-						<time datetime="#_">5</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(6)">
-						<time datetime="#_">6</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(7)">
-						<time datetime="#_">7</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(8)">
-						<time datetime="#_">8</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(9)">
-						<time datetime="#_">9</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(10)">
-						<time datetime="#_">10</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(11)">
-						<time datetime="#_">11</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(12)">
-						<time datetime="#_">12</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(13)">
-						<time datetime="#_">13</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(14)">
-						<time datetime="#_">14</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(15)">
-						<time datetime="#_">15</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(16)">
-						<time datetime="#_">16</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(17)">
-						<time datetime="#_">17</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(18)">
-						<time datetime="#_">18</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(19)">
-						<time datetime="#_">19</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(20)">
-						<time datetime="#_">20</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(21)">
-						<time datetime="#_">21</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(22)">
-						<time datetime="#_">22</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(23)">
-						<time datetime="#_">23</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(24)">
-						<time datetime="#_">24</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(25)">
-						<time datetime="#_">25</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(26)">
-						<time datetime="#_">26</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(27)">
-						<time datetime="#_">27</time>
-					</button>
-					<button
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(28)">
-						<time datetime="#_">28</time>
-					</button>
-					<button
-						id="29"
-						type="button"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(29)">
-						<time datetime="#_">29</time>
-					</button>
-					<button
-						id="30"
-						type="button"
-						style="display: none"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(30)">
-						<time datetime="#_">30</time>
-					</button>
-					<button
-						id="31"
-						type="button"
-						style="display: none"
-						class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
-						@click="changeSelectedDate(31)">
-						<time datetime="#_">31</time>
-					</button>
+					<template v-for="i in 6">
+						<div
+							:id="'blank' + (i - 1)"
+							class="mx-auto flex size-10 w-full items-center justify-center"
+							style="display: none"></div>
+					</template>
+
+					<template v-for="day in 31">
+						<button
+							:id="day"
+							type="button"
+							class="mx-auto flex size-10 w-full items-center justify-center text-white hover:rounded-full hover:border-2 focus:rounded-full focus:bg-[#EFB2CE] focus:text-black"
+							@click="changeSelectedDate(day)">
+							<time :datetime="'#_'">{{ day }}</time>
+						</button>
+					</template>
+					
 				</div>
 			</div>
 		</div>
@@ -544,59 +348,25 @@
 		<hr class="h-0.1 mx-auto mb-8 mt-4 w-full bg-white" />
 
 		<LoadingScreen v-if="loading" />
-
+		
 		<div class="mx-auto flex w-full flex-col items-center">
 			<div
-				class="card m-2 w-full max-w-4xl cursor-pointer rounded-lg border border-gray-500 bg-gray-300 p-5 shadow transition-shadow hover:shadow-md"
+				class="card m-2 w-full max-w-4xl cursor-pointer rounded-lg border border-gray-300 bg-gray-100 p-5 shadow transition-shadow hover:shadow-md"
 				v-for="post in userDiaries"
 				:key="post.pid"
 				@click="clickPost(post.pid)">
-				<div class="card-header mb-2">
-					<h3 class="truncate text-lg font-semibold">{{ post.postTitle }}</h3>
-					<p
-						class="overflow-hidden overflow-ellipsis whitespace-nowrap text-sm text-gray-600">
-						<strong>Posted By:</strong> You
-					</p>
-					<p
-						class="overflow-hidden overflow-ellipsis whitespace-nowrap text-sm text-gray-600">
-						<strong>Created At:</strong>
-						{{ new Date(post.createdAt).toLocaleString() }}
-					</p>
-				</div>
-				<div class="card-body">
-					<p
-						class="overflow-hidden text-ellipsis whitespace-nowrap text-gray-700">
-						{{ post.postBody }}
-					</p>
-				</div>
+				<PostCard :post="post" :isDiary="true" />
 			</div>
-		</div>
 
-		<div class="mx-auto flex w-full flex-col items-center">
 			<div
-				class="card m-2 w-full max-w-4xl cursor-pointer rounded-lg border border-gray-500 bg-gray-100 p-5 shadow transition-shadow hover:shadow-md"
+				class="card m-2 w-full max-w-4xl cursor-pointer rounded-lg border border-gray-300 bg-gray-100 p-5 shadow transition-shadow hover:shadow-md"
 				v-for="post in friendDiaries"
 				:key="post.pid"
 				@click="clickPost(post.pid)">
-				<div class="card-header mb-2">
-					<h3 class="truncate text-lg font-semibold">{{ post.postTitle }}</h3>
-					<p
-						class="overflow-hidden overflow-ellipsis whitespace-nowrap text-sm text-gray-600">
-						<strong>Posted By:</strong> {{ post.username }}
-					</p>
-					<p
-						class="overflow-hidden overflow-ellipsis whitespace-nowrap text-sm text-gray-600">
-						<strong>Created At:</strong>
-						{{ new Date(post.createdAt).toLocaleString() }}
-					</p>
-				</div>
-				<div class="card-body">
-					<p
-						class="overflow-hidden text-ellipsis whitespace-nowrap text-gray-700">
-						{{ post.postBody }}
-					</p>
-				</div>
+				<PostCard :post="post" :isDiary="true"/>
 			</div>
 		</div>
+
+		
 	</div>
 </template>

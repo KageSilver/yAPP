@@ -26,8 +26,14 @@
 				pid: "",
 				upvotes: 0,
 				downvotes: 0,
+				username: "",
 			}),
 		},
+		isDiary : {
+			type: Boolean,
+			required: false,
+			default: false
+		}
 	});
 	const isMenuOpen = ref(false);
 	// function to get the current user , if we need to edit the post?
@@ -40,6 +46,8 @@
 		currentUser.value = user.username;
 		userId.value = user.userId;
 		myPostVotes.value = await getVotes(props.post.pid);
+		//filter out the votes for the current user
+		myPostVotes.value = myPostVotes.value.filter(vote => vote.uid == userId.value);
 	});
 	const isUpvotePost = computed(() => {
 		//check if the user has upvoted the post
@@ -119,18 +127,17 @@
 				<strong>Created At:</strong>
 				{{ new Date(props.post.createdAt).toLocaleString() }}
 			</p>
+			<p class="overflow-hidden overflow-ellipsis whitespace-nowrap text-sm text-gray-600"
+				v-if="isDiary == true && userId == props.post.uid"
+			>
+				<strong>Posted By:</strong> You
+			</p>
+			<p class="overflow-hidden overflow-ellipsis whitespace-nowrap text-sm text-gray-600"
+				v-else-if="isDiary == true && userId != props.post.uid"
+			>
+				<strong>Posted By:</strong> {{ props.post.username }}
+			</p>
 
-			<!-- Three dot menu (Dropdown) -->
-
-			<div class="absolute right-0 top-0" v-if="currentUser == props.post.userName">
-				<button class="text-gray-600 hover:text-gray-900 focus:outline-none" @click="toggleMenu">
-					<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-						xmlns="http://www.w3.org/2000/svg">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-							d="M12 6v.01M12 12v.01M12 18v.01"></path>
-					</svg>
-				</button>
-			</div>
 		</div>
 
 		<div class="card-body">
