@@ -11,14 +11,21 @@ public class Comment {
     private final String createAt;   // Comment creation timestamp
     private final String updateAt;   // Comment update timestamp
 
+    private String downvotes;
+
+    private String upvotes;
+
+
     // Constructor to initialize all fields
-    public Comment(String uid, String commentBody, String pid, String cid, String createAt, String updateAt) {
+    public Comment(String uid, String commentBody, String pid, String cid, String createAt, String updateAt, String upvotes, String downvotes) {
         this.uid = uid;
         this.commentBody = commentBody;
         this.pid = pid;
         this.cid = cid;
         this.createAt = createAt;
         this.updateAt = updateAt;
+        this.downvotes = downvotes;
+        this.upvotes = upvotes;
     }
 
     // Getter for uid (User ID)
@@ -41,7 +48,7 @@ public class Comment {
         return commentBody;
     }
 
-    public void setCommentBody(String commentBody){
+    public void setCommentBody(String commentBody) {
         this.commentBody = commentBody;
     }
 
@@ -55,6 +62,22 @@ public class Comment {
         return updateAt;
     }
 
+    public String getUpvotes() {
+        return upvotes;
+    }
+
+    public String getDownvotes() {
+        return downvotes;
+    }
+
+    public void setUpvotes(String vote) {
+        upvotes = vote;
+    }
+
+    public void setDownvotes(String vote) {
+        downvotes = vote;
+    }
+
 
     @Override
     public String toString() {
@@ -63,6 +86,8 @@ public class Comment {
                 ", cid='" + cid + '\'' +
                 ", pid='" + pid + '\'' +
                 ", commentBody='" + commentBody + '\'' +
+                ", Upvotes='" + upvotes + '\'' +
+                ", Downvotes='" + downvotes + '\'' +
                 ", createAt='" + createAt + '\'' +
                 ", updateAt='" + updateAt + '\'' +
                 '}';
@@ -75,6 +100,8 @@ public class Comment {
             jsonObject.put("cid", cid);
             jsonObject.put("pid", pid);
             jsonObject.put("commentBody", commentBody);
+            jsonObject.put("upvotes", upvotes);
+            jsonObject.put("downvotes", downvotes);
             jsonObject.put("createAt", createAt);
             jsonObject.put("updateAt", updateAt);
         } catch (JSONException e) {

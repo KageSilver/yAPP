@@ -26,6 +26,7 @@ yAPP is an anonymous chatting application to provide users, known as Yappers, a 
 ## Worksheet
 - Here is our [worksheet](./Documentation/Sprint%201/Sprint%201%20Worksheet.md) for sprint 1.
 - Here is our [worksheet](./Documentation/Sprint%202/Sprint%202%20Worksheet.md) for sprint 2.
+- Here is our [worksheet](./Documentation/Sprint%203/Sprint%203%20Worksheet.md) for sprint 3.
 
 ## Milestones
 - Here are the [milestones](https://github.com/KageSilver/yAPP/milestones) we set up for our project.

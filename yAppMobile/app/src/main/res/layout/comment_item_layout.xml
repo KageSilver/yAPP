@@ -2,8 +2,7 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
-   >
+    android:layout_marginBottom="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,7 +18,7 @@
             android:layout_height="wrap_content"
             android:text="User1: This is a comment"
             android:textColor="@color/black"
-            android:textSize="14sp" />
+            android:textSize="16sp" />
 
         <!-- Comment Time -->
         <TextView
@@ -29,6 +28,55 @@
             android:text="2 hours ago"
             android:textColor="@android:color/darker_gray"
             android:textSize="12sp" />
+
+        <!-- Upvote and Downvote Section -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="end"
+        android:layout_marginTop="8dp">
+
+        <!-- Upvote Button -->
+        <ImageButton
+            android:id="@+id/upvote_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@drawable/ic_up"
+            android:contentDescription="Upvote" />
+
+        <!-- Upvote Count -->
+        <TextView
+            android:id="@+id/upvote_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="s0"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/black" />
+
+        <!-- Downvote Button -->
+        <ImageButton
+            android:id="@+id/downvote_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="16dp"
+            android:background="@drawable/ic_down"
+            android:contentDescription="Downvote" />
+
+        <!-- Downvote Count -->
+        <TextView
+            android:id="@+id/downvote_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="0"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/black" />
+    </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>
+
 

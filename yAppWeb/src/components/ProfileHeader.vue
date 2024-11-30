@@ -1,13 +1,14 @@
 <script setup>
-	import { get } from "aws-amplify/api";
-import { getCurrentUser } from "aws-amplify/auth";
-import { onMounted, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+	import { get, put } from "aws-amplify/api";
+	import { ref, onMounted } from "vue";
+	import { getCurrentUser } from "aws-amplify/auth";
+	import { useRoute } from "vue-router";
+	import { useRouter } from "vue-router";
+	import { watch } from "vue";
 
 	const router = useRouter(); // Use router hook
 
 	const username = ref(""); // Reacted variable to hold the username
-	const userId = ref(""); // Reacted variable to hold the userId
 	const jsonData = ref([]); // Reacted array to hold the list of friendships
 	const counts = ref(0); // Reacted variable to hold the number of friend requests
 	const route = useRoute(); // This composable provides access to the current route object
@@ -28,7 +29,6 @@ import { useRoute, useRouter } from "vue-router";
 		
 		const user = await getCurrentUser();
 		username.value = user.username;
-		userId.value = user.userId;
 		//update selected tab
 		selectedTab.value = route.path;
 		await getRequests(username.value);
@@ -58,7 +58,7 @@ import { useRoute, useRouter } from "vue-router";
 
 <template>
 	<div class="relative mt-[8rem] w-full bg-light-pink pl-8 pt-[8rem]">
-		<h5 class="mb-2 text-3xl font-bold text-white">
+		<h5 class="mb-10 text-3xl font-bold text-white">
 			Welcome back, {{ username }}!
 		</h5>
 		<!-- Button positioned at the top-right corner -->
@@ -75,9 +75,6 @@ import { useRoute, useRouter } from "vue-router";
 		</button>
 	</div>
 
-	<div class="mt-0 w-full bg-dark-purple pb-[5rem] pl-8 pt-2">
-		<h5 class="mb-2 text-sm text-purple">UUID: {{ userId }}</h5>
-	</div>
 	<div class="sm:hidden">
 		<label for="tabs" class="sr-only">Select tab</label>
 		<select

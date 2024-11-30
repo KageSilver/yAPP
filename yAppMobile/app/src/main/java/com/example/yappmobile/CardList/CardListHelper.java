@@ -27,7 +27,7 @@ public class CardListHelper extends AppCompatActivity
 {
     private final Context context; // Where CardItems are Contained
     private final ProgressBar loadingSpinner;
-    private final String cardType; // Currently 4 types: POST, DIARY, CURRENT_FRIEND, AND FRIEND_REQUEST
+    private final String cardType; // Currently 5 types: POST, DIARY, CURRENT_FRIEND, FRIEND_REQUEST, and AWARD
     private List<JSONObject> cardItemList; // List of CardItems
     private final IListCardItemInteractions itemInteractions; // Handles clicks of the CardItem
     private CardListAdapter adapter;
@@ -85,6 +85,36 @@ public class CardListHelper extends AppCompatActivity
             populateCard();
         }).exceptionally(throwable ->
         {
+            Log.e("API", "Error fetching data", throwable);
+            return null;
+        });
+    }
+
+    public void loadAwardsByUser(String uid, RecyclerView recyclerView)
+    {
+        // Make loading spinner visible while we populate our CardItemAdapter
+        loadingSpinner.setVisibility(View.VISIBLE);
+
+        createAdapter(recyclerView);
+
+        String existingAwards = "/api/awards/getAwardsByUser?uid="+uid;
+        String newAwards = "/api/awards/getNewAwardsByUser?uid="+uid;
+
+        // Fetch card items from API
+        CompletableFuture<String> future = getItemsFromAPI(existingAwards);
+        future.thenAccept(jsonData -> {
+            cardItemList.addAll(0, handleData(jsonData));
+            populateCard();
+        }).exceptionally(throwable -> {
+           Log.e("API", "Error fetching data", throwable);
+           return null;
+        });
+
+        future = getItemsFromAPI(newAwards);
+        future.thenAccept(jsonData -> {
+           cardItemList.addAll(handleData(jsonData));
+           populateCard();
+        }).exceptionally(throwable -> {
             Log.e("API", "Error fetching data", throwable);
             return null;
         });
@@ -218,9 +248,9 @@ public class CardListHelper extends AppCompatActivity
         final int MAX_RETRIES = 5;
         CompletableFuture<String> future = new CompletableFuture<>();
         RestOptions options = RestOptions.builder()
-                                         .addPath(apiUrl)
-                                         .addHeader("Content-Type", "application/json")
-                                         .build();
+                .addPath(apiUrl)
+                .addHeader("Content-Type", "application/json")
+                .build();
         retryAPICall(options, future, MAX_RETRIES);
         return future;
     }
@@ -260,7 +290,7 @@ public class CardListHelper extends AppCompatActivity
                 error ->
                 {
                     if (retriesLeft > 0
-                        && error.getCause() instanceof java.net.SocketTimeoutException)
+                            && error.getCause() instanceof java.net.SocketTimeoutException)
                     {
                         Log.i("API", "Retrying... Attempts left: " + retriesLeft);
                         retryAPICall(options, future, retriesLeft - 1);
@@ -339,7 +369,7 @@ public class CardListHelper extends AppCompatActivity
             else
             {
                 Log.d("CardListHelper",
-                      "Wrong card type! Tried to get the last post's time on a non-PostCard item");
+                        "Wrong card type! Tried to get the last post's time on a non-PostCard item");
             }
         }
         catch (JSONException jsonException)
