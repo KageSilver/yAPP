@@ -1,18 +1,20 @@
 <script setup>
 	import {
-		getCurrentUser
-	} from "aws-amplify/auth";
-	import {
-		defineProps,
-		onMounted,
-		ref,
-		computed
-	} from "vue";
-	import {
-		get,
-		post,
-		del
-	} from "aws-amplify/api";
+	del,
+	get,
+	post
+} from "aws-amplify/api";
+import {
+	getCurrentUser
+} from "aws-amplify/auth";
+import {
+	computed,
+	defineProps,
+	onMounted,
+	ref,
+	watch
+} from "vue";
+
 	const myPostVotes = ref([]);
 	const props = defineProps({
 		post: {
@@ -84,7 +86,8 @@
 	};
 
 	const vote = async (pid, isPost, isUpVote, currentValue) => {
-	
+		document.getElementById("upBtn_" + pid).disabled = true;
+		document.getElementById("downBtn_" + pid).disabled = true;
 		const body = ref({});
 		body.value = {
 			uid: userId.value,
@@ -107,21 +110,53 @@
 				},
 			});
 			await restOperation.response;
+			if (isUpVote) {
+				props.post.upvotes  += 1;
+			} else { 
+				props.post.downvotes += 1;
+			}
+
+		
 		} else {
 			const restOperation = del({
 				apiName: "yapp",
 				path: `/api/votes/removeVote?uid=${userId.value}&pid=${pid}&isPost=${isPost}&type=${isUpVote}`,
 			});
 			await restOperation.response;
+			if (isUpVote) {
+				props.post.upvotes  -= 1;
+			} else { 
+				props.post.downvotes -= 1;
+			}
+
 		}
+		//fetch current post
+		document.getElementById("upBtn_" + pid).disabled = false;
+		document.getElementById("downBtn_" + pid).disabled = false;
 
 		//refresh the votes
-		window.location.reload();
+		//update the current post 
+	
+		myPostVotes.value = await getVotes(pid);
+		myPostVotes.value = myPostVotes.value.filter(vote => vote.uid == userId.value);
+		
+		await fetchPost(props.post.pid);
 	};
+
+
+	watch(myPostVotes, (newValue, oldValue) => {
+		isUpvotePost.value = myPostVotes.value.filter(vote => vote.type == true).length > 0;
+		isDownvotePost.value = myPostVotes.value.filter(vote => vote.type == false).length > 0;
+		//update the 
+    // Do something when the value changes (e.g., update the UI or call a function)
+	});
+
+
+
 </script>
 <template>
 	<div>
-		<div class="card-header relative mb-2">
+		<div class="card-header relative mb-2" :id="'post_' + props.post.pid">
 			<h3 class="truncate text-lg font-semibold">{{ props.post.postTitle }}</h3>
 			<p class="overflow-hidden overflow-ellipsis whitespace-nowrap text-sm text-gray-600">
 				<strong>Created At:</strong>
@@ -150,7 +185,7 @@
 		<div class="flex space-x-4 mt-8">
 			<!-- Upvote -->
 			<!-- Upvote Button -->
-			<button @click.stop="vote(props.post.pid, true, true, isUpvotePost)"
+			<button @click.stop="vote(props.post.pid, true, true, isUpvotePost)" :id="'upBtn_' + props.post.pid"
 				class="relative flex rounded-xl items-center p-2 hover:bg-light-pink hover:text-transparent disabled:hover:bg-none disabled:hover:text-current disabled:opacity-50 disabled:cursor-not-allowed"
 				:disabled="isDownvotePost.value">
 				<span class="upvotes top-0" v-if="props.post.upvotes > 0">
@@ -161,7 +196,7 @@
 			</button>
 
 			<!-- Downvote Button -->
-			<button @click.stop="vote(props.post.pid, true, false, isDownvotePost)"
+			<button @click.stop="vote(props.post.pid, true, false, isDownvotePost)"  :id="'downBtn_' + props.post.pid"
 				class="relative flex rounded-xl items-center p-2 hover:bg-light-pink hover:text-transparent disabled:hover:bg-none disabled:hover:text-current disabled:opacity-50 disabled:cursor-not-allowed"
 				:disabled="isUpvotePost.value">
 				<span class="downvotes top-0" v-if="props.post.downvotes > 0">
