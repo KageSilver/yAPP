@@ -147,8 +147,6 @@ import {
 	watch(myPostVotes, (newValue, oldValue) => {
 		isUpvotePost.value = myPostVotes.value.filter(vote => vote.type == true).length > 0;
 		isDownvotePost.value = myPostVotes.value.filter(vote => vote.type == false).length > 0;
-		//update the 
-    // Do something when the value changes (e.g., update the UI or call a function)
 	});
 
 
