@@ -11,11 +11,6 @@ namespace yAppLambda;
 /// yAppLambda::yAppLambda.LambdaEntryPoint::FunctionHandlerAsync
 /// </summary>
 public class LambdaEntryPoint :
-    // The base class must be set to match the AWS service invoking the lambda function. 
-    // API Gateway REST API                     ->   Amazon.Lambda.AspNetCoreServer.APIGatewayProxyFunction
-    // API Gateway HTTP API payload version 1.0 ->   Amazon.Lambda.AspNetCoreServer.APIGatewayProxyFunction
-    // API Gateway HTTP API payload version 2.0 ->   Amazon.Lambda.AspNetCoreServer.APIGatewayHttpApiV2ProxyFunction
-    // Application Load Balancer                ->   Amazon.Lambda.AspNetCoreServer.ApplicationLoadBalancerFunction
     APIGatewayProxyFunction
 {
     /// <summary>
