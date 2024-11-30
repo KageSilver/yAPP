@@ -1,10 +1,8 @@
 <script setup>
-	import { get, put } from "aws-amplify/api";
-	import { ref, onMounted } from "vue";
-	import { getCurrentUser } from "aws-amplify/auth";
-	import { useRoute } from "vue-router";
-	import { useRouter } from "vue-router";
-	import { watch } from "vue";
+	import { get } from "aws-amplify/api";
+import { getCurrentUser } from "aws-amplify/auth";
+import { onMounted, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 	const router = useRouter(); // Use router hook
 
@@ -49,8 +47,9 @@
 			const decoder = new TextDecoder("utf-8"); // Use TextDecoder to decode the ArrayBuffer to a string
 			const decodedText = decoder.decode(response);
 			jsonData.value = JSON.parse(decodedText); // Update with parsed JSON
-			counts.value = jsonData.value.length;
-			console.log(jsonData);
+			//filter the to user's friend requests
+			const toUserRequests = jsonData.value.filter(request => request.ToUserName === username);
+			counts.value = toUserRequests.length;
 		} catch (error) {
 			console.log("GET call failed", error);
 		}
