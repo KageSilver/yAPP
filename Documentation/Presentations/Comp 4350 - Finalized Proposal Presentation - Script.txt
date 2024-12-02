@@ -1,0 +1,118 @@
+COMP 4350 
+yAPP
+Cynthia, Kelly, Qiwen, and Tara
+Hi everyone! My name is Cynthia and this is Kelly, Qiwen, and Tara; and our project is called yAPP.
+
+yAPP
+Interact with others
+03
+Open up to friends
+04
+02
+Safe and secure
+01
+Anonymous 
+yAPP is an anonymous social media platform that provides a safe and secure space for anyone to share their thoughts. Our users, known as Yappers, can ask questions to the general public, interact with other public posts, and open up to their friends. On traditional social media platforms, actions such as posting, commenting, and viewing are all tied to our accounts. This leaves our identities vulnerable. We could be traced or even exposed. But with yAPP, our users won’t have to worry about being stalked. yAPP allows Yappers to separate their lives from their online personas. They can feel comfortable freely expressing themselves without the fear of their peer’s expectations.
+
+
+Key Features
+Posting
+01
+Anonymously ask questions to the yAPP community
+Publish one friends-only post per day
+Can be anonymous or not
+Personal Calendar
+03
+View personal diary entries
+View friends’ diary entries
+Interactions
+02
+View, reply, upvote, and downvote posts
+Hidden Achievement System
+04
+Highly upvoted/downvoted
+High traffic
+Frequent poster
+So what does this look like, exactly? Well, the platform offers two main ways for Yappers to post. They can ask questions anonymously to the yAPP community or write daily diary entries, which can then be shared with friends either anonymously or openly. yAPP uses a calendar to display both your personal and your friends’ journals, allowing for easier access and overall better user experience.  
+
+Yappers are also able to engage with posts by viewing, replying, upvoting, and downvoting -- all privately. Meaning that, while usernames can be shared to your friends, no information about your activity is visible to anyone else but you. 
+
+Finally, to keep yappers engaged, we’ve implemented a hidden achievement system, specifically rewarding high upvotes, downvotes, traffic, and post frequency. 
+
+
+
+Frontend
+
+Web
+Vue.js
+TypeScript
+Tailwind CSS
+Pnpm package manager
+Mobile
+.NET MAUI
+
+Backend
+
+ASP.NET
+C#
+Technology
+We chose ASP.NET for backend development because it aligns with industry trends, offers robust endpoint organization, supports Swagger for generating frontend models, and simplifies unit testing in C# within CI/CD pipelines. 
+
+For the frontend web app, we selected Vue.js with TypeScript for better structure and maintainability, and Tailwind CSS for flexible UI design. 
+
+We prefer pnpm over npm because it is more lightweight and efficient. Our mobile app is going to use .NET MAUI to support both iOS and Android.
+
+Technology
+AWS
+Lambda
+CloudFront
+CloudWatch
+Amplify
+API Gateway
+DynamoDB
+Cognito
+User pool management
+API endpoints
+management
+“Serverless” compute service
+NoSQL DB
+Domain provisioning
+Debugging and monitoring
+Deployment
+We also integrate our app with AWS. 
+
+While cost concerns are valid, we don't anticipate exceeding the free tier limits based on our setup, although unforeseen issues could happen. Potential costs mainly come from CloudWatch and the database. 
+
+We'll use Amplify for deployment, user management through Cognito User Pool, 
+
+API Gateway for secure endpoints,  CloudWatch for debugging, 
+
+CloudFront for domain provisioning, and Lambda for compute service .
+
+We selected DynamoDB over RDS because it is more suitable for less complex data objects with a reasonable pricing
+
+
+High Level Architecture
+Thin Client
+Website
+Desktop App
+IOS & Android App
+
+Layers & Tiers
+N-tier design with AWS
+Layers
+Presentation
+Logic 
+Data
+Objects 
+
+Utilize AWS software
+Here, we can see the proposed high level architecture for our project. Using the various services and technologies mentioned in the previous slides, we have opted to use an n-tier architecture. This is due to the fact that the majority of our application will be hosted with AWS, which requires many different interactions between services that cannot be contained within a single TIER. With this in mind, we have separated our application into various layers. We’ll be using a Presentation, Logic, Data, and Objects layer.
+
+We plan on keeping most, if not all, of the presentation code on the client side. This allows for us to keep the majority of the logic on the server-side, achieving a Thin client. We will be able to support various platforms without introducing tedious churn and reducing the ops burden of code management.
+
+To facilitate deployment of our application, we will be using other various AWS software that did not fit into a singular layer within our architecture. This will help us achieve the goal of simplifying our development cycle by introducing many quality of life services directly into our infrastructure.
+
+
+Thank You!
+And… that’s it! Thank you for listening to our presentation!

@@ -9,6 +9,9 @@ yAPP is an anonymous chatting application to provide users, known as Yappers, a 
 ## Demo
  - You can view our demo once our AWS interactions have been deleted [here](./Documentation/Demo/Demo.md).
 
+## Presentations
+ - You can view the presentations with their scripts [here](./Documentation/Presentations/).
+
 ## Folder Structure
  - [Backend - Amplify](./amplify/)
  - [Frontend - Mobile](./yAppMobile/)
