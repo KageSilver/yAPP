@@ -1,178 +1,100 @@
-yAPP: AWS Cloud Stack
-Group 4: Cynthia, Kelly, Qiwen, & Tara
+SPEAKER 1 - Tara
+(Slide 1)
 "Hello everyone! My name is Tara, and we’re group 4."
 
-What have we been yAPP to?
+(Slide 2)
 “...and for the past few months, we've been working on an app called yAPP; an anonymous social media platform that provides a safe and secure space for anyone to share their thoughts.”
 
 “Now, let’s jump straight into our presentation by outlining our technical stack and all that we needed to set up with our cloud infrastructure. But first, let’s get some background and take a look at our project’s architecture.”
 
-Project Architecture
+(Slide 3)
 “As you can see here, we’ve got our current technical architecture diagram which… might seem intimidating at first glance —  I mean, obviously it is! I had to flip it sideways to even fit on this slide — but this outlines our entire system. As we are focusing solely on our AWS architecture, we don’t need to keep looking at this complicated mess. If I were to even attempt to explain what all of this even means, I’d probably end up looking like…”
 
-
-Yikes…
+(Slide 4)
 “...this. Yeah… Yikes.”
 
-There! Much better.
+(Slide 5)
 “Ah, now this is much more like it. Here, we can see a generalized design primarily outlining our AWS interactions, along with the overall design of our cloud infrastructure. In the middle of the diagram, you can see our primary AWS services, which resides “ within ” our Logic layer. We can also see how it interacts with our other layers, such as how our code links between Lambda and DynamoDB. Our data models also connect directly to our database, allowing for us to keep our schemas under control without worrying about losing our setup.”
 
 “When we were designing our initial infrastructure, we had looked at a wide variety of services and chose those that best suited our needs. Afterwards, we figured out how to link them together to create a cohesive and seamless development process. This was probably the most complicated part of our project, and as such, it is the primary focus of our presentation. Now, I’m going to hand it off to Kelly!”
 
-What is AWS?
-Amazon Web Services: 
+SPEAKER 2 - Kelly
+
+(Slide 6)
 “Provides on-demand cloud computing platforms and APIs on a metered, pay-as-you-go basis.”
 So what even is AWS? ¯\_(ツ)_/¯
 A quick google search tells us that it’s a subdivision of Amazon that provides on-demand cloud computing platforms and APIs on a metered, pay-as-you-go basis. So, in other words, it’s a box of LEGOs on steroids, but make it the cloud (jazz hands).
 
-AWS Services
-DynamoDB
-NoSQL database 
-01
-API Gateway
-Accepts and processes API calls
-Includes…
-Authorization and access control
-Monitoring traffic
-03
-Lambda
-Lets you run code without having to provision or manage servers
-02
-Cognito
-Handles registration and sign in
-Provisions identity tokens 
-04
+(Slide 7)
 Before diving into how everything works together in our cloud architecture, let’s quickly break down its key components:
 DynamoDB: Our NoSQL database, designed for fast and flexible data storage.
 Lambda: A serverless compute service where we run our code without worrying about managing servers.
 API Gateway: This handles all tasks related to accepting and processing  API calls — things like authorization, access control, and traffic monitoring.
 Cognito: Manages user registration, sign-ins, and generates identity tokens for verified Yappers.
 
-
-AWS Amplify
-05
-The star of the show
+(Slide 8)
 But the main star of the show is, really, AWS Amplify, which automatically links all these services for us and provides static site hosting. It's comprised of 2 main components: the amplify command-line and the amplify library. The command line lets you create and provisions resources in the cloud, while the library is used to connect to specific AWS services. 
 
-
-AWS Interactions
+(Slide 9)
 When a client goes on yAPP, which is hosted by Amplify, it first goes through Cognito, which looks through the user pool and provides identity tokens for verified, signed-in Yappers. 
 All API requests are then accepted and processed by API Gateway. The responses depend on the client's token, the lookup policy associated with said token, and the Lambda functions linked to that specific endpoint. 
 Lambda functions are basically the mediators for incoming HTTP requests and DynamoDB. Lambda writes, reads, and processes data to/from DynamoDB accordingly, then passes the results back to API Gateway.
 Qiwen will now be showing you how easy it is to set up a project using AWS Amplify commands.
 
+SPEAKER 3 - Qiwen
 
-Setting up an environment
-
-Add configuration
-01
-amplify configure
-
-Assuming you have the amplify cli installed. 
-First, let’s configure Amplify to connect to your AWS account. Navigate to your project’s root directory and run: amplify configure.
+(Slide 10)
+First, let’s configure Amplify to connect to your AWS account. Navigate to your project’s root directory and run: amplify configure.
 This command will guide you through logging into your AWS account and setting up a profile. Just follow the prompts—it’s quick and easy.
 
-
-Initialize Project
-02
-amplify init
-
+(Slide 11)
 Then we need to initialize Amplify for your project by running amplify init
 This will connect your local application to the AWS Amplify backend and generates essential configuration files, such as the .amplify folder and team-provider-info.json, to manage project settings and resources. The CLI automatically configures itself for your app's framework such as react, or android and guides you to select your preferred editor, like VS Code. 
 
-
-
-
-
-
-Add Authentication
-03
-amplify add auth
+(Slide 12)
 Now, let’s add authentication by running amplify add auth
 This command walks you through setting up user authentication. You can use default settings for a basic setup or customize options like MFA and social logins. Once done, Amplify will create a Cognito User Pool for user management and an Identity Pool for secure access to AWS resources.
 
-Add a Function
-04
-amplify add function
-Now let  add backend logic by running amplify add function
+(Slide 13)
+Now let's add backend logic by running amplify add function
 This will create a Lambda function. You’ll be prompted to name the function and select a runtime, like Node.js or Python. Once configured, a CloudFormation template is generated, and you can add your custom logic directly in the function code.
 
-
-Add an endpoint
-05
-amplify add api
+(Slide 14)
 Next, we need an API to trigger the Lambda function by running amplify add api:
 This command lets you create a REST or GraphQL API. Choose REST for this case, and connect it to the Lambda function you just created.
 
-
-Push Changes
-06
-amplify push
+(Slide 15)
 With all resources configured, it’s time to deploy them. Run: amplify push
 This command magically packages everything into CloudFormation templates and provisions your backend resources on AWS. Think of it as the moment your backend goes live!
 
-
-Publish Changes
-07
-amplify publish
+(Slide 16)
 Now it is time to deploy our frontend using the amplify publish command. 
 This builds your frontend, syncs it with the backend, and deploys the entire application to Amplify Hosting. Once complete, you’ll receive a live URL to access your app.
 
-
-Add Env
-08
-amplify add env
-amplify checkout env
+(Slide 17)
 If you need a new environment, for example, staging or production, you can set it up by running: amplify add env
 This will clone your current setup into a new environment, and you just checkout the environment like git allowing you to maintain isolated configurations for different stages of development. 
-And that’s it! It’s so easy to work with the cloud using Amplify. It handles all the heavy lifting and basically does all the magic for you, making cloud development simple, fast, and efficient.
+And that’s it! It’s so easy to work with the cloud using Amplify. It handles all the heavy lifting and basically does all the magic for you, making cloud development simple, fast, and efficient.
 While Amplify has provided a fast and easy way to integrate our application with AWS, we’ve also faced several challenges along the way. Now let Cynthia to share more about the challenges we encountered.
 
+SPEAKER 4 - Cynthia
 
-
-Challenges We Faced
+(Slide 18)
 We faced many challenges over the course of this project, especially with our cloud stack.
 
-Flaky Tests
-PROBLEM
-SOLUTION
-Extend wait times within tests to ensure operation completion
-Cloud based integration tests
-Tests affect the test database
-Timing and race conditions
+(Slide 19)
 One of the problems we faced was our integration tests. We had these tests remain cloud based, using a test database with the same configuration as our production database. Because of this, timing and race conditions came into play, as our integration tests would make real API calls to our server, which takes time to receive a response from. We would often have to change the time delays within each test so they could wait long enough to receive a response in order for them to pass.
 
-Limited Documentation
-PROBLEM
-SOLUTION
-Reliance on outside sources
-Debugging and researching
-Trial and error
-Getting more eyes on the problem
-Limited documentation on some AWS services
-Mainly Amplify and DynamoDB
+(Slide 20)
 Another problem we faced was the limited documentation on the services we were using, especially for Amplify and DynamoDB. While Amplify’s documentation was useful, there was a lot of information missing, including connecting it with a mobile UI and integrating and customizing the authenticator. We relied heavily on sources like stack overflow and legacy documentation from AWS. DynamoDB’s documentation was less useful, being very confusing and unclear on how queries should be formulated, with limited examples that only covered very average use cases. Our solution for this was to spent lots of time debugging and researching, with lots of trial and error throughout this process.
 
 If we were still having problems after trying these solutions, we would ask our group mates for help. Getting more eyes on the problem was a surefire way for us to get a problem solved.
 
-Cost & Resource Duplication
-PROBLEM
-SOLUTION
-Reduce number of environments
-Reduce number of database tables
-AWS services can be expensive
-Amplify environments
-DynamoDB tables
+(Slide 21)
 Another problem we were faced with was cost. AWS services can be expensive and we weren’t keen on racking up a high bill. This led to us reducing resource duplication where possible in our architecture. We limited ourselves to 3 Amplify environments: main, dev, and test. Additionally, we tried to reduce the number of DynamoDB tables we would require. We knew this would be a problem at the very start of the project, so we planned our application to use as few tables as possible, keeping into account that we needed an instance of each table for each environment, meaning we needed to multiple the number of tables by 3. 
 
-Using AWS Cloud Services
-Good for getting started quickly
-Limited scalability for complex projects
-Hand wavy
-Steep learning curve
-Balance between simplicity, functionality, and cost
+(Slide 22)
 Services like Amplify can be helpful for the beginning phases of a project due to its simplicity, rapid setup, and ability to integrate with other AWS services. However, the need for manual adjustments and custom solutions increases with Amplify as projects grow more complex. Cloud tools like Amplify can be extremely hand-wavy and difficult to learn on the fly, creating a steep learning curve to overcome at the beginning of a project. Overall, we found that balancing simplicity, functionality, and cost was key when working with limited resources in the cloud.
 
-
-Any Questions?
+(Slide 23)
 Thank you all for listening! Does anyone have any questions?
