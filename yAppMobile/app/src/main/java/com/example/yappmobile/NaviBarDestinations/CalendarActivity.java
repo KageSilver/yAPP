@@ -1,7 +1,6 @@
 package com.example.yappmobile.NaviBarDestinations;
 
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.CalendarView;
@@ -10,7 +9,6 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.fragment.app.FragmentContainerView;
 
 import com.amplifyframework.auth.AuthUser;
 import com.amplifyframework.core.Amplify;
@@ -219,7 +217,8 @@ public class CalendarActivity extends AppCompatActivity
     private String formatCompareDate(Calendar cal)
     {
         // formats date to compare with values in the api response
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.FFF'Z'");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T00:00:00.000'Z");
+        System.out.println("***************************************"+formatter.format(cal.getTime()));
         return formatter.format(cal.getTime());
     }
 }
