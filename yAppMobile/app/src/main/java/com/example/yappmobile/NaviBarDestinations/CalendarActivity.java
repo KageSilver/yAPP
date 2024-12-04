@@ -218,7 +218,6 @@ public class CalendarActivity extends AppCompatActivity
     {
         // formats date to compare with values in the api response
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T00:00:00.000'Z");
-        System.out.println("***************************************"+formatter.format(cal.getTime()));
         return formatter.format(cal.getTime());
     }
 }
