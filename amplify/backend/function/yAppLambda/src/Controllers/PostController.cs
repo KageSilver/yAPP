@@ -57,7 +57,7 @@ public class PostController : ControllerBase
             return NotFound("Post creator not found");
         }
 
-        if (request.DiaryEntry && GetDiariesByUser(request.UID, DateTime.Now.Date).Result.Value.Count > 0)
+        if (request.DiaryEntry && GetDiariesByUser(request.UID, DateTime.UtcNow.Date).Result.Value.Count > 0)
         {
             return BadRequest("Cannot make more than one diary entry a day");
         }
