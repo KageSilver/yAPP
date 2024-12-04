@@ -602,7 +602,7 @@ public class PostControllerTests
         _mockPostActions.Setup(p => p.GetDiariesByUser(It.IsAny<string>(),It.IsAny<DateTime>())).ReturnsAsync(list);
 
         // Act
-        var result = await _postController.GetDiariesByUser(post.UID, DateTime.Now);
+        var result = await _postController.GetDiariesByUser(post.UID, DateTime.Now.Date);
         var resultPosts = result.Value;
 
         // Assert
@@ -622,7 +622,7 @@ public class PostControllerTests
     public async Task GetDiariesByUser_ShouldReturnBadRequest_WithInvalidUID()
     {
         // Act
-        var result = await _postController.GetDiariesByUser(null, DateTime.Now);
+        var result = await _postController.GetDiariesByUser(null, DateTime.Now.Date);
 
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -659,7 +659,7 @@ public class PostControllerTests
         _mockPostActions.Setup(p => p.GetDiariesByFriends(It.IsAny<ICognitoActions>(), It.IsAny<string>(), It.IsAny<DateTime>())).ReturnsAsync(list);
 
         // Act
-        var result = await _postController.GetDiariesByFriends(post.UID, now);
+        var result = await _postController.GetDiariesByFriends(post.UID, DateTime.Now.Date);
 
         // Assert
         var returnedList = Assert.IsType<List<Post>>(result.Value);
@@ -680,7 +680,7 @@ public class PostControllerTests
     public async Task GetDiariesByFriends_ShouldReturnBadRequest_WithInvalidUID()
     {
         // Act
-        var result = await _postController.GetDiariesByFriends(null, DateTime.Now);
+        var result = await _postController.GetDiariesByFriends(null, DateTime.Now.Date);
 
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
