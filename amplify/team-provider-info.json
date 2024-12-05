@@ -50,7 +50,7 @@
       "function": {
         "yAppLambda": {
           "deploymentBucketName": "amplify-yapp-dev-94d82-deployment",
-          "s3Key": "amplify-builds/yAppLambda-393230482b637a626c56-build.zip"
+          "s3Key": "amplify-builds/yAppLambda-69624d73443057574a46-build.zip"
         }
       },
       "api": {
@@ -81,7 +81,7 @@
       "function": {
         "yAppLambda": {
           "deploymentBucketName": "amplify-yapp-test-d66f4-deployment",
-          "s3Key": "amplify-builds/yAppLambda-736d63676f3155345676-build.zip"
+          "s3Key": "amplify-builds/yAppLambda-61733038617850706a50-build.zip"
         }
       },
       "api": {

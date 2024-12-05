@@ -401,7 +401,7 @@ public class PostActionsTests
             .Returns(scanToSearchMock.Object);
 
         // Act
-        var result = await _postActionsMock.GetPostsByUser(post.UID, false);
+        var result = await _postActionsMock.GetPostsByUser(post.UID);
 
         // Assert
         Assert.Equal(1, result.Count);
@@ -427,7 +427,7 @@ public class PostActionsTests
             .ThrowsAsync(new Exception("error querying posts"));
 
         // Act
-        var result = await _postActionsMock.GetPostsByUser("uid", false);
+        var result = await _postActionsMock.GetPostsByUser("uid");
 
         // Assert
         Assert.Empty(result);
@@ -547,7 +547,7 @@ public class PostActionsTests
             .Returns(queryFromSearchMock.Object);
 
         // Act
-        var result = await _postActionsMock.GetDiariesByUser(post.UID, now);
+        var result = await _postActionsMock.GetDiariesByUser(post.UID, DateTime.Now.Date);
 
         // Assert
         Assert.Equal(1, result.Count);
@@ -574,7 +574,7 @@ public class PostActionsTests
             .ThrowsAsync(new Exception("error querying diaries"));
 
         // Act
-        var result = await _postActionsMock.GetDiariesByUser("uid", DateTime.Now);
+        var result = await _postActionsMock.GetDiariesByUser("uid", DateTime.Now.Date);
 
         // Assert
         Assert.Empty(result);
@@ -720,7 +720,7 @@ public class PostActionsTests
             .Returns(queryFromSearchMockPost.Object);
 
         // Act
-        var result = await _postActionsMock.GetDiariesByFriends(_cognitoActions, post.UID, now);
+        var result = await _postActionsMock.GetDiariesByFriends(_cognitoActions, post.UID, DateTime.Now.Date);
 
         // Assert
         Assert.Equal(2, result.Count); // Needs to be 2 since there's "technically" two friends and both their posts return
@@ -747,7 +747,7 @@ public class PostActionsTests
             .Throws(new Exception("Could not load diary entries"));
             
         // Act
-        var result = await _postActionsMock.GetDiariesByFriends(_cognitoActions, "uid", DateTime.Now);
+        var result = await _postActionsMock.GetDiariesByFriends(_cognitoActions, "uid", DateTime.Now.Date);
 
         // Assert
         Assert.Empty(result);

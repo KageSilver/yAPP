@@ -30,11 +30,12 @@ public class PostControllerIntegrationTests
 
     //we must use simulator email to test the user without using email quota
     private const string TestUserEmail = "bounce4@simulator.amazonses.com";
-    private const string TestUserEmail2 = "bounce3@simulator.amazonses.com";
+    private const string TestUserEmail2 = "bounce5@simulator.amazonses.com";
     private static string _testUserId = ""; // this will be updated in the first test when the test user is created
 
     private ICognitoActions _cognitoActions;
     private IPostActions _postActions;
+    private IFriendshipActions _friendshipActions;
 
     public PostControllerIntegrationTests()
     {
@@ -59,6 +60,7 @@ public class PostControllerIntegrationTests
         IDynamoDBContext dynamoDbContext = new DynamoDBContext(client);
 
         _postActions = new PostActions(_appSettings, dynamoDbContext);
+        _friendshipActions = new FriendshipActions(_appSettings, dynamoDbContext);
     }
 
     #region CreatePost Tests
@@ -85,7 +87,7 @@ public class PostControllerIntegrationTests
             DiaryEntry = false,
             Anonymous = true
         };
-        
+
         var content = new StringContent(JsonConvert.SerializeObject(newPost), System.Text.Encoding.UTF8,
             "application/json");
 
@@ -168,7 +170,7 @@ public class PostControllerIntegrationTests
             DiaryEntry = true,
             Anonymous = true
         };
-        
+
         var content = new StringContent(JsonConvert.SerializeObject(newPost), System.Text.Encoding.UTF8,
             "application/json");
 
@@ -192,7 +194,7 @@ public class PostControllerIntegrationTests
         await _postActions.DeletePost(post.PID);
         // Test user is deleted in GetDiariesByFriends_ShouldReturnPosts_WhenSuccessful()
     }
-    
+
     [Fact, Order(5)]
     public async Task CreatePost_SecondDiaryPost_ReturnsBadRequest()
     {
@@ -213,19 +215,17 @@ public class PostControllerIntegrationTests
             DiaryEntry = true,
             Anonymous = true
         };
-        
-        var content1 = new StringContent(JsonConvert.SerializeObject(newPost1), System.Text.Encoding.UTF8,
-            "application/json");
+
+        var content1 = new StringContent(JsonConvert.SerializeObject(newPost1), System.Text.Encoding.UTF8,"application/json");
         var response1 = await _client.PostAsync("/api/posts/createPost", content1);
         await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
         Assert.Equal(System.Net.HttpStatusCode.OK, response1.StatusCode);
-        
+
         var responseString = await response1.Content.ReadAsStringAsync();
         var post = JsonConvert.DeserializeObject<Post>(responseString);
-        
-        var content2 = new StringContent(JsonConvert.SerializeObject(newPost2), System.Text.Encoding.UTF8,
-            "application/json");
-        
+
+        var content2 = new StringContent(JsonConvert.SerializeObject(newPost2), System.Text.Encoding.UTF8,"application/json");
+
         // Act
         var response2 = await _client.PostAsync("/api/posts/createPost", content2);
         await Task.Delay(TimeSpan.FromSeconds(2)); // Adjust the delay duration as needed
@@ -238,7 +238,7 @@ public class PostControllerIntegrationTests
         await _postActions.DeletePost(post.PID);
         // Test user is deleted in GetDiariesByFriends_ShouldReturnPosts_WhenSuccessful()
     }
-    
+
     #endregion
 
     #region GetRecentPosts Tests
@@ -256,7 +256,7 @@ public class PostControllerIntegrationTests
             DiaryEntry = false,
             Anonymous = true
         };
-        
+
         var content = new StringContent(JsonConvert.SerializeObject(newPost), System.Text.Encoding.UTF8,
             "application/json");
 
@@ -266,7 +266,7 @@ public class PostControllerIntegrationTests
 
         var responseString = await response1.Content.ReadAsStringAsync();
         var responsePost = JsonConvert.DeserializeObject<Post>(responseString);
-        
+
         var list = new List<Post>();
         list.Add(responsePost);
 
@@ -277,12 +277,12 @@ public class PostControllerIntegrationTests
 
         var responseString2 = response2.Content.ReadAsStringAsync().Result;
         Assert.NotNull(responseString2);
-        
+
         // Clean up
         await _postActions.DeletePost(responsePost.PID);
         // Test user is deleted in GetDiariesByFriends_ShouldReturnPosts_WhenSuccessful()
     }
-    
+
     [Fact, Order(7)]
     public async Task GetRecentPosts_ShouldReturnBadRequest_WithInvalidRequest()
     {
@@ -296,7 +296,7 @@ public class PostControllerIntegrationTests
     #endregion
 
     #region DeletePost Tests
-    
+
     [Fact, Order(8)]
     public async Task DeletePost_ShouldReturnTrue_WhenPostIsDeletedSuccessfully()
     {
@@ -310,7 +310,7 @@ public class PostControllerIntegrationTests
             DiaryEntry = false,
             Anonymous = true
         };
-        
+
         var content = new StringContent(JsonConvert.SerializeObject(newPost), System.Text.Encoding.UTF8,
             "application/json");
 
@@ -331,7 +331,7 @@ public class PostControllerIntegrationTests
 
         // Test user is deleted in GetDiariesByFriends_ShouldReturnPosts_WhenSuccessful()
     }
-    
+
     [Fact, Order(9)]
     public async Task DeletePost_ShouldReturnBadRequest_WhenPostIdIsNull()
     {
@@ -341,7 +341,7 @@ public class PostControllerIntegrationTests
         // Assert
         Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
     }
-    
+
     [Fact, Order(10)]
     public async Task DeletePost_ShouldReturnFalse_WhenDeleteFails()
     {
@@ -372,7 +372,7 @@ public class PostControllerIntegrationTests
             DiaryEntry = false,
             Anonymous = true
         };
-        
+
         var content = new StringContent(JsonConvert.SerializeObject(newPost), System.Text.Encoding.UTF8,
             "application/json");
 
@@ -382,7 +382,7 @@ public class PostControllerIntegrationTests
 
         var responseString = await response1.Content.ReadAsStringAsync();
         var responsePost = JsonConvert.DeserializeObject<Post>(responseString);
-        
+
         // make updates to the post
         responsePost.PostTitle = "edited post";
         responsePost.PostBody = "this post has been edited";
@@ -409,14 +409,14 @@ public class PostControllerIntegrationTests
         await _postActions.DeletePost(responsePost.PID);
         // Test user is deleted in GetDiariesByFriends_ShouldReturnPosts_WhenSuccessful()
     }
-    
+
     [Fact, Order(12)]
     public async Task UpdatePost_ShouldReturnBadRequest_WhenRequestIsNull()
     {
         // Arrange
         var content = new StringContent(JsonConvert.SerializeObject(null), System.Text.Encoding.UTF8,
             "application/json");
-        
+
         // Act
         var response = await _client.PutAsync($"/api/posts/updatePost", content);
 
@@ -425,9 +425,9 @@ public class PostControllerIntegrationTests
     }
 
     #endregion
-    
+
     #region GetPostById Tests
-    
+
     [Fact, Order(13)]
     public async Task GetPostById_ShouldReturnPost_WhenSuccessful()
     {
@@ -442,7 +442,7 @@ public class PostControllerIntegrationTests
             DiaryEntry = false,
             Anonymous = true
         };
-        
+
         var content = new StringContent(JsonConvert.SerializeObject(request), System.Text.Encoding.UTF8,
             "application/json");
 
@@ -489,11 +489,11 @@ public class PostControllerIntegrationTests
     {
         // Act
         var response = await _client.GetAsync($"/api/posts/getPostById?pid={null}");
-        
+
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
-    
+
     #endregion
 
     #region GetPostsByUser Tests
@@ -512,7 +512,7 @@ public class PostControllerIntegrationTests
             DiaryEntry = false,
             Anonymous = true
         };
-        
+
         var content = new StringContent(JsonConvert.SerializeObject(request), System.Text.Encoding.UTF8,
             "application/json");
 
@@ -523,7 +523,7 @@ public class PostControllerIntegrationTests
         var newPost = JsonConvert.DeserializeObject<Post>(responseString1);
 
         // Act
-        var response2 = await _client.GetAsync($"/api/posts/getPostsByUser?uid={_testUserId}&diaryEntry={false}");
+        var response2 = await _client.GetAsync($"/api/posts/getPostsByUser?uid={_testUserId}");
         var responseString2 = await response2.Content.ReadAsStringAsync();
         var postList = JsonConvert.DeserializeObject<List<Post>>(responseString2);
 
@@ -547,8 +547,8 @@ public class PostControllerIntegrationTests
     public async Task GetPostsByUser_ShouldReturnBadRequest_WithInvalidUID()
     {
         // Act
-        var response = await _client.GetAsync($"/api/posts/getPostsByUser?uid={null}&diaryEntry={false}");
-        
+        var response = await _client.GetAsync($"/api/posts/getPostsByUser?uid={null}");
+
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
@@ -571,7 +571,7 @@ public class PostControllerIntegrationTests
             DiaryEntry = true,
             Anonymous = true
         };
-        
+
         var content = new StringContent(JsonConvert.SerializeObject(request), System.Text.Encoding.UTF8,
             "application/json");
 
@@ -582,12 +582,13 @@ public class PostControllerIntegrationTests
         var newPost = JsonConvert.DeserializeObject<Post>(responseString1);
 
         // Act
-        var date = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffK");
+        var date = DateTime.Now.Date.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
         var response2 = await _client.GetAsync($"/api/posts/getDiariesByUser?uid={_testUserId}&current={date}");
         var responseString2 = await response2.Content.ReadAsStringAsync();
         var postList = JsonConvert.DeserializeObject<List<Post>>(responseString2);
 
         // Assert
+        Console.WriteLine(postList);
         Assert.Equal(1, postList.Count);
         Assert.Equal(newPost.PID, postList.First().PID);
         Assert.Equal(newPost.UID, postList.First().UID);
@@ -600,6 +601,7 @@ public class PostControllerIntegrationTests
 
         // Clean up
         await _postActions.DeletePost(newPost.PID);
+        await Task.Delay(TimeSpan.FromSeconds(2));
         // Test user is deleted in GetDiariesByFriends_ShouldReturnPosts_WhenSuccessful()
     }
 
@@ -607,8 +609,8 @@ public class PostControllerIntegrationTests
     public async Task GetDiariesByUser_ShouldReturnBadRequest_WithInvalidUID()
     {
         // Act
-        var response = await _client.GetAsync($"/api/posts/getDiariesByUser?uid={null}&current={DateTime.Now}");
-        
+        var response = await _client.GetAsync($"/api/posts/getDiariesByUser?uid={null}&current={DateTime.Now.Date}");
+
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
@@ -636,7 +638,7 @@ public class PostControllerIntegrationTests
         var friendRequest = new FriendRequest
         {
             FromUserName = TestUserEmail2,
-            ToUserId = _testUserId
+            ToUserName = TestUserEmail
         };
 
         var content = new StringContent(JsonConvert.SerializeObject(friendRequest), System.Text.Encoding.UTF8,
@@ -668,7 +670,7 @@ public class PostControllerIntegrationTests
             DiaryEntry = true,
             Anonymous = true
         };
-        
+
         content = new StringContent(JsonConvert.SerializeObject(request), System.Text.Encoding.UTF8,
             "application/json");
 
@@ -679,7 +681,7 @@ public class PostControllerIntegrationTests
         var newPost = JsonConvert.DeserializeObject<Post>(responseString1);
 
         // Act
-        var date = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffK");
+        var date = DateTime.Now.Date.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
         var response2 = await _client.GetAsync($"/api/posts/getDiariesByFriends?uid={_testUserId}&current={date}");
         var responseString2 = await response2.Content.ReadAsStringAsync();
         var postList = JsonConvert.DeserializeObject<List<Post>>(responseString2);
@@ -696,6 +698,7 @@ public class PostControllerIntegrationTests
         Assert.Equal(newPost.Anonymous, postList.First().Anonymous);
 
         // Clean up
+        await _friendshipActions.DeleteFriendship(TestUserEmail2, TestUserEmail);
         await _cognitoActions.DeleteUser(TestUserEmail);
         await _cognitoActions.DeleteUser(TestUserEmail2);
         await _postActions.DeletePost(newPost.PID);
@@ -705,8 +708,8 @@ public class PostControllerIntegrationTests
     public async Task GetDiariesByFriends_ShouldReturnBadRequest_WithInvalidUID()
     {
         // Act
-        var response = await _client.GetAsync($"/api/posts/getDiariesByFriends?uid={null}&current={DateTime.Now}");
-        
+        var response = await _client.GetAsync($"/api/posts/getDiariesByFriends?uid={null}&current={DateTime.Now.Date}");
+
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }

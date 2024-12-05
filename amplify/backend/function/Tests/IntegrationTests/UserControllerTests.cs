@@ -26,7 +26,7 @@ public class UserControllerIntegrationTests
     private readonly AmazonCognitoIdentityProviderClient _cognitoIdentityProvider;
 
     //we must use simulator email to test the user without using email quota
-    private const string TestUserEmail = "bounce@simulator.amazonses.com";
+    private const string TestUserEmail = "bounce1@simulator.amazonses.com";
     private static string _testUserId = ""; // this will be updated from a test and use for another test
 
     private  ICognitoActions _cognitoActions;
@@ -61,7 +61,6 @@ public class UserControllerIntegrationTests
     {
         var response = await _client.GetAsync($"/api/users/getUserByName?username={TestUserEmail}");
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-       
     }
 
     [Fact, Order(3)]
@@ -85,7 +84,6 @@ public class UserControllerIntegrationTests
         var response2 = await _client.GetAsync($"/api/users/getUserById?id={_testUserId}");
         Assert.Equal(HttpStatusCode.OK, response2.StatusCode);
     }
-    
 
     [Fact, Order(5)]
     public async Task UpdateUser_ShouldReturnBadRequest_WhenRequestIsNull()

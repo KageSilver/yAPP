@@ -22,7 +22,7 @@ import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.AuthenticatorActivity;
 import com.example.yappmobile.CardList.CardListHelper;
 import com.example.yappmobile.CardList.IListCardItemInteractions;
-import com.example.yappmobile.PostEntryActivity;
+import com.example.yappmobile.Posts.PostEntryActivity;
 import com.example.yappmobile.R;
 
 import java.util.concurrent.CompletableFuture;
@@ -60,7 +60,7 @@ public class MyPostsFragment extends Fragment implements IListCardItemInteractio
 
         future.thenAccept(uid -> {
             getActivity().runOnUiThread(() -> {
-                String myPostsAPI = "/api/posts/getPostsByUser?uid=" + uid + "&diaryEntry=false";
+                String myPostsAPI = "/api/posts/getPostsByUser?uid=" + uid;
                 postListHelper.loadItems(myPostsAPI, rvPosts);
             });
         });
@@ -74,6 +74,7 @@ public class MyPostsFragment extends Fragment implements IListCardItemInteractio
         intent.putExtra("currentPost", currentPost);
         activityLauncher.launch(intent);
     }
+
 
 
     ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(

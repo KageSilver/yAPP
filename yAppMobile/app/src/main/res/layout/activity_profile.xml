@@ -78,17 +78,6 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/profile_uuid_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginRight="24dp"
-                    android:layout_marginBottom="24dp"
-                    android:text="UUID"
-                    android:textColor="@color/white"
-                    android:textSize="16sp" />
-
-                <TextView
                     android:id="@+id/profile_bio_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -106,7 +95,9 @@
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/profile_tabs"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:elevation="16dp">
 
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/profile_my_posts_tab"
@@ -153,7 +144,7 @@
         android:id="@+id/bottom_navigation"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
+        android:background="@color/white"
         android:fadingEdge="none"
         android:padding="10dp"
         app:compatShadowEnabled="false"
@@ -164,7 +155,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
-        app:menu="@menu/bottom_nav_menu"></com.google.android.material.bottomnavigation.BottomNavigationView>
+        app:menu="@menu/bottom_nav_menu"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 

@@ -1,23 +1,36 @@
 <script setup>
-	import { get, put } from "aws-amplify/api";
+	import { del, get } from "aws-amplify/api";
 	import { getCurrentUser } from "aws-amplify/auth";
 	import { onMounted, ref } from "vue";
+	import { useRouter } from "vue-router";
+	import Alert from "../components/Alert.vue";
 	import ConfirmationModal from "../components/ConfirmationModal.vue";
 	import ProfileHeader from "../components/ProfileHeader.vue";
 	import LoadingScreen from "../components/LoadingScreen.vue";
 
+	const router = useRouter();
 	const username = ref("");
 	const jsonData = ref([]);
 	const loading = ref(false);
 
-	// Get list of friends as JSON
+	const showAlert = ref(false);
+	const showModal = ref(false);
+	const message = ref("");
+	const alertMsg = ref({
+		header: "",
+		message: "",
+	});
+
+	const currentFriend = ref(null);
+	const currentFriendship = ref(null);
+
 	onMounted(async () => {
 		const user = await getCurrentUser();
 		username.value = user.username;
-		getFriends();
+		await getFriends();
 	});
 
-	// Get authenticated user's list of current friends
+	// Get user's list of current friends
 	const getFriends = async () => {
 		loading.value = true;
 		try {
@@ -25,7 +38,6 @@
 				apiName: "yapp",
 				path: `/api/friends/getFriendsByStatus?userName=${username.value}&status=1`,
 			});
-
 			const { body } = await restOperation.response;
 			jsonData.value = await body.json();
 		} catch (error) {
@@ -34,12 +46,7 @@
 		loading.value = false;
 	};
 
-	const showModal = ref(false);
-	const currentFriend = ref(null);
-	const message = ref("");
-	const currentFriendship = ref(null);
-
-	const openModal = friendship => {
+	const setModal = friendship => {
 		showModal.value = true;
 		currentFriendship.value = friendship;
 
@@ -52,44 +59,56 @@
 		message.value = `Are you sure you want to unfollow ${currentFriend.value}?`;
 	};
 
+	const setAlert = (header, message) => {
+		alertMsg.value.header = header;
+		alertMsg.value.message = message;
+		showAlert.value = true;
+	}
+
 	const closeModal = () => {
 		showModal.value = false;
 	};
 
+	const closeAlert = () => {
+		showAlert.value = false;
+	};
+
+	// Triggers when user confirms to unfollow
 	const confirmUnfollow = async () => {
-		// Wait for unfollowing friend to be fully proccessed
+		// Wait for deletion to be fully proccessed
 		await unfollowFriend(currentFriendship.value);
+
 		closeModal();
+
 		// Update the current list of friends
 		await getFriends();
 	};
 
-	// Unfollow sent friend
+	// Unfollow the chosen friend :(
 	const unfollowFriend = async friendship => {
+		//set loading screen
 		loading.value = true;
 		try {
-			const newRequest = {
-				fromUserName: friendship.FromUserName,
-				toUserName: friendship.ToUserName,
-				status: 2,
-			};
-
-			const sendPutRequest = put({
+			const deleteRequest = del({
 				apiName: "yapp",
-				path: "/api/friends/updateFriendRequest",
-				headers: {
-					"Content-type": "application/json",
-				},
-				options: {
-					body: newRequest,
-				},
+				path: `/api/friends/deleteFriendship?fromUserName=${friendship.FromUserName}&toUserName=${friendship.ToUserName}`,
 			});
-			await sendPutRequest.response;
-		} catch (err) {
-			console.error(err);
+			await deleteRequest.response;
+
+			//set alert
+			setAlert("Yipee!", "Friendship deleted successfully");
+
+			//send it back to the previous page
+			router.push({
+				name: "friends",
+			});
+		} catch (e) {
+			console.log("DELETE call failed: ", e);
+			setAlert("Oops!", "Failed to delete friendship");
 		}
+		//disable loading screen
 		loading.value = false;
-	};
+	}
 </script>
 
 <template>
@@ -106,9 +125,9 @@
 			<div
 				class="flex-box mt-5 px-16 pr-32"
 				v-for="friendship in jsonData"
-				:key="friendship.ToUserName || friendship.FromUserName"
-			>
+				:key="friendship.ToUserName || friendship.FromUserName">
 				<div class="request bg-deep-dark p-5 text-white">
+					<!--Display the friend's username (not the current user)-->
 					<h4 v-if="friendship.ToUserName !== username">
 						{{ friendship.ToUserName }}
 					</h4>
@@ -116,8 +135,7 @@
 					<div class="request-actions">
 						<button
 							class="rounded-lg bg-light-pink p-4 font-bold text-white"
-							@click="openModal(friendship)"
-						>
+							@click="setModal(friendship)">
 							Unfollow
 						</button>
 					</div>
@@ -127,8 +145,12 @@
 					:close="closeModal"
 					:confirm="confirmUnfollow"
 					header="Woah there!"
-					:message="message"
-				/>
+					:message="message" />
+				<Alert
+					:showModal="showAlert"
+					:header="alertMsg.header"
+					:message="alertMsg.message"
+					:close="closeAlert" />
 			</div>
 		</div>
 	</div>

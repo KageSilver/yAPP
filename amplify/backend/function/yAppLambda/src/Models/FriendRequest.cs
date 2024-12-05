@@ -8,14 +8,11 @@ namespace yAppLambda.Models;
 public class FriendRequest
 {
     [JsonPropertyName("fromUserName")]
-    public string FromUserName { get; set; } 
-    
-    [JsonPropertyName("toUserId")]
-    public string ToUserId { get; set; } 
-    
+    public string FromUserName { get; set; }
+
     [JsonPropertyName("toUserName")]
     public string ToUserName { get; set; }
-    
+
     [JsonPropertyName("status")]
     public int Status { get; set; }
 }

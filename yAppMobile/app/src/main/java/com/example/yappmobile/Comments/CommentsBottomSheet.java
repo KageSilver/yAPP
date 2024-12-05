@@ -11,8 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.core.Amplify;
-import com.example.yappmobile.PostEntryActivity;
+import com.example.yappmobile.Posts.PostEntryActivity;
 import com.example.yappmobile.R;
+import com.example.yappmobile.Votes.IRefreshListener;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -24,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import android.widget.ProgressBar;
 
-public class CommentsBottomSheet extends BottomSheetDialogFragment {
+public class CommentsBottomSheet extends BottomSheetDialogFragment implements IRefreshListener {
 
     private static final String ARG_PID = "pid";
     private static  final String ARG_UID = "uid";
@@ -86,11 +87,9 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
         _recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Initialize the adapter with the fragment reference
-        _adapter = new CommentAdapter(commentList, _uid, this, _parent);
+        _adapter = new CommentAdapter(commentList, _uid, this, _parent,this);
         _recyclerView.setAdapter(_adapter);
 
-        // After loading the data, hide the progress bar
-        // For example, when comments are loaded:
         loadComments();
         // Handle the "Send Comment" button click
         EditText newCommentInput = view.findViewById(R.id.new_comment_input);
@@ -107,9 +106,8 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
     }
 
 
-
-
     private void loadComments() {
+        _progressBar.setVisibility(View.VISIBLE);
         RestOptions options = RestOptions.builder()
                 .addPath("/api/comments/getCommentsByPid?pid=" + _pid)
                 .build();
@@ -117,17 +115,20 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
         Amplify.API.get(options,
                 restResponse -> {
                     try {
+                        commentList.clear(); // Clear the list before adding new items
                         JSONArray commentsArray = new JSONArray(restResponse.getData().asString());
                         for (int i = 0; i < commentsArray.length(); i++) {
                             JSONObject commentObj = commentsArray.getJSONObject(i);
                             String uid = commentObj.getString("uid");
                             String cid = commentObj.getString("cid");
                             String pid = commentObj.getString("pid");
+                            String upvotes = commentObj.getString("upvotes");
+                            String downvotes = commentObj.getString("downvotes");
                             String commentBody = commentObj.getString("commentBody");
                             String createdAt = commentObj.getString("createdAt");
                             String updatedAt = commentObj.getString("updatedAt");
 
-                            Comment comment = new Comment(uid, commentBody, pid, cid, createdAt, updatedAt);
+                            Comment comment = new Comment(uid, commentBody, pid, cid, createdAt, updatedAt,upvotes,downvotes);
                             commentList.add(comment);
                         }
 
@@ -177,7 +178,6 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
                         // Hide the progress bar once the response is received
                         getActivity().runOnUiThread(() -> {
                             _progressBar.setVisibility(View.GONE);
-                            commentList.clear();
                             loadComments();
                         });
                     },
@@ -194,6 +194,12 @@ public class CommentsBottomSheet extends BottomSheetDialogFragment {
         } catch (Exception e) {
             Log.e(LOG_NAME, "Error posting comment", e);
         }
+    }
+
+
+    @Override
+    public void refreshUI() {
+        loadComments();
     }
 }
 

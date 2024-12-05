@@ -6,6 +6,12 @@ yAPP is an anonymous chatting application to provide users, known as Yappers, a 
  - You can view our website on our main environment [here](https://dqn0i6zpqfsuv.cloudfront.net/).
  - We also have a dev environment [here](https://dezluqsjxnkgt.cloudfront.net/).
 
+## Demo
+ - You can view our demo once our AWS interactions have been deleted [here](./Documentation/Demo/Demo.md).
+
+## Presentations
+ - You can view the presentations with their scripts [here](./Documentation/Presentations/).
+
 ## Folder Structure
  - [Backend - Amplify](./amplify/)
  - [Frontend - Mobile](./yAppMobile/)
@@ -26,6 +32,7 @@ yAPP is an anonymous chatting application to provide users, known as Yappers, a 
 ## Worksheet
 - Here is our [worksheet](./Documentation/Sprint%201/Sprint%201%20Worksheet.md) for sprint 1.
 - Here is our [worksheet](./Documentation/Sprint%202/Sprint%202%20Worksheet.md) for sprint 2.
+- Here is our [worksheet](./Documentation/Sprint%203/Sprint%203%20Worksheet.md) for sprint 3.
 
 ## Milestones
 - Here are the [milestones](https://github.com/KageSilver/yAPP/milestones) we set up for our project.

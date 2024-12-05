@@ -21,6 +21,7 @@ public class CommentControllerTests
     private readonly Mock<ICognitoActions> _mockCognitoActions;
     private readonly CommentController _commentController;
     private readonly Mock<ICommentActions> _mockCommentActions;
+    private readonly Mock<IVoteActions> _mockVoteActions;
 
     public CommentControllerTests()
     {
@@ -28,8 +29,9 @@ public class CommentControllerTests
         _dynamoDbContextMock = new Mock<IDynamoDBContext>();
         _mockCognitoActions = new Mock<ICognitoActions>();
         _mockCommentActions = new Mock<ICommentActions>();
+        _mockVoteActions = new Mock<IVoteActions>();
         _commentController = new CommentController(_mockAppSettings.Object, _mockCognitoActions.Object,
-            _dynamoDbContextMock.Object, _mockCommentActions.Object);
+            _dynamoDbContextMock.Object, _mockCommentActions.Object, _mockVoteActions.Object);
     }
 
     #region CreateComment Tests

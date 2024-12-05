@@ -20,14 +20,16 @@ public class PostController : ControllerBase
     private readonly IDynamoDBContext _dbContext;
     private readonly ICognitoActions _cognitoActions;
     private readonly IPostActions _postActions;
+    private readonly IVoteActions _voteActions;
 
     public PostController(IAppSettings appSettings, ICognitoActions cognitoActions, 
-                          IDynamoDBContext dbContext, IPostActions postActions)
+                          IDynamoDBContext dbContext, IPostActions postActions, IVoteActions voteActions)
     {
         _appSettings = appSettings;
         _cognitoActions = cognitoActions;
         _dbContext = dbContext;
         _postActions = postActions;
+        _voteActions = voteActions;
     }
     
     // POST: api/posts/createPost with body { "uid": "uid", "postTitle": "title", "postBody": "body", "diaryEntry": false, "anonymous": false }
@@ -55,7 +57,7 @@ public class PostController : ControllerBase
             return NotFound("Post creator not found");
         }
 
-        if (request.DiaryEntry && GetDiariesByUser(request.UID, DateTime.Now).Result.Value.Count > 0)
+        if (request.DiaryEntry && GetDiariesByUser(request.UID, DateTime.UtcNow.Date).Result.Value.Count > 0)
         {
             return BadRequest("Cannot make more than one diary entry a day");
         }
@@ -105,24 +107,23 @@ public class PostController : ControllerBase
         return post;
     }
 
-    // GET: api/posts/getPostsByUser?uid={uid}&diaryEntry={diaryEntry}
+    // GET: api/posts/getPostsByUser?uid={uid}
     /// <summary>
-    /// Retrieves all posts from a user, either all public posts or all diary entries.
+    /// Gets all public posts from a user
     /// </summary>
     /// <param name="uid">The uid used to find all posts created by a user.</param>
-    /// <param name="diaryEntry">If the query is for public posts or diary entries.</param>
-    /// <returns>A list of posts created by a user, either public posts or diary entries.</returns>
+    /// <returns>A list of public posts created by a user.</returns>
     [HttpGet("getPostsByUser")]
     [ProducesResponseType(typeof(List<Post>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<List<Post>>> GetPostsByUser(string uid, bool diaryEntry)
+    public async Task<ActionResult<List<Post>>> GetPostsByUser(string uid)
     {
         if(string.IsNullOrEmpty(uid))
         {
             return BadRequest("uid is required");
         }
 
-        var posts = await _postActions.GetPostsByUser(uid, diaryEntry);
+        var posts = await _postActions.GetPostsByUser(uid);
 
         return posts;
     }
@@ -132,7 +133,7 @@ public class PostController : ControllerBase
     /// Gets the diary entries made by a user within a specific day
     /// </summary>
     /// <param name="uid">The author of the diary entry.</param>
-    /// <param name="current">The current day to query.</param>
+    /// <param name="current">12am of a selected date to query.</param>
     /// <returns>The diary entry made by a user on the specified day.</returns>
     [HttpGet("getDiariesByUser")]
     [ProducesResponseType(typeof(List<Post>), StatusCodes.Status200OK)]
@@ -153,7 +154,7 @@ public class PostController : ControllerBase
     /// Gets the diary entries made by the user's friends within a specific day
     /// </summary>
     /// <param name="uid">The user whose friends will be searched for.</param>
-    /// <param name="current">The current day to query.</param>
+    /// <param name="current">12am of a selected date to query.</param>
     /// <returns>A list of diary entries made by the user's friends on the specified day</returns>
     [HttpGet("getDiariesByFriends")]
     [ProducesResponseType(typeof(List<Post>), StatusCodes.Status200OK)]
@@ -207,6 +208,7 @@ public class PostController : ControllerBase
             return BadRequest("Post id is required");
         }
 
+        await _voteActions.DeleteVotes(pid);
         var deleted = await _postActions.DeletePost(pid);
 
         return deleted;

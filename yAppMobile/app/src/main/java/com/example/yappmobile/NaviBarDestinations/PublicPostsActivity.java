@@ -21,7 +21,7 @@ import com.example.yappmobile.AuthenticatorActivity;
 import com.example.yappmobile.CardList.CardListHelper;
 import com.example.yappmobile.CardList.IListCardItemInteractions;
 import com.example.yappmobile.NavBar;
-import com.example.yappmobile.PostEntryActivity;
+import com.example.yappmobile.Posts.PostEntryActivity;
 import com.example.yappmobile.R;
 
 import java.text.SimpleDateFormat;
@@ -181,5 +181,5 @@ public class PublicPostsActivity extends AppCompatActivity implements IListCardI
                         }
                     }
                 }
-        });
+            });
 }

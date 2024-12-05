@@ -28,16 +28,14 @@
 	<div class="h-screen bg-signin-gradient">
 		<authenticator
 			:services="services"
-			:handleAuthStateChange="handleAuthStateChange"
-		>
+			:handleAuthStateChange="handleAuthStateChange">
 			<!-- HEADER -->
 			<template v-slot:header>
 				<div
 					style="
 						padding: var(--amplify-space-large);
 						text-align: center bg-signin-gradient;
-					"
-				>
+					">
 					<img
 						class="amplify-image"
 						alt="yAPP logo"
@@ -47,8 +45,7 @@
 							height: 200px;
 							justify-self: center;
 							opacity: 90%;
-						"
-					/>
+						" />
 				</div>
 				<div style="padding-bottom: var(--amplify-space-large)">
 					<h1 class="text-center text-[3rem] text-white">yAPP</h1>
@@ -60,8 +57,7 @@
 				<div style="padding: var(--amplify-space-large); text-align: center">
 					<p
 						class="amplify-text"
-						style="color: var(--amplify-colors-neutral-40)"
-					>
+						style="color: var(--amplify-colors-neutral-40)">
 						yAPP © All Rights Reserved
 					</p>
 				</div>

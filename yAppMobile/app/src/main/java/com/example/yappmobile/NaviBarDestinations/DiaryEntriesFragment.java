@@ -22,12 +22,11 @@ import com.amplifyframework.auth.AuthUser;
 import com.amplifyframework.core.Amplify;
 import com.example.yappmobile.CardList.CardListHelper;
 import com.example.yappmobile.CardList.IListCardItemInteractions;
-import com.example.yappmobile.PostEntryActivity;
+import com.example.yappmobile.Posts.PostEntryActivity;
 import com.example.yappmobile.R;
 
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -46,7 +45,7 @@ public class DiaryEntriesFragment extends Fragment implements IListCardItemInter
     public void onViewCreated(View view, Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        
+
         ProgressBar loadingSpinner = view.findViewById(R.id.indeterminate_bar);
         diaryEntryHelper = new CardListHelper(this.getContext(), loadingSpinner, "DIARY", this);
 

@@ -31,29 +31,25 @@
 	<div class="absolute right-0 top-0">
 		<button
 			@click="toggleMenu"
-			class="text-gray-600 hover:text-gray-900 focus:outline-none"
-		>
+			class="text-gray-600 hover:text-gray-900 focus:outline-none">
 			<svg
 				class="h-10 w-10"
 				fill="none"
 				stroke="currentColor"
 				viewBox="0 0 24 24"
-				xmlns="http://www.w3.org/2000/svg"
-			>
+				xmlns="http://www.w3.org/2000/svg">
 				<path
 					stroke-linecap="round"
 					stroke-linejoin="round"
 					stroke-width="2"
-					d="M12 6v.01M12 12v.01M12 18v.01"
-				></path>
+					d="M12 6v.01M12 12v.01M12 18v.01"></path>
 			</svg>
 		</button>
 
 		<!-- Dropdown Menu -->
 		<div
 			v-if="isMenuOpen"
-			class="absolute right-0 z-10 mt-2 w-24 rounded border border-gray-200 bg-white text-center shadow-lg"
-		>
+			class="absolute right-0 z-10 mt-2 w-24 rounded border border-gray-200 bg-white text-center shadow-lg">
 			<a
 				href="#"
 				@click="edit"

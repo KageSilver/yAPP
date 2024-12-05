@@ -94,8 +94,7 @@ public class Startup
             //Inject shared connection wrappers if they don't exist
             services.AddSingleton<IAppSettings>(_appSettings);
             services.AddSingleton<ICognitoActions,CognitoActions>();
-            services.AddSingleton<IFriendshipStatusActions, FriendshipStatusActions>();  
-            
+            services.AddSingleton<IFriendshipStatusActions, FriendshipStatusActions>();
            
             // Register AmazonDynamoDBClient as a singleton with the specified region
             services.AddSingleton<IAmazonDynamoDB>(sp =>
@@ -112,6 +111,8 @@ public class Startup
             services.AddScoped<IFriendshipActions, FriendshipActions>();
             services.AddScoped<IPostActions, PostActions>();
             services.AddScoped<ICommentActions, CommentActions>();
+            services.AddScoped<IAwardActions, AwardActions>();
+            services.AddScoped<IVoteActions, VoteActions>();
 
         }
         catch (Exception e)

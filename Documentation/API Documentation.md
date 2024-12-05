@@ -1,5 +1,49 @@
 # API Documentation
 
+## Awards
+
+### GetAwardById
+ - Retrieves an award by a unique identifier.
+ - GET: api/awards/getAwardById?aid={aid}
+   - aid: The unique identifier for an award
+ - Response: returns the award object associated with the specified award id
+   - { "aid": "aid", "pid": "pid", "uid": "uid", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "name": "name", "type": "type", "tier": 0 }
+ - Status codes:
+   - 200 OK
+   - 400 Bad Request: award ID is required
+   - 404 Not Found: Award does not exist
+
+### GetAwardsByUser
+ - Gets all awards from a user
+ - GET: api/awards/getAwardsByUser?uid={uid}
+   - uid: The user who earned the awards being fetched
+ - Response: returns a list of award objects that have been earned by the user associated with the specified user id
+   - [ { "aid": "aid", "pid": "pid", "uid": "uid", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "name": "name", "type": "type", "tier": 0 } ]
+ - Status codes:
+   - 200 Ok
+   - 400 Bad Request: uid is required
+
+### GetAwardsByPost
+ - Gets all awards from a post
+ - GET: api/awards/getAwardsByPost?pid={pid}
+   - pid: The post on which the awards were earned
+ - Response: returns a list of award objects that have been earned on a post associated with the specified post id
+   - [ { "aid": "aid", "pid": "pid", "uid": "uid", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "name": "name", "type": "type", "tier": 0 } ]
+ - Status codes:
+   - 200 Ok
+   - 400 Bad Request: pid is required
+
+### GetNewAwardsByUser
+ - Gets new awards a user has earned since this endpoint was last called
+ - GET: api/awards/getNewAwardsByUser?uid={uid}
+   - uid: The user who earned the awards being fetched
+ - Response: returns a list of award objects that have been earned by the specified user through the checks done in this endpoint
+   - [ { "aid": "aid", "pid": "pid", "uid": "uid", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "name": "name", "type": "type", "tier": 0 } ] 
+ - Status codes:
+   - 200 Ok
+   - 400 Bad Request: uid is required
+   - 404 Not Found: User does not exist
+
 ## Comments
 
 ### GetPostByCid
@@ -90,6 +134,17 @@
     - 200 OK
     - 400 Bad Request: username is required
 
+### GetFriendship
+ - Retrieves the friendship between fromUsername and toUsername.
+ - GET: api/friends/getFriendship?fromUsername={username1}&toUsername={username2}
+    - fromUsername: The username of the friendship's sender
+    - toUsername: The username of the friendship's recipient
+ - Response: returns the friendship object associated with the two specified users
+    - { "FromUserName": "string", "ToUserName": "string", "Status": 0, "CreatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "UpdatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ" }
+ - Status codes:
+    - 200 OK
+    - 400 Bad Request: Usernames are required
+
 ### SendFriendRequest
  - Sends a friend request from one user to another.
  - POST: api/friends/friendRequest
@@ -116,6 +171,17 @@
         - Failed to update friendship status
     - 404 Not Found: Friendship not found
 
+### DeleteFriendship
+ - Deletes a friendship from the database.
+ - DELETE: api/friends/deleteFriendship?fromUsername={username1}&toUsername={username2}
+    - fromUsername: The username of the friendship's sender
+    - toUsername: The username of the friendship's recipient
+ - Response: returns whether the deletion was successful
+ - Status codes:
+    - 200 OK
+    - 400 Bad Request: Usernames are required
+    - 404 Not Found: The friendship doesn't exist
+
 ## Posts
 
 ### GetPostById
@@ -130,10 +196,9 @@
     - 404 Not Found: Post does not exist
 
 ### GetPostsByUser
- - Retrieves all posts from a user, either all public posts or all diary entries.
- - GET: api/posts/getPostsByUser?uid={uid}&diaryEntry={diaryEntry}
+ - Retrieves all public posts from a user
+ - GET: api/posts/getPostsByUser?uid={uid}
     - uid: The uid used to find all posts created by a user
-    - diaryEntry: If the query is for public posts or diary entries
  - Response: returns a list of posts by the specified user
     - [ { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true } ]
  - Status codes:
@@ -155,7 +220,7 @@
  - Gets diary entry posts from a specified user from a specified date
  - GET: api/posts/getDiariesByUser?uid={uid}&current={current}
     - uid: The uid to find a diary entry by the user
-    - current: The specified date to search for diary entries made on that date
+    - current: 12am of a specific date search for diary entries made on that date
  - Response: returns a diary entry post that was created by the specified user on a specified date
     - { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true }
  - Status codes:
@@ -166,7 +231,7 @@
  - Gets diary entry posts from all friends of a specified user
  - GET: api/posts/getDiariesByFriends?uid={uid}&current={current}
     - uid: The uid to find a diary entry by the user's friends
-    - current: The specified date to search for diary entries made on that date
+    - current: 12am of a specific date search for diary entries made on that date
  - Response: returns a list of posts made by the users friends on a specified date
     - [ { "pid": "string", "createdAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "updatedAt": "yyyy-MM-ddTHH:mm:ss.FFFZ", "uid": "string", "postTitle": "string", "postBody": "string", "upvotes": 0, "downvotes": 0, "diaryEntry": false, "anonymous": true } ]
  - Status codes:
@@ -240,3 +305,48 @@
     - 200 OK
     - 400 Bad Request: request body is required and must contain username and name
     - 404 Not Found: User not found
+
+## Votes
+
+### GetVote
+ - Get the given vote by uid, pid, and type
+ - GET: api/votes/getVoteStatus?uid={uid}&pid={pid}&type={type}
+   - uid: The uid of the current user
+   - pid: The pid of the post or comment
+   - type: Whether it's checking for an upvote/downvote
+ - Response: returns a vote object that is associated with the given values
+   - { "pid": "pid", "isPost": true, "type": true, "uid": "uid" }
+
+### GetVotesByPid
+ - Gets all votes with given PID
+ - GET: api/votes/getVotesByPid?pid={pid}
+   - pid: The pid to find a vote under
+ - Response: returns a list of vote objects made on a post associated with the specified post id
+   - [ { "pid": "pid", "isPost": true, "type": true, "uid": "uid" } ]
+ - Status codes:
+   - 200 OK
+   - 400 Bad Request: Pid is required
+
+### AddVote
+ - Creates a new vote
+ - POST: api/votes/addVote
+ - Request body: { "pid": "pid", "isPost": "isPost", "type": "type", "uid": "uid" }
+ - Response: returns the vote object created from the new vote
+ - Status codes:
+   - 200 OK
+   - 400 Bad Request: 
+      - Request body is required and must contain the post/comment's id and the user's id
+      - Failed to create vote object
+   - 404 Not Found: User not found
+
+### RemoveVote
+ - Remove the corresponding vote by pid and uid
+ - DELETE: api/votes/removeVote?uid={uid}&pid={pid}&type={type}
+   - uid: The uid of the current user
+   - pid: The pid of the post or comment
+   - type: Whether it's removing an upvote/downvote
+ - Response: returns whether the deletion was successful
+   - true/false
+ - Status codes:
+   - 200 OK
+   - 400 Bad Request: User id and post/comment id is required

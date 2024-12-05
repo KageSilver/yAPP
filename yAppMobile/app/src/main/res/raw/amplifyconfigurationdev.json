@@ -1,0 +1,61 @@
+{
+    "UserAgent": "aws-amplify-cli/2.0",
+    "Version": "1.0",
+    "api": {
+        "plugins": {
+            "awsAPIPlugin": {
+                "test": {
+                    "endpointType": "REST",
+                    "endpoint": "https://y4cvw78v4d.execute-api.us-east-2.amazonaws.com/dev",
+                    "region": "us-east-2",
+                    "authorizationType": "NONE"
+                }
+            }
+        }
+    },
+    "auth": {
+        "plugins": {
+            "awsCognitoAuthPlugin": {
+                "UserAgent": "aws-amplify-cli/0.1.0",
+                "Version": "0.1.0",
+                "IdentityManager": {
+                    "Default": {}
+                },
+                "CredentialsProvider": {
+                    "CognitoIdentity": {
+                        "Default": {
+                            "PoolId": "us-east-2:6cf1c726-006a-4564-8056-577579cb8b6a",
+                            "Region": "us-east-2"
+                        }
+                    }
+                },
+                "CognitoUserPool": {
+                    "Default": {
+                        "PoolId": "us-east-2_AoahD29kD",
+                        "AppClientId": "2vmsktps1vpvcrp4us3revrcja",
+                        "Region": "us-east-2"
+                    }
+                },
+                "Auth": {
+                    "Default": {
+                        "OAuth": {
+                            "WebDomain": "yappdev.auth.us-east-2.amazoncognito.com",
+                            "AppClientId": "2vmsktps1vpvcrp4us3revrcja",
+                            "SignInRedirectURI": "yapp://callback/",
+                            "SignOutRedirectURI": "yapp://signout/",
+                            "Scopes": [
+                                "email",
+                                "openid",
+                                "profile",
+                                "phone"
+                            ],
+                            "ResponseType": "code"
+                        },
+                        "authenticationFlowType": "USER_SRP_AUTH"
+                    }
+                }
+
+            }
+        }
+    }
+}

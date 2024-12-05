@@ -28,6 +28,7 @@ public class PostControllerTests
     private readonly Mock<IPostActions> _mockPostActions;
     private readonly Mock<IAmazonCognitoIdentityProvider> _cognitoClientMock;
     private readonly CognitoActions _cognitoActions;
+    private readonly Mock<IVoteActions> _mockVoteActions;
 
     public PostControllerTests()
     {
@@ -35,8 +36,9 @@ public class PostControllerTests
         _dynamoDbContextMock = new Mock<IDynamoDBContext>();
         _mockCognitoActions = new Mock<ICognitoActions>();
         _mockPostActions = new Mock<IPostActions>();
+        _mockVoteActions = new Mock<IVoteActions>();
         _postController = new PostController(_mockAppSettings.Object, _mockCognitoActions.Object,
-            _dynamoDbContextMock.Object, _mockPostActions.Object);
+            _dynamoDbContextMock.Object, _mockPostActions.Object, _mockVoteActions.Object);
     }
 
     #region CreatePost Tests
@@ -59,12 +61,12 @@ public class PostControllerTests
     public async Task CreatePost_ShouldReturnNotFound_WhenUIDIsNotFound()
     {
         // Arrange
-        var request = new NewPost { 
-            UID = "userDoesNotExist", 
-            PostTitle = "title", 
-            PostBody = "body", 
-            DiaryEntry = false, 
-            Anonymous = true 
+        var request = new NewPost {
+            UID = "userDoesNotExist",
+            PostTitle = "title",
+            PostBody = "body",
+            DiaryEntry = false,
+            Anonymous = true
         };
         _mockCognitoActions.Setup(c => c.GetUserById(request.UID)).ReturnsAsync((User)null);
 
@@ -79,25 +81,25 @@ public class PostControllerTests
     [Fact]
     public async Task CreatePost_ShouldReturnOK_WhenPostIsCreatedSuccessfully()
     {
-        // Arrange 
-        var request = new NewPost 
-        { 
-            UID = "user1@example.com", 
-            PostTitle = "title", 
-            PostBody = "body", 
-            DiaryEntry = false, 
-            Anonymous = true 
+        // Arrange
+        var request = new NewPost
+        {
+            UID = "user1@example.com",
+            PostTitle = "title",
+            PostBody = "body",
+            DiaryEntry = false,
+            Anonymous = true
         };
         var poster = new User {UserName = "user1@example.com" };
-        var post = new Post 
-        { 
-            UID = request.UID, 
-            PostTitle = request.PostTitle, 
-            PostBody = request.PostBody, 
-            Upvotes = 0, 
-            Downvotes = 0, 
-            DiaryEntry = request.DiaryEntry, 
-            Anonymous = request.Anonymous 
+        var post = new Post
+        {
+            UID = request.UID,
+            PostTitle = request.PostTitle,
+            PostBody = request.PostBody,
+            Upvotes = 0,
+            Downvotes = 0,
+            DiaryEntry = request.DiaryEntry,
+            Anonymous = request.Anonymous
         };
 
         // Mock GetUser to return the poster
@@ -124,25 +126,25 @@ public class PostControllerTests
     [Fact]
     public async Task CreatePost_FirstDiaryPost_ReturnsPost()
     {
-        // Arrange 
-        var request = new NewPost 
-        { 
-            UID = "user1@example.com", 
-            PostTitle = "title", 
-            PostBody = "body", 
-            DiaryEntry = true, 
-            Anonymous = true 
+        // Arrange
+        var request = new NewPost
+        {
+            UID = "user1@example.com",
+            PostTitle = "title",
+            PostBody = "body",
+            DiaryEntry = true,
+            Anonymous = true
         };
         var poster = new User {UserName = "user1@example.com" };
-        var post = new Post 
-        { 
-            UID = request.UID, 
-            PostTitle = request.PostTitle, 
-            PostBody = request.PostBody, 
-            Upvotes = 0, 
-            Downvotes = 0, 
-            DiaryEntry = request.DiaryEntry, 
-            Anonymous = request.Anonymous 
+        var post = new Post
+        {
+            UID = request.UID,
+            PostTitle = request.PostTitle,
+            PostBody = request.PostBody,
+            Upvotes = 0,
+            Downvotes = 0,
+            DiaryEntry = request.DiaryEntry,
+            Anonymous = request.Anonymous
         };
 
         // Mock GetUser to return the poster
@@ -170,30 +172,30 @@ public class PostControllerTests
     [Fact]
     public async Task CreatePost_SecondDiaryPost_ReturnsBadRequest()
     {
-        // Arrange 
-        var request = new NewPost 
-        { 
-            UID = "user1@example.com", 
-            PostTitle = "title", 
-            PostBody = "body", 
-            DiaryEntry = true, 
-            Anonymous = true 
+        // Arrange
+        var request = new NewPost
+        {
+            UID = "user1@example.com",
+            PostTitle = "title",
+            PostBody = "body",
+            DiaryEntry = true,
+            Anonymous = true
         };
         var poster = new User {UserName = "user1@example.com" };
-        var post = new Post 
-        { 
-            UID = request.UID, 
-            PostTitle = request.PostTitle, 
-            PostBody = request.PostBody, 
-            Upvotes = 0, 
-            Downvotes = 0, 
-            DiaryEntry = request.DiaryEntry, 
-            Anonymous = request.Anonymous 
+        var post = new Post
+        {
+            UID = request.UID,
+            PostTitle = request.PostTitle,
+            PostBody = request.PostBody,
+            Upvotes = 0,
+            Downvotes = 0,
+            DiaryEntry = request.DiaryEntry,
+            Anonymous = request.Anonymous
         };
 
         var list = new List<Post>();
         list.Add(post);
-        
+
         // Mock GetUser to return the poster
         _mockCognitoActions.Setup(c => c.GetUserById(request.UID)).ReturnsAsync(poster);
         // Mock GetDiariesByUser to return an empty list indicating they haven't made a post that day yet
@@ -208,7 +210,7 @@ public class PostControllerTests
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
         Assert.Equal("Cannot make more than one diary entry a day", badRequestResult.Value);
     }
-    
+
     #endregion
 
     #region DeletePost Tests
@@ -234,10 +236,9 @@ public class PostControllerTests
 
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
-        Assert.Equal("Post id is required",
-            badRequestResult.Value);
+        Assert.Equal("Post id is required",badRequestResult.Value);
     }
-    
+
     [Fact]
     public async Task DeletePost_ShouldReturnFalse_WhenDeleteFails()
     {
@@ -246,7 +247,7 @@ public class PostControllerTests
 
         // Act
         var response = await _postController.DeletePost("1");
-        
+
         // Assert
         Assert.False(response.Value);
     }
@@ -306,7 +307,7 @@ public class PostControllerTests
         Assert.Equal("request body is required and must contain uid, post title, post body",
             badRequestResult.Value);
     }
-    
+
     [Fact]
     public async Task UpdatePost_ShouldReturnBadRequest_WhenUIDIsMissing()
     {
@@ -334,7 +335,7 @@ public class PostControllerTests
         Assert.Equal("request body is required and must contain uid, post title, post body",
             badRequestResult.Value);
     }
-    
+
     [Fact]
     public async Task UpdatePost_ShouldReturnBadRequest_WhenPostBodyIsMissing()
     {
@@ -416,13 +417,13 @@ public class PostControllerTests
 
         var list = new List<Post>();
         list.Add(post);
-        
+
         _mockPostActions.Setup(p => p.GetRecentPosts(It.IsAny<DateTime>(),It.IsAny<int>())).ReturnsAsync(list);
 
         // Act
         var result = await _postController.GetRecentPosts(DateTime.Now, 1);
         var resultPosts = result.Value;
-        
+
         // Assert
         Assert.IsType<List<Post>>(resultPosts);
         Assert.Equal(1, resultPosts.Count);
@@ -497,7 +498,7 @@ public class PostControllerTests
 
         // Act
         var result = await _postController.GetPostById("1");
-        
+
         // Assert
         var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
         Assert.Equal("Post does not exist", notFoundResult.Value);
@@ -540,10 +541,10 @@ public class PostControllerTests
         var list = new List<Post>();
         list.Add(post);
 
-        _mockPostActions.Setup(p => p.GetPostsByUser(It.IsAny<string>(), It.IsAny<bool>())).ReturnsAsync(list);
+        _mockPostActions.Setup(p => p.GetPostsByUser(It.IsAny<string>())).ReturnsAsync(list);
 
         // Act
-        var result = await _postController.GetPostsByUser(post.UID, false);
+        var result = await _postController.GetPostsByUser(post.UID);
 
         // Assert
         var returnedList = Assert.IsType<List<Post>>(result.Value);
@@ -565,7 +566,7 @@ public class PostControllerTests
     public async Task GetPostsByUser_ShouldReturnBadRequest_WithInvalidUID()
     {
         // Act
-        var result = await _postController.GetPostsByUser(null, false);
+        var result = await _postController.GetPostsByUser(null);
 
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -597,13 +598,13 @@ public class PostControllerTests
 
         var list = new List<Post>();
         list.Add(post);
-        
+
         _mockPostActions.Setup(p => p.GetDiariesByUser(It.IsAny<string>(),It.IsAny<DateTime>())).ReturnsAsync(list);
 
         // Act
-        var result = await _postController.GetDiariesByUser(post.UID, DateTime.Now);
+        var result = await _postController.GetDiariesByUser(post.UID, DateTime.Now.Date);
         var resultPosts = result.Value;
-        
+
         // Assert
         Assert.IsType<List<Post>>(resultPosts);
         Assert.Equal(1, resultPosts.Count);
@@ -621,7 +622,7 @@ public class PostControllerTests
     public async Task GetDiariesByUser_ShouldReturnBadRequest_WithInvalidUID()
     {
         // Act
-        var result = await _postController.GetDiariesByUser(null, DateTime.Now);
+        var result = await _postController.GetDiariesByUser(null, DateTime.Now.Date);
 
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
@@ -629,13 +630,13 @@ public class PostControllerTests
     }
 
     #endregion
-    
+
     #region GetDiariesByFriends Tests
 
     [Fact]
     public async Task GetDiariesByFriends_ShouldReturnPosts_WhenSuccessful()
     {
-        
+
         // Arrange
         var now = DateTime.Now;
         var post = new Post
@@ -658,7 +659,7 @@ public class PostControllerTests
         _mockPostActions.Setup(p => p.GetDiariesByFriends(It.IsAny<ICognitoActions>(), It.IsAny<string>(), It.IsAny<DateTime>())).ReturnsAsync(list);
 
         // Act
-        var result = await _postController.GetDiariesByFriends(post.UID, now);
+        var result = await _postController.GetDiariesByFriends(post.UID, DateTime.Now.Date);
 
         // Assert
         var returnedList = Assert.IsType<List<Post>>(result.Value);
@@ -679,7 +680,7 @@ public class PostControllerTests
     public async Task GetDiariesByFriends_ShouldReturnBadRequest_WithInvalidUID()
     {
         // Act
-        var result = await _postController.GetDiariesByFriends(null, DateTime.Now);
+        var result = await _postController.GetDiariesByFriends(null, DateTime.Now.Date);
 
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);

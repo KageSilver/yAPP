@@ -28,7 +28,7 @@ public class CommentControllerIntegrationTests
     private readonly IAppSettings _appSettings;
 
     // We must use simulator email to test the user without using email quota
-    private const string TestUserEmail = "bounce5@simulator.amazonses.com";
+    private const string TestUserEmail = "bounce8@simulator.amazonses.com";
     private static string _testUid = "";
 
     private ICognitoActions _cognitoActions;
@@ -99,7 +99,7 @@ public class CommentControllerIntegrationTests
         Assert.Equal(newComment.CommentBody, comment.CommentBody);
         Assert.Equal(newComment.PID, comment.PID);
 
-        // Clean up (need to be uncommented when deletion is implemented)
+        // Clean up
         await _commentActions.DeleteComment(comment.CID);
         // Test user is deleted in DeleteComment_ShouldReturnFalse_WhenDeleteFails()
     }
