@@ -14,7 +14,8 @@ Test Plan : [TestPlan](./Jmeter/yApp%20Test.jmx)
      - Thread Level: 1,2,4,8,16
 
 #### 2. Test Reports
-    To demonstrate a successful test run, we have included a screenshot showing the results for 2 threads. However, for the other thread levels, the results were saved directly to a CSV file, and unfortunately, screenshots were not captured.
+
+To demonstrate a successful test run, we have included a screenshot showing the results for 2 threads. However, for the other thread levels, the results were saved directly to a CSV file, and unfortunately, screenshots were not captured.
     - Screenshot: ![Screenshot](./Jmeter/screenshot.png)
   - 1 Thread:  [Report 1](./Jmeter/summary_1.csv)
   - 2 Threads: [Report 2](./Jmeter/summary_2.csv)
