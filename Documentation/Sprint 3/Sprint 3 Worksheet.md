@@ -36,11 +36,13 @@ Since we are limited by Lambda’s memory size and mindful of AWS costs, the loa
        - `getCommentsByPid` has relatively low throughput at 0.78958.
        - `getNewAwardsByUser` has very low throughput at 0.57176.
    - High Error Rate
-     - High error rates can indicate system instability or the presence of specific bottlenecks. For the `removeVote` and `deleteComment` operations, the provided IDs were intentionally non-existent, so the 100% error rate for these actions is expected. However, unexpected errors were observed in the `sendFriendRequest` and `updateFriendReques` operations, which require further investigation.
+     - High error rates can indicate system instability or the presence of specific bottlenecks. For the `removeVote` and `deleteComment` operations, the provided IDs were intentionally non-existent, so the 100% error rate for these actions is expected. However, unexpected errors were observed in the `sendFriendRequest` , `updateFriendReques` and other operations, which require further investigation.
        - `removeVote` (100% error rate)
        - `deleteComment` (100% error rate)
        - `sendFriendRequest` (56.25% error rate)
        - `updateFriendRequest` (43.75% error rate)
+       - ...
+  
    - Inconsistent performance
      - High variability (Std. Dev.) indicates inconsistent performance, making the operation less reliable.
        - `getRecentPost`: Std. Dev. = 3303.7
