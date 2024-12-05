@@ -8,11 +8,10 @@ Test Plan : [TestPlan](./Jmeter/yApp%20Test.jmx)
 - Endpoint: https://cw1eg57r56.execute-api.us-east-2.amazonaws.com/test
   - This is a test environment hosted on AWS Lambda with a memory size of 128 MB.
 - Test Cases
-Since we are limited by Lambda’s memory size and mindful of AWS costs, the load testing focuses on analyzing performance across various concurrency levels (1, 2, 4, 8, 16 threads). The following test scenarios are conducted:
-   - Loop Count: 1
-   - Ramp up Period: 5
-   - Thread Level: 1,2,4,8, 16
-  
+  - Since we are limited by Lambda’s memory size and mindful of AWS costs, the load testing focuses on analyzing performance across various concurrency levels (1, 2, 4, 8, 16 threads). The following test scenarios are conducted:
+     - Loop Count: 1
+     - Ramp up Period: 5
+     - Thread Level: 1,2,4,8,16
 
   #### 2. Test Reports
     To demonstrate a successful test run, we have included a screenshot showing the results for 2 threads. However, for the other thread levels, the results were saved directly to a CSV file, and unfortunately, screenshots were not captured.
@@ -58,7 +57,7 @@ Since we are limited by Lambda’s memory size and mindful of AWS costs, the loa
        -  ![avg](./Jmeter/Avg.png)
     AWS Lambda functions experience latency spikes during cold starts, which occur when a function is invoked for the first time or after being idle. These spikes are due to the initialization process.
     
-    ###### Did you meet your goals? - No, but the goal could be achieved with additional resources.
+     ***Did you meet your goals? - No, but the goal could be achieved with additional resources.***
 
     Current Performance at 128MB Memory: At 16 threads, the system achieves a throughput of 10.18035 requests/second. This supports approximately 16 concurrent users comfortably.  To meet the requirement of 1,000 users, the system needs to scale by a factor of:  Scaling Factor = Target Throughput / Current Throughput  = 1000 / 10.18035 ≈ 98.2 This implies the current setup cannot meet the requirement without scaling the system significantly.
 
