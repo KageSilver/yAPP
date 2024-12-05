@@ -21,8 +21,7 @@ Since we are limited by Lambda’s memory size and mindful of AWS costs, the loa
   - 2 Threads: [Report 2](./Jmeter/summary_thread2.csv)
   - 4 Threads: [Report 4](./Jmeter/summary_thread4.csv)
   - 8 Threads: [Report 8](./Jmeter/summary_thread8.csv)
-  - 16 Threads
-    ![Result 16](./Jmeter/summary_thread16.csv)
+  - 16 Threads: [Report 16](./Jmeter/summary_thread16.csv)
   #### 3. Bottleneck found in the load testing
     ##### According to the summary_thread16.csv: 
 
@@ -54,9 +53,9 @@ Since we are limited by Lambda’s memory size and mindful of AWS costs, the loa
     In our proposal, we specified the need to manage a user pool of 1,000 monthly active users, including activities such as sign-up, sign-in, password changes, and account updates. While constrained by the free tier and the 128MB memory allocation, the ideal scenario would involve upgrading to a paid plan with increased resources, enabling the system to achieve the desired performance and scalability.
 
     1. Throughput vs. Threads
-    ![throughput](./Jmeter/throughput.png)
-    1. Latency vs. Threads
-     ![avg](./Jmeter/Avg.png)
+       -  ![throughput](./Jmeter/throughput.png)
+    2. Latency vs. Threads
+       -  ![avg](./Jmeter/Avg.png)
     AWS Lambda functions experience latency spikes during cold starts, which occur when a function is invoked for the first time or after being idle. These spikes are due to the initialization process.
     
     ###### Did you meet your goals? - No, but the goal could be achieved with additional resources.
