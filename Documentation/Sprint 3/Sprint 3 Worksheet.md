@@ -13,7 +13,7 @@ Test Plan : [TestPlan](./Jmeter/yApp%20Test.jmx)
      - Ramp up Period: 5
      - Thread Level: 1,2,4,8,16
 
-  #### 2. Test Reports
+#### 2. Test Reports
     To demonstrate a successful test run, we have included a screenshot showing the results for 2 threads. However, for the other thread levels, the results were saved directly to a CSV file, and unfortunately, screenshots were not captured.
     - Screenshot: ![Screenshot](./Jmeter/screenshot.png)
   - 1 Thread:  [Report 1](./Jmeter/summary_1.csv)
@@ -21,8 +21,8 @@ Test Plan : [TestPlan](./Jmeter/yApp%20Test.jmx)
   - 4 Threads: [Report 4](./Jmeter/summary_4.csv)
   - 8 Threads: [Report 8](./Jmeter/summary_8.csv)
   - 16 Threads: [Report 16](./Jmeter/summary_16.csv)
-  #### 3. Bottleneck found in the load testing
-    ##### According to the summary_thread16.csv: 
+#### 3. Bottleneck found in the load testing
+According to the summary_thread16.csv: 
 
    - High Latency
      -  Operations with the highest average and max latencies
@@ -46,24 +46,24 @@ Test Plan : [TestPlan](./Jmeter/yApp%20Test.jmx)
        - `getRecentPost`: Std. Dev. = 3303.7
        - `getNewAwardsByUser`: Std. Dev. = 4930.52
        - `createPost`: Std. Dev. = 3149.3
-  #### 4. Does it meet the non-functional requirements?
-    Given the constraints of Lambda’s memory size, currently set at 128MB, and the need to manage AWS costs, the load testing was conducted to analyze performance across various concurrency levels (1, 2, 4, 8, and 16 threads). The objective was to evaluate performance trends and determine whether the system meets the defined non-functional requirements.
+#### 4. Does it meet the non-functional requirements?
+Given the constraints of Lambda’s memory size, currently set at 128MB, and the need to manage AWS costs, the load testing was conducted to analyze performance across various concurrency levels (1, 2, 4, 8, and 16 threads). The objective was to evaluate performance trends and determine whether the system meets the defined non-functional requirements.
 
-    In our proposal, we specified the need to manage a user pool of 1,000 monthly active users, including activities such as sign-up, sign-in, password changes, and account updates. While constrained by the free tier and the 128MB memory allocation, the ideal scenario would involve upgrading to a paid plan with increased resources, enabling the system to achieve the desired performance and scalability.
+In our proposal, we specified the need to manage a user pool of 1,000 monthly active users, including activities such as sign-up, sign-in, password changes, and account updates. While constrained by the free tier and the 128MB memory allocation, the ideal scenario would involve upgrading to a paid plan with increased resources, enabling the system to achieve the desired performance and scalability.
 
-    1. Throughput vs. Threads
+  1. Throughput vs. Threads
        -  ![throughput](./Jmeter/throughput.png)
-    2. Latency vs. Threads
+  2. Latency vs. Threads
        -  ![avg](./Jmeter/Avg.png)
-    AWS Lambda functions experience latency spikes during cold starts, which occur when a function is invoked for the first time or after being idle. These spikes are due to the initialization process.
+       -  AWS Lambda functions experience latency spikes during cold starts, which occur when a function is invoked for the first time or after being idle. These spikes are due to the initialization process.
     
-     ***Did you meet your goals? - No, but the goal could be achieved with additional resources.***
+  ***Did you meet your goals? - No, but the goal could be achieved with additional resources.***
 
-    Current Performance at 128MB Memory: At 16 threads, the system achieves a throughput of 10.18035 requests/second. This supports approximately 16 concurrent users comfortably.  To meet the requirement of 1,000 users, the system needs to scale by a factor of:  Scaling Factor = Target Throughput / Current Throughput  = 1000 / 10.18035 ≈ 98.2 This implies the current setup cannot meet the requirement without scaling the system significantly.
+  Current Performance at 128MB Memory: At 16 threads, the system achieves a throughput of 10.18035 requests/second. This supports approximately 16 concurrent users comfortably.  To meet the requirement of 1,000 users, the system needs to scale by a factor of:  Scaling Factor = Target Throughput / Current Throughput  = 1000 / 10.18035 ≈ 98.2 This implies the current setup cannot meet the requirement without scaling the system significantly.
 
-    However, throughput scales linearly with threads (Up to 16 Threads). The system demonstrates predictable scaling, doubling throughput as threads increase, indicating efficient use of resources at 128MB memory. This trend suggests the system has the potential to scale further. 
+  However, throughput scales linearly with threads (Up to 16 Threads). The system demonstrates predictable scaling, doubling throughput as threads increase, indicating efficient use of resources at 128MB memory. This trend suggests the system has the potential to scale further. 
 
-    In conclusion, While the system currently does not meet the non-functional requirement of supporting 1,000 users, the observed linear scaling trend indicates that the goal is achievable with increased resources. Strategic investments in memory upgrades (eg. 1024 MB), provisioned concurrency, and architectural optimizations would allow the system to scale efficiently to meet the target.
+  In conclusion, While the system currently does not meet the non-functional requirement of supporting 1,000 users, the observed linear scaling trend indicates that the goal is achievable with increased resources. Strategic investments in memory upgrades (eg. 1024 MB), provisioned concurrency, and architectural optimizations would allow the system to scale efficiently to meet the target.
 
 
 
