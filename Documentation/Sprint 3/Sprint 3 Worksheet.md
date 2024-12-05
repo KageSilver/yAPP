@@ -17,11 +17,11 @@ Since we are limited by Lambda’s memory size and mindful of AWS costs, the loa
   #### 2. Test Reports
     To demonstrate a successful test run, we have included a screenshot showing the results for 2 threads. However, for the other thread levels, the results were saved directly to a CSV file, and unfortunately, screenshots were not captured.
     - Screenshot: ![Screenshot](./Jmeter/screenshot.png)
-  - 1 Thread:  [Report 1](./Jmeter/summary_thread1.csv)
-  - 2 Threads: [Report 2](./Jmeter/summary_thread2.csv)
-  - 4 Threads: [Report 4](./Jmeter/summary_thread4.csv)
-  - 8 Threads: [Report 8](./Jmeter/summary_thread8.csv)
-  - 16 Threads: [Report 16](./Jmeter/summary_thread16.csv)
+  - 1 Thread:  [Report 1](./Jmeter/summary_1.csv)
+  - 2 Threads: [Report 2](./Jmeter/summary_2.csv)
+  - 4 Threads: [Report 4](./Jmeter/summary_4.csv)
+  - 8 Threads: [Report 8](./Jmeter/summary_8.csv)
+  - 16 Threads: [Report 16](./Jmeter/summary_16.csv)
   #### 3. Bottleneck found in the load testing
     ##### According to the summary_thread16.csv: 
 
