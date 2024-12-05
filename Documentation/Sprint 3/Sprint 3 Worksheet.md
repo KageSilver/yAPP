@@ -2,6 +2,71 @@
 
 ## Load Testing
 
+#### 1. Environment
+Test Plan : [TestPlan](./Jmeter/yApp%20Test.jmx)
+- Tool: Apache JMeter
+- Endpoint: https://cw1eg57r56.execute-api.us-east-2.amazonaws.com/test
+  - This is a test environment hosted on AWS Lambda with a memory size of 128 MB.
+- Test Cases
+Since we are limited by Lambda’s memory size and mindful of AWS costs, the load testing focuses on analyzing performance across various concurrency levels (1, 2, 4, 8, 16 threads). The following test scenarios are conducted:
+   - Loop Count: 1
+   - Ramp up Period: 5
+   - Thread Level: 1,2,4,8, 16
+  
+
+  #### 2. Test Reports
+    To demonstrate a successful test run, we have included a screenshot showing the results for 2 threads. However, for the other thread levels, the results were saved directly to a CSV file, and unfortunately, screenshots were not captured.
+    - Screenshot: ![Screenshot](./Jmeter/screenshot.png)
+  - 1 Thread:  [Report 1](./Jmeter/summary_thread1.csv)
+  - 2 Threads: [Report 2](./Jmeter/summary_thread2.csv)
+  - 4 Threads: [Report 4](./Jmeter/summary_thread4.csv)
+  - 8 Threads: [Report 8](./Jmeter/summary_thread8.csv)
+  - 16 Threads
+    ![Result 16](./Jmeter/summary_thread16.csv)
+  #### 3. Bottleneck found in the load testing
+    ##### According to the summary_thread16.csv: 
+
+   - High Latency
+     -  Operations with the highest average and max latencies
+       - `getCommentsByPid`: Average = 2162 ms, Max = 3897 ms
+       - `getNewAwardsByUser`: Average = 6097 ms, Max = 12298 ms
+       - `getRecentPosts`: Average = 1858 ms, Max = 14607 ms
+   - Inefficient operations
+     - From the above analysis, it is evident that `getCommentsByPid` and `getNewAwardsByUser` exhibit high latency, which correlates with their low throughput. This suggests that these operations are inefficient and may require optimization.
+       - `getCommentsByPid` has relatively low throughput at 0.78958.
+       - `getNewAwardsByUser` has very low throughput at 0.57176.
+   - High Error Rate
+     - High error rates can indicate system instability or the presence of specific bottlenecks. For the `removeVote` and `deleteComment` operations, the provided IDs were intentionally non-existent, so the 100% error rate for these actions is expected. However, unexpected errors were observed in the `sendFriendRequest` and `updateFriendReques` operations, which require further investigation.
+       - `removeVote` (100% error rate)
+       - `deleteComment` (100% error rate)
+       - `sendFriendRequest` (56.25% error rate)
+       - `updateFriendRequest` (43.75% error rate)
+   - Inconsistent performance
+     - High variability (Std. Dev.) indicates inconsistent performance, making the operation less reliable.
+       - `getRecentPost`: Std. Dev. = 3303.7
+       - `getNewAwardsByUser`: Std. Dev. = 4930.52
+       - `createPost`: Std. Dev. = 3149.3
+  #### 4. Does it meet the non-functional requirements?
+    Given the constraints of Lambda’s memory size, currently set at 128MB, and the need to manage AWS costs, the load testing was conducted to analyze performance across various concurrency levels (1, 2, 4, 8, and 16 threads). The objective was to evaluate performance trends and determine whether the system meets the defined non-functional requirements.
+
+    In our proposal, we specified the need to manage a user pool of 1,000 monthly active users, including activities such as sign-up, sign-in, password changes, and account updates. While constrained by the free tier and the 128MB memory allocation, the ideal scenario would involve upgrading to a paid plan with increased resources, enabling the system to achieve the desired performance and scalability.
+
+    1. Throughput vs. Threads
+    ![throughput](./Jmeter/throughput.png)
+    1. Latency vs. Threads
+     ![avg](./Jmeter/Avg.png)
+    AWS Lambda functions experience latency spikes during cold starts, which occur when a function is invoked for the first time or after being idle. These spikes are due to the initialization process.
+    
+    ###### Did you meet your goals? - No, but the goal could be achieved with additional resources.
+
+    Current Performance at 128MB Memory: At 16 threads, the system achieves a throughput of 10.18035 requests/second. This supports approximately 16 concurrent users comfortably.  To meet the requirement of 1,000 users, the system needs to scale by a factor of:  Scaling Factor = Target Throughput / Current Throughput  = 1000 / 10.18035 ≈ 98.2 This implies the current setup cannot meet the requirement without scaling the system significantly.
+
+    However, throughput scales linearly with threads (Up to 16 Threads). The system demonstrates predictable scaling, doubling throughput as threads increase, indicating efficient use of resources at 128MB memory. This trend suggests the system has the potential to scale further. 
+
+    In conclusion, While the system currently does not meet the non-functional requirement of supporting 1,000 users, the observed linear scaling trend indicates that the goal is achievable with increased resources. Strategic investments in memory upgrades (eg. 1024 MB), provisioned concurrency, and architectural optimizations would allow the system to scale efficiently to meet the target.
+
+
+
 ## Security Analysis
 1. Our group looked at a WIDE variety of tools to run our static code analysis, but due to time constraints we decided to stick to the built-in tools provided by the IDEs we currently use. We looked at extensions from VS Code or the built-in analyzer from Visual Studio, but it simply was not working on its own. We then turned to the next possible option suggested by the good old internet, using the Roslyn code analyzer that could be installed through NuGet (specifically Microsoft.CodeAnalysis.FxCopAnalyzers - the latest version) which is compatible with our main language, C#. Then, we simply rebuilt our project with this security-oriented package. By doing this, we were able to output more security-focused errors in the Error List in Visual Studio. The output of our analysis shows that we have no critical security risks or errors. However, it did helpfully show that we had over 1500 warnings with 100 suggestions... To make sure we weren't missing anything, we also ran ReSharper with our IDE Rider. It showed similar results and provided a complicated to understand xml file as output. We've attached the link to it in the appendices of this document along with a screenshot of the output from the first analysis.
 
