@@ -1,0 +1,156 @@
+SPEAKER 1 - Tara
+(Slide 1)
+Hello everyone, my name is Tara and we’re Group 4. It seems like we just can’t stop yAPPing, and we’re back to show you all what yAPP really is.
+
+(Slide 2)
+yAPP is an anonymous social media platform that focuses on providing a safe space for anyone to share their thoughts.
+The application is currently being hosted on a website, and we also have a fully-implemented android build that is currently only available through our GitHub.
+Now, let’s get right into it and see what our app is really capable of!
+
+(Slide 3)
+Our project consisted of 5 main features; Friendship, posting, post interactions, diary posting with a personal calendar, and a hidden awards system!
+The Friendship feature allows for users to friend other users and make private posts only visible between each other.
+The Posting feature allows for our users to, you guessed it, make posts!
+The Post Interactions feature lets our users comment on posts, along with upvoting and downvoting both posts and comments.
+The Diary Posting and Personal Calendar feature sports a sleek calendar design for users to make a single diary entry directly to their friends everyday.
+Finally, for the Hidden Awards Feature, we’ve made it possible for our users to gain achievements after performing various tasks on our app.
+
+(Slide 4)
+Now, it’s time for the demo to really start. As we progress through our demo, you will notice that we have some videos showcasing each of our various features.
+We will also be showing the process for both our website and mobile interfaces, each on the same slide.
+
+(Slide 5)
+First up, we’ve got our profile management feature.
+Let’s start off by outlining how to make a brand new account for our — hey, wait a minute, you’ve all done this hundreds of times. Let’s just skip to the good stuff!
+
+(Slide 6)
+You guys all know how making an account works in any social media app, so we’ll move right on to what we all need in our lives. Friends :D
+The next couple of slides showcases our Friends feature (which wasn’t even initially a feature until we actually started to work on it and realized how complex it really was)
+As with almost any social media platform, we have made it possible for our users to add their closest friends to their account.
+Now, you may be wondering, why would you want to have your friends in an app where you want to stay mostly anonymous? Sit tight, we’ll get to that in a bit :)
+
+To add a friend, we’re going to navigate to the profile tab. Here, we can click on the “My Friends” tab, but since we’re a brand new user, we don’t have any friends :(
+Let’s fix that!
+By clicking on the add friend icon, we can see all of our incoming friend requests, which we obviously have none of.
+Then, clicking on the Add a New Friend button allows for us to enter their username and send a request to Cynthia (she kept her username as her email, what a weirdo).
+
+(Slide 7)
+Once we’re back to our profile page, you may notice that there’s a notification in the top right corner signifying that we’ve got a new friend request! Let’s go check it out.
+By clicking on the friend requests icon, we’re going to see that “someone” else wants to be our sample user’s friend! Let’s add them :)
+We can now go back to our profile page, click on the My Friends tab, and see that we now have a new friend! Yay!
+If there was some sort of major falling out and we wanted to remove them as our friend, we could, but we’re not going to lose our only friend on the platform.
+
+(Slide 8)
+Now, we’re going to go over the Posting feature.
+We’re at the bread and butter of our app, what the entire purpose of yAPP is. The opportunity to yapp through posting!
+The main page of our application showcases all of the public posts that people have posted recently. If we so desired, we could scroll through all of the posts that have been made, ever! Doesn’t matter how old they may be.
+Why don’t we get our new user to start adding their voice to the void. We’re going to click on the create post button and just make a default post. It can be about anything you really want, all you need to do is simply put in a title and a body — don’t mind the slider button, we’ll get to diary entries later.
+
+(Slide 9)
+Once we make the post, we can see that it has been added to the top of the public posts page, sweet! Mission accomplished.
+On top of being able to see the post that we just made on the home page, we can also see all of the posts that we’ve made under our profile tab.
+This allows for us to keep track of our own posts without it getting lost in the mess of public posts, just so we can see how our post is performing and what people have said about it.
+
+(Slide 10)
+This brings us to our Post Interactions feature.
+
+What use are posts if I can’t do anything with them? Well, that’s why we’ve made it possible for our users to interact with them!
+Our sample user here can click on any of the posts on the home page, bringing us to a more detailed post page.
+Here, we can see the message of the post in full, along with the comments that other people have left on this post. Why don’t we add our own opinion to it!
+After clicking on the reply button, we can add our own comment onto the post where others can see! Simply type in your comment and hit send.
+You might also notice the up and down arrows on both the post and the comments. These are the upvote and downvote counts, so we can see how helpful a comment or post is!
+
+(Slide 11)
+Oh no! We accidentally doxxed ourselves on that last comment. Good thing we can quickly delete it!
+Now, we can type in what we really wanted to say by adding in a new comment.
+Shoot, even after remaking the comment we actually wanted to add, there’s still a typo in it. I’m glad I can easily and quickly update it!
+What’s also great is that I can do that all with my posts, too. Thank god I don’t have to worry about fat fingering my keyboard :)
+
+(Slide 12)
+Now, the next couple of slides will be outlining our personal calendar feature.
+
+Remember how I said we’d get back to the purpose of friends and diary entries? This is where they’re needed!
+We have a special feature where you can make a diary entry specifically so that only you and your friends may be able to see it. 
+Sometimes, I don’t want strangers to comment on some more… personal matters. That’s why I’d like to ask my friends instead! :D
+
+We can make a new post, but this time, we’re going to toggle the Diary Entry option.
+This reveals a new option for Anonymity. 
+There may be times where you want to seek council from your friends without them knowing it’s specifically you. Other times, you may just want to meme around with them and don’t really care if you’re anonymous or not! It’s all up to you.
+
+(Slide 13)
+After we make this new diary entry, we can view it by navigating to our calendar page by clicking on the calendar button.
+On this page, we can view all of the diary entries that have been made by ourselves or our friends on any given day!
+This feature only allows for users to make one entry a day since this is supposed to be reserved as a more serious area for feedback from friends. By limiting the amount of diary entries our users can make, it keeps their personal calendar clean and not as overwhelming as it could be.
+
+(Slide 14)
+And finally, we’ve got our Hidden Awards feature.
+
+As you may’ve noticed, there was a tab under the profile page titled “My Awards”.
+That’s right, we’ve gamified our posting application!
+Our users will receive tiered achievements based on various tasks that they perform in the app. What those awards exactly are, we won’t tell :)
+But if they wanted to see which ones they’ve already achieved, they can navigate to that page and view all of the achievements that they’ve gotten so far, outlining specifically which ones are new since their last visit.
+This incentivizes our users to keep interacting with the app by rewarding them with achievements. It’s perfect for the people who love to 100% games!
+
+(Slide 15)
+That’s it for our project demo! Now, I’m going to hand it off to Cynthia to outline what our development process was like!
+
+
+SPEAKER 2 - Cynthia
+
+(Slide 16)
+Now I’d like to tell you all a bit about the process of bringing yAPP to life.
+
+(Slide 17)
+Firstly, I’d like to go over some things that went well for us and helped make the creation of yAPP possible.
+
+(Slide 18)
+In my opinion, one of the things we had the most success with was our project planning. Before implementing anything we thoroughly walked through the entire design of our system for everything we planned to implement throughout the entire project. While this was mainly focused on what features we wanted to implement, this also included the technologies we would be using, our database design, and our UI design. We wanted to ensure we accounted for everything we could before we got to implementation to limit any surprises down the line. This gave us a clearer idea of what all needed to be done and allowed us to split our project up well between the sprint deadlines for this class. After deciding what we would work on each sprint, we distributed the work amongst everyone in the group as evenly as possible.
+
+(Slide 19)
+We did this with the help of spreadsheets! [next] Lots [next] and lots [next] and lots of spreadsheets. These allowed us to thoroughly and flexibly plan out our work for each sprint as a team, where all of our work distribution was visible on one screen so we could better assess if our plans needed to change. This also allowed us to quickly spot if there was something missing from our planned implementation, like an API endpoint that the frontend needed but wasn’t planned out in the implementation. We could also have an easier time understanding our development timeline by being able to see the bigger picture with all the features, user stories, and dev tasks available on one page. This also helped us better assess the scope of our features, allowing us to redistribute work between sprints and move around components, such as user stories, to where they would best fit from a development standpoint.
+
+(Slide 20)
+Once we were done putting everything into spreadsheets we could port it over to GitHub. This allowed us to track our work easier, keeping everyone up-to-date with what has been completed and what still needs to be worked on. As you can see in the pictures, we linked all our issues together to make it easier for us to keep track of which issues connected to each other and how far along the feature and user story issues were to gauge where we were on our planned timeline.
+
+(Slide 21)
+We used a GitHub project attached to our repo to track everything from features and user stories down to dev tasks, bug fixes, and even documentation. This project allowed us to keep track of extra information for each of our issues. As you can see from the picture, this extra information includes priority, status, and time estimates. This project organizer also includes standard information that comes with GitHub issues, such as labels and the assignee of each issue. This feature is very flexible and customizable, which helped us have multiple perspectives on the work for this project.
+
+(Slide 22)
+As you might have noticed during our demo, our two UIs have a very cohesive design. As you can see here, we tried to keep the look of our UIs as similar as possible and maintain the same functionalities. This allowed us to create a more seamless experience when switching between the UIs. 
+
+(Slide 23)
+We achieved this by creating a mockup of both UIs before we got deep into development. This was done using Figma, which allowed us to plan out the look and feel of our application before implementation.
+
+(Slide 24)
+We all followed this design document as best we could when doing frontend development, making our workflow for this section of our project much easier and more organized, overall making this process more streamlined. Despite all four of us working on each frontend at some point in this project, we were able to create a uniform look across a single frontend because of the design document. Since our application is a bit simple, we wanted to make our UIs look as good as possible so we could deliver a great project.
+
+(Slide 25)
+Now, no matter how great a group project goes, there will always be something that inevitably goes wrong or doesn’t work properly
+
+(Slide 26)
+We had a few hiccups throughout this project with communication. 
+
+As university students, our schedules are very packed, which made finding times we could all meet very difficult. We also all had lives outside of this class, including other classes, work, and social lives. This made planning as a team a bit difficult, so a lot of our decisions ended up being made by one person and then checking with everyone else to get the ok. This also limited the number of meetings we could have, so we strived to communicate as often as possible on our Discord server to try to keep up-to-date on the project development.
+
+We also had some difficulty conveying things through text. Sometimes we would forget to elaborate on the details of something we were discussing, leading to some confusion. At times we would also have trouble conveying our emotions or attitude, which led to some misunderstandings. Our lack of in-person meetings only made this worse.
+
+There was also a bit of trouble for us learning some technologies for this project. Some of our group members had used them before while others had not. This difference in knowledge created some confusing conversations as, going back to conveying information through text, some details were missing in the communication. Combining this with an already steep learning curve for some of our group members created some interesting miscommunication.
+
+(Slide 27)
+Now, let’s just say we had a few problems getting our CICD pipeline up and running properly. We chose to use Jenkins for our pipeline, which we intended to run on an AWS EC2 instance. Long story short we ended up using a VM on campus to run our Jenkins server instead. Then we had issues with our tests failing in the pipeline due to timing issues, which we briefly touched on during our last presentation. Additionally, we had some problems with datetime formatting that the machine our server was running on didn’t quite like. So, while the backend would work on our local machines and deployment, it refused to work on that machine. Unfortunately, this is still a problem we’re trying to fix. The CICD pipeline was definitely one of the top things we underestimated for this project and took way longer than we anticipated. All around not a fun time. Overall, we could have planned this aspect of our project better.
+
+(Slide 28)
+This project has been quite the learning experience, so here are some of the takeaways from this process that we would employ if we were to continue developing this project.
+
+(Slide 29)
+Moving forward, we would continue to thoroughly plan everything, including our work distribution and timelines, to keep our development on track. We would continue to use the same process as we have been for this entire project, since we found it blended very well with our workflow.
+
+We’d commit to having a higher standard of communication and communicate as a group more frequently. This includes being more mindful of the words we are using and the way we are speaking or writing so we can maintain a good working environment. This also includes having more context or information when communicating to avoid confusion, miscommunication, and unnecessarily long discussions.
+
+We’d also plan for more worst-case scenarios, such as our issues with the CICD pipeline. Leaving extra time for if anything goes wrong can help alleviate stress from group members and avoid working right up until the deadline.
+
+(Slide 30)
+Thank you all for listening!
+
+(Slide 31)
+Any questions?

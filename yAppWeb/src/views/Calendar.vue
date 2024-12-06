@@ -14,6 +14,7 @@
 	const loading = ref(false);
 
 	var today = new Date();
+	today.setHours(0, 0, 0, 0);
 	var selectedDate = today;
 	var friends = new Array();
 	var friendUsernames = new Array();
@@ -86,7 +87,7 @@
 		try {
 			const restOperation = get({
 				apiName: "yapp",
-				path: `/api/posts/getDiariesByUser?uid=${uid.value}&current=${selectedDate.toJSON()}`,
+				path: `/api/posts/getDiariesByUser?uid=${uid.value}&current=${selectedDate.toISOString()}`,
 			});
 			const { body } = await restOperation.response;
 			const response = await (await body.blob()).arrayBuffer();
@@ -103,7 +104,7 @@
 		try {
 			const restOperation = get({
 				apiName: "yapp",
-				path: `/api/posts/getDiariesByFriends?uid=${uid.value}&current=${selectedDate.toJSON()}`,
+				path: `/api/posts/getDiariesByFriends?uid=${uid.value}&current=${selectedDate.toISOString()}`,
 			});
 			const { body } = await restOperation.response;
 			const response = await (await body.blob()).arrayBuffer();
@@ -214,7 +215,7 @@
 				1,
 			);
 		}
-
+		selectedDate.setHours(0, 0, 0, 0);
 		reset();
 	}
 
@@ -231,7 +232,7 @@
 				1,
 			);
 		}
-
+		selectedDate.setHours(0, 0, 0, 0);
 		reset();
 	}
 
@@ -245,6 +246,7 @@
 			selectedDate.getMonth(),
 			date,
 		);
+		selectedDate.setHours(0, 0, 0, 0);
 		changeDateHeader();
 
 		await getUserDiaries(uid);

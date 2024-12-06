@@ -57,7 +57,7 @@ public class PostController : ControllerBase
             return NotFound("Post creator not found");
         }
 
-        if (request.DiaryEntry && GetDiariesByUser(request.UID, DateTime.Now).Result.Value.Count > 0)
+        if (request.DiaryEntry && GetDiariesByUser(request.UID, DateTime.UtcNow.Date).Result.Value.Count > 0)
         {
             return BadRequest("Cannot make more than one diary entry a day");
         }
@@ -133,7 +133,7 @@ public class PostController : ControllerBase
     /// Gets the diary entries made by a user within a specific day
     /// </summary>
     /// <param name="uid">The author of the diary entry.</param>
-    /// <param name="current">The current day to query.</param>
+    /// <param name="current">12am of a selected date to query.</param>
     /// <returns>The diary entry made by a user on the specified day.</returns>
     [HttpGet("getDiariesByUser")]
     [ProducesResponseType(typeof(List<Post>), StatusCodes.Status200OK)]
@@ -154,7 +154,7 @@ public class PostController : ControllerBase
     /// Gets the diary entries made by the user's friends within a specific day
     /// </summary>
     /// <param name="uid">The user whose friends will be searched for.</param>
-    /// <param name="current">The current day to query.</param>
+    /// <param name="current">12am of a selected date to query.</param>
     /// <returns>A list of diary entries made by the user's friends on the specified day</returns>
     [HttpGet("getDiariesByFriends")]
     [ProducesResponseType(typeof(List<Post>), StatusCodes.Status200OK)]
