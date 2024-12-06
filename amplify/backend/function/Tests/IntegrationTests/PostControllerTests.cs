@@ -582,7 +582,7 @@ public class PostControllerIntegrationTests
         var newPost = JsonConvert.DeserializeObject<Post>(responseString1);
 
         // Act
-        var date = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffK");
+        var date = DateTime.Now.Date.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
         var response2 = await _client.GetAsync($"/api/posts/getDiariesByUser?uid={_testUserId}&current={date}");
         var responseString2 = await response2.Content.ReadAsStringAsync();
         var postList = JsonConvert.DeserializeObject<List<Post>>(responseString2);
@@ -609,7 +609,7 @@ public class PostControllerIntegrationTests
     public async Task GetDiariesByUser_ShouldReturnBadRequest_WithInvalidUID()
     {
         // Act
-        var response = await _client.GetAsync($"/api/posts/getDiariesByUser?uid={null}&current={DateTime.Now}");
+        var response = await _client.GetAsync($"/api/posts/getDiariesByUser?uid={null}&current={DateTime.Now.Date}");
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -681,7 +681,7 @@ public class PostControllerIntegrationTests
         var newPost = JsonConvert.DeserializeObject<Post>(responseString1);
 
         // Act
-        var date = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffK");
+        var date = DateTime.Now.Date.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
         var response2 = await _client.GetAsync($"/api/posts/getDiariesByFriends?uid={_testUserId}&current={date}");
         var responseString2 = await response2.Content.ReadAsStringAsync();
         var postList = JsonConvert.DeserializeObject<List<Post>>(responseString2);
@@ -708,7 +708,7 @@ public class PostControllerIntegrationTests
     public async Task GetDiariesByFriends_ShouldReturnBadRequest_WithInvalidUID()
     {
         // Act
-        var response = await _client.GetAsync($"/api/posts/getDiariesByFriends?uid={null}&current={DateTime.Now}");
+        var response = await _client.GetAsync($"/api/posts/getDiariesByFriends?uid={null}&current={DateTime.Now.Date}");
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
