@@ -86,8 +86,11 @@ In our proposal, we specified the need to manage a user pool of 1,000 monthly ac
 
 ## Thoughts
 
+Our project design worked well for us for the most part, though there are a few things we would change when looking back on our development. While we had scoped most of our features quite well, our Profile Management feature ended up being two features in one due to the Friends user story. At this point in the project, we all consider the Friendship aspect of our application to be it's own feature due to the time and effort it took to get it working. If we had considered Friends a feature on it's own since the beginning, our sprint 1 workload would have been scoped much better. On the more technical side, we would have chosen a different frontend framework for our mobile app that would offer more cross platform availability and easier usage overall for us as developers. We initially planned to use .NET MAUI but pivoted to Kotlin last minute due to time constraints in sprint 1. Finally, while DynamoDB didn't cause us too many issues, we could have chosen a different database that had better documentation and was easier to integrate into our backend.
+
 ## Other Thoughts
 
+Overall, we thought this project had a good setup and allowed for students to have more agency in the project compared to most Computer Science assignments. While the requirements for actual implementation create the space for students to have freedom with the project, we think that further requirements could be implemented to ensure students can keep their projects on track, such as communication, time management, and organization. There could also be more pointers to where to find information on technologies that could be used in this project for groups that have no idea where to start.
 
 # Appendix for Security Analysis
 Here is a screenshot of the output from building the project and viewing the error list window with code analysis turned on.
