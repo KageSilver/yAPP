@@ -49,8 +49,8 @@ pipeline {
         IMAGE_NAME = 'my-docker-image' // Replace with your image name
         CONTAINER_NAME = 'my-docker-container' // Replace with your container name
         //DOCKER_REGISTRY = 'my-registry' // Optional: if you are using a private registry
-        ACCESS_KEY_ID ="AKIA23WHT5F5J2CZOKNS"
-        SECRET_ACCESS_KEY ="vJnMiQhPExnL0+ksaeTNVCEzJJPBgqq+Ydt9cmLs"
+        ACCESS_KEY_ID =""
+        SECRET_ACCESS_KEY =""
         AWS_DEFAULT_REGION = "us-east-2"
         APK_OUTPUT_PATH = "/app/yAppMobile/app/build/outputs/apk/debug/app-debug.apk"  // Path to the APK inside the container
         HOST_OUTPUT_DIR = "output"  // Directory on the Jenkins host to store the APK
