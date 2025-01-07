@@ -2,14 +2,14 @@
   "main": {
     "awscloudformation": {
       "AuthRoleName": "amplify-yapp-main-a1f30-authRole",
-      "UnauthRoleArn": "arn:aws:iam::746669205882:role/amplify-yapp-main-a1f30-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::746669205882:role/amplify-yapp-main-a1f30-authRole",
+      "UnauthRoleArn": "",
+      "AuthRoleArn": "",
       "Region": "us-east-2",
       "DeploymentBucketName": "amplify-yapp-main-a1f30-deployment",
       "UnauthRoleName": "amplify-yapp-main-a1f30-unauthRole",
       "StackName": "amplify-yapp-main-a1f30",
-      "StackId": "arn:aws:cloudformation:us-east-2:746669205882:stack/amplify-yapp-main-a1f30/64b89b10-77c4-11ef-9dfc-0a3db7ac2389",
-      "AmplifyAppId": "d34oy4u1icq89e",
+      "StackId": "",
+      "AmplifyAppId": "",
       "APIGatewayAuthURL": "https://s3.amazonaws.com/amplify-yapp-main-a1f30-deployment/amplify-cfn-templates/api/APIGatewayAuthStack.json"
     },
     "categories": {
@@ -33,15 +33,15 @@
   "dev": {
     "awscloudformation": {
       "AuthRoleName": "amplify-yapp-dev-94d82-authRole",
-      "UnauthRoleArn": "arn:aws:iam::746669205882:role/amplify-yapp-dev-94d82-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::746669205882:role/amplify-yapp-dev-94d82-authRole",
+      "UnauthRoleArn": "",
+      "AuthRoleArn": "",
       "Region": "us-east-2",
       "DeploymentBucketName": "amplify-yapp-dev-94d82-deployment",
       "UnauthRoleName": "amplify-yapp-dev-94d82-unauthRole",
       "StackName": "amplify-yapp-dev-94d82",
-      "StackId": "arn:aws:cloudformation:us-east-2:746669205882:stack/amplify-yapp-dev-94d82/1d880f40-792d-11ef-945f-06ddacbeee33",
-      "AmplifyAppId": "d34oy4u1icq89e",
-      "APIGatewayAuthURL": "https://s3.amazonaws.com/amplify-yapp-dev-94d82-deployment/amplify-cfn-templates/api/APIGatewayAuthStack.json"
+      "StackId": "",
+      "AmplifyAppId": "",
+      "APIGatewayAuthURL": ""
     },
     "categories": {
       "auth": {
@@ -50,7 +50,7 @@
       "function": {
         "yAppLambda": {
           "deploymentBucketName": "amplify-yapp-dev-94d82-deployment",
-          "s3Key": "amplify-builds/yAppLambda-74694a75747574416539-build.zip"
+          "s3Key": ""
         }
       },
       "api": {
@@ -64,15 +64,15 @@
   "test": {
     "awscloudformation": {
       "AuthRoleName": "amplify-yapp-test-d66f4-authRole",
-      "UnauthRoleArn": "arn:aws:iam::746669205882:role/amplify-yapp-test-d66f4-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::746669205882:role/amplify-yapp-test-d66f4-authRole",
+      "UnauthRoleArn": "",
+      "AuthRoleArn": "",
       "Region": "us-east-2",
       "DeploymentBucketName": "amplify-yapp-test-d66f4-deployment",
       "UnauthRoleName": "amplify-yapp-test-d66f4-unauthRole",
       "StackName": "amplify-yapp-test-d66f4",
-      "StackId": "arn:aws:cloudformation:us-east-2:746669205882:stack/amplify-yapp-test-d66f4/bd51f950-792d-11ef-82d6-023e0c1371ef",
-      "AmplifyAppId": "d34oy4u1icq89e",
-      "APIGatewayAuthURL": "https://s3.amazonaws.com/amplify-yapp-test-d66f4-deployment/amplify-cfn-templates/api/APIGatewayAuthStack.json"
+      "StackId": "",
+      "AmplifyAppId": "",
+      "APIGatewayAuthURL": ""
     },
     "categories": {
       "auth": {
@@ -81,7 +81,7 @@
       "function": {
         "yAppLambda": {
           "deploymentBucketName": "amplify-yapp-test-d66f4-deployment",
-          "s3Key": "amplify-builds/yAppLambda-61733038617850706a50-build.zip"
+          "s3Key": ""
         }
       },
       "api": {
