@@ -2,6 +2,8 @@
 
 yAPP is an anonymous chatting application to provide users, known as Yappers, a safe and secure space to share their thoughts, ask questions to the general public, and open up to their friends, all anonymously. The anonymity yAPP provides allows Yappers to separate their personal lives with their online personas. On traditional social media platforms, actions such as posting, commenting, or viewing are all tied to accounts, leaving identities vulnerable to being traced or even exposed.
 
+Post Final Release - We have torn down all of our services on AWS, and as such, none of the website links will work and the app will not load. Please refer to the [demo documentation](./Documentation/Demo/Demo.md) to see how it all worked in action!
+
 ## Website
  - You can view our website on our main environment [here](https://dqn0i6zpqfsuv.cloudfront.net/).
  - We also have a dev environment [here](https://dezluqsjxnkgt.cloudfront.net/).
